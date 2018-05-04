@@ -15,7 +15,7 @@ Hyperio is ideal for data scientists and data engineers that want to remain in c
 
 ## Install
 
-pip install git+http://
+pip install git+https://github.com/autonomio/hyperio.git
 
 ## How to use
 
