@@ -1,4 +1,6 @@
-## Hyperio | Hyperparameter Scanning Solution for Keras 
+<img alt='Hyperparameter scanner for Keras Models' src='https://raw.githubusercontent.com/autonomio/hyperio/master/logo.png' width=250px>
+
+## Hyperparameter Scanning for Keras 
 
 Hyperio provides a hyperparameter scanning solution that allows using any Keras model as they are, with the simple change that instead of calling the parameter (e.g. epochs=25), you call it from a dictionary with an identical label (e.g. params['epochs']). Really, not kidding. 
 
@@ -15,7 +17,7 @@ Hyperio is ideal for data scientists and data engineers that want to remain in c
 
 ## Install
 
-pip install git+https://github.com/autonomio/hyperio.git
+    pip install git+https://github.com/autonomio/hyperio.git
 
 ## How to use
 
