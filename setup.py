@@ -4,12 +4,12 @@
 
 DESCRIPTION = "Hyperio Hyperparameter Scanner for Keras"
 LONG_DESCRIPTION = """\
-Hyperio provides a hyperparameter scanning solution that 
-allows using any Keras model as they are, with the simple 
-change that instead of calling the parameter (e.g. epochs=25), 
-you call it from a dictionary with an identical label (e.g. params['epochs']). 
+Hyperio provides a hyperparameter scanning solution that
+allows using any Keras model as they are, with the simple
+change that instead of calling the parameter (e.g. epochs=25),
+you call it from a dictionary with an identical label (e.g. params['epochs']).
 
-Really, not kidding. 
+Really, not kidding.
 """
 
 DISTNAME = 'Hyperio'
@@ -18,7 +18,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://autonom.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/autonomio/hyperio/'
-VERSION = '0.1'
+VERSION = '0.1.5'
 
 try:
     from setuptools import setup
@@ -46,6 +46,11 @@ def check_dependencies():
         import keras
     except ImportError:
         install_requires.append('keras')
+    try:
+        import astetik
+    except ImportError:
+        install_requires.append('astetik')
+
 
     return install_requires
 

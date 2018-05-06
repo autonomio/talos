@@ -1,5 +1,6 @@
 from hyperio.main import Hyperio
-from .utils.utils import lr_normalizer
-from .data.data import iris
+from hyperio.reporting import Reporting
 
-__version__ = "0.1"
+del main, reporting, utils
+
+__version__ = "0.1.5"

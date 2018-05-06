@@ -1,0 +1,28 @@
+dist: trusty
+sudo: required
+before_install:
+language: python
+python:
+ - '2.7'
+ - '3.4'
+ - '3.5'
+ - '3.6'
+install:
+ - pip install -r requirements.txt
+ - python setup.py install
+ - pip install coveralls
+before_script:
+ - export DISPLAY=:99.0
+ - sh -e /etc/init.d/xvfb start
+ - sleep 3
+script:
+ - coverage run --source=hyperio ./test_script.py
+after_success: coveralls
+
+deploy:
+  provider: pypi
+  user: "mikkokotila"
+  password:
+    secure: "bqg8QBOP4QnrmNt0rXzTLv2r4oyhgdtRqvlGl2IDOH9LAnRrcRSXeZrdXBQc9d4wMQ1cwtn8q/cXeF6HHxIvvX+HaD+V0G16kCjgA5nz0+D5xSeqlwYZO2V/uzhPFpVGp8DCeDRR5spNFtkH9A5U6qga/Bm8wASlYod2GSi2BKCwApwG2xfiVEuET3+5hS9j2F4wAcwHOihZu7H33YNyZ9/gCEJBYkshSJxqCo0/aVJHWth6ja1YJ1T6EMWLHsJdCkEZk5cT2Dx/HO5D/vqzUe2kTrdqFjhcvpyk6yGH7CgxkS1x9MdjAFbrcqxA9wJjbpNHgyMd0kHzvDgPc5ZWr3yyCkb5FHLk+qlPSy6uuvs3+0e+9Sm/SctFgCN0HfznGoXSUxANDKl2tvgtkVBQUZzqhOtQ6PxlmcFbTYhJhmbnIO3qoGec7FN+Apz0c7RV/0e/ZqZMLhG60eybUCeBMElzq2rGlYEmceSI1VAIkqf68fdfsWyFr9t0naJXbQDr3q09Vyx9Cy011DtwgWUN9Xy/dlZmGvAA9IDGsxUfBp8R5eEhiduleHPn0nJDwyJo16XOJR7c+JGMZmQdd/bKtLpR/fr40AFsK52Z6ynRs1XKyBFQxifIfnt68f1CWwbSaoKAKVZbCJZq0gGhA4mPzuJaIzfJ3/6GA5eh5tyfnRw="
+  on:
+    branch: production
