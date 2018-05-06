@@ -6,6 +6,9 @@ Hyperio provides a hyperparameter scanning solution that allows using any Keras 
 
 Hyperio is ideal for data scientists and data engineers that want to remain in complete control of their keras models, but are tired of mindless parameter hopping...
 
+See the example Notebook [HERE](https://github.com/autonomio/hyperio/blob/master/examples/Hyperparameter%20Optimization%20with%20Keras%20for%20the%20Iris%20Prediction.ipynb)
+
+
 ## Benefits 
 
 - works with ANY keras model
