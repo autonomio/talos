@@ -21,7 +21,7 @@ Hyperio is ideal for data scientists and data engineers that want to remain in c
 
 ## How to use
 
-Let's consider a simple Keras model: 
+Let's consider an example of a simple Keras model: 
 
     model = Sequential()
     model.add(Dense(8, input_dim=x_train.shape[1], activation='relu'))
