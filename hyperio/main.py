@@ -1,11 +1,12 @@
 import numpy as np
 import datetime as dt
 import pandas as pd
+import itertools
 
 import re
 from keras import backend as K
 
-from .utils.template import df_cols
+from .utils.template import df_cols, value_cols
 
 
 class Hyperio:
@@ -14,8 +15,10 @@ class Hyperio:
 
     def __init__(self, x, y, params, dataset_name, experiment_no, model,
                  val_split=.3, shuffle=True, search_method='random',
-                 reduction_method=None, grid_downsample=None,
-                 hyperio_log_name='hyperio.log', debug=False):
+                 reduction_method=None, reduction_interval=100,
+                 reduction_window=None,
+                 grid_downsample=None, hyperio_log_name='hyperio.log',
+                 debug=False):
 
         # experiment name
         self.dataset_name = dataset_name
@@ -35,7 +38,9 @@ class Hyperio:
 
         # load input parameters
         self.search_method = search_method
-        self.reduction_method = None
+        self.reduction_method = reduction_method
+        self.reduction_interval = reduction_interval
+        self.reduction_window = reduction_window
         self.grid_downsample = grid_downsample
         self.val_split = val_split
         self.shuffle = shuffle
@@ -61,7 +66,9 @@ class Hyperio:
 
         # run the scan
         self.result = []
-        self._null = self._hyper_run()
+
+        while len(self.param_log) != 0:
+            self._null = self._hyper_run()
 
         # get the results ready
         self._null = self._result_todf()
@@ -76,26 +83,72 @@ class Hyperio:
 
         '''RUNTIME'''
 
-        for i in range(len(self.param_grid)):
+        self._run_round_params()    # this creates the params round
+        _hr_out = self._model()
+        _hr_out = self._run_round_results(_hr_out)
+        self._run_write_log()
+        self.result.append(_hr_out)
+        self._save_result()
 
-            self._run_round_params()    # this creates the params round
-            _hr_out = self._model()
-            _hr_out = self._run_round_results(_hr_out)
-            self._run_write_log()
-            self.result.append(_hr_out)
-            self._save_result()
+        # this is for the first round only
+        self._estimator()
 
-            # this is for the first round only
-            self._estimator()
+        # reducing algorithsm
+        if (self.round_counter + 1) % self.reduction_interval == 0:
 
-            # prevent Tensorflow memory leakage
-            K.clear_session()
+            if self.reduction_method == 'spear':
+                self.score_based_reducer()
 
-            # add one to the total round counter
-            self.round_counter += 1
+        # prevent Tensorflow memory leakage
+        K.clear_session()
+
+        # add one to the total round counter
+        self.round_counter += 1
 
     # ------------------------------
     # THE MAIN RUNTIME FUNCTION ENDS
+
+    def corr_reducer(self, metric, neg_corr=True, treshold=-.1):
+
+        data = pd.read_csv(self.experiment_name + '.csv')
+
+        ind = data.columns[9:]
+        ind = pd.Series(list(ind), index=range(len(ind)))
+        ind = ind.reset_index().set_index(0)
+
+        data = data.copy('deep')
+        if self.reduction_window == None:
+            self.reduction_window = self.reduction_interval
+        data = data.tail(self.reduction_window)
+        metric_col =  pd.DataFrame(data[metric])
+        data = pd.merge(metric_col, data.iloc[:, 9:], left_index=True, right_index=True)
+        correlations = data.corr('spearman')
+
+        neg_lab = correlations[metric].dropna().sort_values(ascending=neg_corr).index[0]
+
+        dummies = pd.get_dummies(data[neg_lab])
+        merged = pd.merge(metric_col, dummies, left_index=True, right_index=True)
+        corr = merged.corr()[metric].sort_values(ascending=neg_corr)
+
+        if corr[0] < treshold:
+            return (corr.index[0], int(ind.loc['lr'].values))
+        else:
+            return "_NULL"
+
+    def score_based_reducer(self):
+
+        to_drop = self.corr_reducer('val_score')
+
+        # if a value have been returned, proceed with dropping
+        if to_drop != "_NULL":
+            index_of_drops = self.param_grid[self.param_grid[:, to_drop[1]] == to_drop[0]][:,-1]
+            for i in index_of_drops:
+                try:
+                    self.param_log.remove(i)
+                    print('hit')
+                except ValueError:
+                    print('miss')
+        # otherwise do nothing
 
     def _run_round_params(self):
 
@@ -212,24 +265,13 @@ class Hyperio:
     def _param_grid(self):
 
         '''CREATE THE PARAMETER PERMUTATIONS
-
-        Note that you have to change dimensions
-        for the reshape after adding new params.
-
         '''
-        # NOTE: this has to change together with template.py and input params
-        _pg_out = np.meshgrid(self.p['lr'],
-                              self.p['first_neuron'],
-                              self.p['batch_size'],
-                              self.p['epochs'],
-                              self.p['dropout'],
-                              self.p['optimizer'],
-                              self.p['loss'],
-                              self.p['last_activation'],
-                              self.p['weight_regulizer'],
-                              self.p['emb_output_dims'])
 
-        return np.array(_pg_out).T.reshape(-1, 10)
+        ls = [list(self.p[key]) for key in self.p.keys()]
+        _pg_out = np.array(list(itertools.product(*ls)))
+
+        return _pg_out
+
 
     def _param_space(self):
 
@@ -377,38 +419,36 @@ class Hyperio:
         v_t = np.array(out.history['val_acc']) - np.array(out.history['val_loss'])
 
         train_peak = np.argpartition(t_t, round_epochs-1)[-1]
-        test_peak = np.argpartition(v_t, round_epochs-1)[-1]
+        val_peak = np.argpartition(v_t, round_epochs-1)[-1]
 
         train_acc = np.array(out.history['acc'])[train_peak]
         train_loss = np.array(out.history['loss'])[train_peak]
         train_score = train_acc - train_loss
 
-        val_acc = np.array(out.history['val_acc'])[train_peak]
-        val_loss = np.array(out.history['val_loss'])[train_peak]
+        val_acc = np.array(out.history['val_acc'])[val_peak]
+        val_loss = np.array(out.history['val_loss'])[val_peak]
         val_score = val_acc - val_loss
 
         # this is for the log
         self._val_score = val_score
         self._round_epochs = round_epochs
 
-        # NOTE: if this is changed, change template.py too
-        rr_out = [train_peak, test_peak,
-                  train_acc, val_acc,
-                  train_loss, val_loss,
-                  train_score, val_score,
-                  self.params['batch_size'],
-                  self.params['epochs'],
-                  round_epochs,
-                  self.params['dropout'],
-                  self.params['lr'],
-                  self.params['first_neuron'],
-                  self.params['loss'],
-                  self.params['optimizer'],
-                  self.params['last_activation'],
-                  self.params['weight_regulizer'],
-                  self.params['emb_output_dims']]
+        # if the round counter is zero, just output header
+        if self.round_counter == 0:
+            _rr_out = value_cols()
+            [_rr_out.append(key) for key in self.params.keys()]
+            return _rr_out
 
-        return rr_out
+        # otherwise proceed to create the value row
+        _rr_out = []
+        for val in value_cols():
+            _rr_out.append(locals()[val])
+
+        # this is based on columns defined in template.py
+        for key in self.params.keys():
+            _rr_out.append(self.params[key])
+
+        return _rr_out
 
     def _save_result(self):
         '''SAVES THE RESULTS/PARAMETERS TO A CSV SPECIFIC TO THE EXPERIMENT'''
@@ -422,7 +462,8 @@ class Hyperio:
         '''ADDS A DATAFRAME VERSION OF THE RESULTS TO THE CLASS OBJECT'''
 
         self.result = pd.DataFrame(self.result)
-        self.result.columns = self.df_col_list
+        self.result.columns = self.result.iloc[0]
+        self.result = self.result.drop(0)
 
     # -------------------------------------------
     # results processing and saving ends
