@@ -309,8 +309,11 @@ class Hyperio:
         param_range(0.001, 0.01, 10)
 
         '''
-
-        out = np.arange(start, end, (end - start) / n, dtype=float)
+        try:
+            out = np.arange(start, end, (end - start) / n, dtype=float)
+        # this is for python2
+        except ZeroDivisionError:
+            out = np.arange(start, end, (end - start) / float(n), dtype=float)
 
         if type(start) == int and type(end) == int:
             out = out.astype(int)

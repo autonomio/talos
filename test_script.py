@@ -5,10 +5,12 @@ import pandas as pd
 
 from keras.utils import to_categorical
 from hyperio.utils.utils import lr_normalizer, early_stopper, hidden_layers
+from hyperio.data.data import iris
+
 from keras.models import Sequential
 from keras.layers import Dropout, Dense
 
-from keras.optimizers import Adam, Nadam
+from keras.optimizers import SGD, Adam, Adadelta, Adagrad, Adamax, RMSprop, Nadam
 from keras.activations import softmax, relu, elu
 from keras.losses import categorical_crossentropy, logcosh
 
@@ -73,7 +75,7 @@ p = {'lr': (2, 10, 30),
      'batch_size': [2, 3, 4],
      'epochs': [1],
      'dropout': (0, 0.40, 10),
-     'optimizer': [Adam, Nadam],
+     'optimizer': [Adam, Nadam, SGD, Adadelta, Adagrad, RMSprop, Nadam],
      'loss': [categorical_crossentropy, logcosh],
      'activation': [relu, elu],
      'last_activation': [softmax],
@@ -92,3 +94,5 @@ h = hy.Hyperio(x, y,
                reduction_interval=5)
 
 r = hy.Reporting('testing_000.csv')
+
+df = iris()
