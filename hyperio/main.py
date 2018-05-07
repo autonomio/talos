@@ -142,12 +142,10 @@ class Hyperio:
         # if a value have been returned, proceed with dropping
         if to_drop != "_NULL":
             index_of_drops = self.param_grid[self.param_grid[:, to_drop[1]] == to_drop[0]][:,-1]
-            for i in index_of_drops:
-                try:
-                    self.param_log.remove(i)
-                    print('hit')
-                except ValueError:
-                    print('miss')
+            self.param_log = list(set(self.param_log).difference(set(index_of_drops)))
+
+
+
         # otherwise do nothing
 
     def _run_round_params(self):
