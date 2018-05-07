@@ -5,7 +5,7 @@ import pandas as pd
 
 from keras.utils import to_categorical
 from hyperio.utils.utils import lr_normalizer, early_stopper, hidden_layers
-from hyperio.data.data import iris
+from hyperio.data import data
 
 from keras.models import Sequential
 from keras.layers import Dropout, Dense
@@ -13,22 +13,6 @@ from keras.layers import Dropout, Dense
 from keras.optimizers import SGD, Adam, Adadelta, Adagrad, Adamax, RMSprop, Nadam
 from keras.activations import softmax, relu, elu
 from keras.losses import categorical_crossentropy, logcosh
-
-
-def iris():
-
-    '''
-    Returns (x, y)
-
-    '''
-
-    df = pd.read_csv('https://raw.githubusercontent.com/uiuc-cse/data-fa14/gh-pages/data/iris.csv')
-    df['species'] = df['species'].factorize()[0]
-    df = df.sample(len(df))
-    y = to_categorical(df['species'])
-    x = df.iloc[:, :-1].values
-
-    return x, y
 
 
 def iris_model(x_train, y_train, x_val, y_val, params):
@@ -75,14 +59,14 @@ p = {'lr': (2, 10, 30),
      'batch_size': [2, 3, 4],
      'epochs': [1],
      'dropout': (0, 0.40, 10),
-     'optimizer': [Adam, Nadam, SGD, Adadelta, Adagrad, RMSprop, Nadam],
+     'optimizer': [Adam, Nadam, SGD, Adadelta, Adagrad, RMSprop, Nadam, Adamax],
      'loss': [categorical_crossentropy, logcosh],
      'activation': [relu, elu],
      'last_activation': [softmax],
      'weight_regulizer': [None],
      'emb_output_dims': [None]}
 
-x, y = iris()
+x, y = data.iris()
 
 h = hy.Hyperio(x, y,
                params=p,
