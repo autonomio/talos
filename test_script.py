@@ -94,5 +94,3 @@ h = hy.Hyperio(x, y,
                reduction_interval=5)
 
 r = hy.Reporting('testing_000.csv')
-
-df = iris()
