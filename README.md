@@ -68,18 +68,18 @@ Now let's see how the exact same model looks like, prepared for Hyperio scan:
 
 As you can see, the only thing that changed, is the values that we provide for the parameters. We then pass the parameters with a dictionary:
 
-p = {'lr': (2, 10, 30),
-     'first_neuron':[4, 8, 16, 32, 64, 128],
-     'hidden_layers':[2,3,4,5,6],
-     'batch_size': [2, 3, 4],
-     'epochs': [300],
-     'dropout': (0, 0.40, 10),
-     'weight_regulizer':[None],
-     'emb_output_dims': [None],
-     'optimizer': [Adam, Nadam],
-     'loss': [categorical_crossentropy, logcosh],
-     'activation':[relu, elu],
-     'last_activation': [softmax]}
+	p = {'lr': (2, 10, 30),
+	     'first_neuron':[4, 8, 16, 32, 64, 128],
+	     'hidden_layers':[2,3,4,5,6],
+	     'batch_size': [2, 3, 4],
+	     'epochs': [300],
+	     'dropout': (0, 0.40, 10),
+	     'weight_regulizer':[None],
+	     'emb_output_dims': [None],
+	     'optimizer': [Adam, Nadam],
+	     'loss': [categorical_crossentropy, logcosh],
+	     'activation':[relu, elu],
+	     'last_activation': [softmax]}
 
 Hyperio accepts lists with values, and tuples (start, end, n). Learning rate is normalized to 1 so that for each optimizer, lr=1 is the default Keras setting. Once this is all done, we can run the scan:
 
