@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #!/usr/bin/env python
 
 import hyperio as hy
@@ -92,3 +93,7 @@ h = hy.Hyperio(x, y,
                reduction_interval=5)
 
 r = hy.Reporting('testing_000.csv')
+=======
+import hyperio
+
+>>>>>>> 926ca65b510d166957ff9c405e8eb1d61446ddb1
