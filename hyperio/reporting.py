@@ -31,7 +31,7 @@ class Reporting:
         for col in ['loss', 'activation', 'last_activation']:
             try:
                 data[col] = [i[1] for i in data[col].str.split()]
-            except KeyError:
+            except (KeyError, IndexError):
                 pass
 
         float_cols = data.select_dtypes(float).columns
