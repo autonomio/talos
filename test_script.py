@@ -1,10 +1,7 @@
 #!/usr/bin/env python
-
 import hyperio as hy
-import pandas as pd
 
-from keras.utils import to_categorical
-from hyperio.utils.utils import lr_normalizer, early_stopper, hidden_layers
+from hyperio.model import lr_normalizer, early_stopper, hidden_layers
 from hyperio.data import data
 
 from keras.models import Sequential
@@ -50,7 +47,6 @@ def iris_model(x_train, y_train, x_val, y_val, params):
 
 # PROGRAM STARTS HERE
 # ===================
-
 
 # here use a standard 2d dictionary for inputting the param boundaries
 p = {'lr': (2, 10, 30),
