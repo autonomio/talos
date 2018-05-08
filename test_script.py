@@ -2,7 +2,6 @@
 import hyperio as hy
 
 from hyperio.model import lr_normalizer, early_stopper, hidden_layers
-from hyperio.data import data
 
 from keras.models import Sequential
 from keras.layers import Dropout, Dense
@@ -62,7 +61,7 @@ p = {'lr': (2, 10, 30),
      'weight_regulizer': [None],
      'emb_output_dims': [None]}
 
-x, y = data.iris()
+x, y = hy.datasets.iris()
 
 h = hy.Hyperio(x, y,
                params=p,
