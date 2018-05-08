@@ -18,7 +18,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://autonom.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/autonomio/hyperio/'
-VERSION = '0.1.6'
+VERSION = '0.1.7'
 
 try:
     from setuptools import setup
@@ -59,24 +59,27 @@ if __name__ == "__main__":
     install_requires = check_dependencies()
 
     setup(name=DISTNAME,
-        author=MAINTAINER,
-        author_email=MAINTAINER_EMAIL,
-        maintainer=MAINTAINER,
-        maintainer_email=MAINTAINER_EMAIL,
-        description=DESCRIPTION,
-        long_description=LONG_DESCRIPTION,
-        license=LICENSE,
-        url=URL,
-        version=VERSION,
-        download_url=DOWNLOAD_URL,
-        install_requires=install_requires,
-        packages=['hyperio',
-                  'hyperio.data',
-                  'hyperio.utils'],
+          author=MAINTAINER,
+          author_email=MAINTAINER_EMAIL,
+          maintainer=MAINTAINER,
+          maintainer_email=MAINTAINER_EMAIL,
+          description=DESCRIPTION,
+          long_description=LONG_DESCRIPTION,
+          license=LICENSE,
+          url=URL,
+          version=VERSION,
+          download_url=DOWNLOAD_URL,
+          install_requires=install_requires,
+          packages=['hyperio',
+                    'hyperio.data',
+                    'hyperio.utils',
+                    'hyperio.model',
+                    'hyperio.parameters',
+                    'hyperio.reducers'],
 
-        classifiers=[
+          classifiers=[
                      'Intended Audience :: Science/Research',
-                     'Programming Language :: Python :: 2.7',
+                     'Programming Language :: Python :: 3.6',
                      'License :: OSI Approved :: MIT License',
                      'Topic :: Scientific/Engineering :: Human Machine Interfaces',
                      'Topic :: Scientific/Engineering :: Artificial Intelligence',
