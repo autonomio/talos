@@ -90,8 +90,6 @@ class Hyperio:
 
         round_params(self)    # this creates the params round
 
-        print(self.params)
-
         _hr_out = self._model()
         _hr_out = run_round_results(self, _hr_out)
         write_log(self)

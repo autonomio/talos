@@ -13,11 +13,14 @@ def spear(self, metric, neg_corr=True, treshold=-.1):
     if self.reduction_window == None:
         self.reduction_window = self.reduction_interval
     data = data.tail(self.reduction_window)
-    metric_col =  pd.DataFrame(data[metric])
+    metric_col = pd.DataFrame(data[metric])
     data = pd.merge(metric_col, data.iloc[:, 9:], left_index=True, right_index=True)
     correlations = data.corr('spearman')
-
-    neg_lab = correlations[metric].dropna().sort_values(ascending=neg_corr).index[0]
+    try:
+        neg_lab = correlations[metric].dropna().sort_values(ascending=neg_corr).index[0]
+    except IndexError:
+        print('Reduction Failed: only NaN values')
+        return "_NULL"
 
     dummies = pd.get_dummies(data[neg_lab])
     merged = pd.merge(metric_col, dummies, left_index=True, right_index=True)
