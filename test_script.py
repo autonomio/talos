@@ -42,7 +42,7 @@ def iris_model(x_train, y_train, x_val, y_val, params):
                     validation_data=[x_val, y_val],
                     callbacks=early_stopper(params['epochs'], mode='strict'))
 
-    return out
+    return out, model
 
 # PROGRAM STARTS HERE
 # ===================
