@@ -1,7 +1,11 @@
 from keras.callbacks import EarlyStopping
 
 
-def early_stopper(epochs, mode='moderate', min_delta=None, patience=None):
+def early_stopper(epochs,
+                  monitor='val_loss',
+                  mode='moderate',
+                  min_delta=None,
+                  patience=None):
 
     '''EARLY STOP CALLBACK
 
@@ -16,17 +20,17 @@ def early_stopper(epochs, mode='moderate', min_delta=None, patience=None):
     '''
 
     if mode == 'moderate':
-        _es_out = EarlyStopping(monitor='val_loss',
+        _es_out = EarlyStopping(monitor=monitor,
                                 min_delta=0,
                                 patience=int(epochs / 10),
                                 verbose=0, mode='auto')
     elif mode == 'strict':
-        _es_out = EarlyStopping(monitor='val_loss',
+        _es_out = EarlyStopping(monitor=monitor,
                                 min_delta=0,
                                 patience=2,
                                 verbose=0, mode='auto')
     elif type(mode) == type([]):
-        _es_out = EarlyStopping(monitor='val_loss',
+        _es_out = EarlyStopping(monitor=monitor,
                                 min_delta=min_delta,
                                 patience=patience,
                                 verbose=0, mode='auto')

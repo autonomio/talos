@@ -34,7 +34,10 @@ def dict_tostr(self, d):
     s = re.sub("$", "'", s)
 
     # add some values
-    s += ',' + str(round(self._val_score, 3))
+    try:
+        s += ',' + str(round(self._val_score, 3))
+    except TypeError:
+        s += ',' + self._val_score
     s += ',' + str(self._round_epochs)
     s += ',' + self._y_type
     s += ',' + str(self._y_range)

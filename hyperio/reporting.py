@@ -41,8 +41,8 @@ class Reporting:
 
     def _min_and_maxes(self, mode):
 
-        mins = pd.DataFrame(self.data.min())
-        maxs = pd.DataFrame(self.data.max())
+        mins = pd.DataFrame(self.data.sort_values('val_score').tail(10).min())
+        maxs = pd.DataFrame(self.data.sort_values('val_score').tail(10).max())
         min_max = pd.merge(mins, maxs, left_index=True, right_index=True).tail(-9)
         min_max.columns = ['min', 'max']
 

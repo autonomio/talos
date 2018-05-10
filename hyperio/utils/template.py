@@ -1,9 +1,14 @@
 def value_cols():
 
-    _vc_out = ['round_epochs', 'train_peak', 'val_peak',
-               'train_acc', 'val_acc',
-               'train_loss', 'val_loss',
-               'train_score', 'val_score']
+    _vc_out = ['round_epochs',
+               'train_peak',
+               'val_peak',
+               'train_acc',
+               'val_acc',
+               'train_loss',
+               'val_loss',
+               'train_score',
+               'val_score']
 
     return _vc_out
 
@@ -14,6 +19,8 @@ def rep_cols():
                'batch_size',
                'round_epochs',
                'lr',
+               'hidden_layers',
+               'dropout',
                'optimizer',
                'activation',
                'last_activation',

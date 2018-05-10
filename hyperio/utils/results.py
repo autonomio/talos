@@ -1,8 +1,6 @@
 from numpy import array, argpartition, savetxt
 from pandas import DataFrame
 
-from .template import value_cols
-
 
 def run_round_results(self, out):
 
@@ -11,38 +9,26 @@ def run_round_results(self, out):
     NOTE: The epoch level data will be dropped here each round.
 
     '''
-    round_epochs = len(out.history['acc'])
 
-    t_t = array(out.history['acc']) - array(out.history['loss'])
-    v_t = array(out.history['val_acc']) - array(out.history['val_loss'])
+    _rr_out = []
 
-    train_peak = argpartition(t_t, round_epochs-1)[-1]
-    val_peak = argpartition(v_t, round_epochs-1)[-1]
-
-    train_acc = array(out.history['acc'])[train_peak]
-    train_loss = array(out.history['loss'])[train_peak]
-    train_score = train_acc - train_loss
-
-    val_acc = array(out.history['val_acc'])[val_peak]
-    val_loss = array(out.history['val_loss'])[val_peak]
-    val_score = val_acc - val_loss
-
-    # this is for the log
-    self._val_score = val_score
-    self._round_epochs = round_epochs
+    self._round_epochs = len(out.history['acc'])
 
     # if the round counter is zero, just output header
     if self.round_counter == 0:
-        _rr_out = value_cols()
+        _rr_out.append('round_epochs')
+        _rr_out = list(out.history.keys())
         [_rr_out.append(key) for key in self.params.keys()]
         return _rr_out
 
     # otherwise proceed to create the value row
-    _rr_out = []
-    for val in value_cols():
-        _rr_out.append(locals()[val])
+    _rr_out.append(self._round_epochs)
+    for key in out.history.keys():
+        t_t = array(out.history[key]) - array(out.history[key])
+        peak_epoch = argpartition(t_t, self._round_epochs-1)[-1]
+        peak_val = array(out.history[key])[peak_epoch]
+        _rr_out.append(peak_val)
 
-    # this is based on columns defined in template.py
     for key in self.params.keys():
         _rr_out.append(self.params[key])
 

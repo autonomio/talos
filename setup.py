@@ -75,7 +75,8 @@ if __name__ == "__main__":
                     'hyperio.utils',
                     'hyperio.model',
                     'hyperio.parameters',
-                    'hyperio.reducers'],
+                    'hyperio.reducers',
+                    'hyperio.metrics'],
 
           classifiers=[
                      'Intended Audience :: Science/Research',
