@@ -31,7 +31,7 @@ def iris_model(x_train, y_train, x_val, y_val, params):
 
     # here are using a learning rate boundary
     model.compile(optimizer=params['optimizer'](lr=lr_normalizer(params['lr'], params['optimizer'])),
-                  loss=params['loss'],
+                  loss=params['losses'],
                   metrics=['acc'])
 
     # here we are also using the early_stopper function for a callback
