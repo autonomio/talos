@@ -10,6 +10,8 @@ Talos is ideal for data scientists and data engineers that want to remain in com
 
 See the example Notebook [HERE](https://github.com/autonomio/hyperio/blob/master/examples/Hyperparameter%20Optimization%20with%20Keras%20for%20the%20Iris%20Prediction.ipynb)
 
+Read the User Manual [HERE](https://github.com/autonomio/talos/blob/master/docs/index.rst)
+
 ## Development Objective
 
 Talos development is focused on creating a an abstraction layer for Keras, that meets the criteria of "models that build models". This means that Talos is able to, in a semi-autonomous manner find highly optimal parameter configurations for conventional prediction tasks, while being able to use that same capacity optimize itself (i.e. the optimization process) using the same approach. Thus unlocking "models that build models that build models that...". Following a reductionist approach, this goal is fulfilled by systematically building the required "blocks" one by one.
