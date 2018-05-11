@@ -104,4 +104,4 @@ Talos accepts lists with values, and tuples (start, end, n). Learning rate is no
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [https://github.com/autonomio/talos/blob/master/LICENSE](LICENSE.md) file for details
