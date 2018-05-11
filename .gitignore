@@ -4,4 +4,4 @@ __pycache__
 *.csv
 *.log
 dist/
-hyperio.egg-info
+talos.egg-info

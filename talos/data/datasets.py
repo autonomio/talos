@@ -51,7 +51,7 @@ def iris():
 
 def cervical_cancer():
 
-    df = pd.read_csv('data/cervical_cancer.csv')
+    df = pd.read_csv(base + 'cervical_cancer.csv')
     df = df.replace('?', nan)
     df = df.drop(['citology', 'hinselmann', 'biopsy'], axis=1)
     df = df.drop(['since_first_diagnosis', 'since_last_diagnosis'], axis=1).dropna()
