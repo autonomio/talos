@@ -4,12 +4,15 @@
 
 ![Travis branch](https://img.shields.io/travis/autonomio/hyperio/master.svg)[![Coverage Status](https://coveralls.io/repos/github/autonomio/hyperio/badge.svg?branch=master)](https://coveralls.io/github/autonomio/hyperio?branch=master)
 
-Hyperio provides a hyperparameter scanning solution allowing use of any Keras model, with the simple change where instead calling the parameter (e.g. epochs=25), you call a dictionary key with a label (e.g. params['epochs']).
+Talos provides a hyperparameter scanning solution allowing use of any Keras model, with the simple change where instead calling the parameter (e.g. epochs=25), you call a dictionary key with a label (e.g. params['epochs']).
 
-Hyperio is ideal for data scientists and data engineers that want to remain in complete control of their Keras models, but are tired of mindless parameter hopping and confusing optimization solutions that add complexity instead of taking it away.
+Talos is ideal for data scientists and data engineers that want to remain in complete control of their Keras models, but are tired of mindless parameter hopping and confusing optimization solutions that add complexity instead of taking it away.
 
 See the example Notebook [HERE](https://github.com/autonomio/hyperio/blob/master/examples/Hyperparameter%20Optimization%20with%20Keras%20for%20the%20Iris%20Prediction.ipynb)
 
+## Development Objective
+
+Talos development is focused on creating a platform that meets the criteria of "models that build models". This means that Talos is able to, in a semi-autonomous manner find highly optimal parameter configurations for conventional prediction tasks, while being able to use that same capacity optimize itself (i.e. the optimization process) using the same approach. Thus unlocking "models that build models that build models that...". Following a reductionist approach, this goal is fulfilled by systematically building the required "blocks" one by one. 
 
 ## Benefits
 

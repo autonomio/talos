@@ -17,7 +17,7 @@ def run_round_results(self, out):
     # if the round counter is zero, just output header
     if self.round_counter == 0:
         _rr_out.append('round_epochs')
-        _rr_out = list(out.history.keys())
+        [_rr_out.append(i) for i in list(out.history.keys())]
         [_rr_out.append(key) for key in self.params.keys()]
         return ",".join(str(i) for i in _rr_out)
 

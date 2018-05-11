@@ -5,7 +5,7 @@ def spear(self, metric, neg_corr=True, treshold=-.1):
 
     data = pd.read_csv(self.experiment_name + '.csv')
 
-    ind = data.columns[9:]
+    ind = data.columns[7:]
     ind = pd.Series(list(ind), index=range(len(ind)))
     ind = ind.reset_index().set_index(0)
 
@@ -14,7 +14,7 @@ def spear(self, metric, neg_corr=True, treshold=-.1):
         self.reduction_window = self.reduction_interval
     data = data.tail(self.reduction_window)
     metric_col = pd.DataFrame(data[metric])
-    data = pd.merge(metric_col, data.iloc[:, 9:], left_index=True, right_index=True)
+    data = pd.merge(metric_col, data.iloc[:, 7:], left_index=True, right_index=True)
     correlations = data.corr('spearman')
     try:
         neg_lab = correlations[metric].dropna().sort_values(ascending=neg_corr).index[0]
@@ -27,7 +27,7 @@ def spear(self, metric, neg_corr=True, treshold=-.1):
     corr = merged.corr()[metric].sort_values(ascending=neg_corr)
 
     if corr[0] < treshold:
-        return (corr.index[0], int(ind.loc['lr'].values))
+        return (corr.index[0], int(ind.loc[neg_lab].values))
     else:
         return "_NULL"
 

@@ -1,15 +1,8 @@
 import pandas as pd
 
 from IPython.display import display, HTML
-from .utils.template import rep_cols
 
 import astetik
-
-# these labels are used in the pretty report
-report_cols = rep_cols()
-
-# text based reports are provided for these
-labels = ['val_score', 'train_score']
 
 
 class Reporting:
@@ -26,12 +19,13 @@ class Reporting:
     def _load_data(self):
 
         data = pd.read_csv(self.filename)
-        data['optimizer'] = data['optimizer'].str.replace("'|>|<|\.|class|keras|optimizers|\ ", '')
-
-        for col in ['loss', 'activation', 'last_activation']:
+        # cleanes up the function/class name artifacts
+        for col in data.columns:
             try:
-                data[col] = [i[1] for i in data[col].str.split()]
-            except (KeyError, IndexError):
+                if data[col][0].startswith('<'):
+                    data[col] = data[col].str.replace("'|\.",' ')
+                    data[col] = [i[1] for i in data[col].str.split()]
+            except AttributeError:
                 pass
 
         float_cols = data.select_dtypes(float).columns
@@ -41,8 +35,8 @@ class Reporting:
 
     def _min_and_maxes(self, mode):
 
-        mins = pd.DataFrame(self.data.sort_values('val_score').tail(10).min())
-        maxs = pd.DataFrame(self.data.sort_values('val_score').tail(10).max())
+        mins = pd.DataFrame(self.data.sort_values('val_acc').tail(10).min())
+        maxs = pd.DataFrame(self.data.sort_values('val_acc').tail(10).max())
         min_max = pd.merge(mins, maxs, left_index=True, right_index=True).tail(-9)
         min_max.columns = ['min', 'max']
 
@@ -53,9 +47,9 @@ class Reporting:
         '''PRINT PRETTY RESULT REPORT'''
 
         display(HTML('<h3>highest</h3>'))
-        display(self.data.sort_values('val_score', ascending=False).head(10).set_index('val_score')[report_cols])
+        display(self.data.sort_values('val_acc', ascending=False).head(10).set_index('val_acc').iloc[:,7:])
 
         display(HTML('<h3>lowest</h3>'))
-        display(self.data.sort_values('val_score', ascending=True).head(10).set_index('val_score')[report_cols])
+        display(self.data.sort_values('val_acc', ascending=True).head(10).set_index('val_acc').iloc[:,7:])
 
         print('\n NOTE: you have more options in the Reporting object.\n')
