@@ -53,14 +53,14 @@ Let's consider an example of a simple Keras model:
                     verbose=0,
                     validation_data=[x_val, y_val])
 
-Now let's see how the exact same model looks like, prepared for Talos scan:
+To prepare the model for a talos scan, we simply replace the parameters we want to include in the scans with references to our parameter dictionary (example of dictionary provided below). 
 
 	def iris_model(x_train, y_train, x_val, y_val, params):
 
 	    model = Sequential()
-	    model.add(Dense(8, input_dim=x_train.shape[1], activation='relu'))
+	    model.add(Dense(params['first_neuron'], input_dim=x_train.shape[1], activation=params['activation']))
 	    model.add(Dropout(params['dropout']))
-	    model.add(Dense(y_train.shape[1], activation='softmax'))
+	    model.add(Dense(y_train.shape[1], activation=params['last_activation']))
 
 	    model.compile(optimizer=params['optimizer']),
 	                  loss=params['losses'],
@@ -72,7 +72,7 @@ Now let's see how the exact same model looks like, prepared for Talos scan:
 	                    verbose=0,
 	                    validation_data=[x_val, y_val])
 
-	    return out
+	    return out, model
 
 As you can see, the only thing that changed, is the values that we provide for the parameters. We then pass the parameters with a dictionary:
 
@@ -94,6 +94,12 @@ The above example is a simple indication of what is possible. Any parameter that
 Talos accepts lists with values, and tuples (start, end, n). Learning rate is normalized to 1 so that for each optimizer, lr=1 is the default Keras setting. Once this is all done, we can run the scan:
 
 	h = ta.Scan(x, y, params=p, experiment_name='first_test', model=iris_model, grid_downsample=0.5)
+
+## Notes on Usage 
+
+- Models need to have a model.fit() object and model in the return statement
+
+- The model needs to be inside a function (which is passed to the talos.Scan()
 
 ## Options
 
