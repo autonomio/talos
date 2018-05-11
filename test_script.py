@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 import talos as ta
 
-from hyperio.model import lr_normalizer, early_stopper, hidden_layers
+from talos.model import lr_normalizer, early_stopper, hidden_layers
 
-from keras.models import Sequential
-from keras.layers import Dropout, Dense
+from talos.models import Sequential
+from talos.layers import Dropout, Dense
 
-from keras.optimizers import SGD, Adam, Adadelta, Adagrad, Adamax, RMSprop, Nadam
-from keras.activations import softmax, relu, elu
-from keras.losses import categorical_crossentropy, logcosh
+from talos.optimizers import SGD, Adam, Adadelta, Adagrad, Adamax, RMSprop, Nadam
+from talos.activations import softmax, relu, elu
+from talos.losses import categorical_crossentropy, logcosh
 
 
 def iris_model(x_train, y_train, x_val, y_val, params):
