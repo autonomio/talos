@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import hyperio as hy
+import talos as ta
 
 from hyperio.model import lr_normalizer, early_stopper, hidden_layers
 
@@ -61,9 +61,9 @@ p = {'lr': (2, 10, 30),
      'weight_regulizer': [None],
      'emb_output_dims': [None]}
 
-x, y = hy.datasets.iris()
+x, y = ta.datasets.iris()
 
-h = hy.Hyperio(x, y,
+h = ta.Hyperio(x, y,
                params=p,
                dataset_name='testing',
                experiment_no='000',
@@ -72,4 +72,4 @@ h = hy.Hyperio(x, y,
                reduction_method='spear',
                reduction_interval=5)
 
-r = hy.Reporting('testing_000.csv')
+r = ta.Reporting('testing_000.csv')
