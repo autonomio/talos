@@ -2,7 +2,7 @@
 
 ## Hyperparameter Scanning for Keras
 
-![Travis branch](https://img.shields.io/travis/autonomio/hyperio/master.svg)[![Coverage Status](https://coveralls.io/repos/github/autonomio/hyperio/badge.svg?branch=master)](https://coveralls.io/github/autonomio/hyperio?branch=master)
+![Travis branch](https://img.shields.io/travis/autonomio/talos/master.svg)[![Coverage Status](https://coveralls.io/repos/github/autonomio/hyperio/badge.svg?branch=master)](https://coveralls.io/github/autonomio/hyperio?branch=master)
 
 Talos provides a hyperparameter scanning solution for Keras users. There is no need to learn any new syntax, or change anything in the way Keras models are operated. Keras functionality is fully exposed, and any parameter can be included in the scans.
 
