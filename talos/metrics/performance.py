@@ -4,13 +4,13 @@ import numpy as np
 
 class Performance():
 
-    def __init__(self, y_pred, y_val, shape):
+    def __init__(self, y_pred, y_val, shape, y_max):
 
         self.y_pred = y_pred
         self.y_val = y_val
         self.shape = shape
 
-        self.classes = np.maximum(self.y_pred, self.y_val).max() + 1
+        self.classes y_max + 1
 
         if self.shape == 'binary_class':
             self.binary_class()

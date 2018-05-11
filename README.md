@@ -16,14 +16,15 @@ Talos development is focused on creating a an abstraction layer for Keras, that 
 
 ## Benefits
 
-Based on a review of more than 30 hyperparameter optimization and scanning solutions, Hyperio offers the most intuitive, easy-to-learn, and permissive access to important hyperparameter optimization capabilities.
+Based on a review of more than 30 hyperparameter optimization and scanning solutions, Talos offers the most intuitive, easy-to-learn, and permissive access to important hyperparameter optimization capabilities.
 
-- works with ANY keras model
+- works with ANY Keras model
 - very easy to implement
 - adds zero new overhead
 - provides several ways to reduce random-search complexity
 - no need to learn any new syntax
 - no blackbox / other statistical complexity
+- improved f1 performance metric for binary, multi-label, multi-class and continuous predictions
 
 ## Install
 
@@ -58,7 +59,7 @@ Now let's see how the exact same model looks like, prepared for Hyperio scan:
 	    model.add(Dense(y_train.shape[1], activation='softmax'))
 
 	    model.compile(optimizer=params['optimizer']),
-	                  loss=params['loss'],
+	                  loss=params['losses'],
 	                  metrics=['acc'])
 
 	    out = model.fit(x_train, y_train,
@@ -80,13 +81,15 @@ As you can see, the only thing that changed, is the values that we provide for t
 	     'weight_regulizer':[None],
 	     'emb_output_dims': [None],
 	     'optimizer': [Adam, Nadam],
-	     'loss': [categorical_crossentropy, logcosh],
+	     'losses': [categorical_crossentropy, logcosh],
 	     'activation':[relu, elu],
 	     'last_activation': [softmax]}
 
-Hyperio accepts lists with values, and tuples (start, end, n). Learning rate is normalized to 1 so that for each optimizer, lr=1 is the default Keras setting. Once this is all done, we can run the scan:
+The above example is a simple indication of what is possible. Any parameter that Keras accepts, can be included in the dictionary format. 
 
-	h = Hyperio(x, y, params=p, experiment_name='first_test', model=iris_model, grid_downsample=0.5)
+Talos accepts lists with values, and tuples (start, end, n). Learning rate is normalized to 1 so that for each optimizer, lr=1 is the default Keras setting. Once this is all done, we can run the scan:
+
+	h = ta.Hyperio(x, y, params=p, experiment_name='first_test', model=iris_model, grid_downsample=0.5)
 
 ## Options
 

@@ -60,6 +60,7 @@ class Hyperio:
 
         self.x = x
         self.y = y
+        self.y_max = y.max()
         self = validation_split(self)
         self.shape = classify(self.y)
 
