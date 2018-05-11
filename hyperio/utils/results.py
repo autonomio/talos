@@ -19,7 +19,7 @@ def run_round_results(self, out):
         _rr_out.append('round_epochs')
         _rr_out = list(out.history.keys())
         [_rr_out.append(key) for key in self.params.keys()]
-        return _rr_out
+        return ",".join(str(i) for i in _rr_out)
 
     # otherwise proceed to create the value row
     _rr_out.append(self._round_epochs)
@@ -32,7 +32,7 @@ def run_round_results(self, out):
     for key in self.params.keys():
         _rr_out.append(self.params[key])
 
-    return _rr_out
+    return ",".join(str(i) for i in _rr_out)
 
 
 def save_result(self):

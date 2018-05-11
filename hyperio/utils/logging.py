@@ -1,5 +1,6 @@
 import re
 
+
 def clean_dict(self):
 
     '''this is operated from _write_tolog'''
@@ -38,12 +39,12 @@ def dict_tostr(self, d):
         s += ',' + str(round(self._val_score, 3))
     except TypeError:
         s += ',' + self._val_score
-    s += ',' + str(self._round_epochs)
-    s += ',' + self._y_type
-    s += ',' + str(self._y_range)
-    s += ',' + self._y_format
-    s += ',' + str(self.val_split)
-    s += ',' + self.dataset_name
+        s += ',' + str(self._round_epochs)
+        s += ',' + self.shape
+        s += ',' + str(self._y_range)
+        s += ',' + self._y_format
+        s += ',' + str(self.val_split)
+        s += ',' + self.dataset_name
 
     return s
 

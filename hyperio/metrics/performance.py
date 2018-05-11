@@ -1,9 +1,23 @@
-class BinaryPerformance():
+from keras.utils import to_categorical
+import numpy as np
 
-    def __init__(self, y_pred, y_val):
+
+class Performance():
+
+    def __init__(self, y_pred, y_val, shape):
 
         self.y_pred = y_pred
         self.y_val = y_val
+        self.shape = shape
+
+        self.classes = np.maximum(self.y_pred, self.y_val).max() + 1
+
+        if self.shape == 'binary_class':
+            self.binary_class()
+        elif self.shape == 'multi_class':
+            self.multi_class()
+        elif self.shape == 'multi_label':
+            self.multi_label()
 
         self.trues_and_falses()
         self.f1score()
@@ -11,27 +25,54 @@ class BinaryPerformance():
         self.one_rule()
         self.zero_rule()
 
+    def multi_class(self):
+
+        '''For one-hot encoded'''
+
+        self.y_pred = self.y_pred.flatten('F')
+        self.y_val = self.y_val.flatten('F')
+
+    def binary_class(self):
+
+        '''For single column, single label'''
+
+        return
+
+    def multi_label(self):
+
+        '''For many labels in a single column'''
+
+        self.y_pred = to_categorical(self.y_pred, num_classes=self.classes)
+        self.y_val = to_categorical(self.y_val, num_classes=self.classes)
+
+        self.multi_class()
+
     def f1score(self):
 
         '''Computes fscore when possible'''
 
         if sum(self.y_pred) == len(self.y_pred):
             if sum(self.y_val) != len(self.y_val):
-                self.result = '_all_ones_'
+                self.result = '_warning_all_ones_'
                 return
-
+        elif sum(self.y_pred) == 0:
+            if sum(self.y_val) != 0:
+                self.result = '_warning_all_zeros_'
+            elif sum(self.y_val) == 0:
+                self.result = 1
+            return
         try:
             self.precision = self.tp / (self.tp + self.fp)
             1 / self.precision
         except ZeroDivisionError:
-            self.result = '_all_zeros_'
+            self.result = '_warning_no_true_positive'
             return
 
         try:
             self.recall = self.tp / (self.tp + self.fn)
             1 / self.recall
         except ZeroDivisionError:
-            self.result = '_no_ones_'
+            self.result = '_warning_3'
             return
 
         try:
@@ -39,7 +80,6 @@ class BinaryPerformance():
             self.result = f1
         except ZeroDivisionError:
             return
-
 
     def trues_and_falses(self):
 
@@ -52,7 +92,6 @@ class BinaryPerformance():
 
         # then we iterate through the predictions
         for i in range(len(self.y_val)):
-
             if self.y_pred[i] == 1 and self.y_val[i] == 1:
                 self.tp += 1
             elif self.y_pred[i] == 1 and self.y_val[i] == 0:

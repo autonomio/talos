@@ -1,6 +1,6 @@
 from hyperio.scan import Hyperio
 from hyperio.reporting import Reporting
-from hyperio.metrics.binary_performance import BinaryPerformance 
+from hyperio.metrics.performance import Performance 
 from hyperio.data import datasets, models
 from hyperio.utils import save_load
 

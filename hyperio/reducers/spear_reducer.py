@@ -34,7 +34,7 @@ def spear(self, metric, neg_corr=True, treshold=-.1):
 
 def spear_reducer(self):
 
-    to_drop = spear(self, 'val_score')
+    to_drop = spear(self, self.reduction_metric)
 
     # if a value have been returned, proceed with dropping
     if to_drop != "_NULL":

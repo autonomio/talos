@@ -12,6 +12,7 @@ from .parameters.handling import param_format, param_space, param_index, round_p
 from .parameters.permutations import param_grid
 from .utils.save_load import save_model
 from .metrics.score_model import get_score
+from .utils.pred_class import classify
 
 
 class Hyperio:
@@ -23,6 +24,7 @@ class Hyperio:
                  save_best_model=False,
                  reduction_method=None, reduction_interval=100,
                  reduction_window=None, grid_downsample=None,
+                 reduction_metric='val_acc',
                  hyperio_log_name='hyperio.log', debug=False):
 
         self.dataset_name = dataset_name
@@ -42,6 +44,7 @@ class Hyperio:
         self.reduction_method = reduction_method
         self.reduction_interval = reduction_interval
         self.reduction_window = reduction_window
+        self.reduction_metric = reduction_metric
         self.grid_downsample = grid_downsample
         self.val_split = val_split
         self.shuffle = shuffle
@@ -58,6 +61,7 @@ class Hyperio:
         self.x = x
         self.y = y
         self = validation_split(self)
+        self.shape = classify(self.y)
 
         self._data_len = len(self.x)
         self = prediction_type(self)
