@@ -129,22 +129,30 @@ NOTE: This section should not be confused with the section covering the Keras mo
 | debug             | True or False           | invokes debug logging            |
 +-------------------+-------------------------+----------------------------------+
 
+NOTE: None of these have effect on the actual parameter permutations. Those are set within the parameter dictionary explained in the above section. 
 
+x
+.
+This needs be a 1d or 2d array with predictor features.
 
-Options
--------
+y
+.
+This needs to be a 1d or 2d array with prediction values.
 
-In addition to the parameter, there are several options that can be set within the Scan() call. These values will effect the actual scan, as opposed to anything that change for each permutation.
+params
+......
+This is the parameter dictionary explained in the above sections. Note that the any Keras parameter can be added simply by adding it to the dictionary and the referencing it in the Keras model with the dictionary key. 
+
 
 val_split
 .........
 
-The validation split that will be used for the experiment. By default .3 to validation data.
+The validation split that will be used for the experiment. By default .3 i.e. 30% goes to validation dataset. 
 
 shuffle
 .......
 
-If the data should be shuffle before validation split is performed. By default True.
+Defines if the dataset should be shuffled before validation split is performed. By default True. Note that time series data should never be shuffled. 
 
 search_method
 .............
@@ -205,6 +213,7 @@ Usage Notes
 
 - The model needs to be inside a function (which is passed to the talos.Scan()
 
-
+Links
+-----
 
 .. [Talos_Overview] https://github.com/autonomio/talos/blob/master/README.md
