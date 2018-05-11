@@ -14,7 +14,7 @@ Read the User Manual [HERE](https://github.com/autonomio/talos/blob/master/docs/
 
 ## Development Objective
 
-Talos development is focused on creating a an abstraction layer for Keras, that meets the criteria of "models that build models". This means that Talos is able to, in a semi-autonomous manner find highly optimal parameter configurations for conventional prediction tasks, while being able to use that same capacity optimize itself (i.e. the optimization process) using the same approach. Thus unlocking "models that build models that build models that...". Following a reductionist approach, this goal is fulfilled by systematically building the required "blocks" one by one.
+Talos development is focused on creating an abstraction layer for Keras, that meets the criteria of "models that build models". This means that Talos will be able to, in a semi-autonomous manner, find highly optimal parameter configurations for conventional prediction tasks, while being able to use that same capacity to optimize itself (i.e. the optimization process). Thus unlocking "models that build models that build models that...". Following a reductionist approach, this goal is fulfilled by systematically building the required "blocks" one by one.
 
 ## Benefits
 
