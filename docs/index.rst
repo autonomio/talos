@@ -45,7 +45,18 @@ In addition some imports are needed from Keras, and from talos.
 Parameter Dictionary
 --------------------
 
-The parameter dictionary is a simple python dictionary with keys and values. The values are accepted as lists of values, as tuples that represent ranges, and as single values inside a list. None is accepted as value for any parameter. In summary: 
+The parameter dictionary is a simple python dictionary with keys and values. The values are accepted as lists of values, as tuples that represent ranges, and as single values inside a list. 
+
++-------------------+-------------------------+-------------------------+
+|                   |                         |                         |
+| INPUT TYPE        | REQUIRED INPUT          | FORMAT                  |
++===================+=========================+=========================+
+| List              | one or more values      | depends on the parameter|
++-------------------+-------------------------+-------------------------+
+| Tuple             | start, stop, steps      | int or float            |
++-------------------+-------------------------+-------------------------+
+
+None is accepted as value for any parameter. In summary: 
 
 - Inputting just one parameter is enough
 - Any Keras parameter can be included 
@@ -67,18 +78,18 @@ A simple example of a parameter dictionary::
            'activation':[relu, elu],
            'last_activation': [softmax]}
 
+Reduction Methods
+-----------------
+Because the parameter space expands according to n! factorial, in a typical scenario the number of possible permutations becomes very large. Talos provides two approaches to reducing the number of permutations: 
 
+- random reduction 
+- non-random reduction
 
-
-
+The random approaches cut down the possible permutations before starting the scan, whereas non-random approaches cut down the permuations on-going based on results. For example, if batch sizes in the upper bound of the set parameter boundary perform boorly, they will be automatically reduced. Talos provides several ways to effect this process. These are covered in detail in the below section titled 'Input Parameters'.
 
 Input Parameters
 ----------------
-
-- Models need to have a model.fit() object and model in the return statement
-
-- The model needs to be inside a function (which is passed to the talos.Scan()
-
+NOTE: This section should not be confused with the section covering the Keras model parameters that are being scanned/optimized. Input parameters refer to the parameters required and accepted within Talos commands. 
 
 
 +-------------------+-------------------------+-------------------------+
@@ -186,6 +197,14 @@ debug
 .....
 
 Useful when you don't want records to be made in to the master log (./talos.log)
+
+Usage Notes
+-----------
+
+- Models need to have a model.fit() object and model in the return statement
+
+- The model needs to be inside a function (which is passed to the talos.Scan()
+
 
 
 .. [Talos_Overview] https://github.com/autonomio/talos/blob/master/README.md
