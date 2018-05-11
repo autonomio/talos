@@ -1,4 +1,4 @@
-<img alt='Hyperparameter scanner for Keras Models' src='https://raw.githubusercontent.com/autonomio/hyperio/master/logo.png' width=250px>
+<img alt='Hyperparameter scanner for Keras Models' src='https://raw.githubusercontent.com/autonomio/talos/master/logo.png' width=250px>
 
 ## Hyperparameter Scanning for Keras
 
