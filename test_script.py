@@ -63,7 +63,7 @@ p = {'lr': (2, 10, 30),
 
 x, y = ta.datasets.iris()
 
-h = ta.Hyperio(x, y,
+h = ta.Scan(x, y,
                params=p,
                dataset_name='testing',
                experiment_no='000',

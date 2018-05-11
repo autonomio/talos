@@ -4,7 +4,7 @@ import numpy as np
 def validation_split(self):
 
     '''VALIDATION SPLIT OF X AND Y
-    Based on the Hyperio() parameter val_split
+    Based on the Scan() parameter val_split
     both 'x' and 'y' are split.
 
     '''

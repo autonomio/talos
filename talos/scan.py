@@ -15,7 +15,7 @@ from .metrics.score_model import get_score
 from .utils.pred_class import classify
 
 
-class Hyperio:
+class Scan:
 
     global self
 
@@ -25,16 +25,16 @@ class Hyperio:
                  reduction_method=None, reduction_interval=100,
                  reduction_window=None, grid_downsample=None,
                  reduction_metric='val_acc',
-                 hyperio_log_name='hyperio.log', debug=False):
+                 talos_log_name='talos.log', debug=False):
 
         self.dataset_name = dataset_name
         self.experiment_no = experiment_no
         self.experiment_name = dataset_name + '_' + experiment_no
 
         if debug == True:
-            self.logfile = open('hyperio.debug.log', 'a')
+            self.logfile = open('talos.debug.log', 'a')
         else:
-            self.logfile_name = hyperio_log_name
+            self.logfile_name = talos_log_name
             self.logfile = open(self.logfile_name, 'a')
 
         self.model = model

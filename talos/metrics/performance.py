@@ -10,7 +10,7 @@ class Performance():
         self.y_val = y_val
         self.shape = shape
 
-        self.classes y_max + 1
+        self.classes = y_max + 1
 
         if self.shape == 'binary_class':
             self.binary_class()

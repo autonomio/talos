@@ -28,7 +28,11 @@ Based on a review of more than 30 hyperparameter optimization and scanning solut
 
 ## Install
 
-    pip install git+https://github.com/autonomio/hyperio.git
+    pip install hyperio
+
+Or from git repo:
+
+    pip install git+https://github.com/autonomio/talos.git
 
 ## How to use
 
@@ -49,7 +53,7 @@ Let's consider an example of a simple Keras model:
                     verbose=0,
                     validation_data=[x_val, y_val])
 
-Now let's see how the exact same model looks like, prepared for Hyperio scan:
+Now let's see how the exact same model looks like, prepared for Talos scan:
 
 	def iris_model(x_train, y_train, x_val, y_val, params):
 
@@ -85,15 +89,15 @@ As you can see, the only thing that changed, is the values that we provide for t
 	     'activation':[relu, elu],
 	     'last_activation': [softmax]}
 
-The above example is a simple indication of what is possible. Any parameter that Keras accepts, can be included in the dictionary format. 
+The above example is a simple indication of what is possible. Any parameter that Keras accepts, can be included in the dictionary format.
 
 Talos accepts lists with values, and tuples (start, end, n). Learning rate is normalized to 1 so that for each optimizer, lr=1 is the default Keras setting. Once this is all done, we can run the scan:
 
-	h = ta.Hyperio(x, y, params=p, experiment_name='first_test', model=iris_model, grid_downsample=0.5)
+	h = ta.Scan(x, y, params=p, experiment_name='first_test', model=iris_model, grid_downsample=0.5)
 
 ## Options
 
-In addition to the parameter, there are several options that can be set within the Hyperio() call. These values will effect the actual scan, as opposed to anything that change for each permutation.
+In addition to the parameter, there are several options that can be set within the Scan() call. These values will effect the actual scan, as opposed to anything that change for each permutation.
 
 #### val_split
 
@@ -135,12 +139,12 @@ This information is used for the master log and naming the experiment results ro
 
 This will be appended to the round results .csv file and together with the dataset_name form a unique handler for the experiment.  
 
-#### hyperio_log_name
+#### talos_log_name
 
 The path to the master log file where a log entry is created for every single scan event together with meta-information such as what type of prediction challenge it is, how the data is transformed (e.g. one-hot encoded). This data can be useful for training models for the purpose of optimizing models. That's right, models that make models.
 
-By default hyperio.log is in the present working directory. It's better to change this to something where it has persistence.
+By default talos.log is in the present working directory. It's better to change this to something where it has persistence.
 
 #### debug
 
-Useful when you don't want records to be made in to the master log (./hyperio.log)
+Useful when you don't want records to be made in to the master log (./talos.log)
