@@ -28,7 +28,7 @@ Based on a review of more than 30 hyperparameter optimization and scanning solut
 
 ## Install
 
-    pip install hyperio
+    pip install talos
 
 Or from git repo:
 
