@@ -68,7 +68,7 @@ h = ta.Scan(x, y,
                dataset_name='testing',
                experiment_no='000',
                model=iris_model,
-               grid_downsample=.001,
+               grid_downsample=.0001,
                reduction_method='spear',
                reduction_interval=5)
 

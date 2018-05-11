@@ -91,7 +91,7 @@ class Performance():
         self.tp, self.tn, self.fp, self.fn = 0, 0, 0, 0
 
         # then we iterate through the predictions
-        for i in range(len(self.y_val)):
+        for i in range(len(self.y_pred)):
             if self.y_pred[i] == 1 and self.y_val[i] == 1:
                 self.tp += 1
             elif self.y_pred[i] == 1 and self.y_val[i] == 0:
