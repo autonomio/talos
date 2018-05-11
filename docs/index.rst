@@ -1,59 +1,191 @@
-## Notes on Usage 
+=============================
+Talos User Manual
+=============================
+
+.. image:: https://travis-ci.org/autonomio/talos.svg?branch=master
+    :target: https://travis-ci.org/autonomio/talos
+
+.. image:: https://coveralls.io/repos/github/autonomio/talos/badge.svg?branch=master
+    :target: https://coveralls.io/github/autonomio/talos?branch=master
+
+
+.. image:: https://gemnasium.com/badges/github.com/autonomio/talos.svg
+    :target: https://gemnasium.com/github.com/autonomio/talos
+
+
+This document covers the functionality of Talos, a hyperparameter optimizer for Keras models. If you're looking for a high level overview of the capabilities, you might find [Talos overview]_ more useful. 
+
+
+Installation
+------------
+
+Installing from package::
+
+    pip install talos
+
+Installing from git::
+
+    pip install git+https://github.com/autonomio/talos.git
+
+
+Usage
+-----
+
+There are three components that are involved in setting up an experiment (a scan of given parameter space). 
+
+1) a Keras model 
+
+2) a Python dictionary 
+
+3) talos.Scan() command 
+
+In addition some imports are needed from Keras, and from talos. 
+
+
+Parameter Dictionary
+--------------------
+
+The parameter dictionary is a simple python dictionary with keys and values. The values are accepted as lists of values, as tuples that represent ranges, and as single values inside a list. None is accepted as value for any parameter. In summary: 
+
+- Inputting just one parameter is enough
+- Any Keras parameter can be included 
+- Any number of parameters can be included 
+- Any number of variations can be included 
+
+A simple example of a parameter dictionary::
+
+      p = {'lr': (0.5, 5, 10),
+           'first_neuron':[4, 8, 16, 32, 64],
+           'hidden_layers':[0, 1, 2, 3, 4],
+           'batch_size': (2, 30, 10),
+           'epochs': [300],
+           'dropout': (0, 0.5, 5),
+           'weight_regulizer':[None],
+           'emb_output_dims': [None],
+           'optimizer': [Adam, Nadam],
+           'losses': [logcosh, binary_crossentropy],
+           'activation':[relu, elu],
+           'last_activation': [softmax]}
+
+
+
+
+
+
+Input Parameters
+----------------
 
 - Models need to have a model.fit() object and model in the return statement
 
 - The model needs to be inside a function (which is passed to the talos.Scan()
 
-## Options
+
+
++-------------------+-------------------------+-------------------------+
+|                   |                         |                         |
+| INPUT PARAMETER   | REQUIRED INPUT          | REQUIRED                |
++===================+=========================+=========================+
+| X                 | 1d or 2d array          | Yes                     |
++-------------------+-------------------------+-------------------------+
+| Y                 | int,float,categorical   | Yes                     |
++-------------------+-------------------------+-------------------------+
+| epoch             | int                     | 5                       |
++-------------------+-------------------------+-------------------------+
+| flatten           | string, float           | 'mean'                  |
++-------------------+-------------------------+-------------------------+
+| dropout           | float                   | .2                      |
++-------------------+-------------------------+-------------------------+
+| layers            | int (2 through 5        | 3                       |
++-------------------+-------------------------+-------------------------+
+| model             | int                     | 'train' (OBSOLETE)      |
++-------------------+-------------------------+-------------------------+
+| loss              | string [Keras_Losses]_  | 'binary_crossentropy'   |
++-------------------+-------------------------+-------------------------+
+| save_model        | string,                 | False                   |
++-------------------+-------------------------+-------------------------+
+| neuron_first      | int,float,categorical   | 300                     |
++-------------------+-------------------------+-------------------------+
+| neuron_last       | data object             | 1                       |
++-------------------+-------------------------+-------------------------+
+| batch_size        | int                     | 10                      |
++-------------------+-------------------------+-------------------------+
+| verbose           | 0,1,2                   | 0                       |
++-------------------+-------------------------+-------------------------+
+| shape             | string                  | 'funnel'                |
++-------------------+-------------------------+-------------------------+
+| double_check      | True or False           | False                   |
++-------------------+-------------------------+-------------------------+
+| validation        | True,False,float(0 to 1)| False                   |
++-------------------+-------------------------+-------------------------+
+
+
+
+Options
+-------
 
 In addition to the parameter, there are several options that can be set within the Scan() call. These values will effect the actual scan, as opposed to anything that change for each permutation.
 
-#### val_split
+val_split
+.........
 
 The validation split that will be used for the experiment. By default .3 to validation data.
 
-#### shuffle
+shuffle
+.......
 
 If the data should be shuffle before validation split is performed. By default True.
 
-#### search_method
+search_method
+.............
 
 Three modes are offered: 'random', 'linear', and 'reverse'. Random picks randomly one permutation and then removes it from the search grid. Linear starts from the beginning of the grid, and reverse from the end.
 
-#### reduction_method
+reduction_method
+................
 
 There is currently one reduction algorithm available 'spear'. It is based on an approach where depending on the 'reduction_interval' and 'reduction_window' poorly performing parameters are dropped from the scan. If you would like to see a specific algorithm implemented, please create an issue for it.
 
-#### reduction_interval
+reduction_interval
+..................
 
 The number of rounds / permutation attempts after which the reduction method will be applied. The 'reduction_method' must be set to other than None for this to take effect.
 
-#### reduction_window
+reduction_window
+................
 
 The number of rounds / permutation attempts for looking back when applying the reduction_method. For continuous optimization, this should be less than reduction_interval or the same.
 
-#### grid_downsampling
+grid_downsampling
+.................
 
 Takes in a float value based on which a fraction of the total parameter grid will be picked randomly.
 
-#### early_stopping
+early_stopping
+..............
 
 Provides a callback functionality where once val_loss (validation loss) is no longer dropping, based on the setting, the round will be terminated. Results for the round will be still recorded before moving on to the next permutation. Accepts a string values 'moderate' and 'strict', or a list with two int values (min_delta, patience). Where min_delta indicates the threshhold for change where the round will be flagged for termination (e.g. 0 means that val_loss is not changing) and patience indicates the number of epochs counting from the flag being raised before the round is actual terminated.
 
-#### dataset_name
+dataset_name
+............
 
 This information is used for the master log and naming the experiment results round results .csv file.
 
-#### experiment_no
+experiment_no
+.............
 
 This will be appended to the round results .csv file and together with the dataset_name form a unique handler for the experiment.  
 
-#### talos_log_name
+talos_log_name
+..............
 
 The path to the master log file where a log entry is created for every single scan event together with meta-information such as what type of prediction challenge it is, how the data is transformed (e.g. one-hot encoded). This data can be useful for training models for the purpose of optimizing models. That's right, models that make models.
 
 By default talos.log is in the present working directory. It's better to change this to something where it has persistence.
 
-#### debug
+debug
+.....
 
 Useful when you don't want records to be made in to the master log (./talos.log)
+
+
+.. [Talos_Overview] https://github.com/autonomio/talos/blob/master/README.md
