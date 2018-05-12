@@ -213,6 +213,8 @@ Usage Notes
 
 - The model needs to be inside a function (which is passed to the talos.Scan()
 
+- You must use the exact names that are used by Keras for each parameter
+
 Links
 -----
 
