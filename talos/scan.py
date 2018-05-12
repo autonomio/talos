@@ -13,6 +13,7 @@ from .parameters.permutations import param_grid
 from .utils.save_load import save_model
 from .metrics.score_model import get_score
 from .utils.pred_class import classify
+from .utils.last_neuron import last_neuron
 
 
 class Scan:
@@ -63,6 +64,7 @@ class Scan:
         self.y_max = y.max()
         self = validation_split(self)
         self.shape = classify(self.y)
+        self.last_neuron = last_neuron(self)
 
         self._data_len = len(self.x)
         self = prediction_type(self)
@@ -78,7 +80,12 @@ class Scan:
     def _run(self):
 
         round_params(self)
-        _hr_out, self.keras_model = self._model()
+
+        try:
+            _hr_out, self.keras_model = self._model()
+        except TypeError:
+            print('The model needs to have Return in format "return history, model"')
+
         _hr_out = run_round_results(self, _hr_out)
 
         self._val_score = get_score(self)

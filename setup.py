@@ -69,7 +69,7 @@ if __name__ == "__main__":
           download_url=DOWNLOAD_URL,
           install_requires=install_requires,
           packages=['talos',
-                    'talos.data',
+                    'talos.examples',
                     'talos.utils',
                     'talos.model',
                     'talos.parameters',

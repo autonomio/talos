@@ -24,7 +24,7 @@ def iris_model(x_train, y_train, x_val, y_val, params):
     model.add(Dropout(params['dropout']))
 
     # with this call we can create any number of hidden layers
-    hidden_layers(model, params)
+    hidden_layers(model, params, y_train.shape[1])
 
     # again, instead of the activation name, we have a dictionary entry
     model.add(Dense(y_train.shape[1],
@@ -55,7 +55,7 @@ def cervix_model(x_train, y_train, x_val, y_val, params):
 
     model.add(Dropout(params['dropout']))
 
-    hidden_layers(model, params)
+    hidden_layers(model, params, 1)
 
     model.add(Dense(1, activation=params['last_activation']))
 

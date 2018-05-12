@@ -97,6 +97,12 @@ Talos accepts lists with values, and tuples (start, end, n). Learning rate is no
 
 	h = ta.Scan(x, y, params=p, experiment_name='first_test', model=iris_model, grid_downsample=0.5)
 
+## Optimization
+
+One of the challenges in the paradigm where Talos exposes Keras models fully, is the evaluation of permutations across different experiments, as it is common that evaluation metrics can change depending on the model. 
+
+This is overcome by having a grading system that first detects the kind of data (type of prediction and distribution of truth values), and then uses a relevant robust scoring mechanism (f1 score) to produce an apples-to-apples "grade" for each permutation, which is then stored in the master log. The same score is available for binary, multi-label, multi-class (one hot encoded) and continuous data. For each type of prediction, the score is produced following the same procedure, resulting in a true apples-to-apples performance metric. 
+
 ## Built With
 
 * [Numpy](http://numpy.org) - Scientific Computing

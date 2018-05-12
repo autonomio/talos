@@ -23,7 +23,7 @@ class Reporting:
         for col in data.columns:
             try:
                 if data[col][0].startswith('<'):
-                    data[col] = data[col].str.replace("'|\.",' ')
+                    data[col] = data[col].str.replace('keras.optimizers.','').str.replace("'|\.",' ')
                     data[col] = [i[1] for i in data[col].str.split()]
             except AttributeError:
                 pass

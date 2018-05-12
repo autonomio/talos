@@ -66,7 +66,7 @@ def cervical_cancer():
 
 def breast_cancer():
 
-    df = pd.read_csv('data/breast_cancer.csv')
+    df = pd.read_csv(base + 'breast_cancer.csv')
 
     # then some minimal data cleanup
     df.drop("Unnamed: 32", axis=1, inplace=True)
