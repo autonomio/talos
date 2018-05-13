@@ -61,3 +61,8 @@ def result_todf(self):
     self.result = self.result.drop(0)
 
     return self
+
+
+def peak_epochs_todf(self):
+
+    return DataFrame(self.peak_epochs, columns=self.peak_epochs[0]).drop(0)

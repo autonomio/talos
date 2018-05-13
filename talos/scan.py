@@ -2,7 +2,7 @@ from keras import backend as K
 
 from .utils.validation_split import validation_split
 
-from .utils.results import run_round_results, save_result, result_todf
+from .utils.results import run_round_results, save_result, result_todf, peak_epochs_todf
 from .utils.logging import write_log
 from .utils.detector import prediction_type
 from .reducers.sample_reducer import sample_reducer
@@ -75,6 +75,7 @@ class Scan:
             self._null = self._run()
 
         self = result_todf(self)
+        self.peak_epochs_df = peak_epochs_todf(self)
         self._null = self.logfile.close()
         print('Scan Finished!')
 
