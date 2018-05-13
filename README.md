@@ -4,7 +4,7 @@
 
 ![Travis branch](https://img.shields.io/travis/autonomio/talos/master.svg)[![Coverage Status](https://coveralls.io/repos/github/autonomio/hyperio/badge.svg?branch=master)](https://coveralls.io/github/autonomio/hyperio?branch=master)
 
-Talos provides a hyperparameter scanning solution for Keras users. There is no need to learn any new syntax, or change anything in the way Keras models are operated. Keras functionality is fully exposed, and any parameter can be included in the scans.
+Talos is a solution that helps finding hyperparameter configurations for Keras models. To perform hyperparameter optimization with Talos, there is no need to learn any new syntax, or change anything in the way Keras models are operated. Keras functionality is fully exposed, and any parameter can be included in the scans.
 
 Talos is ideal for data scientists and data engineers that want to remain in complete control of their Keras models, but are tired of mindless parameter hopping and confusing optimization solutions that add complexity instead of taking it away.
 
