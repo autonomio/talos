@@ -7,4 +7,4 @@ from talos.utils import save_load
 del parameters, model, utils, scan, save_load,
 del Performance, reporting, reducers, metrics, examples
 
-__version__ = "0.1.8"
+__version__ = "0.1.9"
