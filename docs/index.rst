@@ -215,6 +215,12 @@ Usage Notes
 
 - You must use the exact names that are used by Keras for each parameter
 
+- If lr_normalizer is not used with optimizer, then use::
+
+    model.compile(optimizer=params['optimizer']())
+    
+
+
 Links
 -----
 
