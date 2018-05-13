@@ -42,6 +42,24 @@ There are three components that are involved in setting up an experiment (a scan
 In addition some imports are needed from Keras, and from talos. 
 
 
+Usage Notes
+-----------
+
+- Models need to have a model.fit() object and model in the return statement
+
+- The model needs to be inside a function (which is passed to the talos.Scan()
+
+- You must use the exact names that are used by Keras for each parameter
+
+- If lr_normalizer is not used with optimizer, then use::
+
+    model.compile(optimizer=params['optimizer']())
+    
+- If you want to have a given parameter in the result dataframe / csv log, it has to be in the param dictionary
+    
+
+
+
 Parameter Dictionary
 --------------------
 
@@ -205,21 +223,6 @@ debug
 .....
 
 Useful when you don't want records to be made in to the master log (./talos.log)
-
-Usage Notes
------------
-
-- Models need to have a model.fit() object and model in the return statement
-
-- The model needs to be inside a function (which is passed to the talos.Scan()
-
-- You must use the exact names that are used by Keras for each parameter
-
-- If lr_normalizer is not used with optimizer, then use::
-
-    model.compile(optimizer=params['optimizer']())
-    
-
 
 Links
 -----
