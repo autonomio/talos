@@ -58,6 +58,7 @@ class Scan:
         self.param_log = list(range(len(self.param_grid)))
         self.param_grid = param_index(self)
         self.round_counter = 0
+        self.peak_epochs = []
 
         self.x = x
         self.y = y

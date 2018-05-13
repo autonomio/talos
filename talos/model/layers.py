@@ -45,6 +45,7 @@ def hidden_layers(model, params, last_neuron):
         bias_constraint = None
 
     try:
+        params['shapes']
         layer_neurons = shapes(params, last_neuron)
     except KeyError:
         layer_neurons = [params['first_neuron']] * params['hidden_layers']

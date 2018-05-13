@@ -31,7 +31,7 @@ def early_stopper(epochs,
                                 verbose=0, mode='auto')
     elif type(mode) == type([]):
         _es_out = EarlyStopping(monitor=monitor,
-                                min_delta=min_delta,
-                                patience=patience,
+                                min_delta=mode[0],
+                                patience=mode[1],
                                 verbose=0, mode='auto')
     return [_es_out]

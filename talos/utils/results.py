@@ -21,13 +21,19 @@ def run_round_results(self, out):
         [_rr_out.append(key) for key in self.params.keys()]
         return ",".join(str(i) for i in _rr_out)
 
+        # this takes care of the separate entity with just peak epoch data
+        [self.peak_epochs.append(i) for i in list(out.history.keys())]
+
     # otherwise proceed to create the value row
     _rr_out.append(self._round_epochs)
     for key in out.history.keys():
-        t_t = array(out.history[key]) - array(out.history[key])
-        peak_epoch = argpartition(t_t, self._round_epochs-1)[-1]
-        peak_val = array(out.history[key])[peak_epoch]
-        _rr_out.append(peak_val)
+        t_t = array(out.history[key])
+        peak_epoch = argpartition(t_t, len(t_t) - 1)[-1]
+        peak = array(out.history[key])[peak_epoch]
+        _rr_out.append(peak)
+
+        # this takes care of the separate entity with just peak epoch data
+        self.peak_epochs.append(peak_epoch)
 
     for key in self.params.keys():
         _rr_out.append(self.params[key])

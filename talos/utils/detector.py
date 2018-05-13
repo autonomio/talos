@@ -1,4 +1,4 @@
-from numpy import median, unique
+from numpy import median, unique, mean
 
 
 def prediction_type(self):
@@ -19,7 +19,7 @@ def prediction_type(self):
             self._y_type = 'binary'
             self._y_range = y_cols
             self._y_format = 'single'
-        elif np.mean(self.y) == median(self.y):
+        elif mean(self.y) == median(self.y):
             self._y_type = 'category'
             self._y_range = y_uniques
             self._y_format = 'single'
