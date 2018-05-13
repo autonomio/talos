@@ -14,6 +14,7 @@ from .utils.save_load import save_model
 from .metrics.score_model import get_score
 from .utils.pred_class import classify
 from .utils.last_neuron import last_neuron
+from .metrics.entropy import epoch_entropy
 
 
 class Scan:
@@ -59,6 +60,7 @@ class Scan:
         self.param_grid = param_index(self)
         self.round_counter = 0
         self.peak_epochs = []
+        self.epoch_entropy = []
 
         self.x = x
         self.y = y
@@ -88,6 +90,7 @@ class Scan:
         except TypeError:
             print('The model needs to have Return in format "return history, model"')
 
+        self.epoch_entropy.append(epoch_entropy((_hr_out)))
         _hr_out = run_round_results(self, _hr_out)
 
         self._val_score = get_score(self)

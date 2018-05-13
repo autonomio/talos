@@ -47,9 +47,9 @@ class Reporting:
         '''PRINT PRETTY RESULT REPORT'''
 
         display(HTML('<h3>highest</h3>'))
-        display(self.data.sort_values('val_acc', ascending=False).head(10).set_index('val_acc').iloc[:,7:])
+        display(self.data.sort_values('val_acc', ascending=False).head(10).set_index('val_acc').iloc[:,6:])
 
         display(HTML('<h3>lowest</h3>'))
-        display(self.data.sort_values('val_acc', ascending=True).head(10).set_index('val_acc').iloc[:,7:])
+        display(self.data.sort_values('val_acc', ascending=True).head(10).set_index('val_acc').iloc[:,6:])
 
         print('\n NOTE: you have more options in the Reporting object.\n')
