@@ -6,11 +6,17 @@ from keras.utils import to_categorical
 base = 'https://raw.githubusercontent.com/autonomio/datasets/master/autonomio-datasets/'
 
 
-def icu_mortality():
+def limit_rows(data, samples):
+
+    return data.sample(frac=1).head(samples)
+
+
+def icu_mortality(samples=None):
 
     df = pd.read_csv(base + 'icu_mortality.csv')
     df = df.dropna(thresh=3580, axis=1)
     df = df.dropna()
+    df = limit_rows(df, samples)
     y = df['hospitalmortality'].astype(int).values
     x = df.drop('hospitalmortality', axis=1).values
 
