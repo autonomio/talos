@@ -30,7 +30,10 @@ def run_round_results(self, out):
     p_epochs = []
     for key in out.history.keys():
         t_t = array(out.history[key])
-        peak_epoch = argpartition(t_t, len(t_t) - 1)[-1]
+        if 'acc' in key:
+            peak_epoch = argpartition(t_t, len(t_t) - 1)[-1]
+        else:
+            peak_epoch = argpartition(t_t, len(t_t) - 1)[0]
         peak = array(out.history[key])[peak_epoch]
         _rr_out.append(peak)
         p_epochs.append(peak_epoch)
