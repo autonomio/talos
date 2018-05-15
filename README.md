@@ -2,7 +2,7 @@
 
 ## Hyperparameter Scanning and Optimization for Keras  [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Hyperparameter%20optimization%20for%20humans&url=https://github.com/autonomio/talos&hashtags=AI,deeplearning,keras)
 
-![Travis branch](https://img.shields.io/travis/autonomio/talos/master.svg)[![Coverage Status](https://coveralls.io/repos/github/autonomio/hyperio/badge.svg?branch=master)](https://coveralls.io/github/autonomio/hyperio?branch=master)
+![Travis branch](https://img.shields.io/travis/autonomio/talos/master.svg)[![Coverage Status](https://coveralls.io/repos/github/autonomio/talos/badge.svg?branch=master)](https://coveralls.io/github/autonomio/talos?branch=master)
 
 Talos is a solution that helps finding hyperparameter configurations for Keras models. To perform hyperparameter optimization with Talos, there is no need to learn any new syntax, or change anything in the way Keras models are created. Keras functionality is fully exposed, and any parameter can be included in the scans.
 
