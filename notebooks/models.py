@@ -10,7 +10,8 @@ def iris(x_train, y_train, x_val, y_val, params):
     '''A model that yields 100% accuracy and f1 for Iris dataset'''
 
     model = Sequential()
-    model.add(Dense(params['first_neuron'], input_dim=x_train.shape[1], activation=params['activation']))
+    model.add(Dense(params['first_neuron'], input_dim=x_train.shape[1],
+                    activation=params['activation']))
     model.add(Dropout(params['dropout']))
     hidden_layers(model, params)
     model.add(Dense(y_train.shape[1], activation=params['last_activation']))
@@ -33,7 +34,10 @@ def breast_cancer(x_train, y_train, x_val, y_val, params):
 
     # next we can build the model exactly like we would normally do it
     model = Sequential()
-    model.add(Dense(10, input_dim=x_train.shape[1], activation=params['activation'], kernel_initializer='normal'))
+    model.add(Dense(10,
+                    input_dim=x_train.shape[1],
+                    activation=params['activation'],
+                    kernel_initializer='normal'))
     model.add(Dropout(params['dropout']))
 
     # if we want to also test for number of layers and shapes, that's possible
