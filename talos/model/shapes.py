@@ -4,7 +4,7 @@ import math as m
 def shapes(params, last_neuron):
 
     layers = params['hidden_layers']
-    shape = params['shape']
+    shape = params['shapes']
     neuron_max = params['first_neuron']
     neuron_previous = neuron_max
     neuron_last = last_neuron

@@ -47,9 +47,12 @@ def hidden_layers(model, params, last_neuron):
     try:
         params['shapes']
         layer_neurons = shapes(params, last_neuron)
+        print('works here')
     except KeyError:
         layer_neurons = [params['first_neuron']] * params['hidden_layers']
 
+    print(layer_neurons)
+    print(params['shapes'])
 
     for i in range(params['hidden_layers']):
 
