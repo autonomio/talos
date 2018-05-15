@@ -104,6 +104,32 @@ h = ta.Scan(x, y,
             experiment_no='000',
             model=iris_model)
 
+p = {'lr': [1],
+     'first_neuron': [4],
+     'hidden_layers': [2],
+     'batch_size': [50],
+     'epochs': [1],
+     'dropout': [0],
+     'shapes': ['stairs'],
+     'optimizer': [Adam, Adagrad, Adamax, RMSprop, Adadelta, Nadam, SGD],
+     'losses': [categorical_crossentropy],
+     'activation': [relu],
+     'last_activation': [softmax],
+     'weight_regulizer': [None],
+     'emb_output_dims': [None]}
+
+x, y = ta.datasets.iris()
+
+h = ta.Scan(x, y,
+            params=p,
+            dataset_name='testing',
+            experiment_no='000',
+            model=iris_model)
+
+
+
+
+
 r = ta.Reporting('testing_000.csv')
 
 # here use a standard 2d dictionary for inputting the param boundaries
