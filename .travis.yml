@@ -13,7 +13,7 @@ before_script:
  - sh -e /etc/init.d/xvfb start
  - sleep 3
 script:
- - coverage run --source=hyperio ./test_script.py
+ - coverage run --source=talos ./test_script.py
 after_success: coveralls
 
 deploy:

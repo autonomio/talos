@@ -31,7 +31,8 @@ def iris_model(x_train, y_train, x_val, y_val, params):
                     activation=params['last_activation']))
 
     # here are using a learning rate boundary
-    model.compile(optimizer=params['optimizer'](lr=lr_normalizer(params['lr'], params['optimizer'])),
+    model.compile(optimizer=params['optimizer'](lr=lr_normalizer(params['lr'],
+                  params['optimizer'])),
                   loss=params['losses'],
                   metrics=['acc'])
 
@@ -94,13 +95,13 @@ p = {'lr': (2, 10, 30),
 x, y = ta.datasets.iris()
 
 h = ta.Scan(x, y,
-               params=p,
-               dataset_name='testing',
-               experiment_no='000',
-               model=iris_model,
-               grid_downsample=.0001,
-               reduction_method='spear',
-               reduction_interval=5)
+            params=p,
+            dataset_name='testing',
+            experiment_no='000',
+            model=iris_model,
+            grid_downsample=.0001,
+            reduction_method='spear',
+            reduction_interval=5)
 
 r = ta.Reporting('testing_000.csv')
 
@@ -108,23 +109,23 @@ r = ta.Reporting('testing_000.csv')
 
 x, y = ta.datasets.cervical_cancer()
 p = {'lr': (0.5, 5, 10),
-     'first_neuron':[4, 8, 16, 32, 64],
-     'hidden_layers':[2,3,4,5],
+     'first_neuron': [4, 8, 16, 32, 64],
+     'hidden_layers': [2,3,4,5],
      'batch_size': (2, 30, 10),
      'epochs': [3],
      'dropout': (0, 0.5, 5),
-     'weight_regulizer':[None],
+     'weight_regulizer': [None],
      'emb_output_dims': [None],
      'optimizer': [Nadam],
      'loss': [logcosh, binary_crossentropy],
-     'activation':[relu],
+     'activation': [relu],
      'last_activation': [sigmoid]}
 
-ta.Scan(x, y, save_best_model=False,
-           grid_downsample=0.001,
-           params=p,
-           dataset_name='cervix',
-           experiment_no='a',
-           model=cervix_model, reduction_method='spear', reduction_interval=5)
+ta.Scan(x, y,
+        grid_downsample=0.001,
+        params=p,
+        dataset_name='cervix',
+        experiment_no='a',
+        model=cervix_model, reduction_method='spear', reduction_interval=5)
 
 ta.Reporting('cervix_a.csv')

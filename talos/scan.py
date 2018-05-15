@@ -1,4 +1,5 @@
 from keras import backend as K
+from tensorflow import get_default_graph, Session
 
 from .utils.validation_split import validation_split
 
@@ -10,7 +11,6 @@ from .reducers.spear_reducer import spear_reducer
 from .utils.estimators import time_estimator
 from .parameters.handling import param_format, param_space, param_index, round_params
 from .parameters.permutations import param_grid
-from .utils.save_load import save_model
 from .metrics.score_model import get_score
 from .utils.pred_class import classify
 from .utils.last_neuron import last_neuron
@@ -23,10 +23,9 @@ class Scan:
 
     def __init__(self, x, y, params, dataset_name, experiment_no, model,
                  val_split=.3, shuffle=True, search_method='random',
-                 save_best_model=False,
                  reduction_method=None, reduction_interval=100,
                  reduction_window=None, grid_downsample=None,
-                 reduction_metric='val_acc',
+                 reduction_metric='val_acc', round_limit=None,
                  talos_log_name='talos.log', debug=False):
 
         self.dataset_name = dataset_name
@@ -50,7 +49,6 @@ class Scan:
         self.grid_downsample = grid_downsample
         self.val_split = val_split
         self.shuffle = shuffle
-        self.save_model = save_best_model
 
         self.p = param_format(self)
         self.combinations = param_space(self)
@@ -61,6 +59,8 @@ class Scan:
         self.round_counter = 0
         self.peak_epochs = []
         self.epoch_entropy = []
+        self.round_limit = round_limit
+        self.round_models = []
 
         self.x = x
         self.y = y
@@ -73,8 +73,13 @@ class Scan:
         self = prediction_type(self)
 
         self.result = []
-        while len(self.param_log) != 0:
-            self._null = self._run()
+
+        if self.round_limit != None:
+            for i in range(self.round_limit):
+                self._null = self._run()
+        else:
+            while len(self.param_log) != 0:
+                self._null = self._run()
 
         self = result_todf(self)
         self.peak_epochs_df = peak_epochs_todf(self)
@@ -104,12 +109,8 @@ class Scan:
             if self.reduction_method == 'spear':
                 self = spear_reducer(self)
 
-        if self.save_model == True:
-            save_model(self)
-
         K.clear_session()
         self.round_counter += 1
-
 
     def _model(self):
 
