@@ -4,17 +4,26 @@
 
 ![Travis branch](https://img.shields.io/travis/autonomio/talos/master.svg)[![Coverage Status](https://coveralls.io/repos/github/autonomio/hyperio/badge.svg?branch=master)](https://coveralls.io/github/autonomio/hyperio?branch=master)
 
-Talos is a solution that helps finding hyperparameter configurations for Keras models. To perform hyperparameter optimization with Talos, there is no need to learn any new syntax, or change anything in the way Keras models are operated. Keras functionality is fully exposed, and any parameter can be included in the scans.
+Talos is a solution that helps finding hyperparameter configurations for Keras models. To perform hyperparameter optimization with Talos, there is no need to learn any new syntax, or change anything in the way Keras models are created. Keras functionality is fully exposed, and any parameter can be included in the scans.
 
-Talos is ideal for data scientists and data engineers that want to remain in complete control of their Keras models, but are tired of mindless parameter hopping and confusing optimization solutions that add complexity instead of taking it away.
+Talos is made for data scientists and data engineers that want to remain in complete control of their Keras models, but are tired of mindless parameter hopping and confusing optimization solutions that add complexity instead of taking it away.
 
 See the example Notebook [HERE](https://github.com/autonomio/hyperio/blob/master/examples/Hyperparameter%20Optimization%20with%20Keras%20for%20the%20Iris%20Prediction.ipynb)
 
 Read the User Manual [HERE](https://github.com/autonomio/talos/blob/master/docs/index.rst)
 
-## Development Objective
+## Development Objectives
 
-Talos development is focused on creating an abstraction layer for Keras, that meets the criteria of "models that build models". This means that Talos will be able to, in a semi-autonomous manner, find highly optimal parameter configurations for conventional prediction tasks, while being able to use that same capacity to optimize itself (i.e. the optimization process). Thus unlocking "models that build models that build models that...". Following a reductionist approach, this goal is fulfilled by systematically building the required "blocks" one by one.
+Currently Talos yields state-of-the-art results (e.g. Iris dataset 100% and Wisconsin Breast Cancer dataset 99.4%) across a range of prediction tasks in a semi-automatic manner, while providing the simplest available method for hyperparameter optimization with Keras.
+
+The development goals and current work include:
+
+- to expose 100% of Keras functionality to the user
+- to create robust synthesis of generality and performance in a single metric 
+- to use the synthesis score as a metric for optimizing the hyperparameter optimization process
+- to allow *reverse inheritance* of the optimization capacity i.e. models that build models that...
+
+These goals are currently being met by systematically building simple, easy-to-understand building blocks that solve manageable parts of the challenge.
 
 ## Benefits
 
