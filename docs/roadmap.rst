@@ -10,3 +10,12 @@ The development goals and current work include:
 - to allow *reverse inheritance* of the optimization capacity i.e. models that build models that...
 
 These goals are currently being met by systematically building simple, easy-to-understand building blocks that solve manageable parts of the challenge.
+
+Immediate Development
+---------------------
+
+- Robust cross-validation
+- Generalization measure
+- Prediction task agnostic performance measure
+- Adding layer generation for other than Dense layers
+- Current custom f1 implementation into Keras metric
