@@ -14,8 +14,10 @@ These goals are currently being met by systematically building simple, easy-to-u
 Immediate Development
 ---------------------
 
+- Show false negatives / false positives  / border cases
 - Robust cross-validation
 - Generalization measure
 - Prediction task agnostic performance measure
 - Adding layer generation for other than Dense layers
 - Current custom f1 implementation into Keras metric
+- Add support for fastai?
