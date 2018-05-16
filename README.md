@@ -12,6 +12,8 @@ See the example Notebook [HERE](https://github.com/autonomio/hyperio/blob/master
 
 Read the User Manual [HERE](https://github.com/autonomio/talos/blob/master/docs/index.rst)
 
+Read a Talos field-report on [Hyperparameter Optimization](https://towardsdatascience.com/hyperparameter-optimization-with-keras-b82e6364ca53)
+
 ## Development Objectives
 
 Currently Talos yields state-of-the-art results (e.g. Iris dataset 100% and Wisconsin Breast Cancer dataset 99.4%) across a range of prediction tasks in a semi-automatic manner, while providing the simplest available method for hyperparameter optimization with Keras.
