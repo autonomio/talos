@@ -1,6 +1,5 @@
-## Development Objectives
-
-Currently Talos yields state-of-the-art results (e.g. Iris dataset 100% and Wisconsin Breast Cancer dataset 99.4%) across a range of prediction tasks in a semi-automatic manner, while providing the simplest available method for hyperparameter optimization with Keras.
+Development Objectives
+======================
 
 The development goals and current work include:
 
