@@ -16,7 +16,7 @@ Read the User Manual [HERE](https://github.com/autonomio/talos/blob/master/docs/
 
 Currently Talos yields state-of-the-art results (e.g. Iris dataset 100% and Wisconsin Breast Cancer dataset 99.4%) across a range of prediction tasks in a semi-automatic manner, while providing the simplest available method for hyperparameter optimization with Keras.
 
-Read the roadmap [here](https://github.com/autonomio/talos/blob/master/docs/roadmap.rst)
+Read the roadmap [HERE](https://github.com/autonomio/talos/blob/master/docs/roadmap.rst)
 
 ## Benefits
 
