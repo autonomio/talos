@@ -8,7 +8,7 @@ Talos is a solution that helps finding hyperparameter configurations for Keras m
 
 Talos is made for data scientists and data engineers that want to remain in complete control of their Keras models, but are tired of mindless parameter hopping and confusing optimization solutions that add complexity instead of taking it away.
 
-See the example Notebook [HERE](https://github.com/autonomio/hyperio/blob/master/examples/Hyperparameter%20Optimization%20with%20Keras%20for%20the%20Iris%20Prediction.ipynb)
+See the example Notebook [HERE](https://github.com/autonomio/talos/blob/master/notebooks/Hyperparameter%20Optimization%20with%20Keras%20for%20the%20Iris%20Prediction.ipynb)
 
 Read the User Manual [HERE](https://github.com/autonomio/talos/blob/master/docs/index.rst)
 
