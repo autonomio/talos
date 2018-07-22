@@ -3,7 +3,17 @@ from keras.optimizers import Nadam
 
 
 def lr_normalizer(lr, optimizer):
-    '''NORMALIZE LEARNING RATE ON DEFAULT 1'''
+    """Assuming a default learning rate 1, rescales the learning rate
+    such that learning rates amongst different optimizers are more or less
+    equivalent.
+
+    Parameters
+    ----------
+    lr : float
+        The learning rate.
+    optimizer : keras optimizer
+        The optimizer. For example, Adagrad, Adam, RMSprop.
+    """
 
     if optimizer == Adadelta:
         pass
