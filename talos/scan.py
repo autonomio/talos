@@ -161,8 +161,11 @@ class Scan:
 
     def _run(self):
 
+        # determine the parameters for the particular execution
         round_params(self)
 
+        # _model() function should return both the result from training
+        # and the model itself
         try:
             _hr_out, self.keras_model = self._model()
         except TypeError:
