@@ -23,7 +23,8 @@ class Reporting:
         for col in data.columns:
             try:
                 if data[col][0].startswith('<'):
-                    data[col] = data[col].str.replace('keras.optimizers.','').str.replace("'|\.",' ')
+                    data[col] = data[col].str.replace('keras.optimizers.', '')\
+                        .str.replace("'|\.", ' ')
                     data[col] = [i[1] for i in data[col].str.split()]
             except AttributeError:
                 pass
@@ -37,7 +38,8 @@ class Reporting:
 
         mins = pd.DataFrame(self.data.sort_values('val_acc').tail(10).min())
         maxs = pd.DataFrame(self.data.sort_values('val_acc').tail(10).max())
-        min_max = pd.merge(mins, maxs, left_index=True, right_index=True).tail(-9)
+        min_max = pd.merge(mins, maxs, left_index=True,
+                           right_index=True).tail(-9)
         min_max.columns = ['min', 'max']
 
         return min_max
@@ -47,9 +49,11 @@ class Reporting:
         '''PRINT PRETTY RESULT REPORT'''
 
         display(HTML('<h3>highest</h3>'))
-        display(self.data.sort_values('val_acc', ascending=False).head(10).set_index('val_acc').iloc[:,6:])
+        display(self.data.sort_values('val_acc', ascending=False)
+                .head(10).set_index('val_acc').iloc[:, 6:])
 
         display(HTML('<h3>lowest</h3>'))
-        display(self.data.sort_values('val_acc', ascending=True).head(10).set_index('val_acc').iloc[:,6:])
+        display(self.data.sort_values('val_acc', ascending=True)
+                .head(10).set_index('val_acc').iloc[:, 6:])
 
         print('\n NOTE: you have more options in the Reporting object.\n')
