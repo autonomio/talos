@@ -26,7 +26,7 @@ class Scan:
                  reduction_method=None, reduction_interval=100,
                  reduction_window=None, grid_downsample=None,
                  reduction_metric='val_acc', round_limit=None,
-                 talos_log_name='talos.log', debug=False):
+                 talos_log_name='talos.log', debug=False, seed=None):
 
         self.dataset_name = dataset_name
         self.experiment_no = experiment_no
@@ -49,6 +49,7 @@ class Scan:
         self.grid_downsample = grid_downsample
         self.val_split = val_split
         self.shuffle = shuffle
+        self.seed = seed
 
         self.p = param_format(self)
         self.combinations = param_space(self)
