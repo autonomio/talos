@@ -12,7 +12,7 @@ def run_round_results(self, out):
 
     _rr_out = []
 
-    self._round_epochs = len(out.history['acc'])
+    self._round_epochs = len(list(out.history.values())[0])
 
     # if the round counter is zero, just output header
     if self.round_counter == 0:
