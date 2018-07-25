@@ -6,10 +6,13 @@ from talos.model import lr_normalizer, early_stopper, hidden_layers
 from keras.models import Sequential
 from keras.layers import Dropout, Dense
 
-from keras.optimizers import SGD, Adam, Adadelta, Adagrad, Adamax, RMSprop, Nadam
+from keras.optimizers import SGD, Adam, Adadelta, Adagrad
+from keras.optimizers import Adamax, RMSprop, Nadam
 from keras.activations import softmax, relu, elu, sigmoid
-from keras.losses import categorical_crossentropy, logcosh, binary_crossentropy
-from talos.metrics.keras_metrics import matthews_correlation, precision, recall, fmeasure
+from keras.losses import categorical_crossentropy, logcosh
+from keras.losses import binary_crossentropy
+from talos.metrics.keras_metrics import matthews_correlation, precision
+from talos.metrics.keras_metrics recall, fmeasure
 
 
 def iris_model(x_train, y_train, x_val, y_val, params):
