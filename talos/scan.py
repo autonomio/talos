@@ -1,15 +1,16 @@
 from keras import backend as K
-from tensorflow import get_default_graph, Session
 
 from .utils.validation_split import validation_split
 
-from .utils.results import run_round_results, save_result, result_todf, peak_epochs_todf
+from .utils.results import run_round_results, save_result, result_todf
+from .utils.results import peak_epochs_todf
 from .utils.logging import write_log
 from .utils.detector import prediction_type
 from .reducers.sample_reducer import sample_reducer
 from .reducers.spear_reducer import spear_reducer
 from .utils.estimators import time_estimator
-from .parameters.handling import param_format, param_space, param_index, round_params
+from .parameters.handling import param_format, param_space, param_index
+from .parameters.handling import round_params
 from .parameters.permutations import param_grid
 from .metrics.score_model import get_score
 from .utils.pred_class import classify
@@ -18,6 +19,78 @@ from .metrics.entropy import epoch_entropy
 
 
 class Scan:
+    """Suite of operations for training and evaluating Keras neural networks.
+
+    Inputs train/dev data and a set of parameters as a dictionary. The name and
+    experiment number must also be chosen since they define the output
+    filenames. The model must also be specified of the form
+
+        my_model(x_train, y_train, x_val, y_val, params),
+
+    and the dictionary
+
+        d = {
+            'fcc_layer_1_N': [50, 100, 200]
+            'fcc_layer_1_act': ['relu', 'tanh']
+            'fcc_layer_1_dropout': (0, 0.1, 5)    # 5 points between 0 and 0.1
+        }
+
+    The dictionary is parsed for every run and only one entry per parameter
+    is fed into the neural network at a time.
+
+    Parameters
+    ----------
+    x : ndarray
+        1d or 2d array consisting of the training data. `x` should have the
+        shape (m, n), where m is the number of training examples and n is the
+        number of features. Extra dimensions can be added to account for the
+        channels entry in convolutional neural networks.
+    y : ndarray
+        The labels corresponding to the training data. `y` should have the
+        shape (m, c) where c is the number of classes. A binary classification
+        problem will have c=1.
+    params : python dictionary
+        Lists all permutations of hyperparameters, a subset of which will be
+        selected at random for training and evaluation.
+    dataset_name : str
+        References the name of the experiment. The dataset_name and
+        experiment_no will be concatenated to produce the file name for the
+        results saved in the local directory.
+    experiment_no : str
+        Indexes the user's choice of experiment number.
+    model : keras_model
+        A Keras style model which compiles and fits the data, and returns
+        the history and compiled model.
+    val_split : float, optional
+        The proportion of the input `x` which is set aside as the
+        cross-validation data. (Default is 0.3).
+    shuffle : bool, optional
+        If True, shuffle the data in x and y before splitting into the train
+        and cross-validation datasets. (Default is True).
+    search_method : {None, 'random', 'linear', 'reverse'}
+        Determines the random sampling of the dictionary. `random` picks one
+        hyperparameter point at random and removes it from the list, then
+        samples again. `linear` starts from the start of the grid and moves
+        forward, and `reverse` starts at the end of the grid and moves
+        backwards.
+    reduction_method : {None, 'spear'}
+        Method for honing in on the optimal hyperparameter subspace. (Default
+        is None).
+    reduction_interval : int
+        The number of reduction method rounds that will be performed. (Default
+        is None).
+    reduction_window : int
+        The number of rounds of the reduction method before observing the
+        results. (Default is None).
+    grid_downsample : int
+        The fraction of `params` that will be tested (Default is None).
+    reduction_metric : {'val_acc'}
+        Metric used to tune the reductions.
+    talos_log_name : str
+        The lame of the saved Talos log. (Default is 'talos.log').
+    debug : bool
+        Implements debugging feedback. (Default is False).
+    """
 
     global self
 
@@ -32,7 +105,7 @@ class Scan:
         self.experiment_no = experiment_no
         self.experiment_name = dataset_name + '_' + experiment_no
 
-        if debug == True:
+        if debug:
             self.logfile = open('talos.debug.log', 'a')
         else:
             self.logfile_name = talos_log_name
@@ -75,7 +148,7 @@ class Scan:
 
         self.result = []
 
-        if self.round_limit != None:
+        if self.round_limit is not None:
             for i in range(self.round_limit):
                 self._null = self._run()
         else:
@@ -89,12 +162,16 @@ class Scan:
 
     def _run(self):
 
+        # determine the parameters for the particular execution
         round_params(self)
 
+        # _model() function should return both the result from training
+        # and the model itself
         try:
             _hr_out, self.keras_model = self._model()
         except TypeError:
-            print('The model needs to have Return in format "return history, model"')
+            print('The model needs to have Return in format '
+                  ' "return history, model"')
 
         self.epoch_entropy.append(epoch_entropy((_hr_out)))
         _hr_out = run_round_results(self, _hr_out)
