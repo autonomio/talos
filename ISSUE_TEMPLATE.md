@@ -8,7 +8,7 @@ Thanks so much for coming here to raise an issue. Please take a moment to 'check
 
 If you still have an error, please submit **complete trace** and a code with: 
 
-- output of shape in numpy for x and y
+- output of shape for x and y e.g. (212,12)
 - Talos params dictionary
 - The Keras model wired for Talos
 - Description of extra variables in the model
