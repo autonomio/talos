@@ -7,9 +7,10 @@ from keras.models import Sequential
 from keras.layers import Dropout, Dense
 
 from keras.optimizers import SGD, Adam, Adadelta, Adagrad, Adamax, RMSprop, Nadam
-from keras.activations import softmax, relu, elu, sigmoid
+from keras.activations import softmax, relu, sigmoid
 from keras.losses import categorical_crossentropy, logcosh, binary_crossentropy
-from talos.metrics.keras_metrics import matthews_correlation, precision, recall, fmeasure
+from talos.metrics.keras_metrics import matthews_correlation
+from talos.metrics.keras_metrics import precision, recall, fmeasure_acc
 
 
 def iris_model(x_train, y_train, x_val, y_val, params):
@@ -63,7 +64,7 @@ def cervix_model(x_train, y_train, x_val, y_val, params):
     model.compile(optimizer=params['optimizer'](lr=lr_normalizer(params['lr'], params['optimizer'])),
                   loss=params['loss'],
                   metrics=['acc',
-                           fmeasure,
+                           fmeasure_acc,
                            recall,
                            precision,
                            matthews_correlation])
