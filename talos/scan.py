@@ -18,6 +18,12 @@ from .utils.last_neuron import last_neuron
 from .metrics.entropy import epoch_entropy
 
 
+TRAIN_VAL_RUNTIME_ERROR_MSG = """
+If setting a custom train/val split, both x_val and y_val must be input data
+and not None.
+"""
+
+
 class Scan:
     """Suite of operations for training and evaluating Keras neural networks.
 
@@ -30,13 +36,30 @@ class Scan:
     and the dictionary
 
         d = {
-            'fcc_layer_1_N': [50, 100, 200]
-            'fcc_layer_1_act': ['relu', 'tanh']
+            'fcc_layer_1_N': [50, 100, 200],
+            'fcc_layer_1_act': ['relu', 'tanh'],
             'fcc_layer_1_dropout': (0, 0.1, 5)    # 5 points between 0 and 0.1
         }
 
     The dictionary is parsed for every run and only one entry per parameter
     is fed into the neural network at a time.
+
+    Important note: the user has two options when specifying input data.
+
+    Option 1:
+        Specify x, y and val_split. The training and validation data mixture
+        (x, y) will be randomly split into the training and validation datasets
+        as per the split specified in val_split.
+
+    Option 2:
+        Specify x, y and x_val, y_val. This would allow the user to specify
+        their own validation datasets. Keras by default shuffles data during
+        training, so the user need only be sure that the split specified is
+        correct. This allows for not only reproducibility, but randomizing the
+        data on the user's own terms. This is critical if the user wishes to
+        augment their training data without augmenting their validation data
+        (which is the only acceptable practice!).
+
 
     Parameters
     ----------
@@ -90,8 +113,14 @@ class Scan:
         The lame of the saved Talos log. (Default is 'talos.log').
     debug : bool
         Implements debugging feedback. (Default is False).
+    x_val : ndarray
+        User specified cross-validation data. (Default is None).
+    y_val : ndarray
+        User specified cross-validation labels. (Default is None).
+
     """
 
+    # TODO: refactor this so that we don't initialize global variables
     global self
 
     def __init__(self, x, y, params, dataset_name, experiment_no, model,
@@ -99,11 +128,19 @@ class Scan:
                  reduction_method=None, reduction_interval=100,
                  reduction_window=None, grid_downsample=None,
                  reduction_metric='val_acc', round_limit=None,
-                 talos_log_name='talos.log', debug=False, seed=None):
+                 talos_log_name='talos.log', debug=False, seed=None,
+                 x_val=None, y_val=None):
 
         self.dataset_name = dataset_name
         self.experiment_no = experiment_no
         self.experiment_name = dataset_name + '_' + experiment_no
+
+        self.custom_val_split = False
+        if (x_val is not None and y_val is None) or \
+           (x_val is None and y_val is not None):
+            raise RuntimeError(TRAIN_VAL_RUNTIME_ERROR_MSG)
+        elif (x_val is not None and y_val is not None):
+            self.custom_val_split = True
 
         if debug:
             self.logfile = open('talos.debug.log', 'a')

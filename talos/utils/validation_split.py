@@ -7,16 +7,22 @@ def validation_split(self):
     by the attribute val_split, which is a number in (0, 1) which determines
     the proportion of the input data to be allocated for cross-validation."""
 
-    if self.shuffle:
-        random_shuffle(self)
+    if self.custom_val_split:
+        self.x_train = self.x
+        self.y_train = self.y
+        # self.x/y_val are already set
 
-    limit = int(len(self.x) * (1 - self.val_split))
+    else:
+        if self.shuffle:
+            random_shuffle(self)
 
-    self.x_train = self.x[:limit]
-    self.y_train = self.y[:limit]
+        limit = int(len(self.x) * (1 - self.val_split))
 
-    self.x_val = self.x[limit:]
-    self.y_val = self.y[limit:]
+        self.x_train = self.x[:limit]
+        self.y_train = self.y[:limit]
+
+        self.x_val = self.x[limit:]
+        self.y_val = self.y[limit:]
 
     return self
 

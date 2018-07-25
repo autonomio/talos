@@ -96,14 +96,19 @@ p = {'lr': [1],
      'weight_regulizer': [None],
      'emb_output_dims': [None]}
 
+
+print("Running Iris test 1...")
 x, y = ta.datasets.iris()
 
+print("Scanning...")
+print(x.shape, y.shape)
 h = ta.Scan(x, y,
             params=p,
             dataset_name='testing',
             experiment_no='000',
             model=iris_model)
 
+print("Running Iris test 2...")
 p = {'lr': [1],
      'first_neuron': [4],
      'hidden_layers': [2],
