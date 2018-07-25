@@ -12,7 +12,7 @@ from keras.activations import softmax, relu, elu, sigmoid
 from keras.losses import categorical_crossentropy, logcosh
 from keras.losses import binary_crossentropy
 from talos.metrics.keras_metrics import matthews_correlation, precision
-from talos.metrics.keras_metrics recall, fmeasure
+from talos.metrics.keras_metrics import recall, fmeasure
 
 
 def iris_model(x_train, y_train, x_val, y_val, params):
