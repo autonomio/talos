@@ -141,6 +141,8 @@ class Scan:
             raise RuntimeError(TRAIN_VAL_RUNTIME_ERROR_MSG)
         elif (x_val is not None and y_val is not None):
             self.custom_val_split = True
+            self.x_val = x_val
+            self.y_val = y_val
 
         if debug:
             self.logfile = open('talos.debug.log', 'a')
