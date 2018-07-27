@@ -6,7 +6,7 @@ from keras.models import Sequential
 from keras.layers import Dropout, Dense
 
 from talos.metrics.keras_metrics import matthews_correlation, precision
-from talos.metrics.keras_metrics import recall, fmeasure
+from talos.metrics.keras_metrics import recall, fmeasure_acc
 
 
 def iris_model(x_train, y_train, x_val, y_val, params):
@@ -63,7 +63,7 @@ def cervix_model(x_train, y_train, x_val, y_val, params):
                                     params['optimizer'])),
                   loss=params['loss'],
                   metrics=['acc',
-                           fmeasure,
+                           fmeasure_acc,
                            recall,
                            precision,
                            matthews_correlation])
