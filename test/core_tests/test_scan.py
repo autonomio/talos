@@ -102,14 +102,27 @@ class TestCancer:
 
     def __init__(self):
         self.x, self.y = datasets.cervical_cancer()
+        self.model = cervix_model
 
     def test_scan_cancer(self):
         print("Running Cervical Cancer dataset test...")
-        Scan(self.x, self.y, grid_downsample=0.001, params=p3,
+        Scan(self.x, self.y, grid_downsample=0.0005, params=p3,
              dataset_name='testing', experiment_no='a',
-             model=cervix_model,
+             model=self.model,
              reduction_method='spear', reduction_interval=5)
         Reporting('testing_a.csv')
+
+    def test_linear_method(self):
+        print("Testing linear method on Cancer dataset...")
+        Scan(self.x, self.y, params=p3, dataset_name='testing',
+             search_method='linear', grid_downsample=0.0005,
+             experiment_no='000', model=self.model)
+
+    def test_reverse_method(self):
+        print("Testing reverse method on Cancer dataset...")
+        Scan(self.x, self.y, params=p3, dataset_name='testing',
+             search_method='reverse', grid_downsample=0.0005,
+             experiment_no='000', model=self.model)
 
 
 class TestLoadDatasets:
