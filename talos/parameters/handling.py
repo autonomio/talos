@@ -19,10 +19,10 @@ def run_param_pick(self):
         _choice = random.choice(self.param_log)
 
     elif self.search_method == 'linear':
-        _choice = self.param_log.min()
+        _choice = min(self.param_log)
 
     elif self.search_method == 'reverse':
-        _choice = self.param_log.max()
+        _choice = max(self.param_log)
 
     self.param_log.remove(_choice)
 
