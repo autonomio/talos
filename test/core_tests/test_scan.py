@@ -8,10 +8,15 @@ from keras.optimizers import SGD, Adam, Adadelta, Adagrad
 from keras.optimizers import Adamax, RMSprop, Nadam
 from keras.activations import softmax, relu, sigmoid
 
-import talos as ta
+from sklearn.model_selection import train_test_split
+
+from talos.scan import Scan
+from talos.reporting import Reporting
 
 from talos.model.examples import iris_model, cervix_model
 
+# remotely hosted datasets
+from talos import datasets, params
 
 p1 = {'lr': [1],
       'first_neuron': [4],
@@ -60,44 +65,62 @@ p3 = {'lr': (0.5, 5, 10),
 class TestIris:
 
     def __init__(self):
-        self.x, self.y = ta.datasets.iris()
+        self.x, self.y = datasets.iris()
+        self.x_train, self.x_dev, self.y_train, self.y_dev \
+            = train_test_split(self.x, self.y, test_size=0.2)
 
     def test_scan_iris_1(self):
         print("Running Iris dataset test 1...")
-        ta.Scan(self.x, self.y, params=p1, dataset_name='iris_test_1',
-                experiment_no='000', model=iris_model)
+        Scan(self.x, self.y, params=p1, dataset_name='testing',
+             experiment_no='000', model=iris_model)
 
     def test_scan_iris_2(self):
         print("Running Iris dataset test 2...")
-        ta.Scan(self.x, self.y, params=p2, dataset_name='iris_test_2',
-                experiment_no='000', model=iris_model)
-        ta.Reporting('iris_test_2_000.csv')
+        Scan(self.x, self.y, params=p2, dataset_name='testing',
+             experiment_no='000', model=iris_model)
+        Reporting('testing_000.csv')
+
+    def test_scan_iris_explicit_validation_set(self):
+        print("Running explicit validation dataset test 1...")
+        Scan(self.x_train, self.y_train, params=p2,
+             dataset_name='testing',
+             experiment_no='000', model=iris_model,
+             x_val=self.x_dev, y_val=self.y_dev)
+
+    def test_scan_iris_explicit_validation_set_force_fail(self):
+        print("Running explicit validation dataset test 2...")
+        try:
+            Scan(self.x_train, self.y_train, params=p2,
+                 dataset_name='testing',
+                 experiment_no='000', model=iris_model,
+                 y_val=self.y_dev)
+        except RuntimeError:
+            pass
 
 
 class TestCancer:
 
     def __init__(self):
-        self.x, self.y = ta.datasets.cervical_cancer()
+        self.x, self.y = datasets.cervical_cancer()
 
     def test_scan_cancer(self):
         print("Running Cervical Cancer dataset test...")
-        ta.Scan(self.x, self.y, grid_downsample=0.001, params=p3,
-                dataset_name='cervical_cancer_test', experiment_no='a',
-                model=cervix_model,
-                reduction_method='spear', reduction_interval=5)
-        ta.Reporting('cervical_cancer_test_a.csv')
+        Scan(self.x, self.y, grid_downsample=0.001, params=p3,
+             dataset_name='testing', experiment_no='a',
+             model=cervix_model,
+             reduction_method='spear', reduction_interval=5)
+        Reporting('testing_a.csv')
 
 
 class TestLoadDatasets:
 
     def __init__(self):
         print("Testing Load Datasets...")
-        x = ta.datasets.icu_mortality()
-        x = ta.datasets.icu_mortality(100)
-        x = ta.datasets.titanic()
-        x = ta.datasets.iris()
-        x = ta.datasets.cervical_cancer()
-        x = ta.datasets.breast_cancer()
-
-        x = ta.params.iris()
-        x = ta.params.breast_cancer()  # noqa
+        x = datasets.icu_mortality()
+        x = datasets.icu_mortality(100)
+        x = datasets.titanic()
+        x = datasets.iris()
+        x = datasets.cervical_cancer()
+        x = datasets.breast_cancer()
+        x = params.iris()
+        x = params.breast_cancer()  # noqa
