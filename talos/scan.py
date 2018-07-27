@@ -3,7 +3,7 @@ from keras import backend as K
 from .utils.validation_split import validation_split
 
 from .utils.results import run_round_results, save_result, result_todf
-from .utils.results import peak_epochs_todf
+from .utils.results import peak_epochs_todf, create_header
 from .utils.logging import write_log
 from .utils.detector import prediction_type
 from .reducers.sample_reducer import sample_reducer
@@ -204,22 +204,23 @@ class Scan:
         # determine the parameters for the particular execution
         round_params(self)
 
-        # _model() function should return both the result from training
-        # and the model itself
-        try:
-            _hr_out, self.keras_model = self._model()
-        except TypeError:
-            print('The model needs to have Return in format '
-                  ' "return history, model"')
+        # compile the model
+        _hr_out, self.keras_model = self._model()
 
+        # create log and other stats
         self.epoch_entropy.append(epoch_entropy((_hr_out)))
+
+        if self.round_counter == 0:
+            _for_header = create_header(self, _hr_out)
+            self.result.append(_for_header)
+            save_result(self)
+
         _hr_out = run_round_results(self, _hr_out)
-
         self._val_score = get_score(self)
-
         write_log(self)
         self.result.append(_hr_out)
         save_result(self)
+
         time_estimator(self)
 
         if (self.round_counter + 1) % self.reduction_interval == 0:
