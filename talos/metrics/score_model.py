@@ -1,5 +1,5 @@
 from .performance import Performance
-from numpy import nan
+from numpy import nan, argmax
 
 
 def get_score(self):
@@ -14,7 +14,7 @@ def get_score(self):
     '''
 
     try:
-        y_pred = self.keras_model.predict_classes(self.x_val)
+        y_pred = argmax(self.keras_model.predict(self.x_val), axis=1)
         return Performance(y_pred, self.y_val, self.shape, self.y_max).result
 
     except TypeError:
