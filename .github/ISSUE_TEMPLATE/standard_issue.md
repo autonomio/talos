@@ -1,6 +1,6 @@
 ---
-name: standard_issue
-about: standard issue template
+name: HOW TO RAISE AN ISSUE
+about: for all kinds of issues related with Talos
 
 ---
 
