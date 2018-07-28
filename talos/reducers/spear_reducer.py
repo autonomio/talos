@@ -20,7 +20,7 @@ def spear(self, metric, neg_corr=True, treshold=-.1):
         self.reduction_window = self.reduction_interval
     data = data.tail(self.reduction_window)
     metric_col = pd.DataFrame(data[metric])
-    data = pd.merge(metric_col, data.iloc[:, 7:], left_index=True, right_index=True)
+    data = pd.merge(metric_col, data[ind], left_index=True, right_index=True)
     correlations = data.corr('spearman')
     try:
         neg_lab = correlations[metric].dropna().sort_values(ascending=neg_corr).index[0]
