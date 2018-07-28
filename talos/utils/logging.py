@@ -18,7 +18,7 @@ def clean_dict(self):
                 _cd_out[key] = None
             elif len(s.split('.')) > 1:
                 _cd_out[key] = self.params[key]
-            elif type(self.params[key]) == type(1):
+            elif isinstance(self.params[key], int):
                 _cd_out[key] = int(s)
             else:
                 _cd_out[key] = s
