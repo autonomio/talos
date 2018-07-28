@@ -90,5 +90,4 @@ if __name__ == "__main__":
                  'Topic :: Scientific/Engineering :: Mathematics',
                  'Operating System :: POSIX',
                  'Operating System :: Unix',
-                 'Operating System :: MacOS'],
-)
+                 'Operating System :: MacOS'],)

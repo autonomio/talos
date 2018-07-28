@@ -69,7 +69,7 @@ def param_format(self):
     for param in self.param_dict.keys():
 
         # for range style input
-        if type(self.param_dict[param]) is type(()):
+        if isinstance(self.param_dict[param], tuple):
             out[param] = param_range(self.param_dict[param][0],
                                      self.param_dict[param][1],
                                      self.param_dict[param][2])
