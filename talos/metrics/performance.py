@@ -1,5 +1,4 @@
 from keras.utils import to_categorical
-import numpy as np
 
 
 class Performance():

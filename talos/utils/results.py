@@ -2,6 +2,24 @@ from numpy import array, argpartition, savetxt
 from pandas import DataFrame
 
 
+def create_header(self, out):
+
+    '''Creates the Header column
+    On the first round creates the header columns
+    for the experiment output log.
+    '''
+
+    _rr_out = []
+
+    _rr_out.append('round_epochs')
+    [_rr_out.append(i) for i in list(out.history.keys())]
+    [_rr_out.append(key) for key in self.params.keys()]
+
+    self.peak_epochs.append(list(out.history.keys()))
+
+    return ",".join(str(i) for i in _rr_out)
+
+
 def run_round_results(self, out):
 
     '''THE MAIN FUNCTION FOR CREATING RESULTS FOR EACH ROUND
@@ -12,18 +30,7 @@ def run_round_results(self, out):
 
     _rr_out = []
 
-    self._round_epochs = len(out.history['acc'])
-
-    # if the round counter is zero, just output header
-    if self.round_counter == 0:
-        _rr_out.append('round_epochs')
-        [_rr_out.append(i) for i in list(out.history.keys())]
-        [_rr_out.append(key) for key in self.params.keys()]
-
-        # this takes care of the separate entity with just peak epoch data
-        self.peak_epochs.append(list(out.history.keys()))
-
-        return ",".join(str(i) for i in _rr_out)
+    self._round_epochs = len(list(out.history.values())[0])
 
     # otherwise proceed to create the value row
     _rr_out.append(self._round_epochs)
