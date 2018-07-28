@@ -6,12 +6,9 @@ from .utils.results import run_round_results, save_result, result_todf
 from .utils.results import peak_epochs_todf, create_header
 from .utils.logging import write_log
 from .utils.detector import prediction_type
-from .reducers.sample_reducer import sample_reducer
 from .reducers.spear_reducer import spear_reducer
-from .utils.estimators import time_estimator
-from .parameters.handling import param_format, param_space, param_index
-from .parameters.handling import round_params
-from .parameters.permutations import param_grid
+from .parameters.round_params import round_params
+from .parameters.ParamGrid import ParamGrid
 from .metrics.score_model import get_score
 from .utils.pred_class import classify
 from .utils.last_neuron import last_neuron
@@ -154,21 +151,26 @@ class Scan:
         self.param_dict = params
 
         self.search_method = search_method
-        self.reduction_method = reduction_method
-        self.reduction_interval = reduction_interval
-        self.reduction_window = reduction_window
-        self.reduction_metric = reduction_metric
         self.grid_downsample = grid_downsample
+
         self.val_split = val_split
         self.shuffle = shuffle
         self.seed = seed
 
-        self.p = param_format(self)
-        self.combinations = param_space(self)
-        self.param_grid = param_grid(self)
-        self.param_grid = sample_reducer(self)
-        self.param_log = list(range(len(self.param_grid)))
-        self.param_grid = param_index(self)
+        # create the paramater object
+        self.param_object = ParamGrid(self.param_dict,
+                                      self.search_method,
+                                      self.grid_downsample)
+
+        # reduction related (main object)
+        self.reduction_method = reduction_method
+
+        # reduction related (parameters object)
+        self.param_object.reduction_interval = reduction_interval
+        self.param_object.reduction_window = reduction_window
+        self.param_object.reduction_metric = reduction_metric
+        self.param_object.experiment_name = self.experiment_name
+
         self.round_counter = 0
         self.peak_epochs = []
         self.epoch_entropy = []
@@ -185,24 +187,26 @@ class Scan:
         self._data_len = len(self.x)
         self = prediction_type(self)
 
+        # the main runtime starts
         self.result = []
-
         if self.round_limit is not None:
             for i in range(self.round_limit):
                 self._null = self._run()
         else:
-            while len(self.param_log) != 0:
+            while len(self.param_object.param_log) != 0:
                 self._null = self._run()
 
         self = result_todf(self)
         self.peak_epochs_df = peak_epochs_todf(self)
         self._null = self.logfile.close()
+        # runtime ends
+
         print('Scan Finished!')
 
     def _run(self):
 
         # determine the parameters for the particular execution
-        round_params(self)
+        self.params = round_params(self.param_object)
 
         # compile the model
         _hr_out, self.keras_model = self._model()
@@ -221,11 +225,9 @@ class Scan:
         self.result.append(_hr_out)
         save_result(self)
 
-        time_estimator(self)
-
-        if (self.round_counter + 1) % self.reduction_interval == 0:
+        if (self.round_counter + 1) % self.param_object.reduction_interval == 0:
             if self.reduction_method == 'spear':
-                self = spear_reducer(self)
+                self.param_object = spear_reducer(self.param_object)
 
         K.clear_session()
         self.round_counter += 1
