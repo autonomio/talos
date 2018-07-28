@@ -8,19 +8,20 @@ def spear(self, metric, neg_corr=True, treshold=-.1):
     data = pd.read_csv(self.experiment_name + '.csv')
 
     # remove metric columns
-    ind = list(data.columns)
+    cols = list(data.columns)
     for col in metric_names():
-        ind.remove(col)
+        cols.remove(col)
 
-    ind = pd.Series(list(ind), index=range(len(ind)))
+    ind = pd.Series(list(cols), index=range(len(cols)))
     ind = ind.reset_index().set_index(0)
 
     data = data.copy('deep')
-    if self.reduction_window == None:
+    if self.reduction_window is None:
         self.reduction_window = self.reduction_interval
     data = data.tail(self.reduction_window)
     metric_col = pd.DataFrame(data[metric])
-    data = pd.merge(metric_col, data[ind], left_index=True, right_index=True)
+
+    data = pd.merge(metric_col, data[cols], left_index=True, right_index=True)
     correlations = data.corr('spearman')
     try:
         neg_lab = correlations[metric].dropna().sort_values(ascending=neg_corr).index[0]
