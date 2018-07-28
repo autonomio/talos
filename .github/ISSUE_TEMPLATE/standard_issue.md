@@ -1,6 +1,6 @@
 ---
-name: HOW TO RAISE AN ISSUE
-about: for all kinds of issues related with Talos
+name: Bug Report
+about: something needs fixing
 
 ---
 
