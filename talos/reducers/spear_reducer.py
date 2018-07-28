@@ -1,11 +1,17 @@
 import pandas as pd
 
+from ..metrics.names import metric_names
+
 
 def spear(self, metric, neg_corr=True, treshold=-.1):
 
     data = pd.read_csv(self.experiment_name + '.csv')
 
-    ind = data.columns[7:]
+    # remove metric columns
+    ind = list(data.columns)
+    for col in metric_names:
+        ind.remove(col)
+
     ind = pd.Series(list(ind), index=range(len(ind)))
     ind = ind.reset_index().set_index(0)
 

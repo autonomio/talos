@@ -57,7 +57,7 @@ p3 = {'lr': (0.5, 5, 10),
       'shapes': ['stairs'],
       'emb_output_dims': [None],
       'optimizer': [Nadam],
-      'loss': [logcosh, binary_crossentropy],
+      'losses': [logcosh, binary_crossentropy],
       'activation': [relu],
       'last_activation': [sigmoid]}
 
