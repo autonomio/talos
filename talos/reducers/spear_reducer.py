@@ -9,7 +9,7 @@ def spear(self, metric, neg_corr=True, treshold=-.1):
 
     # remove metric columns
     ind = list(data.columns)
-    for col in metric_names:
+    for col in metric_names():
         ind.remove(col)
 
     ind = pd.Series(list(ind), index=range(len(ind)))
