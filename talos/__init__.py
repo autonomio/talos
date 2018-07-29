@@ -1,7 +1,7 @@
-from talos.scan import Scan
-from talos.reporting import Reporting
-from talos.metrics.performance import Performance
-from talos.examples import datasets, params
+from .scan import Scan
+from .reporting import Reporting
+from .metrics.performance import Performance
+from .examples import datasets, params
 import astetik as plots
 
 # del parameters, utils, scan
