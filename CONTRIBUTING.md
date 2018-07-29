@@ -26,7 +26,7 @@ Thank you very much for taking the effort to contribute Talos. Below you will fi
 
     2.4. [Branch Management](#branch_management)
 
-3. [Reviewing Pull Requests](#review)
+3. [Pull Requests](#pull_requests)
 
 4. [Specific Guidelines for Github](#github)
 
@@ -193,10 +193,15 @@ An example of a reasonable quality documentation [here](https://mikkokotila.gith
 - Non-members should have a private fork
 
 
-#### 3. Reviewing pull requests <a name="review"></a>
+#### 3. Pull Requests <a name="pull_requests"></a>
 
-Generally speaking the reviewer should always be a different person than the
-person who makes the PR with merge to master.
+1. Contributor (user) forks `autonomo/talos` to `origin/talos`.
+2. user clones `origin/talos` to `local`, sets upstream branch to point to `autonomio/talos` (via `git remote add upstream ...`, where `...` is the address you see when you click on the git clone button on `autonomio/talos`) and then checks out to `dev`.
+3. Immediately `git checkout -b my_feature_branch`. All work on a new feature is done on this branch or its children.
+4. Bugfixes can be directly implemented on `dev`.
+5. When work is done on `my_feature_branch`, user can check out to `local/dev` and ensure `dev` is up to date (`git pull upstream dev`), and then merge on their local branch: `git merge --no-ff my_feature_branch`, resolve any merge conflicts, then `git push origin dev` and open a PR. This PR will be `origin/dev > autonomo/dev`.
+6. Resolve any conflicts with PR if any remain, then work is done.
+
 
 ### 4. General points on using Github  <a name="github"></a>
 
