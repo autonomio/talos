@@ -126,11 +126,13 @@ class Scan:
                  reduction_window=None, grid_downsample=None,
                  reduction_metric='val_acc', round_limit=None,
                  talos_log_name='talos.log', debug=False, seed=None,
-                 x_val=None, y_val=None):
+                 x_val=None, y_val=None, clear_tf_session=False):
 
         self.dataset_name = dataset_name
         self.experiment_no = experiment_no
         self.experiment_name = dataset_name + '_' + experiment_no
+
+        self.clear_tf_session = clear_tf_session
 
         self.custom_val_split = False
         if (x_val is not None and y_val is None) or \
@@ -229,7 +231,8 @@ class Scan:
             if self.reduction_method == 'spear':
                 self.param_object = spear_reducer(self.param_object)
 
-        K.clear_session()
+        if self.clear_tf_session is True:
+            K.clear_session()
         self.round_counter += 1
 
     def _model(self):
