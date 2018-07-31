@@ -59,7 +59,7 @@ Let's consider an example of a simple Keras model:
                     verbose=0,
                     validation_data=[x_val, y_val])
 
-To prepare the model for a talos scan, we simply replace the parameters we want to include in the scans with references to our parameter dictionary (example of dictionary provided below). 
+To prepare the model for a talos scan, we simply replace the parameters we want to include in the scans with references to our parameter dictionary (example of dictionary provided below).
 
 	def iris_model(x_train, y_train, x_val, y_val, params):
 
@@ -99,13 +99,18 @@ The above example is a simple indication of what is possible. Any parameter that
 
 Talos accepts lists with values, and tuples (start, end, n). Learning rate is normalized to 1 so that for each optimizer, lr=1 is the default Keras setting. Once this is all done, we can run the scan:
 
-	h = ta.Scan(x, y, params=p, experiment_name='first_test', model=iris_model, grid_downsample=0.5)
+	h = ta.Scan(x, y, 
+              params=p,
+              dataset_name='first_test',
+              experiment_no='2',
+              model=iris_model,
+              grid_downsample=0.5)
 
 ## Optimization
 
-One of the challenges in the paradigm where Talos exposes Keras models fully, is the evaluation of permutations across different experiments, as it is common that evaluation metrics can change depending on the model. 
+One of the challenges in the paradigm where Talos exposes Keras models fully, is the evaluation of permutations across different experiments, as it is common that evaluation metrics can change depending on the model.
 
-This is overcome by having a grading system that first detects the kind of data (type of prediction and distribution of truth values), and then uses a relevant robust scoring mechanism (f1 score) to produce an apples-to-apples "grade" for each permutation, which is then stored in the master log. The same score is available for binary, multi-label, multi-class (one hot encoded) and continuous data. For each type of prediction, the score is produced following the same procedure, resulting in a true apples-to-apples performance metric. 
+This is overcome by having a grading system that first detects the kind of data (type of prediction and distribution of truth values), and then uses a relevant robust scoring mechanism (f1 score) to produce an apples-to-apples "grade" for each permutation, which is then stored in the master log. The same score is available for binary, multi-label, multi-class (one hot encoded) and continuous data. For each type of prediction, the score is produced following the same procedure, resulting in a true apples-to-apples performance metric.
 
 ## Built With
 
