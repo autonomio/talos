@@ -59,7 +59,7 @@ Let's consider an example of a simple Keras model:
                     verbose=0,
                     validation_data=[x_val, y_val])
 
-To prepare the model for a talos scan, we simply replace the parameters we want to include in the scans with references to our parameter dictionary (example of dictionary provided below).
+To prepare the model for a talos scan, we simply replace the parameters we want to include in the scans with references to our parameter dictionary (example of dictionary provided below). The below example code complete [here](https://github.com/autonomio/talos/blob/master/examples/iris.py).
 
 	def iris_model(x_train, y_train, x_val, y_val, params):
 
@@ -68,7 +68,7 @@ To prepare the model for a talos scan, we simply replace the parameters we want 
 	    model.add(Dropout(params['dropout']))
 	    model.add(Dense(y_train.shape[1], activation=params['last_activation']))
 
-	    model.compile(optimizer=params['optimizer']),
+	    model.compile(optimizer=params['optimizer'],
 	                  loss=params['losses'],
 	                  metrics=['acc'])
 
@@ -99,7 +99,7 @@ The above example is a simple indication of what is possible. Any parameter that
 
 Talos accepts lists with values, and tuples (start, end, n). Learning rate is normalized to 1 so that for each optimizer, lr=1 is the default Keras setting. Once this is all done, we can run the scan:
 
-	h = ta.Scan(x, y, 
+	h = ta.Scan(x, y,
               params=p,
               dataset_name='first_test',
               experiment_no='2',

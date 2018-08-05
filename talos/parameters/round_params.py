@@ -19,7 +19,7 @@ def round_params(self):
     # create a dictionary for the current round
     _round_params_dict = {}
     x = 0
-    for key in self.p.keys():
+    for key in self.param_reference.keys():
         _round_params_dict[key] = self.param_grid[_choice][x]
         x += 1
 
