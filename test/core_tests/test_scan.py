@@ -109,7 +109,7 @@ class TestCancer:
         Scan(self.x, self.y, grid_downsample=0.0005, params=p3,
              dataset_name='testing', experiment_no='a',
              model=self.model,
-             reduction_method='spear', reduction_interval=5)
+             reduction_method='correlation', reduction_interval=5)
         Reporting('testing_a.csv')
 
     def test_linear_method(self):
