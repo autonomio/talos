@@ -53,6 +53,10 @@ def check_dependencies():
         import sklearn
     except ImportError:
         install_requires.append('sklearn')
+    try:
+        import tqdm
+    except ImportError:
+        install_requires.append('tqdm')
 
     return install_requires
 
