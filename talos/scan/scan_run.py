@@ -2,15 +2,15 @@ from tqdm import tqdm
 
 from keras import backend as K
 
-from .utils.results import run_round_results, save_result
-from .parameters.round_params import round_params
-from .utils.results import create_header
-from .metrics.entropy import epoch_entropy
-from .model.ingest_model import ingest_model
-from .metrics.score_model import get_score
-from .utils.logging import write_log
-from .utils.results import result_todf, peak_epochs_todf
-from .reducers.reduce_run import reduce_run
+from ..utils.results import run_round_results, save_result
+from ..parameters.round_params import round_params
+from ..utils.results import create_header
+from ..metrics.entropy import epoch_entropy
+from ..model.ingest_model import ingest_model
+from ..metrics.score_model import get_score
+from ..utils.logging import write_log
+from ..utils.results import result_todf, peak_epochs_todf
+from ..reducers.reduce_run import reduce_run
 
 
 def scan_run(self):
@@ -67,7 +67,7 @@ def rounds_run(self):
     if self.reduction_method is not None:
         if (self.round_counter + 1) % self.reduction_interval == 0:
             len_before_reduce = len(self.param_log)
-            self.param_log = reduce_run(self)
+            self = reduce_run(self)
             total_reduced = len_before_reduce - len(self.param_log)
             # update the progress bar
             self.pbar.update(total_reduced)

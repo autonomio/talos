@@ -1,29 +1,16 @@
-from .ReductionTable import ReductionTable
-from .Reducers import Reducers
-from .reduce_drop import reduction_drop
+from .reduce_prepare import reduce_prepare
+from .reduce_finish import reduce_finish
+from .correlation import correlation
 
 
 def reduce_run(self):
 
-    '''Takes in the Scan object, and returns a modified version
-    of the self.param_log.'''
+    self = reduce_prepare(self)
 
-    self._filaname = self.experiment_name + '.csv'
-
-    # create the table for reduction
-    out = ReductionTable(self._filaname,
-                         self.reduction_metric,
-                         self.reduction_window,
-                         self.reduction_threshold)
-
-    # create the reducer object
-    out = Reducers(out)
-
-    # apply the reduction
     if self.reduction_method == 'correlation':
-        self.out = out.correlation()
+        self = correlation(self)
 
-    if self.out is None:
-        return self.param_log
+    if self._reduce_keys is None:
+        return self
     else:
-        return reduction_drop(self)
+        return reduce_finish(self)

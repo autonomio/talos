@@ -1,4 +1,4 @@
-from .scan import Scan
+from .scan.Scan import Scan
 from .reporting import Reporting
 from .metrics.performance import Performance
 from .examples import datasets, params

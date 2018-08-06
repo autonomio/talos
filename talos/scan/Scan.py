@@ -1,5 +1,4 @@
 from .scan_prepare import scan_prepare
-from .utils.logging import debug_logging
 from .scan_run import scan_run
 
 
@@ -144,6 +143,5 @@ class Scan:
 
     def runtime(self):
 
-        self = debug_logging(self)
         self = scan_prepare(self)
         self = scan_run(self)
