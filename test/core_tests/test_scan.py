@@ -10,7 +10,7 @@ from keras.activations import softmax, relu, sigmoid
 
 from sklearn.model_selection import train_test_split
 
-from talos.scan import Scan
+from talos.scan.Scan import Scan
 from talos.reporting import Reporting
 
 from talos.model.examples import iris_model, cervix_model
@@ -57,7 +57,7 @@ p3 = {'lr': (0.5, 5, 10),
       'shapes': ['stairs'],
       'emb_output_dims': [None],
       'optimizer': [Nadam],
-      'loss': [logcosh, binary_crossentropy],
+      'losses': [logcosh, binary_crossentropy],
       'activation': [relu],
       'last_activation': [sigmoid]}
 
@@ -109,7 +109,7 @@ class TestCancer:
         Scan(self.x, self.y, grid_downsample=0.0005, params=p3,
              dataset_name='testing', experiment_no='a',
              model=self.model,
-             reduction_method='spear', reduction_interval=5)
+             reduction_method='correlation', reduction_interval=5)
         Reporting('testing_a.csv')
 
     def test_linear_method(self):

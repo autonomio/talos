@@ -1,3 +1,9 @@
+---
+name: standard_issue
+about: standard issue template
+
+---
+
 Thanks so much for coming here to raise an issue. Please take a moment to 'check' the below boxes:
 
 - [ ] I'm up-to-date with the latest release:

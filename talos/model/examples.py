@@ -61,7 +61,7 @@ def cervix_model(x_train, y_train, x_val, y_val, params):
     model.compile(optimizer=params['optimizer']
                   (lr=lr_normalizer(params['lr'],
                                     params['optimizer'])),
-                  loss=params['loss'],
+                  loss=params['losses'],
                   metrics=['acc',
                            fmeasure_acc,
                            recall,
