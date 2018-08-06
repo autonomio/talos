@@ -10,7 +10,7 @@ from keras.activations import softmax, relu, sigmoid
 
 from sklearn.model_selection import train_test_split
 
-from talos.scan import Scan
+from talos.scan.Scan import Scan
 from talos.reporting import Reporting
 
 from talos.model.examples import iris_model, cervix_model
