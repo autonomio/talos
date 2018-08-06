@@ -5,6 +5,10 @@ from ..metrics.names import metric_names
 
 def reduce_prepare(self):
 
+    '''
+    Preparation procedures for applying a reduction algorithm.
+    '''
+
     # load the data from the experiment log
     self.data = pd.read_csv(self.experiment_name + '.csv')
     self.names = metric_names()

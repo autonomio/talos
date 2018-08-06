@@ -1,9 +1,7 @@
 import pandas as pd
 
 
-def correlation(self,
-                correlation='spearman',
-                corr_to_drop='neg'):
+def correlation(self, corr_to_drop='neg'):
 
     '''Correlation Reducers
 
@@ -12,7 +10,7 @@ def correlation(self,
 
     '''
 
-    out = self.param_table.corr(correlation)[self.reduction_metric]
+    out = self.param_table.corr(method='spearman')[self.reduction_metric]
     out = out.dropna()
 
     if len(out) == 0:
@@ -34,7 +32,7 @@ def correlation(self,
         return self
 
     # all other cases continue
-    to_drop_temp = dummy_cols.corr(correlation)[self.reduction_metric]
+    to_drop_temp = dummy_cols.corr(method='spearman')[self.reduction_metric]
 
     # pick the drop method based on paramaters
     if corr_to_drop == 'neg':
