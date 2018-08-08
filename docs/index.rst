@@ -103,7 +103,7 @@ Because the parameter space expands according to n! factorial, in a typical scen
 - random reduction 
 - non-random reduction
 
-The random approaches cut down the possible permutations before starting the scan, whereas non-random approaches cut down the permuations on-going based on results. For example, if batch sizes in the upper bound of the set parameter boundary perform boorly, they will be automatically reduced. Talos provides several ways to effect this process. These are covered in detail in the below section titled 'Input Parameters'.
+The random approaches cut down the possible permutations before starting the scan, whereas non-random approaches cut down the permuations on-going based on results. For example, if batch sizes in the upper bound of the set parameter boundary perform poorly, they will be automatically reduced. Talos provides several ways to effect this process. These are covered in detail in the below section titled 'Input Parameters'.
 
 Input Parameters
 ----------------
