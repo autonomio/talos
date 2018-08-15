@@ -1,27 +1,5 @@
-from keras import backend as K
-
-from .utils.validation_split import validation_split
-
-from .utils.results import run_round_results, save_result, result_todf
-from .utils.results import peak_epochs_todf, create_header
-from .utils.logging import write_log
-from .utils.detector import prediction_type
-from .reducers.sample_reducer import sample_reducer
-from .reducers.spear_reducer import spear_reducer
-from .utils.estimators import time_estimator
-from .parameters.handling import param_format, param_space, param_index
-from .parameters.handling import round_params
-from .parameters.permutations import param_grid
-from .metrics.score_model import get_score
-from .utils.pred_class import classify
-from .utils.last_neuron import last_neuron
-from .metrics.entropy import epoch_entropy
-
-
-TRAIN_VAL_RUNTIME_ERROR_MSG = """
-If setting a custom train/val split, both x_val and y_val must be input data
-and not None.
-"""
+from .scan_prepare import scan_prepare
+from .scan_run import scan_run
 
 
 class Scan:
@@ -124,116 +102,46 @@ class Scan:
     global self
 
     def __init__(self, x, y, params, dataset_name, experiment_no, model,
+                 x_val=None, y_val=None,
                  val_split=.3, shuffle=True, search_method='random',
-                 reduction_method=None, reduction_interval=100,
-                 reduction_window=None, grid_downsample=None,
+                 reduction_method=None, reduction_interval=50,
+                 reduction_window=20, grid_downsample=None,
+                 reduction_threshold=0.2,
                  reduction_metric='val_acc', round_limit=None,
                  talos_log_name='talos.log', debug=False, seed=None,
-                 x_val=None, y_val=None):
+                 clear_tf_session=False, disable_progress_bar=False):
 
+        # NOTE: these need to be follow the order from __init__
+        # and all paramaters needs to be included here and only here.
+
+        self.x = x
+        self.y = y
+        self.params = params
         self.dataset_name = dataset_name
         self.experiment_no = experiment_no
-        self.experiment_name = dataset_name + '_' + experiment_no
-
-        self.custom_val_split = False
-        if (x_val is not None and y_val is None) or \
-           (x_val is None and y_val is not None):
-            raise RuntimeError(TRAIN_VAL_RUNTIME_ERROR_MSG)
-        elif (x_val is not None and y_val is not None):
-            self.custom_val_split = True
-            self.x_val = x_val
-            self.y_val = y_val
-
-        if debug:
-            self.logfile = open('talos.debug.log', 'a')
-        else:
-            self.logfile_name = talos_log_name
-            self.logfile = open(self.logfile_name, 'a')
-
         self.model = model
-        self.param_dict = params
-
+        self.x_val = x_val
+        self.y_val = y_val
+        self.val_split = val_split
+        self.shuffle = shuffle
         self.search_method = search_method
         self.reduction_method = reduction_method
         self.reduction_interval = reduction_interval
         self.reduction_window = reduction_window
-        self.reduction_metric = reduction_metric
         self.grid_downsample = grid_downsample
-        self.val_split = val_split
-        self.shuffle = shuffle
-        self.seed = seed
-
-        self.p = param_format(self)
-        self.combinations = param_space(self)
-        self.param_grid = param_grid(self)
-        self.param_grid = sample_reducer(self)
-        self.param_log = list(range(len(self.param_grid)))
-        self.param_grid = param_index(self)
-        self.round_counter = 0
-        self.peak_epochs = []
-        self.epoch_entropy = []
+        self.reduction_threshold = reduction_threshold
+        self.reduction_metric = reduction_metric
         self.round_limit = round_limit
-        self.round_models = []
+        self.talos_log_name = talos_log_name
+        self.debug = debug
+        self.seed = seed
+        self.clear_tf_session = clear_tf_session
+        self.disable_progress_bar = disable_progress_bar
+        # input parameters section ends
 
-        self.x = x
-        self.y = y
-        self.y_max = y.max()
-        self = validation_split(self)
-        self.shape = classify(self.y)
-        self.last_neuron = last_neuron(self)
+        self._null = self.runtime()
 
-        self._data_len = len(self.x)
-        self = prediction_type(self)
+    def runtime(self):
 
-        self.result = []
-
-        if self.round_limit is not None:
-            for i in range(self.round_limit):
-                self._null = self._run()
-        else:
-            while len(self.param_log) != 0:
-                self._null = self._run()
-
-        self = result_todf(self)
-        self.peak_epochs_df = peak_epochs_todf(self)
-        self._null = self.logfile.close()
-        print('Scan Finished!')
-
-    def _run(self):
-
-        # determine the parameters for the particular execution
-        round_params(self)
-
-        # compile the model
-        _hr_out, self.keras_model = self._model()
-
-        # create log and other stats
-        self.epoch_entropy.append(epoch_entropy((_hr_out)))
-
-        if self.round_counter == 0:
-            _for_header = create_header(self, _hr_out)
-            self.result.append(_for_header)
-            save_result(self)
-
-        _hr_out = run_round_results(self, _hr_out)
-        self._val_score = get_score(self)
-        write_log(self)
-        self.result.append(_hr_out)
-        save_result(self)
-
-        time_estimator(self)
-
-        if (self.round_counter + 1) % self.reduction_interval == 0:
-            if self.reduction_method == 'spear':
-                self = spear_reducer(self)
-
-        K.clear_session()
-        self.round_counter += 1
-
-    def _model(self):
-
-        return self.model(self.x_train,
-                          self.y_train,
-                          self.x_val,
-                          self.y_val,
-                          self.params)
+        self = scan_prepare(self)
+        self = scan_run(self)

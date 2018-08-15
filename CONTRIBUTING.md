@@ -24,7 +24,9 @@ Thank you very much for taking the effort to contribute Talos. Below you will fi
 
     2.3. [Documentation](#docs_for_review)
 
-3. [Reviewing Pull Requests](#review)
+    2.4. [Branch Management](#branch_management)
+
+3. [Pull Requests](#pull_requests)
 
 4. [Specific Guidelines for Github](#github)
 
@@ -128,7 +130,7 @@ Best way to get started might be [starting a discussion](https://github.com/auto
 
 ### 1.5. Contributing to Manual / Documentation  <a name="documentation"></a>
 
-At the moment there is no manual / documentation, so contributions here would be wonderful. Generally it's better to do something very simple and clear. It seems that [RTD](http://readthedocs.io) is a good option as it can read INDEX.rst in /docs and a slightly more complex but much better looking option would be slate. 
+At the moment there is no manual / documentation, so contributions here would be wonderful. Generally it's better to do something very simple and clear. It seems that [RTD](http://readthedocs.io) is a good option as it can read INDEX.rst in /docs and a slightly more complex but much better looking option would be slate.
 
 <img src="https://stevemiles70.files.wordpress.com/2015/05/dilbertontechnicaldoumentation.png" width="600px">
 
@@ -149,7 +151,7 @@ Before even thinking about making any changes to actual code:
 
 ### 2.2. Testing the Change <a name="testing"></a>
 
-Never ever, under any circumstances, commit code that is not thoroughly tested:  
+Don't commit code that is not thoroughly tested:  
 
 1) Run through the code changes and ask yourself if it makes sense
 2) Create a clean environment and install from your fork:
@@ -169,6 +171,37 @@ Once you've gone through all these steps, take a short break, come back and ask 
 ### 3. Reviewing Pull Requests <a name="review"></a>
 
 If you've been assigned as a reviewer of a given pull request, unless you've been explicitly asked to do so, **DON'T MERGE** just approve the review and share in the comments what you think. If you don't have any comments, just confirm with a comment that you don't have any. While this is kind of obvious, don't start reviewing before you can see all the tests have passed ;)
+
+### 2.3. Documentation <a name="documentation"></a>
+
+The documentation should:
+
+- be easy to understand
+- develop together with code (when new functions are added docs are updated)
+- use code examples together with the descriptions
+
+An example of a reasonable quality documentation [here](https://mikkokotila.github.io/slate/#introduction).
+
+### 2.4. Branch Management <a name="branch_management"></a>
+
+- Nothing ever gets pushed directly to master
+- Merges to master should always be reviewed
+- Features are updated to personal branch and from there to dev
+- Once master is stable, it gets merged with production which updates pypi
+- New release is made from each production merge
+- Personal dev branches may be opened by repo members
+- Non-members should have a private fork
+
+
+#### 3. Pull Requests <a name="pull_requests"></a>
+
+1. Contributor (user) forks `autonomo/talos` to `origin/talos`.
+2. user clones `origin/talos` to `local`, sets upstream branch to point to `autonomio/talos` (via `git remote add upstream ...`, where `...` is the address you see when you click on the git clone button on `autonomio/talos`) and then checks out to `dev`.
+3. Immediately `git checkout -b my_feature_branch`. All work on a new feature is done on this branch or its children.
+4. Bugfixes can be directly implemented on `dev`.
+5. When work is done on `my_feature_branch`, user can check out to `local/dev` and ensure `dev` is up to date (`git pull upstream dev`), and then merge on their local branch: `git merge --no-ff my_feature_branch`, resolve any merge conflicts, then `git push origin dev` and open a PR. This PR will be `origin/dev > autonomo/dev`.
+6. Resolve any conflicts with PR if any remain, then work is done.
+
 
 ### 4. General points on using Github  <a name="github"></a>
 
