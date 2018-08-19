@@ -1,6 +1,6 @@
 ---
-name: standard_issue
-about: standard issue template
+name: Bug Report
+about: something needs fixing
 
 ---
 
