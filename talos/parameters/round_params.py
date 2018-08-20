@@ -3,6 +3,9 @@ from numpy import random
 
 def round_params(self):
 
+    '''Picks the paramaters for a round based on the available
+    paramater permutations using the param_log index'''
+
     # pick the permutation for the round
     if self.search_method == 'random':
         _choice = random.choice(self.param_log)

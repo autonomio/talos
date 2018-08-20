@@ -4,6 +4,11 @@ from .shapes import shapes
 
 def hidden_layers(model, params, last_neuron):
 
+    '''Hidden layer generation for the cases where number
+    of layers is used as a variable in the optimization process.
+    Handles things in a way where any number of layers can be tried
+    with matching hyperparameters.'''
+
     try:
         kernel_initializer = params['kernel_initializer']
     except KeyError:
