@@ -16,7 +16,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://autonom.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/autonomio/talos/'
-VERSION = '0.1.9.5'
+VERSION = '0.2'
 
 try:
     from setuptools import setup
@@ -53,6 +53,10 @@ def check_dependencies():
         import sklearn
     except ImportError:
         install_requires.append('sklearn')
+    try:
+        import tqdm
+    except ImportError:
+        install_requires.append('tqdm')
 
     return install_requires
 
@@ -74,6 +78,7 @@ if __name__ == "__main__":
           download_url=DOWNLOAD_URL,
           install_requires=install_requires,
           packages=['talos',
+                    'talos.scan',
                     'talos.examples',
                     'talos.utils',
                     'talos.model',
@@ -90,5 +95,4 @@ if __name__ == "__main__":
                  'Topic :: Scientific/Engineering :: Mathematics',
                  'Operating System :: POSIX',
                  'Operating System :: Unix',
-                 'Operating System :: MacOS'],
-)
+                 'Operating System :: MacOS'],)

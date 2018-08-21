@@ -1,3 +1,9 @@
+---
+name: Bug Report
+about: something needs fixing
+
+---
+
 Thanks so much for coming here to raise an issue. Please take a moment to 'check' the below boxes:
 
 - [ ] I'm up-to-date with the latest release:

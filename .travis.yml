@@ -2,7 +2,16 @@ dist: trusty
 sudo: required
 before_install:
 language: python
+notifications:
+  email:
+    recipients:
+      - mailme@mikkokotila.com
+    on_success: never
+    on_failure: always
 python:
+ - '2.7'
+ - '3.4'
+ - '3.5'
  - '3.6'
 install:
  - pip install -r requirements.txt

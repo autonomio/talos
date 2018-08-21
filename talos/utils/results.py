@@ -48,8 +48,8 @@ def run_round_results(self, out):
         # this takes care of the separate entity with just peak epoch data
     self.peak_epochs.append(p_epochs)
 
-    for key in self.params.keys():
-        _rr_out.append(self.params[key])
+    for key in self.round_params.keys():
+        _rr_out.append(self.round_params[key])
 
     return ",".join(str(i) for i in _rr_out)
 
