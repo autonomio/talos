@@ -3,6 +3,11 @@ from keras.utils import to_categorical
 
 class Performance():
 
+    '''A modified fscore where the predictions can be
+    single-label, multi-label, or multi-category, and
+    each will be treated in a way that allows comparison
+    (apples-to-apples) between different prediction tasks.'''
+
     def __init__(self, y_pred, y_val, shape, y_max):
 
         self.y_pred = y_pred

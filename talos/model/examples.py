@@ -5,8 +5,8 @@ from talos.model import lr_normalizer, early_stopper, hidden_layers
 from keras.models import Sequential
 from keras.layers import Dropout, Dense
 
-from talos.metrics.keras_metrics import matthews_correlation, precision
-from talos.metrics.keras_metrics import recall, fmeasure_acc
+from talos.metrics.keras_metrics import matthews_correlation_acc, precision_acc
+from talos.metrics.keras_metrics import recall_acc, fmeasure_acc
 
 
 def iris_model(x_train, y_train, x_val, y_val, params):
@@ -64,9 +64,9 @@ def cervix_model(x_train, y_train, x_val, y_val, params):
                   loss=params['losses'],
                   metrics=['acc',
                            fmeasure_acc,
-                           recall,
-                           precision,
-                           matthews_correlation])
+                           recall_acc,
+                           precision_acc,
+                           matthews_correlation_acc])
 
     results = model.fit(x_train, y_train,
                         batch_size=params['batch_size'],

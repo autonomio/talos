@@ -1,7 +1,7 @@
 from keras import backend as K
 
 
-def matthews_correlation(y_true, y_pred):
+def matthews_correlation_acc(y_true, y_pred):
     '''Calculates the Matthews correlation coefficient measure for quality
     of binary classification problems.
     '''
@@ -23,7 +23,7 @@ def matthews_correlation(y_true, y_pred):
     return numerator / (denominator + K.epsilon())
 
 
-def precision(y_true, y_pred):
+def precision_acc(y_true, y_pred):
     '''Calculates the precision, a metric for multi-label classification of
     how many selected items are relevant.
     '''
@@ -33,7 +33,7 @@ def precision(y_true, y_pred):
     return precision
 
 
-def recall(y_true, y_pred):
+def recall_acc(y_true, y_pred):
     '''Calculates the recall, a metric for multi-label classification of
     how many relevant items are selected.
     '''
@@ -43,7 +43,7 @@ def recall(y_true, y_pred):
     return recall
 
 
-def fbeta_score(y_true, y_pred, beta=1):
+def fbeta_score_acc(y_true, y_pred, beta=1):
     '''Calculates the F score, the weighted harmonic mean of precision and recall.
     This is useful for multi-label classification, where input samples can be
     classified as sets of labels. By only using accuracy (precision) a model
@@ -63,8 +63,8 @@ def fbeta_score(y_true, y_pred, beta=1):
     if K.sum(K.round(K.clip(y_true, 0, 1))) == 0:
         return 0
 
-    p = precision(y_true, y_pred)
-    r = recall(y_true, y_pred)
+    p = precision_acc(y_true, y_pred)
+    r = recall_acc(y_true, y_pred)
     bb = beta ** 2
     fbeta_score = (1 + bb) * (p * r) / (bb * p + r + K.epsilon())
     return fbeta_score
@@ -73,4 +73,4 @@ def fbeta_score(y_true, y_pred, beta=1):
 def fmeasure_acc(y_true, y_pred):
     '''Calculates the f-measure, the harmonic mean of precision and recall.
     '''
-    return fbeta_score(y_true, y_pred, beta=1)
+    return fbeta_score_acc(y_true, y_pred, beta=1)
