@@ -109,7 +109,8 @@ class Scan:
                  reduction_threshold=0.2,
                  reduction_metric='val_acc', round_limit=None,
                  talos_log_name='talos.log', debug=False, seed=None,
-                 clear_tf_session=False, disable_progress_bar=False):
+                 clear_tf_session=False, disable_progress_bar=False,
+                 experimental_functional_support=False):
 
         # NOTE: these need to be follow the order from __init__
         # and all paramaters needs to be included here and only here.
@@ -137,6 +138,7 @@ class Scan:
         self.seed = seed
         self.clear_tf_session = clear_tf_session
         self.disable_progress_bar = disable_progress_bar
+        self.experimental_functional_support = experimental_functional_support
         # input parameters section ends
 
         self._null = self.runtime()
