@@ -75,7 +75,8 @@ class Performance():
             return
 
         try:
-            f1 = 2 * ((self.precision * self.recall) / (self.precision + self.recall))
+            f1 = 2 * ((self.precision * self.recall) /
+                      (self.precision + self.recall))
             self.result = f1
         except ZeroDivisionError:
             return
@@ -94,7 +95,7 @@ class Performance():
             if self.y_pred[i] == 1 and self.y_val[i] == 1:
                 self.tp += 1
             elif self.y_pred[i] == 1 and self.y_val[i] == 0:
-                self.fn += 1
+                self.fp += 1
             elif self.y_pred[i] == 0 and self.y_val[i] == 0:
                 self.tn += 1
             elif self.y_pred[i] == 0 and self.y_val[i] == 1:
