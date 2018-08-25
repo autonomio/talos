@@ -8,9 +8,9 @@ def metric_names():
             'val_loss',
             'acc',
             'val_acc',
-            'fmeasure_acc'
+            'fmeasure_acc',
             'val_fmeasure_acc',
-            'recall_acc'
+            'recall_acc',
             'val_recall_acc',
             'precision_acc',
             'val_precision_acc',

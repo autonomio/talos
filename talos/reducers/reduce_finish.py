@@ -5,6 +5,7 @@ def reduce_finish(self):
     value to drop. Returns self with a modified param_log.'''
 
     # get the column index
+
     to_remove_col = self.param_reference[self._reduce_keys[1]]
 
     value_to_remove = self._reduce_keys[0]
