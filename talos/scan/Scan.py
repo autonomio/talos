@@ -106,11 +106,12 @@ class Scan:
                  val_split=.3, shuffle=True, search_method='random',
                  reduction_method=None, reduction_interval=50,
                  reduction_window=20, grid_downsample=None,
-                 reduction_threshold=0.2,
-                 reduction_metric='val_acc', round_limit=None,
+                 reduction_threshold=0.2, reduction_metric='val_acc',
+                 reduce_loss=False, round_limit=None,
                  talos_log_name='talos.log', debug=False, seed=None,
                  clear_tf_session=False, disable_progress_bar=False,
-                 experimental_functional_support=False):
+                 experimental_functional_support=False,
+                 last_epoch_value=False):
 
         # NOTE: these need to be follow the order from __init__
         # and all paramaters needs to be included here and only here.
@@ -132,6 +133,7 @@ class Scan:
         self.grid_downsample = grid_downsample
         self.reduction_threshold = reduction_threshold
         self.reduction_metric = reduction_metric
+        self.reduce_loss = reduce_loss
         self.round_limit = round_limit
         self.talos_log_name = talos_log_name
         self.debug = debug
@@ -139,6 +141,7 @@ class Scan:
         self.clear_tf_session = clear_tf_session
         self.disable_progress_bar = disable_progress_bar
         self.experimental_functional_support = experimental_functional_support
+        self.last_epoch_value = last_epoch_value
         # input parameters section ends
 
         self._null = self.runtime()

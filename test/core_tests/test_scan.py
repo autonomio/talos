@@ -77,7 +77,9 @@ class TestIris:
     def test_scan_iris_2(self):
         print("Running Iris dataset test 2...")
         Scan(self.x, self.y, params=p2, dataset_name='testing',
-             experiment_no='000', model=iris_model)
+             experiment_no='000', model=iris_model,
+             last_epoch_value=True,
+             experimental_functional_support=True)
 
     def test_scan_iris_explicit_validation_set(self):
         print("Running explicit validation dataset test with metric reduction")
