@@ -22,7 +22,8 @@ def create_header(self, out):
 
 def run_round_results(self, out):
 
-    '''THE MAIN FUNCTION FOR CREATING RESULTS FOR EACH ROUND
+    '''THE MAIN FUNCTION FOR CREATING RESULTS FOR EACH ROUNDself.
+    Takes in the history object from model.fit() and handles it.
 
     NOTE: The epoch level data will be dropped here each round.
 
@@ -36,20 +37,25 @@ def run_round_results(self, out):
     _rr_out.append(self._round_epochs)
     p_epochs = []
 
+    # iterates through the keys and records last or peak for metrics
     for key in out.history.keys():
         t_t = array(out.history[key])
 
-        # note that this requires all metrics / custom metrics
-        # to include 'acc'
+        # this handles metrics (NOTE: 'acc' have to be in metric name)
         if 'acc' in key:
-            peak_epoch = argpartition(t_t, len(t_t) - 1)[-1]
+            best_epoch = argpartition(t_t, len(t_t) - 1)[-1]
 
+        # this handles losses (takes minimum value epoch)
         else:
-            peak_epoch = argpartition(t_t, len(t_t) - 1)[0]
+            best_epoch = argpartition(t_t, len(t_t) - 1)[0]
 
-        peak = array(out.history[key])[peak_epoch]
-        _rr_out.append(peak)
-        p_epochs.append(peak_epoch)
+        if self.last_epoch_value:
+            value_to_report = out.history[key][-1]
+        else:
+            value_to_report = array(out.history[key])[best_epoch]
+
+        _rr_out.append(value_to_report)
+        p_epochs.append(best_epoch)
 
         # this takes care of the separate entity with just peak epoch data
     self.peak_epochs.append(p_epochs)
