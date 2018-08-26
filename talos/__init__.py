@@ -1,5 +1,5 @@
 from .scan.Scan import Scan
-from .reporting import Reporting
+from .utils.reporting import Reporting
 from .metrics.performance import Performance
 from .examples import datasets, params
 import astetik as plots
@@ -7,4 +7,4 @@ import astetik as plots
 # del parameters, utils, scan
 # del Performance, reporting, reducers, metrics, examples
 
-__version__ = "0.2"
+__version__ = "0.3"
