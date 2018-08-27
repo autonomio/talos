@@ -1,11 +1,10 @@
 from .performance import Performance
 from numpy import nan
-from keras.models import Sequential
 
 
-#   Inspired by predict_classes function from Keras Sequential Model   
-#   Supports Functional Model (Experimental)
-def __predict_classes(model, x, batch_size=32, verbose=0):
+# Inspired by predict_classes function from Keras Sequential Model
+# Supports Functional Model (Experimental)
+def _functional_predict(model, x, batch_size=32, verbose=0):
 
         proba = model.predict(x, batch_size=batch_size, verbose=verbose)
         if proba.shape[-1] > 1:
@@ -28,18 +27,12 @@ def get_score(self):
     '''
 
     try:
-        if type(self.keras_model) is Sequential:
-            y_pred = self.keras_model.predict_classes(self.x_val)
+        if self.experimental_functional_support:
+            y_pred = _functional_predict(self.keras_model, self.x_val)
         else:
-            if self.experimental_functional_support:
-                y_pred = __predict_classes(self.keras_model, self.x_val)
-            else:
-                print("Add 'experimental_functional_support=True' in Scan() to support Functional Model")
-                raise
-                
+            y_pred = self.keras_model.predict_classes(self.x_val)
+
         return Performance(y_pred, self.y_val, self.shape, self.y_max).result
 
     except TypeError:
         return nan
-
-    
