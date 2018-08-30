@@ -17,7 +17,7 @@ def reduce_prepare(self):
     if self.reduction_window is not None:
         self.data = self.data.tail(self.reduction_window)
 
-    self.param_columns = [col for col in self.data.columns if col not in self.names]
+    self.param_columns = [col for col in self.data.columns if col not in metric_names()]
     self.param_table = self.data[self.param_columns]
     self.param_table.insert(0, self.reduction_metric, self.data[self.reduction_metric])
 

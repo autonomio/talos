@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-def correlation(self, corr_to_drop='neg'):
+def correlation(self):
 
     '''Correlation Reducers
 
@@ -35,9 +35,9 @@ def correlation(self, corr_to_drop='neg'):
     to_drop_temp = dummy_cols.corr(method='spearman')[self.reduction_metric]
 
     # pick the drop method based on paramaters
-    if corr_to_drop == 'neg':
+    if self.reduce_loss is False:
         self._reduce_keys = to_drop_temp.sort_values().index[0], out[0]
-    elif corr_to_drop == 'pos':
+    else:
         self._reduce_keys = to_drop_temp.sort_values().index[-2], out[0]
 
     return self

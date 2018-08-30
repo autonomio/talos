@@ -11,7 +11,7 @@ from keras.activations import softmax, relu, sigmoid
 from sklearn.model_selection import train_test_split
 
 from talos.scan.Scan import Scan
-from talos.reporting import Reporting
+from talos.utils.reporting import Reporting
 
 from talos.model.examples import iris_model, cervix_model
 
@@ -77,18 +77,19 @@ class TestIris:
     def test_scan_iris_2(self):
         print("Running Iris dataset test 2...")
         Scan(self.x, self.y, params=p2, dataset_name='testing',
-             experiment_no='000', model=iris_model)
-        Reporting('testing_000.csv')
+             experiment_no='000', model=iris_model,
+             last_epoch_value=True,
+             experimental_functional_support=True)
 
     def test_scan_iris_explicit_validation_set(self):
-        print("Running explicit validation dataset test 1...")
+        print("Running explicit validation dataset test with metric reduction")
         Scan(self.x_train, self.y_train, params=p2,
              dataset_name='testing',
              experiment_no='000', model=iris_model,
              x_val=self.x_dev, y_val=self.y_dev)
 
     def test_scan_iris_explicit_validation_set_force_fail(self):
-        print("Running explicit validation dataset test 2...")
+        print("Running explicit validation dataset test with loss reduction")
         try:
             Scan(self.x_train, self.y_train, params=p2,
                  dataset_name='testing',
@@ -104,13 +105,24 @@ class TestCancer:
         self.x, self.y = datasets.cervical_cancer()
         self.model = cervix_model
 
-    def test_scan_cancer(self):
+    def test_scan_cancer_metric_reduction(self):
         print("Running Cervical Cancer dataset test...")
         Scan(self.x, self.y, grid_downsample=0.0005, params=p3,
              dataset_name='testing', experiment_no='a',
              model=self.model,
-             reduction_method='correlation', reduction_interval=5)
-        Reporting('testing_a.csv')
+             reduction_threshold=0.01,
+             reduction_method='correlation',
+             reduction_interval=2)
+
+    def test_scan_cancer_loss_reduction(self):
+        print("Running Cervical Cancer dataset test...")
+        Scan(self.x, self.y, grid_downsample=0.0005, params=p3,
+             dataset_name='testing', experiment_no='a',
+             model=self.model,
+             reduction_metric='val_loss',
+             reduction_threshold=0.01,
+             reduction_method='correlation',
+             reduction_interval=2)
 
     def test_linear_method(self):
         print("Testing linear method on Cancer dataset...")
@@ -123,6 +135,27 @@ class TestCancer:
         Scan(self.x, self.y, params=p3, dataset_name='testing',
              search_method='reverse', grid_downsample=0.0005,
              experiment_no='000', model=self.model)
+
+
+class TestReporting:
+
+    def __init__(self):
+        print("Testing Reporting...")
+
+        r = Reporting('testing_000.csv')
+
+        x = r.data
+        x = r.correlate()
+        x = r.high()
+        x = r.low()
+        x = r.rounds()
+        x = r.rounds2high()
+        x = r.best_params()
+        x = r.plot_corr()
+        x = r.plot_hist()
+        x = r.plot_line()
+
+        del x
 
 
 class TestLoadDatasets:
