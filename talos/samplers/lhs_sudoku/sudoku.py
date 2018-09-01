@@ -135,8 +135,8 @@ Return value:
     if verbose:
         print('Allocating %d elements for solution...' % (N*k*m))
 
-    I    = np.empty( [N,k,m], dtype=int, order="C" )  # index vectors
-    Iidx = np.zeros( [N,k],   dtype=int, order="C" )  # index of first "not yet used" element in each index vector
+    I = np.empty([N, k, m], dtype=int, order="C") # index vectors
+    Iidx = np.zeros([N, k], dtype=int, order="C") # index of first "not yet used" element in each index vector
 
     # Create random permutations of range(m) so that in the sampling loop
     # we may simply pick the first element from each index vector.

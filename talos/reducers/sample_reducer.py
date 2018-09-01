@@ -48,10 +48,8 @@ def sample_reducer(self):
 
     # creates a latin hypercube sample
     elif self.main_self.random_method == 'lhs':
-
-        out = lhs.sample(2, _d_out)[:, 1]
-        size = [i[0] for i in out[0]]
-
+        
+        size = lhs.sample(2, _d_out)[:, 1]
         return self.param_grid.take(size, axis=0)
 
     # creates a latin hypercube sample with sudoku constraint
@@ -59,5 +57,4 @@ def sample_reducer(self):
 
         out = sudoku.sample(1, 1, _d_out)
         size = [i[0] for i in out[0]]
-
         return self.param_grid.take(size, axis=0)
