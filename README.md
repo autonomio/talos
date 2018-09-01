@@ -106,11 +106,16 @@ Talos accepts lists with values, and tuples (start, end, n). Learning rate is no
               model=iris_model,
               grid_downsample=0.5)
 
-## Optimization
+## Optimization Strategies
 
-One of the challenges in the paradigm where Talos exposes Keras models fully, is the evaluation of permutations across different experiments, as it is common that evaluation metrics can change depending on the model.
+Talos can be used for both random and grid searching of hyperparameters. The object of abstraction is the keras model configuration, of which n number of permutations is tried in a  Talos experiment.
 
-This is overcome by having a grading system that first detects the kind of data (type of prediction and distribution of truth values), and then uses a relevant robust scoring mechanism (f1 score) to produce an apples-to-apples "grade" for each permutation, which is then stored in the master log. The same score is available for binary, multi-label, multi-class (one hot encoded) and continuous data. For each type of prediction, the score is produced following the same procedure, resulting in a true apples-to-apples performance metric.
+As opposed to adding other optimization strategies, which are widely available in various solutions, Talos focus is on:
+
+- adding variations of random variable picking
+- reducing the workload of random variable picking
+
+As it stands, both of these approaches are currently under leveraged by other solutions, and under represented in the literature.
 
 ## Built With
 

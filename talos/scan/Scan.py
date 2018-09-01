@@ -68,6 +68,9 @@ class Scan:
     shuffle : bool, optional
         If True, shuffle the data in x and y before splitting into the train
         and cross-validation datasets. (Default is True).
+    random_method : uniform, stratified, lhs, lhs_sudoku
+        Determinines the way in which the grid_downsample is applied. The
+        default setting is 'uniform'.
     search_method : {None, 'random', 'linear', 'reverse'}
         Determines the random sampling of the dictionary. `random` picks one
         hyperparameter point at random and removes it from the list, then
@@ -103,7 +106,9 @@ class Scan:
 
     def __init__(self, x, y, params, dataset_name, experiment_no, model,
                  x_val=None, y_val=None,
-                 val_split=.3, shuffle=True, search_method='random',
+                 val_split=.3, shuffle=True,
+                 random_method='uniform',
+                 search_method='random',
                  reduction_method=None, reduction_interval=50,
                  reduction_window=20, grid_downsample=None,
                  reduction_threshold=0.2, reduction_metric='val_acc',
@@ -126,6 +131,7 @@ class Scan:
         self.y_val = y_val
         self.val_split = val_split
         self.shuffle = shuffle
+        self.random_method = random_method
         self.search_method = search_method
         self.reduction_method = reduction_method
         self.reduction_interval = reduction_interval

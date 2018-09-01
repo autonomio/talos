@@ -27,8 +27,10 @@ def get_score(self):
     '''
 
     try:
+        # for functional model experimental support
         if self.experimental_functional_support:
             y_pred = _functional_predict(self.keras_model, self.x_val)
+        # all other cases
         else:
             y_pred = self.keras_model.predict_classes(self.x_val)
 

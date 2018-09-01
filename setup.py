@@ -84,7 +84,9 @@ if __name__ == "__main__":
                     'talos.model',
                     'talos.parameters',
                     'talos.reducers',
-                    'talos.metrics'],
+                    'talos.metrics',
+                    'talos.samplers',
+                    'talos.samplers.lhs_sudoku'],
 
           classifiers=[
                  'Intended Audience :: Science/Research',
