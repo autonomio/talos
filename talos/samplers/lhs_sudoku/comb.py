@@ -59,4 +59,3 @@ This is then eval'd and the resulting list, converted to an np.array, is returne
     code += " ]"
 
     return __longlist2array(eval(code))
-
