@@ -30,8 +30,12 @@ import time
 import uuid
 
 from datetime import datetime
-# Queue was changed to queue in Python 3
-from queue import Queue, Empty
+
+# handles both python2 and python3
+try:
+    from queue import Queue, Empty
+except ImportError:
+    from Queue import Queue, Empty
 
 import requests
 
