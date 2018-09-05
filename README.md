@@ -106,11 +106,41 @@ Talos accepts lists with values, and tuples (start, end, n). Learning rate is no
               model=iris_model,
               grid_downsample=0.5)
 
-## Optimization Strategies
 
-Talos can be used for both random and grid searching of hyperparameters. The object of abstraction is the keras model configuration, of which n number of permutations is tried in a  Talos experiment.
+## Not All Randomness Are Created Equal
 
-As opposed to adding other optimization strategies, which are widely available in various solutions, Talos focus is on:
+The main optimization strategy focus in Talos is to provide the gold standard random search capabilities. Talos implements three kinds of random generation methods:
+
+- True / Quantum randomness
+- Pseudo randomness
+- Quasi randomness
+
+The currently implemented methods are:
+
+- Quantum randomness (vacuum based)
+- Ambient Sound based randomness
+- Sobol sequences
+- Halton sequences
+- Latin hypercube
+- Improved Latin hypercube
+- Latin hypercube with a Sudoku-style constraint
+- Uniform Mersenne
+- Cryptographically sound uniform
+
+Each method differs in discrepancy and other observable aspects.
+
+## More on Optimization Strategies
+
+Talos supports several common optimization strategies:
+
+- Random search
+- Grid search
+- Manually assisted random or grid search
+- Correlation based optimization
+
+The object of abstraction is the keras model configuration, of which n number of permutations is tried in a  Talos experiment.
+
+As opposed to adding more complex optimization strategies, which are widely available in various solutions, Talos focus is on:
 
 - adding variations of random variable picking
 - reducing the workload of random variable picking

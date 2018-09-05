@@ -107,7 +107,7 @@ class Scan:
     def __init__(self, x, y, params, dataset_name, experiment_no, model,
                  x_val=None, y_val=None,
                  val_split=.3, shuffle=True,
-                 random_method='uniform',
+                 random_method='uniform_mersenne',
                  search_method='random',
                  reduction_method=None, reduction_interval=50,
                  reduction_window=20, grid_downsample=None,

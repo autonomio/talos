@@ -107,17 +107,17 @@ class TestCancer:
 
     def test_scan_cancer_metric_reduction(self):
         print("Running Cervical Cancer dataset test...")
-        Scan(self.x, self.y, grid_downsample=0.0005, params=p3,
+        Scan(self.x, self.y, grid_downsample=0.00025, params=p3,
              dataset_name='testing', experiment_no='a',
              model=self.model,
-             random_method='lhs_sudoku',
+             random_method='latin_sudoku',
              reduction_threshold=0.01,
              reduction_method='correlation',
              reduction_interval=2)
 
     def test_scan_cancer_loss_reduction(self):
         print("Running Cervical Cancer dataset test...")
-        Scan(self.x, self.y, grid_downsample=0.0005, params=p3,
+        Scan(self.x, self.y, grid_downsample=0.00025, params=p3,
              dataset_name='testing', experiment_no='a',
              model=self.model,
              random_method='stratified',
@@ -129,14 +129,14 @@ class TestCancer:
     def test_linear_method(self):
         print("Testing linear method on Cancer dataset...")
         Scan(self.x, self.y, params=p3, dataset_name='testing',
-             search_method='linear', grid_downsample=0.0005,
+             search_method='linear', grid_downsample=0.00025,
              experiment_no='000', model=self.model,
-             random_method='lhs')
+             random_method='quantum')
 
     def test_reverse_method(self):
         print("Testing reverse method on Cancer dataset...")
         Scan(self.x, self.y, params=p3, dataset_name='testing',
-             search_method='reverse', grid_downsample=0.0005,
+             search_method='reverse', grid_downsample=0.00025,
              experiment_no='000', model=self.model)
 
 

@@ -1,7 +1,7 @@
 from numpy import random, vstack
 from sklearn.model_selection import train_test_split
 
-from ..samplers.lhs_sudoku import sudoku, lhs
+from ..samplers.randomizer import Randomizer
 
 
 def sample_reducer(self):
@@ -23,22 +23,18 @@ def sample_reducer(self):
     Returns the reduced param_grid as numpy array.
 
     '''
+
+    random_method = self.main_self.random_method
+
     # calculate the size of the downsample
-    _d_out = int(len(self.param_grid) * self.main_self.grid_downsample)
+    n = int(len(self.param_grid) * self.main_self.grid_downsample)
 
     # initialize with random shuffle if needed
     if self.main_self.shuffle is True:
         random.shuffle(self.param_grid)
 
-    # creates a uniform random sample
-    if self.main_self.random_method == 'uniform':
-
-        random.shuffle(self.param_grid)
-        return self.param_grid[:_d_out]
-
     # creates a stratified sample
-    elif self.main_self.random_method == 'stratified':
-
+    if random_method == 'stratified':
         size = self.main_self.grid_downsample / 2
         train, test = train_test_split(self.param_grid,
                                        train_size=size,
@@ -46,15 +42,31 @@ def sample_reducer(self):
                                        stratify=None)
         return vstack((train, test))
 
-    # creates a latin hypercube sample
-    elif self.main_self.random_method == 'lhs':
-        
-        size = lhs.sample(2, _d_out)[:, 1]
-        return self.param_grid.take(size, axis=0)
+    # Initialize Randomizer()
+    r = Randomizer(len(self.param_grid), n)
 
-    # creates a latin hypercube sample with sudoku constraint
-    elif self.main_self.random_method == 'lhs_sudoku':
+    print(random_method)
 
-        out = sudoku.sample(1, 1, _d_out)
-        size = [i[0] for i in out[0]]
-        return self.param_grid.take(size, axis=0)
+    # use the user selected method
+    if random_method == 'sobol':
+        out = r.sobol()
+    elif random_method == 'quantum':
+        out = r.quantum()
+    elif random_method == 'halton':
+        out = r.halton()
+    elif random_method == 'korobov_matrix':
+        out = r.korobov_matrix()
+    elif random_method == 'latin_sudoku':
+        out = r.latin_sudoku()
+    elif random_method == 'latin_matrix':
+        out = r.latin_matrix()
+    elif random_method == 'latin_improved':
+        out = r.latin_improved()
+    elif random_method == 'uniform_mersenne':
+        out = r.uniform_mersenne()
+    elif random_method == 'uniform_crypto':
+        out = r.uniform_crypto()
+    elif random_method == 'ambience':
+        out = r.ambience()
+
+    return self.param_grid.take(out, axis=0)

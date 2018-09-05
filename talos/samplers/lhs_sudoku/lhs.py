@@ -1,43 +1,30 @@
-# -*- coding: utf-8 -*-
-#
-"""Classical latin hypercube sampler."""
-
 from __future__ import division, print_function, absolute_import
-
 import numpy as np
 
-def sample(N,k):
-    """Generate a latin hypercube sample in `N` dimensions.
 
-Parameters:
-    N : int, >= 1
-        number of dimensions
-    k : int, >= 1
-        number of bins per axis
+def sample(dims, n):
 
-Return value:
-    rank-2 np.array
-        first index indexes the sample number, the second indexes the axis
-        (i.e. each row is an N-dimensional sample).
+    '''Latin Hypercube Sampling
 
-**Notes:**
+    Parameters:
+    dims : int, >= 1
+           number of dimensions
+    n : int, >= 1
+        number of samples
+    '''
 
-In the result, range(k) on the first axis is paired with a random permutation
-of range(k) on each subsequent axis.
-"""
     # sanity check input
-    if not isinstance(N, int)  or  N < 1:
-        raise ValueError("N must be int >= 1, got %g" % (N))
-    if not isinstance(k, int)  or  k < 1:
-        raise ValueError("k must be int >= 1, got %g" % (k))
+    if not isinstance(dims, int) or dims < 1:
+        raise ValueError("dims must be int >= 1, got %g" % (dims))
+    if not isinstance(n, int) or n < 1:
+        raise ValueError("n must be int >= 1, got %g" % (n))
 
-    S = np.empty( (k,N), dtype=int, order="C" )
+    S = np.empty((n, dims), dtype=int, order="C")
 
-    S[:,0] = range(k)
-    for j in range(1, N):
-        tmp = np.array( range(k), dtype=int )
+    S[:, 0] = range(n)
+    for j in range(1, dims):
+        tmp = np.array(range(n), dtype=int)
         np.random.shuffle(tmp)
-        S[:,j] = tmp
+        S[:, j] = tmp
 
     return S
-
