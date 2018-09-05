@@ -13,8 +13,8 @@ import itertools
 
 import numpy as np
 
-from diversipy.distance import calc_euclidean_dist_matrix
-from diversipy.distance import DistanceMatrixFunction
+from .distance import calc_euclidean_dist_matrix
+from .distance import DistanceMatrixFunction
 
 
 
