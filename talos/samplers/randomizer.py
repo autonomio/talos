@@ -1,5 +1,4 @@
 import numpy as np
-from secrets import randbelow
 
 from .sobol.sobol_seq import i4_sobol_generate
 from .hypercube.hycusampling import halton, korobov_design_matrix
@@ -25,6 +24,8 @@ class Randomizer:
         return out[:self.n]
 
     def uniform_crypto(self):
+
+        from secrets import randbelow
 
         '''Cryptographically sound pseudorandom sequence'''
 

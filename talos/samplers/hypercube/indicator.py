@@ -14,8 +14,8 @@ try:
 except ImportError:
     pass
 
-from diversipy.distance import calc_euclidean_dist_matrix
-from diversipy.distance import calc_dists_to_boundary
+from .distance import calc_euclidean_dist_matrix
+from .distance import calc_dists_to_boundary
 
 
 def covering_radius(points, repair_margin=1e-8, full_output=False):

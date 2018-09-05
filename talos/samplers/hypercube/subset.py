@@ -11,8 +11,8 @@ import random
 
 import numpy as np
 
-from diversipy.distance import calc_dists_to_boundary
-from diversipy.distance import calc_euclidean_dist_matrix
+from .distance import calc_dists_to_boundary
+from .distance import calc_euclidean_dist_matrix
 
 
 class MinBoundingBox:
