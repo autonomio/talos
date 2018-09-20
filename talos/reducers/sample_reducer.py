@@ -45,8 +45,6 @@ def sample_reducer(self):
     # Initialize Randomizer()
     r = Randomizer(len(self.param_grid), n)
 
-    print(random_method)
-
     # use the user selected method
     if random_method == 'sobol':
         out = r.sobol()

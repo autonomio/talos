@@ -89,7 +89,8 @@ if __name__ == "__main__":
                     'talos.samplers.lhs_sudoku',
                     'talos.samplers.hypercube',
                     'talos.samplers.sobol',
-                    'talos.samplers.quantum'],
+                    'talos.samplers.quantum'
+                    'talos.samplers.ambient'],
 
           classifiers=[
                  'Intended Audience :: Science/Research',
