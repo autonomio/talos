@@ -22,7 +22,7 @@ A Python interface to the ANU Quantum Random Numbers Server.
 
 http://qrng.anu.edu.au
 """
-
+import ssl
 import binascii
 import math
 import sys
@@ -85,7 +85,9 @@ if sys.version_info[0] == 2:
                 return default
 else:
     def get_json(url):
-        return json.loads(urlopen(url).read().decode('ascii'))
+        
+        context = ssl._create_unverified_context()
+        return json.loads(urlopen(url, context=context).read().decode('ascii'))
 
 
 def binary(array_length=100, block_size=100):
