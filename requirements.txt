@@ -6,3 +6,4 @@ astetik
 tqdm
 sklearn
 chances
+kerasplotlib
