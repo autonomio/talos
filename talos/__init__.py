@@ -8,4 +8,4 @@ import astetik as plots
 # del parameters, utils, scan
 # del Performance, reporting, reducers, metrics, examples
 
-__version__ = "0.3.2"
+__version__ = "0.3.3"

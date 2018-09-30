@@ -114,7 +114,7 @@ class Scan:
                  reduction_threshold=0.2, reduction_metric='val_acc',
                  reduce_loss=False, round_limit=None,
                  talos_log_name='talos.log', debug=False, seed=None,
-                 clear_tf_session=False, disable_progress_bar=False,
+                 clear_tf_session=True, disable_progress_bar=False,
                  experimental_functional_support=False,
                  last_epoch_value=False):
 

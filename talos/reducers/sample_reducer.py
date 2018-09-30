@@ -1,7 +1,7 @@
 from numpy import random, vstack
 from sklearn.model_selection import train_test_split
 
-from ..samplers.randomizer import Randomizer
+import chances
 
 
 def sample_reducer(self):
@@ -43,7 +43,7 @@ def sample_reducer(self):
         return vstack((train, test))
 
     # Initialize Randomizer()
-    r = Randomizer(len(self.param_grid), n)
+    r = chances.Randomizer(len(self.param_grid), n)
 
     # use the user selected method
     if random_method == 'sobol':
