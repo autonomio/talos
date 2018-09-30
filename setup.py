@@ -16,7 +16,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://autonom.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/autonomio/talos/'
-VERSION = '0.3.2'
+VERSION = '0.3.3'
 
 try:
     from setuptools import setup
@@ -57,6 +57,11 @@ def check_dependencies():
         import tqdm
     except ImportError:
         install_requires.append('tqdm')
+
+    try:
+        import tqdm
+    except ImportError:
+        install_requires.append('chances')
 
     return install_requires
 
