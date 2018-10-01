@@ -16,7 +16,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://autonom.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/autonomio/talos/'
-VERSION = '0.3'
+VERSION = '0.4'
 
 try:
     from setuptools import setup
@@ -57,6 +57,18 @@ def check_dependencies():
         import tqdm
     except ImportError:
         install_requires.append('tqdm')
+    try:
+        import chances
+    except ImportError:
+        install_requires.append('chances')
+    try:
+        import kerasplotlib
+    except ImportError:
+        install_requires.append('kerasplotlib')
+    try:
+        import wrangle
+    except ImportError:
+        install_requires.append('wrangle')
 
     return install_requires
 

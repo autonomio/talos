@@ -106,11 +106,46 @@ Talos accepts lists with values, and tuples (start, end, n). Learning rate is no
               model=iris_model,
               grid_downsample=0.5)
 
-## Optimization
 
-One of the challenges in the paradigm where Talos exposes Keras models fully, is the evaluation of permutations across different experiments, as it is common that evaluation metrics can change depending on the model.
+## Not All Randomness Are Created Equal
 
-This is overcome by having a grading system that first detects the kind of data (type of prediction and distribution of truth values), and then uses a relevant robust scoring mechanism (f1 score) to produce an apples-to-apples "grade" for each permutation, which is then stored in the master log. The same score is available for binary, multi-label, multi-class (one hot encoded) and continuous data. For each type of prediction, the score is produced following the same procedure, resulting in a true apples-to-apples performance metric.
+The main optimization strategy focus in Talos is to provide the gold standard random search capabilities. Talos implements three kinds of random generation methods:
+
+- True / Quantum randomness
+- Pseudo randomness
+- Quasi randomness
+
+The currently implemented methods are:
+
+- Quantum randomness (vacuum based)
+- Ambient Sound based randomness
+- Sobol sequences
+- Halton sequences
+- Latin hypercube
+- Improved Latin hypercube
+- Latin hypercube with a Sudoku-style constraint
+- Uniform Mersenne
+- Cryptographically sound uniform
+
+Each method differs in discrepancy and other observable aspects.
+
+## More on Optimization Strategies
+
+Talos supports several common optimization strategies:
+
+- Random search
+- Grid search
+- Manually assisted random or grid search
+- Correlation based optimization
+
+The object of abstraction is the keras model configuration, of which n number of permutations is tried in a  Talos experiment.
+
+As opposed to adding more complex optimization strategies, which are widely available in various solutions, Talos focus is on:
+
+- adding variations of random variable picking
+- reducing the workload of random variable picking
+
+As it stands, both of these approaches are currently under leveraged by other solutions, and under represented in the literature.
 
 ## Built With
 

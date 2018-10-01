@@ -89,7 +89,7 @@ class Reporting:
 
         return corr(self.data[cols], color_grades=color_grades)
 
-    def table(self, metric='val_acc', sort_by='val_acc', ascending=False):
+    def table(self, metric='val_acc', sort_by=None, ascending=False):
 
         '''Shows a table with hyperparameters and a given metric
 
@@ -107,6 +107,9 @@ class Reporting:
         '''
 
         cols = self._cols(metric)
+
+        if sort_by is None:
+            sort_by = metric
 
         out = self.data[cols].sort_values(sort_by, ascending=ascending)
 

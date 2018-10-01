@@ -1,3 +1,5 @@
+from time import strftime
+
 from ..utils.validation_split import validation_split
 from ..utils.detector import prediction_type
 from ..parameters.ParamGrid import ParamGrid
@@ -20,6 +22,12 @@ def scan_prepare(self):
     self = debug_logging(self)
 
     # create the name for the experiment
+    if self.dataset_name is None:
+        self.dataset_name = strftime('%D%H%M%S').replace('/', '')
+
+    if self.experiment_no is None:
+        self.experiment_no = ''
+
     self.experiment_name = self.dataset_name + '_' + self.experiment_no
 
     # for the case where x_val or y_val is missing when other is present
@@ -56,5 +64,9 @@ def scan_prepare(self):
     self._data_len = len(self.x)
     self = prediction_type(self)
     self.result = []
+
+    # model saving
+    self.saved_models = []
+    self.saved_weights = []
 
     return self

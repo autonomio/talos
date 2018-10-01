@@ -50,7 +50,12 @@ class ParamGrid:
 
     def _param_input_conversion(self):
 
-        '''DETECT PARAM FORMAT'''
+        '''DETECT PARAM FORMAT
+
+        Checks of the hyperparameter input format is list
+        or tupple in the params dictionary and expands accordingly.
+
+        '''
 
         out = {}
 
@@ -59,8 +64,8 @@ class ParamGrid:
             # for range/step style input
             if isinstance(self.main_self.params[param], tuple):
                 out[param] = self._param_range(self.main_self.params[param][0],
-                                              self.main_self.params[param][1],
-                                              self.main_self.params[param][2])
+                                               self.main_self.params[param][1],
+                                               self.main_self.params[param][2])
             # all other input styles
             else:
                 out[param] = self.main_self.params[param]
