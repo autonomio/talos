@@ -46,6 +46,10 @@ def rounds_run(self):
     # determine the parameters for the particular execution
     self.round_params = round_params(self)
 
+    # print round params
+    if self.print_params is True:
+        print(self.round_params)
+
     # compile the model
     _hr_out, self.keras_model = ingest_model(self)
 

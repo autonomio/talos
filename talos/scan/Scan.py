@@ -98,13 +98,17 @@ class Scan:
         User specified cross-validation data. (Default is None).
     y_val : ndarray
         User specified cross-validation labels. (Default is None).
+    print_params : bool
+        Print params for each round on screen (useful when using TrainingLog
+        callback for visualization)
 
     """
 
     # TODO: refactor this so that we don't initialize global variables
     global self
 
-    def __init__(self, x, y, params, dataset_name, experiment_no, model,
+    def __init__(self, x, y, params, model,
+                 dataset_name=None, experiment_no=None,
                  x_val=None, y_val=None,
                  val_split=.3, shuffle=True,
                  random_method='uniform_mersenne',
@@ -116,7 +120,7 @@ class Scan:
                  talos_log_name='talos.log', debug=False, seed=None,
                  clear_tf_session=True, disable_progress_bar=False,
                  experimental_functional_support=False,
-                 last_epoch_value=False):
+                 last_epoch_value=False, print_params=False):
 
         # NOTE: these need to be follow the order from __init__
         # and all paramaters needs to be included here and only here.
@@ -148,6 +152,7 @@ class Scan:
         self.disable_progress_bar = disable_progress_bar
         self.experimental_functional_support = experimental_functional_support
         self.last_epoch_value = last_epoch_value
+        self.print_params = print_params
         # input parameters section ends
 
         self._null = self.runtime()
