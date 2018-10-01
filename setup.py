@@ -65,6 +65,10 @@ def check_dependencies():
         import kerasplotlib
     except ImportError:
         install_requires.append('kerasplotlib')
+    try:
+        import wrangle
+    except ImportError:
+        install_requires.append('wrangle')
 
     return install_requires
 

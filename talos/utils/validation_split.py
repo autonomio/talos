@@ -1,4 +1,5 @@
 import numpy as np
+from wrangle import shuffle
 
 
 def validation_split(self):
@@ -40,3 +41,27 @@ def random_shuffle(self):
 
     self.x = self.x[random_index]
     self.y = self.y[random_index]
+
+
+def kfold(x, y, folds=10, shuffled=True):
+
+    if shuffled is True:
+        x, y = shuffle(x, y)
+
+    out_x = []
+    out_y = []
+
+    x_len = len(x)
+    step = int(x_len / folds)
+
+    lo = 0
+    hi = step
+
+    for i in range(folds):
+        out_x.append(x[lo:hi])
+        out_y.append(y[lo:hi])
+
+        lo += step
+        hi += step
+
+    return out_x, out_y

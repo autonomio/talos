@@ -1,5 +1,8 @@
-from keras.models import model_from_json
+from numpy import mean, std
 
+from keras.models import model_from_json
+from .validation_split import kfold
+from sklearn.metrics import f1_score
 
 class Predict:
 
@@ -65,3 +68,26 @@ class Predict:
         model = self.load_model(model_id)
 
         return model.predict_classes(x)
+
+    def evaluate(self, x, y,
+                 model_id=None,
+                 folds=5,
+                 shuffle=True,
+                 average='binary'):
+
+        '''Evaluate model against f1-score'''
+
+        out = []
+        if model_id is None:
+            model_id = self.best_model()
+
+        model = self.load_model(model_id)
+
+        kx, ky = kfold(x, y, folds, shuffle)
+
+        for i in range(folds):
+            y_pred = model.predict(kx[i]) >= 0.5
+            scores = f1_score(y_pred, ky[i], average=average)
+            out.append(scores * 100)
+
+        print("%.2f%% (+/- %.2f%%)" % (mean(out), std(out)))
