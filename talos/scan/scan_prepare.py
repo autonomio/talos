@@ -67,6 +67,6 @@ def scan_prepare(self):
 
     # model saving
     self.saved_models = []
-    self.saved_graphs = []
+    self.saved_weights = []
 
     return self

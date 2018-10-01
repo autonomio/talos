@@ -3,6 +3,7 @@ from tqdm import tqdm
 from keras import backend as K
 
 import tensorflow as tf
+from keras.models import model_from_json
 
 from ..utils.results import run_round_results, save_result
 from ..parameters.round_params import round_params
@@ -85,9 +86,9 @@ def rounds_run(self):
             # update the progress bar
             self.pbar.update(total_reduced)
 
-    # handle storing of models
-    self.saved_models.append(self.model)
-    self.saved_graphs.append(tf.get_default_graph())
+    # save model and weights
+    self.saved_models.append(self.keras_model.to_json())
+    self.saved_weights.append(self.keras_model.get_weights())
 
     # clear tensorflow sessions (maybe)
     if self.clear_tf_session is True:
