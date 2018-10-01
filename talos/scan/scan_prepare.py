@@ -65,4 +65,8 @@ def scan_prepare(self):
     self = prediction_type(self)
     self.result = []
 
+    # model saving
+    self.saved_models = []
+    self.saved_graphs = []
+
     return self

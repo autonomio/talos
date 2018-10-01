@@ -1,5 +1,6 @@
 from keras.layers import Dense, Dropout
 from .shapes import shapes
+from ..utils.exceptions import TalosTypeError
 
 
 def hidden_layers(model, params, last_neuron):
@@ -53,6 +54,9 @@ def hidden_layers(model, params, last_neuron):
         bias_constraint = params['bias_constraint']
     except KeyError:
         bias_constraint = None
+
+    if isinstance(params['activation'], str) is True:
+        raise TalosTypeError('When hidden_layers are used, activation needs to be an object and not string')
 
     try:
         params['shapes']
