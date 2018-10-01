@@ -87,7 +87,7 @@ def rounds_run(self):
 
     # handle storing of models
     self.saved_models.append(self.model)
-    self.saved_graph.append(tf.get_default_graph())
+    self.saved_graphs.append(tf.get_default_graph())
 
     # clear tensorflow sessions (maybe)
     if self.clear_tf_session is True:
