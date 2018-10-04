@@ -111,16 +111,24 @@ class Scan:
                  dataset_name=None, experiment_no=None,
                  x_val=None, y_val=None,
                  val_split=.3, shuffle=True,
+                 round_limit=None,
+                 grid_downsample=None,
                  random_method='uniform_mersenne',
+                 seed=None,
                  search_method='random',
-                 reduction_method=None, reduction_interval=50,
-                 reduction_window=20, grid_downsample=None,
-                 reduction_threshold=0.2, reduction_metric='val_acc',
-                 reduce_loss=False, round_limit=None,
-                 talos_log_name='talos.log', debug=False, seed=None,
-                 clear_tf_session=True, disable_progress_bar=False,
-                 experimental_functional_support=False,
-                 last_epoch_value=False, print_params=False):
+                 reduction_method=None,
+                 reduction_interval=50,
+                 reduction_window=20,
+                 reduction_threshold=0.2,
+                 reduction_metric='val_acc',
+                 reduce_loss=False,
+                 last_epoch_value=False,
+                 talos_log_name='talos.log',
+                 clear_tf_session=True,
+                 functional_model=False,
+                 disable_progress_bar=False,
+                 print_params=False,
+                 debug=False,):
 
         # NOTE: these need to be follow the order from __init__
         # and all paramaters needs to be included here and only here.
@@ -150,7 +158,7 @@ class Scan:
         self.seed = seed
         self.clear_tf_session = clear_tf_session
         self.disable_progress_bar = disable_progress_bar
-        self.experimental_functional_support = experimental_functional_support
+        self.functional_model = functional_model
         self.last_epoch_value = last_epoch_value
         self.print_params = print_params
         # input parameters section ends

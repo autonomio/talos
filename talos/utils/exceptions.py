@@ -11,3 +11,7 @@ class TalosParamsError(Exception):
 
 class TalosTypeError(Exception):
     pass
+
+
+class TalosModelError(Exception):
+    pass

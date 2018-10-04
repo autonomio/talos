@@ -2,9 +2,6 @@ from tqdm import tqdm
 
 from keras import backend as K
 
-import tensorflow as tf
-from keras.models import model_from_json
-
 from ..utils.results import run_round_results, save_result
 from ..parameters.round_params import round_params
 from ..utils.results import create_header
@@ -14,7 +11,7 @@ from ..metrics.score_model import get_score
 from ..utils.logging import write_log
 from ..utils.results import result_todf, peak_epochs_todf
 from ..reducers.reduce_run import reduce_run
-from ..utils.exceptions import TalosReturnError
+from ..utils.exceptions import TalosReturnError, TalosTypeError
 
 
 def scan_run(self):
@@ -57,8 +54,11 @@ def rounds_run(self):
     # compile the model
     try:
         _hr_out, self.keras_model = ingest_model(self)
-    except TypeError:
-        raise TalosReturnError("Make sure that input model returns 'out, model' where out is history object from model.fit()")
+    except TypeError as err:
+        if err.args[0] == "unsupported operand type(s) for +: 'int' and 'numpy.str_'":
+            raise TalosTypeError("Activation should be as object and not string in params")
+        else:
+            raise TalosReturnError("Make sure that input model returns 'out, model' where out is history object from model.fit()")
 
     # create log and other stats
     try:
