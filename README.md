@@ -8,7 +8,7 @@ Talos is a solution that helps finding hyperparameter configurations for Keras m
 
 ### See a [basic](https://github.com/autonomio/talos/blob/master/examples/Hyperparameter%20Optimization%20with%20Keras%20for%20the%20Iris%20Prediction.ipynb) | [moderate](https://github.com/autonomio/talos/blob/master/examples/Hyperparameter%20Optimization%20with%20Keras%20for%20the%20Iris%20Prediction.ipynb) | [advanced](https://github.com/autonomio/talos/blob/master/examples/Hyperparameter%20Optimization%20with%20Keras%20for%20the%20Iris%20Prediction.ipynb) example Notebook
 
-### Read the [User Manual](https://github.com/autonomio/talos/blob/master/docs/index.rst)
+### Read the [User Manual](https://autonomio.github.io/docs_talos)
 
 ### Read a [Report on Hyperparameter Optimization with Keras](https://towardsdatascience.com/hyperparameter-optimization-with-keras-b82e6364ca53)
 
@@ -16,6 +16,7 @@ Talos is a solution that helps finding hyperparameter configurations for Keras m
 
 ### Install `pip install talos`
 
+<img src=https://i.imgur.com/e9vbFjQ.png width=600px>
 
 ### Is Talos for Me?
 
