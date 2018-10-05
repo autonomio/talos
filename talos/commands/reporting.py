@@ -1,6 +1,6 @@
 from pandas import read_csv
-from astetik import line, hist, corr
-from talos.metrics.names import metric_names
+from astetik import line, hist, corr, regs, bargrid, kde
+from ..metrics.names import metric_names
 
 
 class Reporting:
@@ -10,9 +10,15 @@ class Reporting:
 
     filename :: the name of the experiment log from Scan()'''
 
-    def __init__(self, filename=None):
+    def __init__(self, source=None):
 
-        self.data = read_csv(filename)
+        '''Takes as input a filename to the experiment
+        log or the Scan object'''
+
+        if isinstance(source, str):
+            self.data = read_csv(source)
+        else:
+            self.data = source.data
 
     def high(self, metric='val_acc'):
 
@@ -44,7 +50,7 @@ class Reporting:
         '''Returns a correlation table against a given metric. Drops
         all other metrics and correlates against hyperparameters only.'''
 
-        columns = [col for col in self.data.columns if col not in metric_names()]
+        columns = [c for c in self.data.columns if c not in metric_names()]
         out = self.data[columns]
         out.insert(0, metric, self.data[metric])
         out = out.corr()[metric]
@@ -88,6 +94,34 @@ class Reporting:
         cols = self._cols(metric)
 
         return corr(self.data[cols], color_grades=color_grades)
+
+    def plot_regs(self, x='val_acc', y='val_loss'):
+
+        '''A regression plot with data on two axis
+
+        x = data for the x axis
+        y = data for the y axis
+        '''
+
+        return regs(self.data, x, y)
+
+    def plot_bars(self, x, y, hue, col):
+
+        '''A comparison plot with 4 axis'''
+
+        return bargrid(self.data,
+                       x=x,
+                       y=y,
+                       hue=hue,
+                       col=col,
+                       col_wrap=4)
+
+    def plot_kde(self, x, y=None):
+
+        '''Kernel Destiny Estimation type histogram with
+        support for 1 or 2 axis of data'''
+
+        return kde(self.data, x, y)
 
     def table(self, metric='val_acc', sort_by=None, ascending=False):
 

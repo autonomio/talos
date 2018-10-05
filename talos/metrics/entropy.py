@@ -1,8 +1,6 @@
 from scipy.stats import entropy
 from numpy import nan
 
-from ..utils.exceptions import TalosModelError
-
 
 def epoch_entropy(history):
 
