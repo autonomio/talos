@@ -1,4 +1,4 @@
-from shutil import unpack_archive
+from zipfile import ZipFile
 
 from pandas import read_csv
 from numpy import load
@@ -20,7 +20,9 @@ class Restore:
         self.file_prefix = self.extract_to + '/' + self.package_name
 
         # extract the zip
-        unpack_archive(self.path_to_zip, self.extract_to)
+        # unpack_archive(self.path_to_zip, self.extract_to)
+        z = ZipFile(self.path_to_zip, mode='r')
+        z.extractall(self.extract_to)
 
         # add params dictionary
         self.params = load(self.file_prefix + '_params.npy').item()
