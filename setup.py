@@ -16,7 +16,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://autonom.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/autonomio/talos/'
-VERSION = '0.4'
+VERSION = '0.4.3'
 
 try:
     from setuptools import setup
@@ -96,7 +96,8 @@ if __name__ == "__main__":
                     'talos.model',
                     'talos.parameters',
                     'talos.reducers',
-                    'talos.metrics'],
+                    'talos.metrics',
+                    'talos.commands'],
 
           classifiers=[
                  'Intended Audience :: Science/Research',

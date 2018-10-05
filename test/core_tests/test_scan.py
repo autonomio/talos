@@ -11,9 +11,9 @@ from keras.activations import softmax, relu, sigmoid
 from sklearn.model_selection import train_test_split
 
 from talos.scan.Scan import Scan
-from talos.utils.reporting import Reporting
+from talos.commands.reporting import Reporting
 
-from talos.model.examples import iris_model, cervix_model
+from talos.examples.models import iris_model, cervix_model
 
 # remotely hosted datasets
 from talos import datasets, params
@@ -79,7 +79,7 @@ class TestIris:
         Scan(self.x, self.y, params=p2, dataset_name='testing',
              experiment_no='000', model=iris_model,
              last_epoch_value=True,
-             experimental_functional_support=True)
+             functional_model=True)
 
     def test_scan_iris_explicit_validation_set(self):
         print("Running explicit validation dataset test with metric reduction")

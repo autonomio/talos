@@ -6,19 +6,21 @@
 
 Talos is a solution that helps finding hyperparameter configurations for Keras models. To perform hyperparameter optimization with Talos, there is no need to learn any new syntax, or change anything in the way Keras models are created. Keras functionality is fully exposed, and any parameter can be included in the scans.
 
-Talos is made for data scientists and data engineers that want to remain in complete control of their Keras models, but are tired of mindless parameter hopping and confusing optimization solutions that add complexity instead of taking it away.
+### See a [basic](https://github.com/autonomio/talos/blob/master/examples/Hyperparameter%20Optimization%20with%20Keras%20for%20the%20Iris%20Prediction.ipynb) | [moderate](https://github.com/autonomio/talos/blob/master/examples/Hyperparameter%20Optimization%20with%20Keras%20for%20the%20Iris%20Prediction.ipynb) | [advanced](https://github.com/autonomio/talos/blob/master/examples/Hyperparameter%20Optimization%20with%20Keras%20for%20the%20Iris%20Prediction.ipynb) example Notebook
 
-See the example Notebook [HERE](https://github.com/autonomio/talos/blob/master/examples/Hyperparameter%20Optimization%20with%20Keras%20for%20the%20Iris%20Prediction.ipynb)
+### Read the [User Manual](https://autonomio.github.io/docs_talos)
 
-Read the User Manual [HERE](https://github.com/autonomio/talos/blob/master/docs/index.rst)
+### Read a [Report on Hyperparameter Optimization with Keras](https://towardsdatascience.com/hyperparameter-optimization-with-keras-b82e6364ca53)
 
-Read a Talos field-report on [Hyperparameter Optimization](https://towardsdatascience.com/hyperparameter-optimization-with-keras-b82e6364ca53)
+### Read the [Roadmap](https://github.com/autonomio/talos/blob/master/docs/roadmap.rst)
 
-## Development Objectives
+### Install `pip install talos`
 
-Currently Talos yields state-of-the-art results (e.g. Iris dataset 100% and Wisconsin Breast Cancer dataset 99.4%) across a range of prediction tasks in a semi-automatic manner, while providing the simplest available method for hyperparameter optimization with Keras.
+<img src=https://i.imgur.com/e9vbFjQ.png width=600px>
 
-Read the roadmap [HERE](https://github.com/autonomio/talos/blob/master/docs/roadmap.rst)
+### Is Talos for Me?
+
+Talos is made for data scientists and data engineers that want to remain in complete control of their Keras models, but are tired of mindless parameter hopping and confusing optimization solutions that add complexity instead of reducing it. Within minutes, without learning any new syntax, Talos allows you to configure, perform, and evaluate hyperparameter optimization experiments that yield state-of-the-art (e.g. Iris dataset 100% and Wisconsin Breast Cancer dataset 99.4%) across a range of prediction tasks, by providing the simplest available method for hyperparameter optimization with Keras.
 
 ## Benefits
 
@@ -34,11 +36,13 @@ Based on a review of more than 30 hyperparameter optimization and scanning solut
 
 ## Install
 
+Production version:
+
     pip install talos
 
-Or from git repo:
+Latest development version
 
-    pip install git+https://github.com/autonomio/talos.git
+    pip install git+https://github.com/autonomio/talos.git@daily-dev
 
 ## How to use
 

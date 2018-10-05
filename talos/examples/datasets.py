@@ -33,7 +33,10 @@ def titanic():
     cols = ['class', 'embark_town', 'who', 'deck', 'sex']
 
     for col in cols:
-        x = pd.merge(x, pd.get_dummies(df[col]), left_index=True, right_index=True)
+        x = pd.merge(x,
+                     pd.get_dummies(df[col]),
+                     left_index=True,
+                     right_index=True)
 
     x = x.dropna()
     x = x.values
@@ -60,7 +63,8 @@ def cervical_cancer():
     df = pd.read_csv(base + 'cervical_cancer.csv')
     df = df.replace('?', nan)
     df = df.drop(['citology', 'hinselmann', 'biopsy'], axis=1)
-    df = df.drop(['since_first_diagnosis', 'since_last_diagnosis'], axis=1).dropna()
+    df = df.drop(['since_first_diagnosis',
+                  'since_last_diagnosis'], axis=1).dropna()
 
     df = df.astype(float)
 
