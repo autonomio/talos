@@ -1,11 +1,16 @@
-from talos.scan import Scan
-from talos.reporting import Reporting
-from talos.metrics.performance import Performance
-from talos.examples import datasets, models, params
-from talos.utils import save_load
+from .scan.Scan import Scan
+from .commands.reporting import Reporting
+from .commands.predict import Predict
+from .commands.deploy import Deploy
+from .commands.evaluate import Evaluate
+from. commands.restore import Restore
+
+from .metrics.performance import Performance
+from .examples import datasets, params
 import astetik as plots
+from kerasplotlib import TrainingLog as live
 
-del parameters, model, utils, scan, save_load,
-del Performance, reporting, reducers, metrics, examples
+# del parameters, utils, scan
+# del Performance, reporting, reducers, metrics, examples
 
-__version__ = "0.1.9"
+__version__ = "0.4.3"

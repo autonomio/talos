@@ -4,6 +4,7 @@ def last_neuron(self):
 
     try:
         last_neuron = self.y.shape[1]
+        return last_neuron
     except IndexError:
         if len(labels) == 2 and max(labels) == 1:
             last_neuron = 1

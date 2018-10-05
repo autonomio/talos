@@ -1,8 +1,19 @@
 from keras.layers import Dense, Dropout
 from .shapes import shapes
+from ..utils.exceptions import TalosTypeError
 
 
 def hidden_layers(model, params, last_neuron):
+
+    '''HIDDEN LAYER Generator
+
+    NOTE: 'first_neuron', 'dropout', and 'hidden_layers' need
+    to be present in the params dictionary.
+
+    Hidden layer generation for the cases where number
+    of layers is used as a variable in the optimization process.
+    Handles things in a way where any number of layers can be tried
+    with matching hyperparameters.'''
 
     try:
         kernel_initializer = params['kernel_initializer']
@@ -44,12 +55,14 @@ def hidden_layers(model, params, last_neuron):
     except KeyError:
         bias_constraint = None
 
+    if isinstance(params['activation'], str) is True:
+        raise TalosTypeError('When hidden_layers are used, activation needs to be an object and not string')
+
     try:
         params['shapes']
         layer_neurons = shapes(params, last_neuron)
     except KeyError:
         layer_neurons = [params['first_neuron']] * params['hidden_layers']
-
 
     for i in range(params['hidden_layers']):
 

@@ -3,3 +3,8 @@ numpy
 tensorflow
 keras
 astetik
+tqdm
+sklearn
+chances
+kerasplotlib
+wrangle

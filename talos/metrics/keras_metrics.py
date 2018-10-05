@@ -1,10 +1,12 @@
 from keras import backend as K
 
 
-def matthews_correlation(y_true, y_pred):
+def matthews_correlation_acc(y_true, y_pred):
+
     '''Calculates the Matthews correlation coefficient measure for quality
     of binary classification problems.
     '''
+
     y_pred_pos = K.round(K.clip(y_pred, 0, 1))
     y_pred_neg = 1 - y_pred_pos
 
@@ -23,27 +25,32 @@ def matthews_correlation(y_true, y_pred):
     return numerator / (denominator + K.epsilon())
 
 
-def precision(y_true, y_pred):
+def precision_acc(y_true, y_pred):
+
     '''Calculates the precision, a metric for multi-label classification of
     how many selected items are relevant.
     '''
+
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
     precision = true_positives / (predicted_positives + K.epsilon())
     return precision
 
 
-def recall(y_true, y_pred):
+def recall_acc(y_true, y_pred):
+
     '''Calculates the recall, a metric for multi-label classification of
     how many relevant items are selected.
     '''
+
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
     recall = true_positives / (possible_positives + K.epsilon())
     return recall
 
 
-def fbeta_score(y_true, y_pred, beta=1):
+def fbeta_score_acc(y_true, y_pred, beta=1):
+
     '''Calculates the F score, the weighted harmonic mean of precision and recall.
     This is useful for multi-label classification, where input samples can be
     classified as sets of labels. By only using accuracy (precision) a model
@@ -56,6 +63,7 @@ def fbeta_score(y_true, y_pred, beta=1):
     correct classes becomes more important, and with beta > 1 the metric is
     instead weighted towards penalizing incorrect class assignments.
     '''
+
     if beta < 0:
         raise ValueError('The lowest choosable beta is zero (only precision).')
 
@@ -63,14 +71,14 @@ def fbeta_score(y_true, y_pred, beta=1):
     if K.sum(K.round(K.clip(y_true, 0, 1))) == 0:
         return 0
 
-    p = precision(y_true, y_pred)
-    r = recall(y_true, y_pred)
+    p = precision_acc(y_true, y_pred)
+    r = recall_acc(y_true, y_pred)
     bb = beta ** 2
     fbeta_score = (1 + bb) * (p * r) / (bb * p + r + K.epsilon())
     return fbeta_score
 
 
-def fmeasure(y_true, y_pred):
+def fmeasure_acc(y_true, y_pred):
     '''Calculates the f-measure, the harmonic mean of precision and recall.
     '''
-    return fbeta_score(y_true, y_pred, beta=1)
+    return fbeta_score_acc(y_true, y_pred, beta=1)

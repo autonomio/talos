@@ -3,8 +3,21 @@ import math as m
 
 def shapes(params, last_neuron):
 
+    '''Handles shapes for the case where hidden layers are used
+    as an optimization parameter. Available shapes are:
+
+    'funnel',
+    'long_funnel',
+    'rhombus',
+    'brick',
+    'diamond',
+    'hexagon',
+    'triangle',
+    'stairs'
+
+    '''
     layers = params['hidden_layers']
-    shape = params['shape']
+    shape = params['shapes']
     neuron_max = params['first_neuron']
     neuron_previous = neuron_max
     neuron_last = last_neuron

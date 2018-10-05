@@ -18,7 +18,7 @@ def clean_dict(self):
                 _cd_out[key] = None
             elif len(s.split('.')) > 1:
                 _cd_out[key] = self.params[key]
-            elif type(self.params[key]) == type(1):
+            elif isinstance(self.params[key], int):
                 _cd_out[key] = int(s)
             else:
                 _cd_out[key] = s
@@ -56,3 +56,14 @@ def write_log(self):
     _wt_out = clean_dict(self)
     _wt_out = dict_tostr(self, _wt_out)
     self.logfile.write(_wt_out + '\n')
+
+
+def debug_logging(self):
+
+    if self.debug:
+        self.logfile = open('talos.debug.log', 'a')
+    else:
+        self.logfile_name = self.talos_log_name
+        self.logfile = open(self.logfile_name, 'a')
+
+    return self

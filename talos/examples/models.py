@@ -1,57 +1,80 @@
+#!/usr/bin/env python
+
+from talos.model import lr_normalizer, early_stopper, hidden_layers
+
 from keras.models import Sequential
 from keras.layers import Dropout, Dense
-from ..model.normalizers import lr_normalizer
-from ..model.layers import hidden_layers
-from ..metrics.keras_metrics import fmeasure
+
+from talos.metrics.keras_metrics import matthews_correlation_acc, precision_acc
+from talos.metrics.keras_metrics import recall_acc, fmeasure_acc
 
 
-def iris(x_train, y_train, x_val, y_val, params):
+def iris_model(x_train, y_train, x_val, y_val, params):
 
-    '''A model that yields 100% accuracy and f1 for Iris dataset'''
-
+    # note how instead of passing the value, we pass a dictionary entry
     model = Sequential()
-    model.add(Dense(params['first_neuron'], input_dim=x_train.shape[1], activation=params['activation']))
+    model.add(Dense(params['first_neuron'],
+                    input_dim=x_train.shape[1],
+                    activation='relu'))
+
+    # same here, just passing a dictionary entry
     model.add(Dropout(params['dropout']))
-    hidden_layers(model, params)
-    model.add(Dense(y_train.shape[1], activation=params['last_activation']))
 
-    model.compile(optimizer=params['optimizer'](lr=lr_normalizer(params['lr'], params['optimizer'])),
+    # with this call we can create any number of hidden layers
+    hidden_layers(model, params, y_train.shape[1])
+
+    # again, instead of the activation name, we have a dictionary entry
+    model.add(Dense(y_train.shape[1],
+                    activation=params['last_activation']))
+
+    # here are using a learning rate boundary
+    model.compile(optimizer=params['optimizer']
+                  (lr=lr_normalizer(params['lr'],
+                                    params['optimizer'])),
                   loss=params['losses'],
-                  metrics=['acc', fmeasure])
+                  metrics=['acc'])
 
+    # here we are also using the early_stopper function for a callback
     out = model.fit(x_train, y_train,
-                    batch_size=20,
+                    batch_size=params['batch_size'],
                     epochs=params['epochs'],
                     verbose=0,
-                    validation_data=[x_val, y_val])
+                    validation_data=[x_val, y_val],
+                    callbacks=early_stopper(params['epochs'], mode=[1, 1]))
 
     return out, model
 
 
-# first we have to make sure to input data and params into the function
-def breast_cancer(x_train, y_train, x_val, y_val, params):
+def cervix_model(x_train, y_train, x_val, y_val, params):
 
-    # next we can build the model exactly like we would normally do it
     model = Sequential()
-    model.add(Dense(10, input_dim=x_train.shape[1], activation=params['activation'], kernel_initializer='normal'))
+    model.add(Dense(params['first_neuron'],
+                    input_dim=x_train.shape[1],
+                    activation='relu'))
+
     model.add(Dropout(params['dropout']))
 
-    # if we want to also test for number of layers and shapes, that's possible
     hidden_layers(model, params, 1)
 
-    # then we finish again with completely standard Keras way
-    model.add(Dense(1, activation=params['last_activation'], kernel_initializer='normal'))
+    model.add(Dense(1, activation=params['last_activation']))
 
-    model.compile(loss=params['losses'],
-                  # here we add a regulizer normalization function from Talos
-                  optimizer=params['optimizer'](lr=lr_normalizer(params['lr'], params['optimizer'])),
-                  metrics=['acc', fmeasure])
+    model.compile(optimizer=params['optimizer']
+                  (lr=lr_normalizer(params['lr'],
+                                    params['optimizer'])),
+                  loss=params['losses'],
+                  metrics=['acc',
+                           fmeasure_acc,
+                           recall_acc,
+                           precision_acc,
+                           matthews_correlation_acc])
 
-    history = model.fit(x_train, y_train,
-                        validation_data=[x_val, y_val],
+    results = model.fit(x_train, y_train,
                         batch_size=params['batch_size'],
                         epochs=params['epochs'],
-                        verbose=0)
+                        verbose=0,
+                        validation_data=[x_val, y_val],
+                        callbacks=early_stopper(params['epochs'],
+                                                mode='moderate',
+                                                monitor='val_fmeasure'))
 
-    # finally we have to make sure that history object and model are returned
-    return history, model
+    return results, model
