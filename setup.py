@@ -33,42 +33,7 @@ def check_dependencies():
         import numpy
     except ImportError:
         install_requires.append('numpy')
-    try:
-        import pandas
-    except ImportError:
-        install_requires.append('pandas')
-    try:
-        import tensorflow
-    except ImportError:
-        install_requires.append('tensorflow')
-    try:
-        import keras
-    except ImportError:
-        install_requires.append('keras')
-    try:
-        import astetik
-    except ImportError:
-        install_requires.append('astetik')
-    try:
-        import sklearn
-    except ImportError:
-        install_requires.append('sklearn')
-    try:
-        import tqdm
-    except ImportError:
-        install_requires.append('tqdm')
-    try:
-        import chances
-    except ImportError:
-        install_requires.append('chances')
-    try:
-        import kerasplotlib
-    except ImportError:
-        install_requires.append('kerasplotlib')
-    try:
-        import wrangle
-    except ImportError:
-        install_requires.append('wrangle')
+
 
     return install_requires
 
