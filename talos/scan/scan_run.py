@@ -24,7 +24,6 @@ def scan_run(self):
     # save the results
     self = result_todf(self)
     self.peak_epochs_df = peak_epochs_todf(self)
-    self._null = self.logfile.close()
 
     self = scan_finish(self)
 
