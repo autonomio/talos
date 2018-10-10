@@ -173,4 +173,7 @@ class Reporting:
         for i, metric in enumerate(metric):
             cols.insert(i, metric)
 
+        # make sure only unique values in col list
+        cols = list(set(cols))
+
         return cols
