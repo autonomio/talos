@@ -5,7 +5,6 @@ from ..utils.detector import prediction_type
 from ..parameters.ParamGrid import ParamGrid
 from ..utils.pred_class import classify
 from ..utils.last_neuron import last_neuron
-from ..utils.logging import debug_logging
 
 
 TRAIN_VAL_RUNTIME_ERROR_MSG = """
@@ -17,9 +16,6 @@ def scan_prepare(self):
 
     '''Includes all preparation procedures up until starting the first scan
     through scan_run()'''
-
-    # based on the 'debug' Scan() paramater
-    self = debug_logging(self)
 
     # create the name for the experiment
     if self.dataset_name is None:

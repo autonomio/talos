@@ -90,17 +90,18 @@ class Scan:
         The fraction of `params` that will be tested (Default is None).
     reduction_metric : {'val_acc'}
         Metric used to tune the reductions.
-    talos_log_name : str
-        The lame of the saved Talos log. (Default is 'talos.log').
-    debug : bool
-        Implements debugging feedback. (Default is False).
     x_val : ndarray
         User specified cross-validation data. (Default is None).
     y_val : ndarray
         User specified cross-validation labels. (Default is None).
+    last_epoch_value : bool
+        Set to True if the last epoch metric values are logged as opposed
+        to the default which is peak epoch values for each round.
     print_params : bool
         Print params for each round on screen (useful when using TrainingLog
         callback for visualization)
+    debug : bool
+        Implements debugging feedback. (Default is False).
 
     """
 
@@ -123,12 +124,10 @@ class Scan:
                  reduction_metric='val_acc',
                  reduce_loss=False,
                  last_epoch_value=False,
-                 talos_log_name='talos.log',
                  clear_tf_session=True,
-                 functional_model=False,
                  disable_progress_bar=False,
                  print_params=False,
-                 debug=False,):
+                 debug=False):
 
         # NOTE: these need to be follow the order from __init__
         # and all paramaters needs to be included here and only here.
@@ -153,12 +152,10 @@ class Scan:
         self.reduction_metric = reduction_metric
         self.reduce_loss = reduce_loss
         self.round_limit = round_limit
-        self.talos_log_name = talos_log_name
         self.debug = debug
         self.seed = seed
         self.clear_tf_session = clear_tf_session
         self.disable_progress_bar = disable_progress_bar
-        self.functional_model = functional_model
         self.last_epoch_value = last_epoch_value
         self.print_params = print_params
         # input parameters section ends

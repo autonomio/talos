@@ -4,8 +4,6 @@ from ..parameters.round_params import round_params
 from ..utils.results import create_header
 from ..metrics.entropy import epoch_entropy
 from ..model.ingest_model import ingest_model
-from ..metrics.score_model import get_score
-from ..utils.logging import write_log
 from ..utils.results import run_round_results, save_result
 from ..reducers.reduce_run import reduce_run
 from ..utils.exceptions import TalosReturnError, TalosTypeError
@@ -44,8 +42,7 @@ def scan_round(self):
         save_result(self)
 
     _hr_out = run_round_results(self, _hr_out)
-    self._val_score = get_score(self)
-    write_log(self)
+
     self.result.append(_hr_out)
     save_result(self)
 
