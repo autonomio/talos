@@ -26,6 +26,9 @@ def scan_prepare(self):
 
     self.experiment_name = self.dataset_name + '_' + self.experiment_no
 
+    # create the round times list
+    self.round_times = []
+
     # for the case where x_val or y_val is missing when other is present
     self.custom_val_split = False
     if (self.x_val is not None and self.y_val is None) or \

@@ -69,6 +69,10 @@ def check_dependencies():
         import wrangle
     except ImportError:
         install_requires.append('wrangle')
+    try:
+        import requests
+    except ImportError:
+        install_requires.append('requests')
 
     return install_requires
 

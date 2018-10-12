@@ -1,3 +1,5 @@
+from time import strftime, time
+
 from keras import backend as K
 
 from ..parameters.round_params import round_params
@@ -21,7 +23,11 @@ def scan_round(self):
     if self.print_params is True:
         print(self.round_params)
 
-    # compile the model
+    # set start time
+    round_start = strftime('%H%M%S')
+    start = time()
+
+    # fit the model
     try:
         _hr_out, self.keras_model = ingest_model(self)
     except TypeError as err:
@@ -30,9 +36,14 @@ def scan_round(self):
         else:
             raise TalosReturnError("Make sure that input model returns 'out, model' where out is history object from model.fit()")
 
+    # set end time and log
+    round_end = strftime('%H%M%S')
+    round_seconds = time() - start
+    self.round_times.append([round_start, round_end, round_seconds])
+
     # create log and other stats
     try:
-        self.epoch_entropy.append(epoch_entropy((_hr_out)))
+        self.epoch_entropy.append(epoch_entropy(_hr_out))
     except (TypeError, AttributeError):
         raise TalosReturnError("Make sure that input model returns in the order 'out, model'")
 
