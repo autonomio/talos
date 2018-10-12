@@ -47,7 +47,7 @@ def run_round_results(self, out):
 
         # this handles losses (takes minimum value epoch)
         else:
-            best_epoch = argpartition(t_t, len(t_t) - 1)[0]
+            best_epoch = argpartition(t_t, 0)[0]
 
         if self.last_epoch_value:
             value_to_report = out.history[key][-1]
