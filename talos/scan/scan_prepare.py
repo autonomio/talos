@@ -5,7 +5,6 @@ from ..utils.detector import prediction_type
 from ..parameters.ParamGrid import ParamGrid
 from ..utils.pred_class import classify
 from ..utils.last_neuron import last_neuron
-from ..utils.logging import debug_logging
 
 
 TRAIN_VAL_RUNTIME_ERROR_MSG = """
@@ -18,9 +17,6 @@ def scan_prepare(self):
     '''Includes all preparation procedures up until starting the first scan
     through scan_run()'''
 
-    # based on the 'debug' Scan() paramater
-    self = debug_logging(self)
-
     # create the name for the experiment
     if self.dataset_name is None:
         self.dataset_name = strftime('%D%H%M%S').replace('/', '')
@@ -29,6 +25,9 @@ def scan_prepare(self):
         self.experiment_no = ''
 
     self.experiment_name = self.dataset_name + '_' + self.experiment_no
+
+    # create the round times list
+    self.round_times = []
 
     # for the case where x_val or y_val is missing when other is present
     self.custom_val_split = False

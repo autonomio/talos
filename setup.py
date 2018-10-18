@@ -16,7 +16,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://autonom.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/autonomio/talos/'
-VERSION = '0.4.3'
+VERSION = '0.4.4'
 
 try:
     from setuptools import setup
@@ -69,6 +69,10 @@ def check_dependencies():
         import wrangle
     except ImportError:
         install_requires.append('wrangle')
+    try:
+        import requests
+    except ImportError:
+        install_requires.append('requests')
 
     return install_requires
 
