@@ -12,10 +12,7 @@ from sklearn.model_selection import train_test_split
 
 from talos.scan.Scan import Scan
 from talos.commands.reporting import Reporting
-
 from talos.examples.models import iris_model, cervix_model
-
-# remotely hosted datasets
 from talos import datasets, params
 
 p1 = {'lr': [1],
@@ -78,8 +75,7 @@ class TestIris:
         print("Running Iris dataset test 2...")
         Scan(self.x, self.y, params=p2, dataset_name='testing',
              experiment_no='000', model=iris_model,
-             last_epoch_value=True,
-             functional_model=True)
+             last_epoch_value=True)
 
     def test_scan_iris_explicit_validation_set(self):
         print("Running explicit validation dataset test with metric reduction")
