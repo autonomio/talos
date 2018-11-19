@@ -49,10 +49,15 @@ class Reporting:
 
         '''Returns a correlation table against a given metric. Drops
         all other metrics and correlates against hyperparameters only.'''
-
+        
+        def _to_numeric(tbl):
+            '''Helper to convert all columns to numeric in a table'''
+            new_columns = {col_name: to_numeric(tbl[col_name], errors='ignore') for col_name in tbl.columns}
+            return DataFrame(new_columns)
+        
         cols = self._cols(metric)
         tbl = self.data[cols]
-        tbl = self._to_numeric(tbl)
+        tbl = _to_numeric(tbl)
         out = tbl.corr()[metric]
 
         return out[out != 1]
@@ -161,11 +166,6 @@ class Reporting:
         out.insert(out.shape[1], 'index_num', range(len(out)))
 
         return out.values
-    
-    def _to_numeric(self, tbl):
-        '''Helper to convert all columns to numeric in a table'''
-        new_columns = {col_name: to_numeric(tbl[col_name], errors='ignore') for col_name in tbl.columns}
-        return DataFrame(new_columns)
         
     
     def _cols(self, metric):
