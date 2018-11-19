@@ -50,9 +50,8 @@ class Reporting:
         '''Returns a correlation table against a given metric. Drops
         all other metrics and correlates against hyperparameters only.'''
 
-        columns = self._cols(metric)
-        out = self.data[columns]
-        out.insert(0, metric, self.data[metric])
+        cols = self._cols(metric)
+        out = self.data[cols]
         out = out.corr()[metric]
 
         return out[out != 1]
@@ -167,6 +166,6 @@ class Reporting:
         '''Helper to remove other than desired metric from data table'''
         if isinstance(metric, list) is False:
             metric = [metric]
-        cols = (set(cols) - set(metric_names)) + set(metric)
+        cols = set(self.data.columns) - set(metric_names) + set(metric)
         cols = list(cols)
         return cols
