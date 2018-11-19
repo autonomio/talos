@@ -166,7 +166,7 @@ class Reporting:
         '''Helper to remove other than desired metric from data table'''
         if isinstance(metric, list) is False:
             metric = [metric]
-        cols_parameteres = set(self.data.columns) - set(metric_names()) # if it isn't a metric, it's a parameter
+        cols_parameters = set(self.data.columns) - set(metric_names()) # if it isn't a metric, it's a parameter
         cols = cols_parameters.union(set(metric)) # add back only the specified metrics
         cols = list(cols)
         return cols
