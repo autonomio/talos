@@ -166,6 +166,6 @@ class Reporting:
         '''Helper to remove other than desired metric from data table'''
         if isinstance(metric, list) is False:
             metric = [metric]
-        cols = set(self.data.columns) - set(metric_names) + set(metric)
+        cols = set(self.data.columns) - set(metric_names()) + set(metric)
         cols = list(cols)
         return cols
