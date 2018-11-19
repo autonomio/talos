@@ -34,4 +34,4 @@ def early_stopper(epochs,
                                 min_delta=mode[0],
                                 patience=mode[1],
                                 verbose=0, mode='auto')
-    return [_es_out]
+    return _es_out

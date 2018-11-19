@@ -40,7 +40,7 @@ def iris_model(x_train, y_train, x_val, y_val, params):
                     epochs=params['epochs'],
                     verbose=0,
                     validation_data=[x_val, y_val],
-                    callbacks=early_stopper(params['epochs'], mode=[1, 1]))
+                    callbacks=[early_stopper(params['epochs'], mode=[1, 1])])
 
     return out, model
 
@@ -73,8 +73,8 @@ def cervix_model(x_train, y_train, x_val, y_val, params):
                         epochs=params['epochs'],
                         verbose=0,
                         validation_data=[x_val, y_val],
-                        callbacks=early_stopper(params['epochs'],
+                        callbacks=[early_stopper(params['epochs'],
                                                 mode='moderate',
-                                                monitor='val_fmeasure'))
+                                                monitor='val_fmeasure')])
 
     return results, model
