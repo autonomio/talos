@@ -23,7 +23,7 @@ class ParamGrid:
 
         # build the parameter permutation grid
         self.param_grid = self._param_grid()
-
+        
         # reduce according to downsample
         if self.main_self.grid_downsample is not None:
             self.param_grid = sample_reducer(self)
@@ -33,6 +33,9 @@ class ParamGrid:
 
         # add the log index to param grid
         self.param_grid = column_stack((self.param_grid, self.param_log))
+
+
+
 
     def _param_grid(self):
 
@@ -44,7 +47,7 @@ class ParamGrid:
         '''
 
         ls = [list(self._p[key]) for key in self._p.keys()]
-        _param_grid_out = array(list(product(*ls)))
+        _param_grid_out = array(list(product(*ls)), dtype='object')
 
         return _param_grid_out
 

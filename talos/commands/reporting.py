@@ -149,14 +149,14 @@ class Reporting:
 
         return out
 
-    def best_params(self, metric='val_acc', n=10):
+    def best_params(self, metric='val_acc', n=10, ascending=False):
 
         '''Get the best parameters of the experiment based on a metric.
         Returns a numpy array with the values in a format that can be used
         with the talos backend in Scan(). Adds an index as the last column.'''
 
         cols = self._cols(metric)
-        out = self.data[cols].sort_values(metric, ascending=False)
+        out = self.data[cols].sort_values(metric, ascending=ascending)
         out = out.drop(metric, axis=1).head(n)
         out.insert(out.shape[1], 'index_num', range(len(out)))
 
@@ -172,5 +172,8 @@ class Reporting:
             metric = [metric]
         for i, metric in enumerate(metric):
             cols.insert(i, metric)
+
+        # make sure only unique values in col list
+        cols = list(set(cols))
 
         return cols

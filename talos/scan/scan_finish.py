@@ -1,5 +1,5 @@
 import time
-from pandas import Series
+from pandas import Series, DataFrame
 
 attrs_to_keep = ['data', 'x', 'y', 'peak_epochs_df',
                  'random_method', 'grid_downsample',
@@ -9,11 +9,15 @@ attrs_to_keep = ['data', 'x', 'y', 'peak_epochs_df',
                  'params', 'saved_models', 'saved_weights',
                  'experiment_name']
 
-attrs_final = ['data', 'x', 'y', 'peak_epochs_df',
+attrs_final = ['data', 'x', 'y', 'peak_epochs_df', 'round_times',
                'params', 'saved_models', 'saved_weights']
 
 
 def scan_finish(self):
+
+    # create a dataframe with permutation times
+    self.round_times = DataFrame(self.round_times)
+    self.columns = ['start', 'end', 'duration']
 
     # combine entropy tables
     self.peak_epochs_df['acc_epoch'] = [i[0] for i in self.epoch_entropy]
