@@ -3,6 +3,8 @@ from sklearn.model_selection import train_test_split
 
 import chances
 
+from ..utils.exceptions import TalosDataError
+
 
 def sample_reducer(self):
 
@@ -28,6 +30,9 @@ def sample_reducer(self):
 
     # calculate the size of the downsample
     n = int(len(self.param_grid) * self.main_self.grid_downsample)
+
+    #if n > 1: 
+    #    raise TalosDataError("Grid < 1: Incease grid_downsample")
 
     # initialize with random shuffle if needed
     if self.main_self.shuffle is True:

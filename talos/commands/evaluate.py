@@ -23,7 +23,8 @@ class Evaluate:
                  shuffle=True,
                  average='binary',
                  metric='val_acc',
-                 asc=False):
+                 asc=False, 
+                 print_out=False):
 
         '''Evaluate model against f1-score'''
 
@@ -40,4 +41,7 @@ class Evaluate:
             scores = f1_score(y_pred, ky[i], average=average)
             out.append(scores * 100)
 
-        print("%.2f%% (+/- %.2f%%)" % (mean(out), std(out)))
+        if print_out is True:
+            print("%.2f%% (+/- %.2f%%)" % (mean(out), std(out)))
+
+        return out
