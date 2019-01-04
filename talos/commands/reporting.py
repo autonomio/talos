@@ -111,9 +111,10 @@ class Reporting:
 
         x = data for the x axis
         y = data for the y axis
+        hue = data for the hue separation
         '''
 
-        return box(self.data, x, metric, hue)
+        return box(self.data, x, y, hue)
 
     def plot_bars(self, x, y, hue, col):
 
