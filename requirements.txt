@@ -1,6 +1,5 @@
 pandas
 numpy
-tensorflow
 keras
 astetik
 tqdm
