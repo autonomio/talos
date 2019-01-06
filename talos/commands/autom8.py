@@ -41,7 +41,7 @@ def Autom8(scan_object,
         Number of folds to be used in cross-validation.
     shuffle : bool
         If the data should be shuffled before cross-validation. 
-    average : string, [None, ‘binary’ (default), ‘micro’, ‘macro’, ‘samples’, ‘weighted’]
+    average : str
         This parameter is required for multiclass/multilabel targets. If None,
         the scores for each class are returned. Otherwise, this determines
         the type of averaging performed on the data:
