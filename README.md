@@ -86,15 +86,17 @@ The *Simple* example below is more than enough for starting to use Talos with an
 
 For more information on how Talos can help with your Keras workflow, visit the [User Manual](https://autonomio.github.io/docs_talos).
 
+You may also want to check out a visualization of the [Talos Hyperparameter Tuning workflow](https://github.com/autonomio/talos/wiki/Workflow).
+
 ### Install 
 
 Stable version:
 
-    pip install talos
+    ### `pip install talos`
 
 Daily development version:
 
-    pip install git+https://github.com/autonomio/talos.git@daily-dev
+    ## `pip install git+https://github.com/autonomio/talos.git@daily-dev`
 
 ### Support
 
