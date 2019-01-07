@@ -4,21 +4,21 @@ from ..scan.Scan import Scan
 def Autom8(scan_object,
            x_val,
            y_val,
-           n=10, 
+           n=10,
            metric='val_acc',
            folds=5,
            shuffle=True,
            average='binary',
            asc=False):
-    
+
     '''Pipeline automator
-    
-    Reduces the idea to prediction pipeline into a single 
+
+    Reduces the idea to prediction pipeline into a single
     command where a Scan() process is followed by evaluating
-    n best  
-    
-    Example use: 
-    
+    n best
+
+    Example use:
+
     Parameters
     ----------
     scan_object : Scan() object
@@ -31,16 +31,16 @@ def Autom8(scan_object,
         Data to be used for 'y' in evaluation. Note that should be in the same
         format as the data which was used in the Scan() but not the same data.
     n : str
-        Number of promising models to be included in the evaluation process. Time 
-        increase linearly with number of models.
+        Number of promising models to be included in the evaluation process.
+        Time increase linearly with number of models.
     metric : str
-        The metric to be used for deciding which models are promising. Basically the 'n'
-        argument and 'metric' argument are combined to pick 'n' best performing models
-        based on 'metric'.
+        The metric to be used for deciding which models are promising.
+        Basically the 'n' argument and 'metric' argument are combined to pick
+        'n' best performing models based on 'metric'.
     folds : int
         Number of folds to be used in cross-validation.
     shuffle : bool
-        If the data should be shuffled before cross-validation. 
+        If the data should be shuffled before cross-validation.
     average : str
         This parameter is required for multiclass/multilabel targets. If None,
         the scores for each class are returned. Otherwise, this determines
@@ -61,13 +61,15 @@ def Autom8(scan_object,
         'weighted':
         Calculate metrics for each label, and find their average weighted
         by support (the number of true instances for each label). This alters
-        'macro' to account for label imbalance; it can result in an F-score that is not between precision and recall.
+        'macro' to account for label imbalance; it can result in an F-score
+        that is not between precision and recall.
 
         'samples':
         Calculate metrics for each instance, and find their average
-        (only meaningful for multilabel classification where this differs from accuracy_score).  
+        (only meaningful for multilabel classification where this differs
+        from accuracy_score).
     asc : bool
-        This needs to be True for evaluation metrics that need to be minimized, 
+        This needs to be True for evaluation metrics that need to be minimized,
         and False when a metric needs to be maximized.
 
     '''
@@ -86,7 +88,8 @@ def Autom8(scan_object,
     preds = scan_object.best_model('eval_f1score_mean')
     scan_object.preds = preds.predict(x_val)
 
-    # print out the best model parameters and stats 
-    scan_object.preds_model = scan_object.data.sort_values('eval_f1score_mean', ascending=False).iloc[0]
-    
+    # print out the best model parameters and stats
+    scan_object.preds_model = scan_object.data.sort_values('eval_f1score_mean',
+                                                           ascending=False).iloc[0]
+
     return scan_object
