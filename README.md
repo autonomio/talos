@@ -70,7 +70,7 @@ Talos works on **Linux, Mac OSX**, and **Windows** systems and can be operated c
 
 ### Examples
 
-Get the below code [here](https://gist.github.com/mikkokotila/4c0d6298ff0a22dc561fb387a1b4b0bb). More examples below.
+Get the below code [here](https://gist.github.com/mikkokotila/4c0d6298ff0a22dc561fb387a1b4b0bb). More examples further below.
 
 <img src=https://i.ibb.co/VWd8Bhm/Screen-Shot-2019-01-06-at-11-26-32-PM.png>
 
@@ -99,6 +99,9 @@ Daily development version:
 #### `pip install git+https://github.com/autonomio/talos.git@daily-dev`
 
 ### Support
+
+Check out [common errors](https://github.com/autonomio/talos/wiki/Troubleshooting) in the Wiki.
+
 
 Check the [Docs](https://autonomio.github.io/docs_talos) which is generally keeping up with Master (and pip package). 
 
