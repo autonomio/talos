@@ -92,11 +92,11 @@ You may also want to check out a visualization of the [Talos Hyperparameter Tuni
 
 Stable version:
 
-    ### `pip install talos`
+#### `pip install talos`
 
 Daily development version:
 
-    ## `pip install git+https://github.com/autonomio/talos.git@daily-dev`
+#### `pip install git+https://github.com/autonomio/talos.git@daily-dev`
 
 ### Support
 
