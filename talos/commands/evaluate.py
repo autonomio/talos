@@ -111,7 +111,7 @@ class Evaluate:
                 elif eval_backend == 'sklearn':
                     scores = sklearn.metrics.__getattribute__(eval_metric)(y_pred, ky[i])
 
-                elif eval_backend == 'custom'
+                elif eval_backend == 'custom':
                     scores = eval_metric
 
             out.append(scores * 100)
