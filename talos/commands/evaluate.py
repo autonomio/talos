@@ -1,8 +1,7 @@
-import keras
-
+from sklearn.metrics import mean_absolute_error, f1_score
 from numpy import mean, std
-
 from sklearn.metrics import f1_score
+from talos.utils.validation_split import kfold
 
 from ..utils.validation_split import kfold
 from ..utils.best_model import best_model, activate_model
@@ -25,39 +24,14 @@ class Evaluate:
                  model_id=None,
                  folds=5,
                  shuffle=True,
-                 average='binary',
                  metric='val_acc',
-                 eval_metric='f1_score',
-                 eval_backend='sklearn',
+                 mode = 'multi_label',
                  asc=False, 
                  print_out=False):
 
-        '''Evaluates the model based on keras or sklearn 
-        metrics. By default set to f1_score but any sklearn
-        or keras metric can be used. Note that 'metric' 
-        is referring to the metric in scan_object.data and
-        is used to first identify the best model which is then
-        evaluated using eval_metric.
-
-        SKLEARN/KERAS METRIC WITHOUT ARGUMENTS:
-
-            evaluate(x, y,
-                     eval_metric=some_sklearn_metric,
-                     eval_backend='sklearn')
-
-
-        SKLEARN/KERAS METRIC WITH ARGUMENTS:
-
-            evaluate(x, y,
-                     eval_metric=some_sklearn_metric(x, y, some_arg),
-                     eval_backend='custom')
-
-
-        CUSTOM METRIC:
-
-            evaluate(x, y,
-                     eval_metric=custom_metric(x, y, some_arg),
-                     eval_backend='custom')
+        '''Evaluate a model based on f1_score (all except regression)
+        or mae (for regression). Supports 'binary', 'multi_class',
+        'multi_label', and 'regression' evaluation.
 
         x : array
             The input data for making predictions
@@ -70,17 +44,11 @@ class Evaluate:
         sort_metric : string
             A column name referring to the metric that was used in the scan_object
             as a performance metric. This is used for sorting the results to pick 
-
+            for evaluation.
         shuffle : bool
             Data is shuffled before evaluation.
-        average : string
-            For f1_score metric from sklearn
-        evaluation_metric : string or function
-            This should be one of sklearn or keras available metrics. Allows custom
-            metrics to be input as functions. Note that custom function require
-            evaluation_backend to be 'custom'
-        evaluation_backend : string
-            'keras', 'sklearn', or 'custom'
+        mode : string
+            'binary', 'multi_class', 'multi_label', or 'regression'.
         asc : bool
             False if the metric is to be optimized upwards (e.g. accuracy or f1_score)
         print_out : bool
@@ -99,24 +67,28 @@ class Evaluate:
         kx, ky = kfold(x, y, folds, shuffle)
 
         for i in range(folds):
-            y_pred = model.predict(kx[i]) >= 0.5
 
-            elif eval_metric == 'f1_score':
-                scores = f1_score(y_pred, ky[i], average=average)
+            y_pred = model.predict(kx[i], verbose=0)
 
-            else:
-                if eval_backend == 'keras':
-                    scores = keras.metrics.__getattribute__(eval_metric)(y_pred, ky[i])
+            if mode == 'binary':
+                y_pred = y_pred >= .5
+                scores = f1_score(y_pred , ky[i], average='binary')
                 
-                elif eval_backend == 'sklearn':
-                    scores = sklearn.metrics.__getattribute__(eval_metric)(y_pred, ky[i])
+            elif mode == 'multi_class':
+                y_pred = y_pred.argmax(axis=-1)
+                scores = f1_score(y_pred , ky[i], average='macro')
+            
+            if mode == 'multi_label':
+                y_pred = model.predict(kx[i]).argmax(axis=1) 
+                scores = f1_score(y_pred , ky[i].argmax(axis=1), average='macro')
 
-                elif eval_backend == 'custom':
-                    scores = eval_metric
-
-            out.append(scores * 100)
+            elif mode == 'regression':
+                y_pred = model.predict(kx[i])
+                scores = mean_absolute_error(y_pred, ky[i])
+            
+            out.append(scores)
 
         if print_out is True:
-            print("%.2f%% (+/- %.2f%%)" % (mean(out), std(out)))
+            print("mean : %.2f \n std : %.2f" % (mean(out), std(out)))
 
         return out
