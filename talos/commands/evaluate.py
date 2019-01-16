@@ -105,7 +105,7 @@ class Evaluate:
                 scores = f1_score(y_pred, ky[i], average=average)
 
             else:
-                if eval_backend == 'keras'
+                if eval_backend == 'keras':
                     scores = keras.metrics.__getattribute__(eval_metric)(y_pred, ky[i])
                 
                 elif eval_backend == 'sklearn':
