@@ -4,7 +4,6 @@ from ..utils.results import result_todf, peak_epochs_todf
 from .scan_round import scan_round
 from .scan_finish import scan_finish
 
-
 def scan_run(self):
 
     '''The high-level management of the scan procedures
@@ -25,7 +24,6 @@ def scan_run(self):
     # save the results
     self = result_todf(self)
     self.peak_epochs_df = peak_epochs_todf(self)
-    self._null = self.logfile.close()
 
     self = scan_finish(self)
 
