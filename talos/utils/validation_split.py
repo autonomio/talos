@@ -29,18 +29,37 @@ def validation_split(self):
 
 
 def random_shuffle(self):
-    """Randomly shuffles the datasets. If self.seed is set, seed the generator
+    
+    """Randomly shuffles the datasets.
+    If self.seed is set, seed the generator
     to ensure that the results are reproducible."""
 
-    random_index = np.arange(len(self.x))
+    def randomize(x):
 
-    if self.seed is not None:
-        np.random.seed(self.seed)
+        '''Helper function to support the case
+        where x consist of a list of arrays.'''
+    
+        if self.seed is not None:
+            np.random.seed(self.seed)
 
-    np.random.shuffle(random_index)
+        ix = np.arange(len(x))
+        np.random.shuffle(ix)
+    
+        return ix 
 
-    self.x = self.x[random_index]
-    self.y = self.y[random_index]
+    if isinstance(self.x, list):
+        
+        ix = randomize(self.x[0])
+        self.x = []
+        
+        for a in self.x:
+            out.append(a[ix])
+
+    else:
+        ix = randomize(self.x)
+        self.x = self.x[ix]
+
+    self.y = self.y[ix]
 
 
 def kfold(x, y, folds=10, shuffled=True):

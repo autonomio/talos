@@ -1,5 +1,9 @@
 from pandas import read_csv
-from astetik import line, hist, corr, regs, bargrid, kde
+from ..utils.connection_check import is_connected
+
+if is_connected() is True:
+    from astetik import line, hist, corr, regs, bargrid, kde, box
+
 from ..metrics.names import metric_names
 
 
@@ -104,6 +108,17 @@ class Reporting:
         '''
 
         return regs(self.data, x, y)
+
+    def plot_box(self, x, y='val_acc', hue=None):
+
+        '''A box plot with data on two axis
+
+        x = data for the x axis
+        y = data for the y axis
+        hue = data for the hue separation
+        '''
+
+        return box(self.data, x, y, hue)
 
     def plot_bars(self, x, y, hue, col):
 

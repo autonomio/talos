@@ -1,6 +1,9 @@
 import time
 from pandas import Series, DataFrame
 
+from ..utils.best_model import best_model
+from ..scan.scan_addon import func_best_model, func_evaluate
+
 attrs_to_keep = ['data', 'x', 'y', 'peak_epochs_df',
                  'random_method', 'grid_downsample',
                  'reduction_interval', 'reduce_loss',
@@ -52,5 +55,12 @@ def scan_finish(self):
 
     # add details dictionary as series
     self.details = Series(out)
+
+    # add best_model
+    self.best_model = func_best_model.__get__(self)
+    self.evaluate_models = func_evaluate.__get__(self)
+
+    # reset the index
+    self.data.index = range(len(self.data))
 
     return self
