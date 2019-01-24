@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from .scan_prepare import scan_prepare
 from .scan_run import scan_run
 
@@ -134,10 +136,10 @@ class Scan:
 
         self.x = x
         self.y = y
-        self.params = params
+        self.params = OrderedDict(params)
+        self.model = model
         self.dataset_name = dataset_name
         self.experiment_no = experiment_no
-        self.model = model
         self.x_val = x_val
         self.y_val = y_val
         self.val_split = val_split

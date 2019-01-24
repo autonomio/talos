@@ -4,10 +4,10 @@
 
 DESCRIPTION = "Talos Hyperparameter Tuning for Keras"
 LONG_DESCRIPTION = """\
-Talos provides a hyperparameter tuning and optimization solution 
-that allows using any Keras model as they are, with the simple
-change that instead of calling the parameter (e.g. epochs=25),
-you call it from a dictionary with an identical label (e.g. params['epochs']).
+Talos radically changes the ordinary Keras workflow by
+fullyautomating hyperparameter tuning and model evaluation.
+Talos exposes Keras functionality entirely and there is no new
+syntax or templates to learn.
 """
 
 DISTNAME = 'talos'
@@ -60,13 +60,15 @@ if __name__ == "__main__":
                     'talos.metrics',
                     'talos.commands'],
 
-          classifiers=[
-                 'Intended Audience :: Science/Research',
-                 'Programming Language :: Python :: 3.6',
-                 'License :: OSI Approved :: MIT License',
-                 'Topic :: Scientific/Engineering :: Human Machine Interfaces',
-                 'Topic :: Scientific/Engineering :: Artificial Intelligence',
-                 'Topic :: Scientific/Engineering :: Mathematics',
-                 'Operating System :: POSIX',
-                 'Operating System :: Unix',
-                 'Operating System :: MacOS'],)
+          classifiers=['Intended Audience :: Science/Research',
+                       'Programming Language :: Python :: 2.7',
+                       'Programming Language :: Python :: 3.5',
+                       'Programming Language :: Python :: 3.6',
+                       'License :: OSI Approved :: MIT License',
+                       'Topic :: Scientific/Engineering :: Human Machine Interfaces',
+                       'Topic :: Scientific/Engineering :: Artificial Intelligence',
+                       'Topic :: Scientific/Engineering :: Mathematics',
+                       'Operating System :: POSIX',
+                       'Operating System :: Unix',
+                       'Operating System :: MacOS',
+                       'Operating System :: Microsoft :: Windows :: Windows 10'])
