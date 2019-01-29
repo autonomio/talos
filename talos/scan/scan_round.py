@@ -34,6 +34,7 @@ def scan_round(self):
         if err.args[0] == "unsupported operand type(s) for +: 'int' and 'numpy.str_'":
             raise TalosTypeError("Activation should be as object and not string in params")
         else:
+            print('ERROR MESSAGE : ' + err.args[0])
             raise TalosReturnError("Make sure that input model returns 'out, model' where out is history object from model.fit()")
 
     # set end time and log
