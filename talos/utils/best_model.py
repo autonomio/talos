@@ -10,7 +10,7 @@ def best_model(self, metric, asc):
 
     best = self.data.sort_values(metric, ascending=asc).iloc[0].name
 
-    return best - 1
+    return best
 
 
 def activate_model(self, model_id):
