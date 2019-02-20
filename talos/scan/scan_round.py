@@ -71,9 +71,11 @@ def scan_round(self):
     self.saved_models.append(self.keras_model.to_json())
     self.saved_weights.append(self.keras_model.get_weights())
 
-    # clear tensorflow sessions (maybe)
+    # clear tensorflow sessions
     if self.clear_tf_session is True:
         K.clear_session()
+
+    # round is completed
     self.round_counter += 1
 
     return self

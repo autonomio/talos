@@ -79,7 +79,7 @@ class Scan:
         samples again. `linear` starts from the start of the grid and moves
         forward, and `reverse` starts at the end of the grid and moves
         backwards.
-    reduction_method : {None, 'spear'}
+    reduction_method : {None, 'correlation'}
         Method for honing in on the optimal hyperparameter subspace. (Default
         is None).
     reduction_interval : int
