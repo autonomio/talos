@@ -1,5 +1,4 @@
-from numpy import random, vstack
-from sklearn.model_selection import train_test_split
+from numpy import random
 
 import chances
 
@@ -31,21 +30,13 @@ def sample_reducer(self):
     # calculate the size of the downsample
     n = int(len(self.param_grid) * self.main_self.grid_downsample)
 
-    #if n > 1: 
-    #    raise TalosDataError("Grid < 1: Incease grid_downsample")
+    # throw an error if
+    if n < 1:
+        raise TalosDataError("No permutations in grid. Incease grid_downsample")
 
     # initialize with random shuffle if needed
-    if self.main_self.shuffle is True:
+    if self.main_self.shuffle:
         random.shuffle(self.param_grid)
-
-    # creates a stratified sample
-    if random_method == 'stratified':
-        size = self.main_self.grid_downsample / 2
-        train, test = train_test_split(self.param_grid,
-                                       train_size=size,
-                                       test_size=size,
-                                       stratify=None)
-        return vstack((train, test))
 
     # Initialize Randomizer()
     r = chances.Randomizer(len(self.param_grid), n)
