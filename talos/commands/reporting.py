@@ -54,8 +54,8 @@ class Reporting:
         '''Returns a correlation table against a given metric. Drops
         all other metrics and correlates against hyperparameters only.'''
 
-       columns = [c for c in self.data.columns if (c not in metric_names()) and c != metric]
-       out = self.data[columns]
+        columns = [c for c in self.data.columns if (c not in metric_names()) and c != metric]
+        out = self.data[columns]
 
         out = out.corr()[metric]
 
