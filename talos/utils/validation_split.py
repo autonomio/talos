@@ -1,7 +1,7 @@
 import numpy as np
 try:
     from wrangle.array.array_random_shuffle import array_random_shuffle as shuffle
-except ModuleNotFoundError:
+except ImportError:
     from wrangle import shuffle
 
 
