@@ -3,6 +3,8 @@ from itertools import product
 
 from ..reducers.sample_reducer import sample_reducer
 
+import random
+
 
 class ParamGrid:
 
@@ -43,6 +45,10 @@ class ParamGrid:
 
         # build the parameter permutation grid
         self.param_grid = self._param_grid(ls,out)
+
+        # initialize with random shuffle if needed
+        if self.main_self.shuffle:
+            random.shuffle(self.param_grid)
 
         # create a index for logging purpose
         self.param_log = list(range(len(self.param_grid)))
