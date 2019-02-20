@@ -1,5 +1,4 @@
 from numpy import arange, unique, array, column_stack
-from itertools import product
 
 from ..reducers.sample_reducer import sample_reducer
 

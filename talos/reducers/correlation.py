@@ -13,7 +13,7 @@ def correlation(self):
     out = self.param_table.corr(method='spearman')[self.reduction_metric]
     out = out.dropna()
 
-    if len(out) == 0:
+    if len(out) <= 1:
         self._reduce_keys = None
         return self
 
