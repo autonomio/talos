@@ -26,5 +26,3 @@ def scan_run(self):
     self.peak_epochs_df = peak_epochs_todf(self)
 
     self = scan_finish(self)
-
-    print('Scan Finished!')
