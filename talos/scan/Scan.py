@@ -115,7 +115,7 @@ class Scan:
                  x_val=None, y_val=None,
                  val_split=.3, shuffle=True,
                  round_limit=None,
-                 grid_downsample=None,
+                 grid_downsample=1.0,
                  random_method='uniform_mersenne',
                  seed=None,
                  search_method='random',
