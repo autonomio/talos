@@ -1,12 +1,11 @@
-from numpy import random, vstack
-from sklearn.model_selection import train_test_split
+from numpy import random
 
 import chances
 
 from ..utils.exceptions import TalosDataError
 
 
-def sample_reducer(self,length,max_value):
+def sample_reducer(self, length, max_value):
 
     '''Sample Reducer (Helper)
 
@@ -28,26 +27,18 @@ def sample_reducer(self,length,max_value):
 
     random_method = self.main_self.random_method
 
-    #if n > 1: 
-    #    raise TalosDataError("Grid < 1: Incease grid_downsample")
+    # calculate the size of the downsample
+    n = int(len(self.param_grid) * self.main_self.grid_downsample)
 
-    # TODO fix shuffle, figure out how it is supposed to work
-    # initialize with random shuffle if needed
-    #if self.main_self.shuffle is True:
-    #    random.shuffle(self.param_grid)
+    # throw an error if
+    if n < 1:
+        raise TalosDataError("No permutations in grid. Incease grid_downsample")
 
-    # TODO figure out if this patch messes with random_method == 'stratified'
-    # creates a stratified sample
-    if random_method == 'stratified':
-        size = self.main_self.grid_downsample / 2
-        train, test = train_test_split(self.param_grid,
-                                       train_size=size,
-                                       test_size=size,
-                                       stratify=None)
-        return vstack((train, test))
+    if self.main_self.shuffle:
+        random.shuffle(self.param_grid)
 
     # Initialize Randomizer()
-    r = chances.Randomizer(max_value,length)
+    r = chances.Randomizer(max_value, length)
 
     # use the user selected method
     if random_method == 'sobol':

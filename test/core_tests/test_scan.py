@@ -115,7 +115,7 @@ class TestCancer:
         Scan(self.x, self.y, grid_downsample=0.00025, params=p3,
              dataset_name='testing', experiment_no='a',
              model=self.model,
-             random_method='stratified',
+             random_method='sobol',
              reduction_metric='val_loss',
              reduction_threshold=0.01,
              reduction_method='correlation',
