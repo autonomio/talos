@@ -9,9 +9,6 @@ def scan_run(self):
     '''The high-level management of the scan procedures
     onwards from preparation. Manages round_run()'''
 
-    # enforce round_limit
-    self.param_grid = self.param_grid[:self.round_limit]
-
     # main loop for the experiment
     # NOTE: the progress bar is also updated on line 73
     self.pbar = tqdm(total=len(self.param_log),
