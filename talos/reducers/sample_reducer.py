@@ -5,7 +5,7 @@ import chances
 from ..utils.exceptions import TalosDataError
 
 
-def sample_reducer(self):
+def sample_reducer(self, n, max_value):
 
     '''Sample Reducer (Helper)
 
@@ -28,18 +28,14 @@ def sample_reducer(self):
     random_method = self.main_self.random_method
 
     # calculate the size of the downsample
-    n = int(len(self.param_grid) * self.main_self.grid_downsample)
+    n = int(max_value * self.main_self.grid_downsample)
 
     # throw an error if
     if n < 1:
         raise TalosDataError("No permutations in grid. Incease grid_downsample")
 
-    # initialize with random shuffle if needed
-    if self.main_self.shuffle:
-        random.shuffle(self.param_grid)
-
     # Initialize Randomizer()
-    r = chances.Randomizer(len(self.param_grid), n)
+    r = chances.Randomizer(max_value, n)
 
     # use the user selected method
     if random_method == 'sobol':
