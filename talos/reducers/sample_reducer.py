@@ -1,5 +1,3 @@
-from numpy import random
-
 import chances
 
 from ..utils.exceptions import TalosDataError

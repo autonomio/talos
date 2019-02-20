@@ -35,16 +35,16 @@ class ParamGrid:
 
         # take round_limit into account
         if self.main_self.round_limit is not None:
-            final_grid_size = min(final_grid_size,self.main_self.round_limit)
+            final_grid_size = min(final_grid_size, self.main_self.round_limit)
 
         # select premutations according to downsample
         if final_grid_size < virtual_grid_size:
-            out = sample_reducer(self,final_grid_size,virtual_grid_size)
+            out = sample_reducer(self, final_grid_size, virtual_grid_size)
         else:
-            out = range(0,final_grid_size)
+            out = range(0, final_grid_size)
 
         # build the parameter permutation grid
-        self.param_grid = self._param_grid(ls,out)
+        self.param_grid = self._param_grid(ls, out)
 
         # initialize with random shuffle if needed
         if self.main_self.shuffle:
@@ -56,10 +56,7 @@ class ParamGrid:
         # add the log index to param grid
         self.param_grid = column_stack((self.param_grid, self.param_log))
 
-
-
-
-    def _param_grid(self,ls,product_indices):
+    def _param_grid(self, ls, product_indices):
 
         '''CREATE THE PARAMETER PERMUTATIONS
 
@@ -68,12 +65,12 @@ class ParamGrid:
         every possible permutation in an array.
         '''
 
-        prod=[]
-        for i in product_indices: # the product indices are the output of our random function
-            p=[]
+        prod = []
+        for i in product_indices:  # the product indices are the output of our random function
+            p = []
             for l in reversed(ls):
-                i,s=divmod(int(i),len(l)) # NOTE i is updated shifting away the information for this parameter
-                p.insert(0,l[s])
+                i, s = divmod(int(i), len(l))  # NOTE i is updated shifting away the information for this parameter
+                p.insert(0, l[s])
             prod.append(tuple(p))
 
         _param_grid_out = array(prod, dtype='object')
