@@ -7,6 +7,7 @@ from ..utils.exceptions import TalosDataError
 
 def sample_reducer(self, length, max_value):
 
+
     '''Sample Reducer (Helper)
 
     NOTE: The Scan() object  is in self.main_self because
@@ -28,14 +29,11 @@ def sample_reducer(self, length, max_value):
     random_method = self.main_self.random_method
 
     # calculate the size of the downsample
-    n = int(len(self.param_grid) * self.main_self.grid_downsample)
+    n = int(max_value * self.main_self.grid_downsample)
 
     # throw an error if
     if n < 1:
         raise TalosDataError("No permutations in grid. Incease grid_downsample")
-
-    if self.main_self.shuffle:
-        random.shuffle(self.param_grid)
 
     # Initialize Randomizer()
     r = chances.Randomizer(max_value, length)
