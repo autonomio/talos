@@ -7,6 +7,7 @@ from test.core_tests.test_scan import TestIris, TestCancer
 from test.core_tests.test_scan import TestReporting, TestLoadDatasets
 from test.core_tests.test_scan_object import test_scan_object
 from test.core_tests.test_reporting_object import test_reporting_object
+from test.core_tests.test_random_methods import test_random_methods
 from talos.utils.generator import generator
 from talos.utils.gpu_utils import force_cpu
 
@@ -15,7 +16,10 @@ if __name__ == '__main__':
 
     '''NOTE: test/core_tests/test_scan.py needs to be edited as well!'''
 
-    scan_object = test_scan_object()  # performs basic tests for scan_object
+    # Scan
+    scan_object = test_scan_object()
+
+    # Reporting
     test_reporting_object(scan_object)
 
     start_time = str(time.strftime("%s"))
@@ -28,6 +32,8 @@ if __name__ == '__main__':
     ta.Evaluate(scan_object)
     ta.Deploy(scan_object, start_time)
     ta.Restore(start_time + '.zip')
+
+    test_random_methods()
 
     fit_generator = generator(scan_object.x, scan_object.y, 20)
     force_cpu()
