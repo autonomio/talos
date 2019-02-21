@@ -90,6 +90,8 @@ class Scan:
         results. (Default is None).
     grid_downsample : int
         The fraction of `params` that will be tested (Default is None).
+    round_limit : int
+        Limits the number of rounds (permutations) in the experiment.
     reduction_metric : {'val_acc'}
         Metric used to tune the reductions.
     x_val : ndarray
@@ -111,9 +113,12 @@ class Scan:
     global self
 
     def __init__(self, x, y, params, model,
-                 dataset_name=None, experiment_no=None,
-                 x_val=None, y_val=None,
-                 val_split=.3, shuffle=True,
+                 dataset_name=None,
+                 experiment_no=None,
+                 x_val=None,
+                 y_val=None,
+                 val_split=.3,
+                 shuffle=True,
                  round_limit=None,
                  grid_downsample=1.0,
                  random_method='uniform_mersenne',
