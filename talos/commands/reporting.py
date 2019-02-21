@@ -132,7 +132,7 @@ class Reporting:
                        col=col,
                        col_wrap=4)
 
-    def plot_kde(self, x, y=None):
+    def plot_kde(self, x='val_acc', y=None):
 
         '''Kernel Destiny Estimation type histogram with
         support for 1 or 2 axis of data'''
