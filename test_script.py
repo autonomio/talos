@@ -10,6 +10,7 @@ from test.core_tests.test_reporting_object import test_reporting_object
 from test.core_tests.test_random_methods import test_random_methods
 from test.core_tests.test_params_object import test_params_object
 from test.core_tests.test_auto_scan import test_auto_scan
+from test.core_tests.test_templates import test_templates
 
 from talos.utils.generator import generator
 from talos.utils.gpu_utils import force_cpu
@@ -26,6 +27,7 @@ if __name__ == '__main__':
     test_reporting_object(scan_object)
     test_params_object()
     test_auto_scan()
+    test_templates()
 
     start_time = str(time.strftime("%s"))
 

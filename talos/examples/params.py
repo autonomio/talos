@@ -51,12 +51,14 @@ def breast_cancer():
          'batch_size': (2, 30, 10),
          'epochs': [50, 100, 150],
          'dropout': (0, 0.5, 5),
-         'weight_regulizer': [None],
-         'emb_output_dims': [None],
-         'shape': ['brick', 'long_funnel'],
+         'shapes': ['brick', 'triangle', 'funnel'],
          'optimizer': [Adam, Nadam, RMSprop],
          'losses': [logcosh, binary_crossentropy],
          'activation': [relu, elu],
          'last_activation': [sigmoid]}
 
     return p
+
+
+def cervical_cancer():
+    return breast_cancer()
