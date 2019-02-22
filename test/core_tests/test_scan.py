@@ -12,8 +12,9 @@ from sklearn.model_selection import train_test_split
 
 from talos.scan.Scan import Scan
 from talos.commands.reporting import Reporting
-from talos.examples.models import iris_model, cervix_model
-from talos import datasets, params
+
+import talos as ta
+
 
 p1 = {'lr': [1],
       'first_neuron': [4],
@@ -61,26 +62,26 @@ p3 = {'lr': (0.5, 5, 10),
 class TestIris:
 
     def __init__(self):
-        self.x, self.y = datasets.iris()
+        self.x, self.y = ta.templates.datasets.iris()
         self.x_train, self.x_dev, self.y_train, self.y_dev \
             = train_test_split(self.x, self.y, test_size=0.2)
 
     def test_scan_iris_1(self):
         print("Running Iris dataset test 1...")
         Scan(self.x, self.y, params=p1, dataset_name='testing',
-             experiment_no='000', model=iris_model)
+             experiment_no='000', model=ta.templates.models.iris)
 
     def test_scan_iris_2(self):
         print("Running Iris dataset test 2...")
         Scan(self.x, self.y, params=p2, dataset_name='testing',
-             experiment_no='000', model=iris_model,
+             experiment_no='000', model=ta.templates.models.iris,
              last_epoch_value=True)
 
     def test_scan_iris_explicit_validation_set(self):
         print("Running explicit validation dataset test with metric reduction")
         Scan(self.x_train, self.y_train, params=p2,
              dataset_name='testing',
-             experiment_no='000', model=iris_model,
+             experiment_no='000', model=ta.templates.models.iris,
              x_val=self.x_dev, y_val=self.y_dev)
 
     def test_scan_iris_explicit_validation_set_force_fail(self):
@@ -88,7 +89,7 @@ class TestIris:
         try:
             Scan(self.x_train, self.y_train, params=p2,
                  dataset_name='testing',
-                 experiment_no='000', model=iris_model,
+                 experiment_no='000', model=ta.templates.models.iris,
                  y_val=self.y_dev)
         except RuntimeError:
             pass
@@ -97,8 +98,8 @@ class TestIris:
 class TestCancer:
 
     def __init__(self):
-        self.x, self.y = datasets.cervical_cancer()
-        self.model = cervix_model
+        self.x, self.y = ta.templates.datasets.cervical_cancer()
+        self.model = ta.templates.models.cervical_cancer
 
     def test_scan_cancer_metric_reduction(self):
         print("Running Cervical Cancer dataset test...")
@@ -160,11 +161,11 @@ class TestLoadDatasets:
 
     def __init__(self):
         print("Testing Load Datasets...")
-        x = datasets.icu_mortality()
-        x = datasets.icu_mortality(100)
-        x = datasets.titanic()
-        x = datasets.iris()
-        x = datasets.cervical_cancer()
-        x = datasets.breast_cancer()
-        x = params.iris()
-        x = params.breast_cancer()  # noqa
+        x = ta.templates.datasets.icu_mortality()
+        x = ta.templates.datasets.icu_mortality(100)
+        x = ta.templates.datasets.titanic()
+        x = ta.templates.datasets.iris()
+        x = ta.templates.datasets.cervical_cancer()
+        x = ta.templates.datasets.breast_cancer()
+        x = ta.templates.params.iris()
+        x = ta.templates.params.breast_cancer()  # noqa

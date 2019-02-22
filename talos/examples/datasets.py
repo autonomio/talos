@@ -1,22 +1,11 @@
-import pandas as pd
-from numpy import nan
-from keras.utils import to_categorical
-
-
-base = 'https://raw.githubusercontent.com/autonomio/datasets/master/autonomio-datasets/'
-
-
-def limit_rows(data, samples):
-
-    return data.sample(frac=1).head(samples)
-
-
 def icu_mortality(samples=None):
 
+    import pandas as pd
+    base = 'https://raw.githubusercontent.com/autonomio/datasets/master/autonomio-datasets/'
     df = pd.read_csv(base + 'icu_mortality.csv')
     df = df.dropna(thresh=3580, axis=1)
     df = df.dropna()
-    df = limit_rows(df, samples)
+    df = df.sample(frac=1).head(samples)
     y = df['hospitalmortality'].astype(int).values
     x = df.drop('hospitalmortality', axis=1).values
 
@@ -25,6 +14,8 @@ def icu_mortality(samples=None):
 
 def titanic():
 
+    import pandas as pd
+    base = 'https://raw.githubusercontent.com/autonomio/datasets/master/autonomio-datasets/'
     df = pd.read_csv(base + 'titanic.csv')
 
     y = df.survived.values
@@ -46,6 +37,9 @@ def titanic():
 
 def iris():
 
+    import pandas as pd
+    from keras.utils import to_categorical
+    base = 'https://raw.githubusercontent.com/autonomio/datasets/master/autonomio-datasets/'
     df = pd.read_csv(base + 'iris.csv')
     df['species'] = df['species'].factorize()[0]
     df = df.sample(len(df))
@@ -60,6 +54,9 @@ def iris():
 
 def cervical_cancer():
 
+    import pandas as pd
+    from numpy import nan
+    base = 'https://raw.githubusercontent.com/autonomio/datasets/master/autonomio-datasets/'
     df = pd.read_csv(base + 'cervical_cancer.csv')
     df = df.replace('?', nan)
     df = df.drop(['citology', 'hinselmann', 'biopsy'], axis=1)
@@ -76,6 +73,8 @@ def cervical_cancer():
 
 def breast_cancer():
 
+    import pandas as pd
+    base = 'https://raw.githubusercontent.com/autonomio/datasets/master/autonomio-datasets/'
     df = pd.read_csv(base + 'breast_cancer.csv')
 
     # then some minimal data cleanup

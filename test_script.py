@@ -8,6 +8,9 @@ from test.core_tests.test_scan import TestReporting, TestLoadDatasets
 from test.core_tests.test_scan_object import test_scan_object
 from test.core_tests.test_reporting_object import test_reporting_object
 from test.core_tests.test_random_methods import test_random_methods
+from test.core_tests.test_params_object import test_params_object
+from test.core_tests.test_auto_scan import test_auto_scan
+
 from talos.utils.generator import generator
 from talos.utils.gpu_utils import force_cpu
 
@@ -21,6 +24,8 @@ if __name__ == '__main__':
 
     # Reporting
     test_reporting_object(scan_object)
+    test_params_object()
+    test_auto_scan()
 
     start_time = str(time.strftime("%s"))
 
@@ -34,7 +39,6 @@ if __name__ == '__main__':
     ta.Restore(start_time + '.zip')
 
     test_random_methods()
-
     fit_generator = generator(scan_object.x, scan_object.y, 20)
     force_cpu()
 

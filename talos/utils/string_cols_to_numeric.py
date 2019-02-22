@@ -25,7 +25,10 @@ def string_cols_to_numeric(data, destructive=False):
             try:
                 data[col] = data[col].astype(int)
             except ValueError:
-                data[col] = data[col].astype(float)
+                try:
+                    data[col] = data[col].astype(float)
+                except ValueError:
+                    data[col] = data[col]
         else:
             data[col] = data[col]
 

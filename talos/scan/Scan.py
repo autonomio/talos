@@ -66,7 +66,7 @@ class Scan:
         the history and compiled model.
     val_split : float, optional
         The proportion of the input `x` which is set aside as the
-        cross-validation data. (Default is 0.3).
+        validation data. (Default is 0.3).
     shuffle : bool, optional
         If True, shuffle the data in x and y before splitting into the train
         and cross-validation datasets. (Default is True).
