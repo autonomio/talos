@@ -1,6 +1,7 @@
-from numpy import arange, unique, array, column_stack, random
+import numpy as np
 
 from ..reducers.sample_reducer import sample_reducer
+
 
 class ParamGrid:
 
@@ -19,12 +20,13 @@ class ParamGrid:
         # convert the input to useful format
         self._p = self._param_input_conversion()
 
+        # create a list of lists, each list being a parameter sequence
         ls = [list(self._p[key]) for key in self._p.keys()]
-        virtual_grid_size = 1
-        for l in ls:
-            virtual_grid_size *= len(l)
 
+        # get the number of total dimensions / permutations
+        virtual_grid_size = np.prod([len(l) for l in ls])
         final_grid_size = virtual_grid_size
+
         # calculate the size of the downsample
         if self.main_self.grid_downsample is not None:
             final_grid_size = int(virtual_grid_size * self.main_self.grid_downsample)
@@ -40,36 +42,35 @@ class ParamGrid:
             out = range(0, final_grid_size)
 
         # build the parameter permutation grid
-        self.param_grid = self._param_grid(ls, out)
+        self.param_grid = self._create_param_permutations(ls, out)
 
         # initialize with random shuffle if needed
         if self.main_self.shuffle:
-            random.shuffle(self.param_grid)
+            np.random.shuffle(self.param_grid)
 
         # create a index for logging purpose
         self.param_log = list(range(len(self.param_grid)))
 
         # add the log index to param grid
-        self.param_grid = column_stack((self.param_grid, self.param_log))
+        self.param_grid = np.column_stack((self.param_grid, self.param_log))
 
-    def _param_grid(self, ls, product_indices):
+    def _create_param_permutations(self, ls, permutation_index):
 
-        '''CREATE THE PARAMETER PERMUTATIONS
+        '''Expand params dictionary to permutations
 
-        This is done once before starting the experiment.
-        Takes in the parameter dictionary, and returns
-        every possible permutation in an array.
+        Takes the input params dictionary and expands it to
+        actual parameter permutations for the experiment.
         '''
 
-        prod = []
-        for i in product_indices:  # the product indices are the output of our random function
+        final_grid = []
+        for i in permutation_index:
             p = []
             for l in reversed(ls):
-                i, s = divmod(int(i), len(l))  # NOTE i is updated shifting away the information for this parameter
+                i, s = divmod(int(i), len(l))
                 p.insert(0, l[s])
-            prod.append(tuple(p))
+            final_grid.append(tuple(p))
 
-        _param_grid_out = array(prod, dtype='object')
+        _param_grid_out = np.array(final_grid, dtype='object')
 
         return _param_grid_out
 
@@ -99,23 +100,21 @@ class ParamGrid:
 
     def _param_range(self, start, end, n):
 
-        '''PARAMETER RANGE
+        '''Deal with ranged inputs in params dictionary
 
-        Deals with the format where a start, end
-        and steps values are given for a parameter
-        in a tuple format.
-
-        This is called internally from param_format()
+        A helper function to handle the cases where params
+        dictionary input is in the format (start, end, steps)
+        and is called internally through ParamGrid().
         '''
 
         try:
-            out = arange(start, end, (end - start) / n, dtype=float)
+            out = np.arange(start, end, (end - start) / n, dtype=float)
         # this is for python2
         except ZeroDivisionError:
-            out = arange(start, end, (end - start) / float(n), dtype=float)
+            out = np.arange(start, end, (end - start) / float(n), dtype=float)
 
         if type(start) == int and type(end) == int:
             out = out.astype(int)
-            out = unique(out)
+            out = np.unique(out)
 
         return out
