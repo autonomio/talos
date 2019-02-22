@@ -2,8 +2,6 @@ import numpy as np
 
 from ..reducers.sample_reducer import sample_reducer
 
-import random
-
 
 class ParamGrid:
 
