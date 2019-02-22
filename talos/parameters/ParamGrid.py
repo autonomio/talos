@@ -1,8 +1,6 @@
-from numpy import arange, unique, array, column_stack
-from itertools import product
+from numpy import arange, unique, array, column_stack, random
 
 from ..reducers.sample_reducer import sample_reducer
-
 
 class ParamGrid:
 
@@ -21,12 +19,32 @@ class ParamGrid:
         # convert the input to useful format
         self._p = self._param_input_conversion()
 
-        # build the parameter permutation grid
-        self.param_grid = self._param_grid()
-        
-        # reduce according to downsample
+        ls = [list(self._p[key]) for key in self._p.keys()]
+        virtual_grid_size = 1
+        for l in ls:
+            virtual_grid_size *= len(l)
+
+        final_grid_size = virtual_grid_size
+        # calculate the size of the downsample
         if self.main_self.grid_downsample is not None:
-            self.param_grid = sample_reducer(self)
+            final_grid_size = int(virtual_grid_size * self.main_self.grid_downsample)
+
+        # take round_limit into account
+        if self.main_self.round_limit is not None:
+            final_grid_size = min(final_grid_size, self.main_self.round_limit)
+
+        # select premutations according to downsample
+        if final_grid_size < virtual_grid_size:
+            out = sample_reducer(self, final_grid_size, virtual_grid_size)
+        else:
+            out = range(0, final_grid_size)
+
+        # build the parameter permutation grid
+        self.param_grid = self._param_grid(ls, out)
+
+        # initialize with random shuffle if needed
+        if self.main_self.shuffle:
+            random.shuffle(self.param_grid)
 
         # create a index for logging purpose
         self.param_log = list(range(len(self.param_grid)))
@@ -34,10 +52,7 @@ class ParamGrid:
         # add the log index to param grid
         self.param_grid = column_stack((self.param_grid, self.param_log))
 
-
-
-
-    def _param_grid(self):
+    def _param_grid(self, ls, product_indices):
 
         '''CREATE THE PARAMETER PERMUTATIONS
 
@@ -46,8 +61,15 @@ class ParamGrid:
         every possible permutation in an array.
         '''
 
-        ls = [list(self._p[key]) for key in self._p.keys()]
-        _param_grid_out = array(list(product(*ls)), dtype='object')
+        prod = []
+        for i in product_indices:  # the product indices are the output of our random function
+            p = []
+            for l in reversed(ls):
+                i, s = divmod(int(i), len(l))  # NOTE i is updated shifting away the information for this parameter
+                p.insert(0, l[s])
+            prod.append(tuple(p))
+
+        _param_grid_out = array(prod, dtype='object')
 
         return _param_grid_out
 

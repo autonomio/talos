@@ -19,7 +19,7 @@ if is_connected() is True:
 	import astetik as plots
 else:
 	print("NO INTERNET CONNECTION: Reporting plots will not work.")
-	
+
 from kerasplotlib import TrainingLog as live
 
-__version__ = "0.4.8"
+__version__ = "0.4.9"

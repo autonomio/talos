@@ -79,7 +79,7 @@ class Scan:
         samples again. `linear` starts from the start of the grid and moves
         forward, and `reverse` starts at the end of the grid and moves
         backwards.
-    reduction_method : {None, 'spear'}
+    reduction_method : {None, 'correlation'}
         Method for honing in on the optimal hyperparameter subspace. (Default
         is None).
     reduction_interval : int
@@ -90,6 +90,8 @@ class Scan:
         results. (Default is None).
     grid_downsample : int
         The fraction of `params` that will be tested (Default is None).
+    round_limit : int
+        Limits the number of rounds (permutations) in the experiment.
     reduction_metric : {'val_acc'}
         Metric used to tune the reductions.
     x_val : ndarray
@@ -111,11 +113,14 @@ class Scan:
     global self
 
     def __init__(self, x, y, params, model,
-                 dataset_name=None, experiment_no=None,
-                 x_val=None, y_val=None,
-                 val_split=.3, shuffle=True,
+                 dataset_name=None,
+                 experiment_no=None,
+                 x_val=None,
+                 y_val=None,
+                 val_split=.3,
+                 shuffle=True,
                  round_limit=None,
-                 grid_downsample=None,
+                 grid_downsample=1.0,
                  random_method='uniform_mersenne',
                  seed=None,
                  search_method='random',

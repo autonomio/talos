@@ -6,3 +6,9 @@ __pycache__
 dist/
 talos.egg-info
 .idea/
+*.zip
+*_.csv
+*.txt
+*.h5
+*.json
+*.npy
