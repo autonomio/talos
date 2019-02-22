@@ -44,7 +44,11 @@ def scan_finish(self):
             out[key] = self.__dict__[key]
 
     out['complete_time'] = time.strftime('%D/%H:%M')
-    out['x_shape'] = self.x.shape
+    try:
+        out['x_shape'] = self.x.shape
+    except AttributeError:
+        out['x_shape'] = list
+        
     out['y_shape'] = self.y.shape
 
     # final cleanup

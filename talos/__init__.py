@@ -22,4 +22,4 @@ else:
 	
 from kerasplotlib import TrainingLog as live
 
-__version__ = "0.4.6"
+__version__ = "0.4.7"
