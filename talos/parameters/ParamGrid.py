@@ -1,9 +1,6 @@
-from numpy import arange, unique, array, column_stack
+from numpy import arange, unique, array, column_stack, random
 
 from ..reducers.sample_reducer import sample_reducer
-
-import random
-
 
 class ParamGrid:
 
