@@ -24,10 +24,10 @@ def string_cols_to_numeric(data, destructive=False):
         if data[col].apply(isnumber).sum() == len(data):
             try:
                 data[col] = data[col].astype(int)
-            except ValueError:
+            except:  # intentionally silent
                 try:
                     data[col] = data[col].astype(float)
-                except ValueError:
+                except:  # intentionally silent
                     data[col] = data[col]
         else:
             data[col] = data[col]

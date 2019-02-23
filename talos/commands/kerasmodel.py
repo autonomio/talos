@@ -5,7 +5,7 @@ from talos.model.normalizers import lr_normalizer
 
 from keras.models import Sequential
 from keras.layers import Dropout, Flatten
-from keras.layers import LSTM, Conv1D, SimpleRNN, Dense
+from keras.layers import LSTM, Conv1D, SimpleRNN, Dense, Bidirectional
 
 try:
     from wrangle.reshape_to_conv1d import reshape_to_conv1d as array_reshape_conv1d
@@ -33,16 +33,24 @@ class KerasModel:
 
         model = Sequential()
 
+        if params['network'] != 'dense':
+            x_train = array_reshape_conv1d(x_train)
+            x_val = array_reshape_conv1d(x_val)
+
         if params['network'] == 'conv1d':
-            x, model = _add_conv1d(x_train, model, params['first_neuron'], x_train.shape[1])
+            model.add(Conv1D(params['first_neuron'], x_train.shape[1]))
+            model.add(Flatten())
 
-        if params['network'] == 'lstm':
-            x, model = _add_lstm(x_train, model, params['first_neuron'])
+        elif params['network'] == 'lstm':
+            model.add(LSTM(params['first_neuron']))
 
-        if params['network'] == 'simplernn':
-            x, model = _add_simplernn(x_train, model, params['first_neuron'])
+        if params['network'] == 'bidirectional_lstm':
+            model.add(Bidirectional(LSTM(params['first_neuron'])))
 
-        if params['network'] == 'dense':
+        elif params['network'] == 'simplernn':
+            model.add(SimpleRNN(params['first_neuron']))
+
+        elif params['network'] == 'dense':
             model.add(Dense(params['first_neuron'],
                             input_dim=x_train.shape[1],
                             activation='relu'))
@@ -69,7 +77,7 @@ class KerasModel:
 
         # compile the model
         model.compile(optimizer=optimizer,
-                      loss=params['loss'],
+                      loss=params['losses'],
                       metrics=['acc'])
 
         # fit the model
@@ -81,28 +89,3 @@ class KerasModel:
 
         # pass the output to Talos
         return out, model
-
-
-def _add_conv1d(x, model, filters, kernel_size):
-
-    x = array_reshape_conv1d(x)
-    model.add(Conv1D(filters, kernel_size))
-    model.add(Flatten())
-
-    return x, model
-
-
-def _add_lstm(x, model, units):
-
-    x = array_reshape_conv1d(x)
-    model.add(LSTM(units))
-
-    return x, model
-
-
-def _add_simplernn(x, model, units):
-
-    x = array_reshape_conv1d(x)
-    model.add(SimpleRNN(units))
-
-    return x, model

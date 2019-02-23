@@ -114,7 +114,7 @@ class Params:
 
     def losses(self):
 
-        self._append_params('loss', loss[self.task])
+        self._append_params('losses', loss[self.task])
 
     def neurons(self, bottom_value=8, max_value=None, steps=None):
 
@@ -171,7 +171,11 @@ class Params:
         '''Adds four different network architectures are parameters:
         dense, simplernn, lstm, conv1d.'''
 
-        self._append_params('network', ['dense', 'simplernn', 'lstm', 'conv1d'])
+        self._append_params('network', ['dense',
+                                        'simplernn',
+                                        'lstm',
+                                        'bidirectional_lstm',
+                                        'conv1d'])
 
     def last_activations(self):
 
