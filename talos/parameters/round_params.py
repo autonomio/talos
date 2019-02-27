@@ -1,5 +1,13 @@
 from numpy import random
 
+def create_params_dict(self,_choice):
+    _round_params_dict = {}
+    x = 0
+    for key in self.param_reference.keys():
+        _round_params_dict[key] = self.param_grid[_choice][x]
+        x += 1
+
+    return _round_params_dict
 
 def round_params(self):
 
@@ -20,10 +28,5 @@ def round_params(self):
     self.param_log.remove(_choice)
 
     # create a dictionary for the current round
-    _round_params_dict = {}
-    x = 0
-    for key in self.param_reference.keys():
-        _round_params_dict[key] = self.param_grid[_choice][x]
-        x += 1
+    return create_params_dict(self,_choice)
 
-    return _round_params_dict
