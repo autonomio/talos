@@ -1,7 +1,7 @@
 import numpy as np
 
 from ..reducers.sample_reducer import sample_reducer
-
+from .round_params import create_params_dict
 
 class ParamGrid:
 
@@ -44,6 +44,20 @@ class ParamGrid:
             final_grid_size = min(final_grid_size, self.main_self.round_limit)
 
         self.param_grid=self._create_param_grid(ls,final_grid_size,virtual_grid_size)
+
+        fn=lambda i:self.main_self.premutation_filter(create_params_dict(self,i))
+        if self.main_self.premutation_filter != None:
+            grid_indices=list(filter(fn,range(len(self.param_grid))))
+            self.param_grid=self.param_grid[grid_indices]
+            final_expanded_grid_size=final_grid_size
+            while len(self.param_grid)<final_grid_size and final_expanded_grid_size<virtual_grid_size:
+                final_expanded_grid_size*=2
+                if final_expanded_grid_size>virtual_grid_size:
+                    final_expanded_grid_size=virtual_grid_size
+                self.param_grid=self._create_param_grid(ls,final_expanded_grid_size,virtual_grid_size)
+                grid_indices=list(filter(fn,range(len(self.param_grid))))
+                self.param_grid=self.param_grid[grid_indices]
+            self.param_grid=self.param_grid[:final_grid_size]
 
         # initialize with random shuffle if needed
         if self.main_self.shuffle:
