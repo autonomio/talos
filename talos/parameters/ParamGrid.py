@@ -17,6 +17,12 @@ class ParamGrid:
 
         self.main_self = main_self
 
+        # creates a reference dictionary for column number to label
+        self.param_reference = {}
+        for i, col in enumerate(self.main_self.params.keys()):
+            self.param_reference[col] = i
+
+
         # convert the input to useful format
         self._p = self._param_input_conversion()
 
