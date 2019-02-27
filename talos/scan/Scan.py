@@ -124,6 +124,7 @@ class Scan:
                  random_method='uniform_mersenne',
                  seed=None,
                  search_method='random',
+                 max_iteration_start_time=None,
                  reduction_method=None,
                  reduction_interval=50,
                  reduction_window=20,
@@ -151,6 +152,7 @@ class Scan:
         self.shuffle = shuffle
         self.random_method = random_method
         self.search_method = search_method
+        self.max_iteration_start_time=max_iteration_start_time
         self.reduction_method = reduction_method
         self.reduction_interval = reduction_interval
         self.reduction_window = reduction_window
