@@ -43,14 +43,7 @@ class ParamGrid:
         if self.main_self.round_limit is not None:
             final_grid_size = min(final_grid_size, self.main_self.round_limit)
 
-        # select premutations according to downsample
-        if final_grid_size < virtual_grid_size:
-            out = sample_reducer(self, final_grid_size, virtual_grid_size)
-        else:
-            out = range(0, final_grid_size)
-
-        # build the parameter permutation grid
-        self.param_grid = self._create_param_permutations(ls, out)
+        self.param_grid=self._create_param_grid(ls,final_grid_size,virtual_grid_size)
 
         # initialize with random shuffle if needed
         if self.main_self.shuffle:
@@ -61,6 +54,17 @@ class ParamGrid:
 
         # add the log index to param grid
         self.param_grid = np.column_stack((self.param_grid, self.param_log))
+
+    def _create_param_grid(self,ls,final_grid_size,virtual_grid_size):
+        # select premutations according to downsample
+        if final_grid_size < virtual_grid_size:
+            out = sample_reducer(self, final_grid_size, virtual_grid_size)
+        else:
+            out = range(0, final_grid_size)
+
+        # build the parameter permutation grid
+        param_grid = self._create_param_permutations(ls, out)
+        return param_grid
 
     def _create_param_permutations(self, ls, permutation_index):
 
