@@ -24,7 +24,8 @@ def scan_prepare(self):
     if self.experiment_no is None:
         self.experiment_no = ''
 
-    self.experiment_name = self.dataset_name + '_' + self.experiment_no
+    if self.experiment_name is None:
+        self.experiment_name = self.dataset_name + '_' + self.experiment_no
 
     # create the round times list
     self.round_times = []
