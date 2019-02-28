@@ -115,6 +115,7 @@ class Scan:
     def __init__(self, x, y, params, model,
                  dataset_name=None,
                  experiment_no=None,
+                 experiment_name=None,
                  x_val=None,
                  y_val=None,
                  val_split=.3,
@@ -146,6 +147,7 @@ class Scan:
         self.model = model
         self.dataset_name = dataset_name
         self.experiment_no = experiment_no
+        self.experiment_name = experiment_name
         self.x_val = x_val
         self.y_val = y_val
         self.val_split = val_split
