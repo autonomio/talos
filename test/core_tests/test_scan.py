@@ -59,10 +59,10 @@ p3 = {'lr': (0.5, 5, 10),
       'last_activation': [sigmoid]}
 
 p4 = {'lr': [1],
-      'first_neuron': [8, 64],
-      'hidden_layers': [2, 5],
-      'batch_size': [30],
-      'epochs': [3],
+      'first_neuron': [8, 24, 64],
+      'hidden_layers': [2, 5, 10],
+      'batch_size': [15, 30],
+      'epochs': [1],
       'dropout': [0],
       'weight_regulizer': [None],
       'shapes': ['funnel'],
@@ -96,7 +96,7 @@ class TestIris:
         Scan(self.x, self.y, params=p4, dataset_name='testing',
              experiment_no='000', model=ta.templates.models.iris,
              premutation_filter=lambda p: p['first_neuron']*p['hidden_layers']<150,
-             round_limit=1,
+             round_limit=4,
              last_epoch_value=True)
 
     def test_scan_iris_explicit_validation_set(self):
