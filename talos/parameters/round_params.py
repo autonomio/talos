@@ -1,6 +1,7 @@
 from numpy import random
 
-def create_params_dict(self,_choice):
+
+def create_params_dict(self, _choice):
     _round_params_dict = {}
     x = 0
     for key in self.param_reference.keys():
@@ -8,6 +9,7 @@ def create_params_dict(self,_choice):
         x += 1
 
     return _round_params_dict
+
 
 def round_params(self):
 
@@ -28,5 +30,4 @@ def round_params(self):
     self.param_log.remove(_choice)
 
     # create a dictionary for the current round
-    return create_params_dict(self,_choice)
-
+    return create_params_dict(self, _choice)
