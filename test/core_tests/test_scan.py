@@ -68,7 +68,7 @@ p4 = {'lr': [1],
       'shapes': ['funnel'],
       'emb_output_dims': [None],
       'optimizer': [Nadam],
-      'losses': [softmax],
+      'losses': [categorical_crossentropy],
       'activation': [relu],
       'last_activation': [sigmoid]}
 
@@ -96,6 +96,7 @@ class TestIris:
         Scan(self.x, self.y, params=p4, dataset_name='testing',
              experiment_no='000', model=ta.templates.models.iris,
              premutation_filter=lambda p: p['first_neuron']*p['hidden_layers']<150,
+             round_limit=1,
              last_epoch_value=True)
 
     def test_scan_iris_explicit_validation_set(self):
