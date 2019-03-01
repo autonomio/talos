@@ -58,6 +58,20 @@ p3 = {'lr': (0.5, 5, 10),
       'activation': [relu],
       'last_activation': [sigmoid]}
 
+p4 = {'lr': [1],
+      'first_neuron': [8, 32, 64],
+      'hidden_layers': [2, 4, 5],
+      'batch_size': [30],
+      'epochs': [3],
+      'dropout': [0],
+      'weight_regulizer': [None],
+      'shapes': ['funnel'],
+      'emb_output_dims': [None],
+      'optimizer': [Nadam],
+      'losses': [softmax],
+      'activation': [relu],
+      'last_activation': [sigmoid]}
+
 
 class TestIris:
 
