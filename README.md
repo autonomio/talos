@@ -23,7 +23,7 @@
   <a href="#Key-Features">Key Features</a> •
   <a href="#Examples">Examples</a> •
   <a href="#Install">Install</a> •
-  <a href="#Install">Support</a> •
+  <a href="#Support">Support</a> •
   <a href="https://autonomio.github.io/docs_talos">Docs</a> •
   <a href="https://github.com/autonomio/talos/issues">Issues</a> •
   <a href="#License">License</a> •
