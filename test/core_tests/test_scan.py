@@ -59,8 +59,8 @@ p3 = {'lr': (0.5, 5, 10),
       'last_activation': [sigmoid]}
 
 p4 = {'lr': [1],
-      'first_neuron': [8, 32, 64],
-      'hidden_layers': [2, 4, 5],
+      'first_neuron': [8, 64],
+      'hidden_layers': [2, 5],
       'batch_size': [30],
       'epochs': [3],
       'dropout': [0],
@@ -92,8 +92,8 @@ class TestIris:
              last_epoch_value=True)
 
     def test_scan_iris_3(self):
-        print("Running Iris dataset test 2...")
-        Scan(self.x, self.y, params=p3, dataset_name='testing',
+        print("Running Iris dataset test 3...")
+        Scan(self.x, self.y, params=p4, dataset_name='testing',
              experiment_no='000', model=ta.templates.models.iris,
              premutation_filter=lambda p: p['first_neuron']*p['hidden_layers']<150,
              last_epoch_value=True)
