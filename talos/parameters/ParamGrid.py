@@ -24,7 +24,9 @@ class ParamGrid:
         ls = [list(self._p[key]) for key in self._p.keys()]
 
         # get the number of total dimensions / permutations
-        virtual_grid_size = np.prod([len(l) for l in ls])
+        virtual_grid_size=1
+        for l in ls:
+            virtual_grid_size*=len(l)
         final_grid_size = virtual_grid_size
 
         # calculate the size of the downsample
