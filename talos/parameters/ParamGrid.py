@@ -1,6 +1,7 @@
 import numpy as np
 
 from ..reducers.sample_reducer import sample_reducer
+from .round_params import create_params_dict
 
 
 class ParamGrid:
@@ -17,6 +18,11 @@ class ParamGrid:
 
         self.main_self = main_self
 
+        # creates a reference dictionary for column number to label
+        self.param_reference = {}
+        for i, col in enumerate(self.main_self.params.keys()):
+            self.param_reference[col] = i
+
         # convert the input to useful format
         self._p = self._param_input_conversion()
 
@@ -24,9 +30,9 @@ class ParamGrid:
         ls = [list(self._p[key]) for key in self._p.keys()]
 
         # get the number of total dimensions / permutations
-        virtual_grid_size=1
+        virtual_grid_size = 1
         for l in ls:
-            virtual_grid_size*=len(l)
+            virtual_grid_size *= len(l)
         final_grid_size = virtual_grid_size
 
         # calculate the size of the downsample
@@ -37,14 +43,22 @@ class ParamGrid:
         if self.main_self.round_limit is not None:
             final_grid_size = min(final_grid_size, self.main_self.round_limit)
 
-        # select premutations according to downsample
-        if final_grid_size < virtual_grid_size:
-            out = sample_reducer(self, final_grid_size, virtual_grid_size)
-        else:
-            out = range(0, final_grid_size)
+        self.param_grid = self._create_param_grid(ls, final_grid_size, virtual_grid_size)
 
-        # build the parameter permutation grid
-        self.param_grid = self._create_param_permutations(ls, out)
+        def fn(i):
+            return self.main_self.premutation_filter(create_params_dict(self, i))
+        if self.main_self.premutation_filter is not None:
+            grid_indices = list(filter(fn, range(len(self.param_grid))))
+            self.param_grid = self.param_grid[grid_indices]
+            final_expanded_grid_size = final_grid_size
+            while len(self.param_grid) < final_grid_size and final_expanded_grid_size < virtual_grid_size:
+                final_expanded_grid_size *= 2
+                if final_expanded_grid_size > virtual_grid_size:
+                    final_expanded_grid_size = virtual_grid_size
+                self.param_grid = self._create_param_grid(ls, final_expanded_grid_size, virtual_grid_size)
+                grid_indices=list(filter(fn, range(len(self.param_grid))))
+                self.param_grid = self.param_grid[grid_indices]
+            self.param_grid = self.param_grid[:final_grid_size]
 
         # initialize with random shuffle if needed
         if self.main_self.shuffle:
@@ -55,6 +69,17 @@ class ParamGrid:
 
         # add the log index to param grid
         self.param_grid = np.column_stack((self.param_grid, self.param_log))
+
+    def _create_param_grid(self, ls, final_grid_size, virtual_grid_size):
+        # select premutations according to downsample
+        if final_grid_size < virtual_grid_size:
+            out = sample_reducer(self, final_grid_size, virtual_grid_size)
+        else:
+            out = range(0, final_grid_size)
+
+        # build the parameter permutation grid
+        param_grid = self._create_param_permutations(ls, out)
+        return param_grid
 
     def _create_param_permutations(self, ls, permutation_index):
 

@@ -43,12 +43,8 @@ def scan_prepare(self):
     self.paramgrid_object = ParamGrid(self)
     self.param_log = self.paramgrid_object.param_log
     self.param_grid = self.paramgrid_object.param_grid
+    self.param_reference = self.paramgrid_object.param_reference
     del self.paramgrid_object
-
-    # creates a reference dictionary for column number to label
-    self.param_reference = {}
-    for i, col in enumerate(self.params.keys()):
-        self.param_reference[col] = i
 
     self.round_counter = 0
     self.peak_epochs = []

@@ -58,6 +58,20 @@ p3 = {'lr': (0.5, 5, 10),
       'activation': [relu],
       'last_activation': [sigmoid]}
 
+p4 = {'lr': [1],
+      'first_neuron': [8, 24, 64],
+      'hidden_layers': [2, 5, 10],
+      'batch_size': [15, 30],
+      'epochs': [1],
+      'dropout': [0],
+      'weight_regulizer': [None],
+      'shapes': ['funnel'],
+      'emb_output_dims': [None],
+      'optimizer': [Nadam],
+      'losses': [categorical_crossentropy],
+      'activation': [relu],
+      'last_activation': [sigmoid]}
+
 
 class TestIris:
 
@@ -75,6 +89,14 @@ class TestIris:
         print("Running Iris dataset test 2...")
         Scan(self.x, self.y, params=p2, dataset_name='testing',
              experiment_no='000', model=ta.templates.models.iris,
+             last_epoch_value=True)
+
+    def test_scan_iris_3(self):
+        print("Running Iris dataset test 3...")
+        Scan(self.x, self.y, params=p4, dataset_name='testing',
+             experiment_no='000', model=ta.templates.models.iris,
+             premutation_filter=lambda p: p['first_neuron']*p['hidden_layers']<150,
+             round_limit=4,
              last_epoch_value=True)
 
     def test_scan_iris_explicit_validation_set(self):
