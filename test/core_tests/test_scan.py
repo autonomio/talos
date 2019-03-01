@@ -77,6 +77,13 @@ class TestIris:
              experiment_no='000', model=ta.templates.models.iris,
              last_epoch_value=True)
 
+    def test_scan_iris_3(self):
+        print("Running Iris dataset test 2...")
+        Scan(self.x, self.y, params=p3, dataset_name='testing',
+             experiment_no='000', model=ta.templates.models.iris,
+             premutation_filter=lambda p: p['first_neuron']*p['hidden_layers']<150,
+             last_epoch_value=True)
+
     def test_scan_iris_explicit_validation_set(self):
         print("Running explicit validation dataset test with metric reduction")
         Scan(self.x_train, self.y_train, params=p2,

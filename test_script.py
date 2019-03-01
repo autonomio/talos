@@ -52,5 +52,6 @@ if __name__ == '__main__':
     TestIris().test_scan_iris_explicit_validation_set_force_fail()
     TestIris().test_scan_iris_1()
     TestIris().test_scan_iris_2()
+    TestIris().test_scan_iris_3()
     TestReporting()
     TestLoadDatasets()
