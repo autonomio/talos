@@ -1,4 +1,5 @@
 from time import strftime, time
+import gc
 
 from keras import backend as K
 
@@ -72,6 +73,9 @@ def scan_round(self):
     # save model and weights
     self.saved_models.append(self.keras_model.to_json())
     self.saved_weights.append(self.keras_model.get_weights())
+
+    del self.keras_model
+    gc.collect()
 
     # clear tensorflow sessions
     if self.clear_tf_session is True:
