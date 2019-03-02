@@ -213,6 +213,8 @@ class MultiLabelTest:
              y_val=self.y_val,
              params=self.values_list,
              round_limit=5,
+             dataset_name='MultiLabelTest',
+             experiment_no='000',
              model=ta.templates.models.iris,
              random_method='crypto_uniform',
              seed=2423,
