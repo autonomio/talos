@@ -57,5 +57,8 @@ def sample_reducer(self, length, max_value):
         out = r.uniform_crypto()
     elif random_method == 'ambience':
         out = r.ambience()
+    else:
+        print('check random_method, no eligble method found. Using uniform mersenne.')
+        out = r.uniform_mersenne()
 
     return out
