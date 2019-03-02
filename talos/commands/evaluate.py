@@ -1,7 +1,5 @@
 from sklearn.metrics import mean_absolute_error, f1_score
 from numpy import mean, std
-from sklearn.metrics import f1_score
-from talos.utils.validation_split import kfold
 
 from ..utils.validation_split import kfold
 from ..utils.best_model import best_model, activate_model
@@ -14,7 +12,7 @@ class Evaluate:
     def __init__(self, scan_object):
 
         '''Takes in as input a Scan() object.
-        e = evaluate(scan_object) and see docstring 
+        e = evaluate(scan_object) and see docstring
         for e() for more information.'''
 
         self.scan_object = scan_object
@@ -25,8 +23,8 @@ class Evaluate:
                  folds=5,
                  shuffle=True,
                  metric='val_acc',
-                 mode = 'multi_label',
-                 asc=False, 
+                 mode='multi_label',
+                 asc=False,
                  print_out=False):
 
         '''Evaluate a model based on f1_score (all except regression)
@@ -43,7 +41,7 @@ class Evaluate:
             Number of folds to use for cross-validation
         sort_metric : string
             A column name referring to the metric that was used in the scan_object
-            as a performance metric. This is used for sorting the results to pick 
+            as a performance metric. This is used for sorting the results to pick
             for evaluation.
         shuffle : bool
             Data is shuffled before evaluation.
@@ -52,7 +50,7 @@ class Evaluate:
         asc : bool
             False if the metric is to be optimized upwards (e.g. accuracy or f1_score)
         print_out : bool
-            Print out the results. 
+            Print out the results.
 
         TODO: add possibility to input custom metrics.
 
@@ -72,20 +70,20 @@ class Evaluate:
 
             if mode == 'binary':
                 y_pred = y_pred >= .5
-                scores = f1_score(y_pred , ky[i], average='binary')
-                
+                scores = f1_score(y_pred, ky[i], average='binary')
+
             elif mode == 'multi_class':
                 y_pred = y_pred.argmax(axis=-1)
-                scores = f1_score(y_pred , ky[i], average='macro')
-            
+                scores = f1_score(y_pred, ky[i], average='macro')
+
             if mode == 'multi_label':
-                y_pred = model.predict(kx[i]).argmax(axis=1) 
-                scores = f1_score(y_pred , ky[i].argmax(axis=1), average='macro')
+                y_pred = model.predict(kx[i]).argmax(axis=1)
+                scores = f1_score(y_pred, ky[i].argmax(axis=1), average='macro')
 
             elif mode == 'regression':
                 y_pred = model.predict(kx[i])
                 scores = mean_absolute_error(y_pred, ky[i])
-            
+
             out.append(scores)
 
         if print_out is True:

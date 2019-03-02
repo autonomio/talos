@@ -1,5 +1,8 @@
 import numpy as np
-from wrangle import shuffle
+try:
+    from wrangle.array.array_random_shuffle import array_random_shuffle as shuffle
+except ImportError:
+    from wrangle import shuffle
 
 
 def validation_split(self):
@@ -17,6 +20,7 @@ def validation_split(self):
         if self.shuffle:
             random_shuffle(self)
 
+        # deduce the midway point for input data
         limit = int(len(self.x) * (1 - self.val_split))
 
         self.x_train = self.x[:limit]
@@ -29,7 +33,7 @@ def validation_split(self):
 
 
 def random_shuffle(self):
-    
+
     """Randomly shuffles the datasets.
     If self.seed is set, seed the generator
     to ensure that the results are reproducible."""
@@ -38,22 +42,23 @@ def random_shuffle(self):
 
         '''Helper function to support the case
         where x consist of a list of arrays.'''
-    
+
         if self.seed is not None:
             np.random.seed(self.seed)
 
         ix = np.arange(len(x))
         np.random.shuffle(ix)
-    
-        return ix 
+
+        return ix
 
     if isinstance(self.x, list):
-        
+
         ix = randomize(self.x[0])
-        self.x = []
-        
+        out = []
+
         for a in self.x:
             out.append(a[ix])
+        self.x = out
 
     else:
         ix = randomize(self.x)
