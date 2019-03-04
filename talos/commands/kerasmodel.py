@@ -73,7 +73,8 @@ class KerasModel:
                         activation=params['last_activation']))
 
         # bundle the optimizer with learning rate changes
-        optimizer = params['optimizer'](lr=lr_normalizer(params['lr'], params['optimizer']))
+        optimizer = params['optimizer'](lr=lr_normalizer(params['lr'],
+                                                         params['optimizer']))
 
         # compile the model
         model.compile(optimizer=optimizer,

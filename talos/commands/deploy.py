@@ -12,11 +12,10 @@ class Deploy:
 
     def __init__(self, scan_object, model_name, metric='val_acc', asc=False):
 
-
         '''Deploy a model to be used later or in a different system.
 
         NOTE: for a metric that is to be minimized, set asc=True or otherwise
-        you will end up with the model that has the highest loss. 
+        you will end up with the model that has the highest loss.
 
         Deploy() takes in the object from Scan() and creates a package locally
         that can be later activated with Restore().
@@ -26,10 +25,10 @@ class Deploy:
         model_name : str
             Name for the .zip file to be created.
         metric : str
-            The metric to be used for picking the best model. 
+            The metric to be used for picking the best model.
         asc: bool
-            Make this True for metrics that are to be minimized (e.g. loss) , and
-            False when the metric is to be maximized (e.g. acc)
+            Make this True for metrics that are to be minimized (e.g. loss) ,
+            and False when the metric is to be maximized (e.g. acc)
 
         '''
 
