@@ -31,7 +31,7 @@ if __name__ == '__main__':
 
     # reporting specific testing
     from test.core_tests.test_scan import ReportingTest, DatasetTest
-    
+
     ReportingTest()
     DatasetTest()
 
@@ -59,5 +59,5 @@ if __name__ == '__main__':
     ta.Restore(start_time + '.zip')
 
     test_random_methods()
-    fit_generator = generator(scan_object.x, scan_object.y, 20)
+    fit_generator = ta.utils.generator(scan_object.x, scan_object.y, 20)
     force_cpu()

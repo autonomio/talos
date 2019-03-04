@@ -1,8 +1,3 @@
-import tensorflow as tf
-import keras.backend as K
-from keras.utils import multi_gpu_model
-
-
 def parallel_gpu_jobs(allow_growth=True, fraction=.5):
 
     '''Sets the max used memory as a fraction for tensorflow
@@ -13,6 +8,9 @@ def parallel_gpu_jobs(allow_growth=True, fraction=.5):
     fraction :: a float value (e.g. 0.5 means 4gb out of 8gb)
 
     '''
+
+    import keras.backend as K
+    import tensorflow as tf
 
     gpu_options = K.tf.GPUOptions(allow_growth=allow_growth,
                                   per_process_gpu_memory_fraction=fraction)
@@ -35,6 +33,8 @@ def multi_gpu(model, gpus=None, cpu_merge=True, cpu_relocation=False):
 
     '''
 
+    from keras.utils import multi_gpu_model
+
     return multi_gpu_model(model,
                            gpus=gpus,
                            cpu_merge=cpu_merge,
@@ -45,6 +45,9 @@ def force_cpu():
 
     '''Force CPU on a GPU system
     '''
+
+    import keras.backend as K
+    import tensorflow as tf
 
     config = tf.ConfigProto(device_count={'GPU': 0})
     session = tf.Session(config=config)
