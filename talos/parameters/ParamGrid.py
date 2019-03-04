@@ -1,8 +1,7 @@
 import numpy as np
 
 from ..reducers.sample_reducer import sample_reducer
-from .round_params import create_params_dict
-from .permutation_filter import permutation_filter
+from ..reducers.permutation_filter import permutation_filter
 
 
 class ParamGrid:
@@ -62,7 +61,7 @@ class ParamGrid:
         self.param_grid = np.column_stack((self.param_grid, self.param_log))
 
     def _create_param_grid(self, ls, final_grid_size, virtual_grid_size):
-        
+
         # select permutations according to downsample
         if final_grid_size < virtual_grid_size:
             out = sample_reducer(self, final_grid_size, virtual_grid_size)
@@ -71,7 +70,7 @@ class ParamGrid:
 
         # build the parameter permutation grid
         param_grid = self._create_param_permutations(ls, out)
-        
+
         return param_grid
 
     def _create_param_permutations(self, ls, permutation_index):

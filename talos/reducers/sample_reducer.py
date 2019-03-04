@@ -5,7 +5,6 @@ from ..utils.exceptions import TalosDataError
 
 def sample_reducer(self, length, max_value):
 
-
     '''Sample Reducer (Helper)
 
     NOTE: The Scan() object  is in self.main_self because

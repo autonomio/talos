@@ -1,7 +1,8 @@
 import numpy as np
 
+
 def generator(x, y, batch_size):
-    
+
     '''Creates a data generator for Keras fit_generator(). '''
 
     samples_per_epoch = x.shape[0]

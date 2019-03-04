@@ -219,7 +219,6 @@ class MultiLabelTest:
              random_method='crypto_uniform',
              seed=2423,
              search_method='linear',
-             max_iteration_start_time=None,
              permutation_filter=lambda p: p['first_neuron'] * p['hidden_layers'] < 9,
              reduction_method='correlation',
              reduction_interval=2,

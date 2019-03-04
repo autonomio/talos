@@ -7,36 +7,36 @@ from .scan_run import scan_run
 class Scan:
     """Hyperparamater scanning and optimization
 
-    USE: ta.Scan(x=x, y=y, params=params_dict, model=model) 
+    USE: ta.Scan(x=x, y=y, params=params_dict, model=model)
 
-    Takes in a Keras model, and a dictionary with the parameter 
-    boundaries for the experiment. 
+    Takes in a Keras model, and a dictionary with the parameter
+    boundaries for the experiment.
 
         p = {
             'epochs' : [50, 100, 200],
             'activation' : ['relu'],
             'dropout': (0, 0.1, 5)
         }
-    
+
     Accepted input formats are [1] single value in a list, [0.1, 0.2]
-    multiple values in a list, and (0, 0.1, 5) a range of 5 values 
-    from 0 to 0.1. 
+    multiple values in a list, and (0, 0.1, 5) a range of 5 values
+    from 0 to 0.1.
 
     Here is an example of the input model:
 
     def model():
 
-        # any Keras model 
+        # any Keras model
 
         return out, model
 
 
-    You must replace the parameters in the model with references to 
+    You must replace the parameters in the model with references to
     the dictionary, for example:
 
     model.fit(epochs=params['epochs'])
 
-    To learn more, start from the examples and documentation 
+    To learn more, start from the examples and documentation
     available here: https://github.com/autonomio/talos
 
 
@@ -84,11 +84,12 @@ class Scan:
         forward, and `reverse` starts at the end of the grid and moves
         backwards.
     max_iteration_start_time : None or str
-        Allows setting a time when experiment will be completed. 
+        Allows setting a time when experiment will be completed. Use the format
+        "%Y-%m-%d %H:%M" here.
     permutation_filter : lambda function
         Use it to filter permutations based on previous knowledge.
         USE: permutation_filter=lambda p: p['batch_size'] < 150
-        This example removes any permutation where batch_size is below 150 
+        This example removes any permutation where batch_size is below 150
     reduction_method : {None, 'correlation'}
         Method for honing in on the optimal hyperparameter subspace. (Default
         is None).
@@ -129,11 +130,11 @@ class Scan:
                  val_split=.3,
                  shuffle=True,
                  round_limit=None,
+                 time_limit=None,
                  grid_downsample=1.0,
                  random_method='uniform_mersenne',
                  seed=None,
                  search_method='random',
-                 max_iteration_start_time=None,
                  permutation_filter=None,
                  reduction_method=None,
                  reduction_interval=50,
@@ -163,7 +164,8 @@ class Scan:
         self.shuffle = shuffle
         self.random_method = random_method
         self.search_method = search_method
-        self.max_iteration_start_time = max_iteration_start_time
+        self.round_limit = round_limit
+        self.time_limit = time_limit
         self.permutation_filter = permutation_filter
         self.reduction_method = reduction_method
         self.reduction_interval = reduction_interval
@@ -172,7 +174,6 @@ class Scan:
         self.reduction_threshold = reduction_threshold
         self.reduction_metric = reduction_metric
         self.reduce_loss = reduce_loss
-        self.round_limit = round_limit
         self.debug = debug
         self.seed = seed
         self.clear_tf_session = clear_tf_session
