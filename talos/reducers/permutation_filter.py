@@ -20,15 +20,15 @@ def permutation_filter(self, ls, final_grid_size, virtual_grid_size):
     while len(self.param_grid) < final_grid_size and final_expanded_grid_size < virtual_grid_size:
         final_expanded_grid_size *= 2
 
-    if final_expanded_grid_size > virtual_grid_size:
-        final_expanded_grid_size = virtual_grid_size
+        if final_expanded_grid_size > virtual_grid_size:
+            final_expanded_grid_size = virtual_grid_size
 
-    self.param_grid = self._create_param_grid(ls,
-                                              final_expanded_grid_size,
-                                              virtual_grid_size)
+        self.param_grid = self._create_param_grid(ls,
+                                                  final_expanded_grid_size,
+                                                  virtual_grid_size)
 
-    grid_indices = list(filter(fn, range(len(self.param_grid))))
-    self.param_grid = self.param_grid[grid_indices]
+        grid_indices = list(filter(fn, range(len(self.param_grid))))
+        self.param_grid = self.param_grid[grid_indices]
 
     self.param_grid = self.param_grid[:final_grid_size]
 

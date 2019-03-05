@@ -44,11 +44,16 @@ class ParamGrid:
             final_grid_size = min(final_grid_size, self.main_self.round_limit)
 
         # create the params grid
-        self.param_grid = self._create_param_grid(ls, final_grid_size, virtual_grid_size)
+        self.param_grid = self._create_param_grid(ls,
+                                                  final_grid_size,
+                                                  virtual_grid_size)
 
         # handle the case where permutation filter is provided
         if self.main_self.permutation_filter is not None:
-            self = permutation_filter(self, ls, final_grid_size, virtual_grid_size)
+            self = permutation_filter(self,
+                                      ls,
+                                      final_grid_size,
+                                      virtual_grid_size)
 
         # initialize with random shuffle if needed
         if self.main_self.shuffle:
