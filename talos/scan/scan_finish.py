@@ -1,5 +1,7 @@
 import time
+import csv
 from pandas import Series, DataFrame
+import pandas
 
 from ..scan.scan_addon import func_best_model, func_evaluate
 from ..utils.string_cols_to_numeric import string_cols_to_numeric
@@ -25,8 +27,12 @@ def scan_finish(self):
     self.peak_epochs_df['acc_epoch'] = [i[0] for i in self.epoch_entropy]
     self.peak_epochs_df['loss_epoch'] = [i[1] for i in self.epoch_entropy]
 
+    def my_csv_line_parse(line):
+        for row in csv.reader([line]):
+            return pandas.Series(row)
+
     # clean the results into a dataframe
-    self.data = self.result[self.result.columns[0]].str.split(',', expand=True)
+    self.data = self.result[self.result.columns[0]].apply(my_csv_line_parse)
     self.data.columns = self.result.columns[0].split(',')
 
     # remove redundant columns

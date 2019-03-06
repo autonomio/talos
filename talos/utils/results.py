@@ -61,7 +61,10 @@ def run_round_results(self, out):
     self.peak_epochs.append(p_epochs)
 
     for key in self.round_params.keys():
-        _rr_out.append(self.round_params[key])
+        p=str(self.round_params[key])
+        if ',' in p:
+            p='"{}"'.format(p.replace('\\', '\\\\').replace('"', '\\"'))
+        _rr_out.append(p)
 
     return ",".join(str(i) for i in _rr_out)
 
