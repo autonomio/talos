@@ -39,13 +39,13 @@ def epoch_entropy(history):
             acc_entropy = nan
 
     elif no_of_items >= 4:
-        if 'acc' in keys:
+        if 'acc' in keys and len(history.history['val_acc'])==len(history.history['acc']):
             acc_entropy = entropy(history.history['val_acc'],
                                   history.history['acc'])
         else:
             acc_entropy = nan
 
-        if 'loss' in keys:
+        if 'loss' in keys and len(history.history['val_loss'])==len(history.history['loss']):
             loss_entropy = entropy(history.history['val_loss'],
                                    history.history['loss'])
         else:
