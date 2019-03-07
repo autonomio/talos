@@ -1,18 +1,3 @@
-import numpy as np
-
-from talos.model.layers import hidden_layers
-from talos.model.normalizers import lr_normalizer
-
-from keras.models import Sequential
-from keras.layers import Dropout, Flatten
-from keras.layers import LSTM, Conv1D, SimpleRNN, Dense, Bidirectional
-
-try:
-    from wrangle.reshape_to_conv1d import reshape_to_conv1d as array_reshape_conv1d
-except ImportError:
-    from wrangle import array_reshape_conv1d
-
-
 class KerasModel:
 
     def __init__(self):
@@ -31,11 +16,18 @@ class KerasModel:
 
     def _create_input_model(self, x_train, y_train, x_val, y_val, params):
 
+        import numpy as np
+        import wrangle as wr
+
+        from keras.models import Sequential
+        from keras.layers import Dropout, Flatten
+        from keras.layers import LSTM, Conv1D, SimpleRNN, Dense, Bidirectional
+
         model = Sequential()
 
         if params['network'] != 'dense':
-            x_train = array_reshape_conv1d(x_train)
-            x_val = array_reshape_conv1d(x_val)
+            x_train = wr.array_reshape_conv1d(x_train)
+            x_val = wr.array_reshape_conv1d(x_val)
 
         if params['network'] == 'conv1d':
             model.add(Conv1D(params['first_neuron'], x_train.shape[1]))
@@ -58,6 +50,7 @@ class KerasModel:
         model.add(Dropout(params['dropout']))
 
         # add hidden layers to the model
+        from talos.model.layers import hidden_layers
         hidden_layers(model, params, 1)
 
         # output layer (this is scetchy)
@@ -73,6 +66,7 @@ class KerasModel:
                         activation=params['last_activation']))
 
         # bundle the optimizer with learning rate changes
+        from talos.model.normalizers import lr_normalizer
         optimizer = params['optimizer'](lr=lr_normalizer(params['lr'],
                                                          params['optimizer']))
 

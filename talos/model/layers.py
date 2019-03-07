@@ -1,8 +1,3 @@
-from keras.layers import Dense, Dropout
-from .network_shape import network_shape
-from ..utils.exceptions import TalosParamsError
-
-
 def hidden_layers(model, params, last_neuron):
 
     '''HIDDEN LAYER Generator
@@ -14,6 +9,10 @@ def hidden_layers(model, params, last_neuron):
     of layers is used as a variable in the optimization process.
     Handles things in a way where any number of layers can be tried
     with matching hyperparameters.'''
+
+    from keras.layers import Dense, Dropout
+    from .network_shape import network_shape
+    from ..utils.exceptions import TalosParamsError
 
     try:
         kernel_initializer = params['kernel_initializer']

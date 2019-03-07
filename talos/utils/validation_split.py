@@ -1,10 +1,3 @@
-import numpy as np
-try:
-    from wrangle.array.array_random_shuffle import array_random_shuffle as shuffle
-except ImportError:
-    from wrangle import shuffle
-
-
 def validation_split(self):
     """Defines the attributes `x_train`, `y_train`, `x_val` and `y_val`.
     The validation (cross-validation, aka development) sets are determined
@@ -17,8 +10,8 @@ def validation_split(self):
         # self.x/y_val are already set
 
     else:
-        if self.shuffle:
-            random_shuffle(self)
+        # shuffle the data before splitting
+        random_shuffle(self)
 
         # deduce the midway point for input data
         limit = int(len(self.x) * (1 - self.val_split))
@@ -39,6 +32,8 @@ def random_shuffle(self):
     to ensure that the results are reproducible."""
 
     def randomize(x):
+
+        import numpy as np
 
         '''Helper function to support the case
         where x consist of a list of arrays.'''
@@ -69,8 +64,10 @@ def random_shuffle(self):
 
 def kfold(x, y, folds=10, shuffled=True):
 
+    import wrangle as wr
+
     if shuffled is True:
-        x, y = shuffle(x, y)
+        x, y = wr.array_random_shuffle(x, y)
 
     out_x = []
     out_y = []

@@ -17,6 +17,7 @@ def test_auto_scan():
         p[key] = [p[key][0]]
 
     ta.Scan(x, y, p, ta.KerasModel().model,
-            permutation_filter=lambda p: p['batch_size'] < 150,)
+            boolean_limit=lambda p: p['batch_size'] < 150
+            )
 
     return "Finished testing auto Scan()"

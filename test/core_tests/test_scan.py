@@ -150,18 +150,16 @@ class BinaryTest:
              y_val=self.y_val,
              params=self.values_list,
              round_limit=5,
-             dataset_name='BinaryTest',
-             experiment_no='000',
+             experiment_name='BinaryTest',
              model=ta.templates.models.cervical_cancer,
              random_method='crypto_uniform',
              seed=2423,
-             search_method='linear',
              reduction_method='correlation',
-             reduction_interval=2,
-             reduction_window=2,
+             reduction_interval=3,
+             reduction_window=3,
              reduction_threshold=0.2,
              reduction_metric='val_loss',
-             reduce_loss=True,
+             minimize_loss=True,
              last_epoch_value=True,
              clear_tf_session=False,
              disable_progress_bar=True,
@@ -174,16 +172,17 @@ class BinaryTest:
              self.y_train,
              params=self.values_range,
              model=ta.templates.models.cervical_cancer,
-             grid_downsample=0.0001,
-             permutation_filter=lambda p: p['first_neuron'] * p['hidden_layers'] < 220,
+             fraction_limit=0.0001,
              random_method='sobol',
              reduction_method='correlation',
-             reduction_interval=2,
-             reduction_window=2,
+             reduction_interval=3,
+             reduction_window=3,
              reduction_threshold=0.2,
              reduction_metric='val_acc',
-             reduce_loss=False,
-             debug=True)
+             minimize_loss=False,
+             debug=True,
+             boolean_limit=lambda p: p['first_neuron'] * p['hidden_layers'] < 220
+             )
 
 
 class MultiLabelTest:
@@ -213,23 +212,22 @@ class MultiLabelTest:
              y_val=self.y_val,
              params=self.values_list,
              round_limit=5,
-             dataset_name='MultiLabelTest',
-             experiment_no='000',
+             experiment_name='MultiLabelTest',
              model=ta.templates.models.iris,
              random_method='crypto_uniform',
              seed=2423,
-             search_method='linear',
-             permutation_filter=lambda p: p['first_neuron'] * p['hidden_layers'] < 9,
              reduction_method='correlation',
-             reduction_interval=2,
-             reduction_window=2,
+             reduction_interval=3,
+             reduction_window=3,
              reduction_threshold=0.2,
              reduction_metric='val_loss',
-             reduce_loss=True,
+             minimize_loss=True,
              last_epoch_value=True,
              clear_tf_session=False,
              disable_progress_bar=True,
-             debug=True)
+             debug=True,
+             boolean_limit=lambda p: p['first_neuron'] * p['hidden_layers'] < 9
+             )
 
     # comprehensive
     def values_range_test(self):
@@ -238,14 +236,14 @@ class MultiLabelTest:
              self.y,
              params=self.values_range,
              model=ta.templates.models.iris,
-             grid_downsample=0.0001,
+             fraction_limit=0.0001,
              random_method='sobol',
              reduction_method='correlation',
-             reduction_interval=2,
-             reduction_window=2,
+             reduction_interval=3,
+             reduction_window=3,
              reduction_threshold=0.2,
              reduction_metric='val_acc',
-             reduce_loss=False,
+             minimize_loss=False,
              debug=True)
 
 
@@ -255,7 +253,9 @@ class ReportingTest:
 
         print("ReportingTest : Running Binary test...")
 
-        r = Reporting('BinaryTest_000.csv')
+        r = Reporting('BinaryTest.csv')
+
+        print(len(r.data.val_acc))
 
         x = r.data
         x = r.correlate()
@@ -269,7 +269,7 @@ class ReportingTest:
         x = r.plot_line()
 
         print("ReportingTest : Running MultiLabel test...")
-        r = Reporting('MultiLabelTest_000.csv')
+        r = Reporting('MultiLabelTest.csv')
 
         x = r.data
         x = r.correlate()

@@ -1,54 +1,46 @@
-from scipy.stats import entropy
-from numpy import nan
+def epoch_entropy(self, history):
 
+    '''Called from logging/logging_run.py
 
-def epoch_entropy(history):
+    Computes the entropy for epoch metric
+    variation. If validation is on,
+    then returns KL divergence instead of
+    simple Shannon entropy. When Keras
+    validation_freq is on, Shannon entropy
+    is returned. Basically, all experiments
+    should use validation, so Shannon is
+    provided mearly as a fallback.
 
-    '''MEASURE EPOCH ENTROPY
-
-    BINARY/CATEGORICAL:
-
-    Measures the KL divergence of the acc and loss results
-    per epoch of a given permutation.
-
-    CONTINUOUS:
-
-    Measures shannon entropy for loss.
-
-    # TODO Right now this does not handle all cases well and needs
-      to be thought about properly.
     '''
 
-    keys = list(history.history.keys())
-    no_of_items = len(keys)
+    import warnings
+    from scipy.stats import entropy
 
-    if no_of_items == 1:
-        if 'loss' in keys:
-            loss_entropy = entropy(history.history['loss'])
-            acc_entropy = nan
-        else:
-            loss_entropy = nan
-            acc_entropy = nan
+    warnings.simplefilter('ignore')
 
-    elif no_of_items == 2:
-        if 'acc' in keys and 'loss' in keys:
-            loss_entropy = entropy(history.history['loss'])
-            acc_entropy = entropy(history.history['acc'])
-        else:
-            loss_entropy = nan
-            acc_entropy = nan
+    out = []
 
-    elif no_of_items >= 4:
-        if 'acc' in keys:
-            acc_entropy = entropy(history.history['val_acc'],
-                                  history.history['acc'])
-        else:
-            acc_entropy = nan
+    # set the default entropy mode to shannon
+    mode = 'shannon'
 
-        if 'loss' in keys:
-            loss_entropy = entropy(history.history['val_loss'],
-                                   history.history['loss'])
-        else:
-            loss_entropy = nan
+    # try to make sure each metric has validation
+    if len(self._metric_keys) == len(self._val_keys):
+        # make sure that the length of the arrays are same
+        for i in range(len(self._metric_keys)):
+            if len(history[self._metric_keys[i]]) == len(history[self._val_keys[i]]):
+                mode = 'kl_divergence'
+            else:
+                break
 
-    return [acc_entropy, loss_entropy]
+    # handle the case where only shannon entropy can be used
+    if mode == 'shannon':
+        for i in range(len(self._metric_keys)):
+            out.append(entropy(history[self._metric_keys[i]]))
+
+    # handle the case where kl divergence can be used
+    elif mode == 'kl_divergence':
+        for i in range(len(self._metric_keys)):
+            out.append(entropy(history[self._val_keys[i]],
+                               history[self._metric_keys[i]]))
+
+    return out

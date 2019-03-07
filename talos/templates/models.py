@@ -1,13 +1,11 @@
-#!/usr/bin/env python
-
-
 def breast_cancer(x_train, y_train, x_val, y_val, params):
 
     from keras.models import Sequential
     from keras.layers import Dropout, Dense
     from talos.model import lr_normalizer, early_stopper, hidden_layers
 
-    from talos.metrics.keras_metrics import matthews_correlation_acc, precision_acc
+    from talos.metrics.keras_metrics import matthews_correlation_acc
+    from talos.metrics.keras_metrics import precision_acc
     from talos.metrics.keras_metrics import recall_acc, fmeasure_acc
 
     model = Sequential()
@@ -49,7 +47,8 @@ def cervical_cancer(x_train, y_train, x_val, y_val, params):
     from keras.layers import Dropout, Dense
     from talos.model import lr_normalizer, early_stopper, hidden_layers
 
-    from talos.metrics.keras_metrics import matthews_correlation_acc, precision_acc
+    from talos.metrics.keras_metrics import matthews_correlation_acc
+    from talos.metrics.keras_metrics import precision_acc
     from talos.metrics.keras_metrics import recall_acc, fmeasure_acc
 
     model = Sequential()
