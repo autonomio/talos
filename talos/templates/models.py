@@ -4,9 +4,7 @@ def breast_cancer(x_train, y_train, x_val, y_val, params):
     from keras.layers import Dropout, Dense
     from talos.model import lr_normalizer, early_stopper, hidden_layers
 
-    from talos.metrics.keras_metrics import matthews_correlation_acc
-    from talos.metrics.keras_metrics import precision_acc
-    from talos.metrics.keras_metrics import recall_acc, fmeasure_acc
+    from talos.metrics.keras_metrics import matthews, precision, recall, f1score
 
     model = Sequential()
     model.add(Dense(params['first_neuron'],
@@ -24,10 +22,10 @@ def breast_cancer(x_train, y_train, x_val, y_val, params):
                                     params['optimizer'])),
                   loss=params['losses'],
                   metrics=['acc',
-                           fmeasure_acc,
-                           recall_acc,
-                           precision_acc,
-                           matthews_correlation_acc])
+                           f1score,
+                           recall,
+                           precision,
+                           matthews])
 
     results = model.fit(x_train, y_train,
                         batch_size=params['batch_size'],
@@ -36,7 +34,7 @@ def breast_cancer(x_train, y_train, x_val, y_val, params):
                         validation_data=[x_val, y_val],
                         callbacks=[early_stopper(params['epochs'],
                                                  mode='moderate',
-                                                 monitor='val_fmeasure')])
+                                                 monitor='val_f1score')])
 
     return results, model
 
@@ -47,9 +45,7 @@ def cervical_cancer(x_train, y_train, x_val, y_val, params):
     from keras.layers import Dropout, Dense
     from talos.model import lr_normalizer, early_stopper, hidden_layers
 
-    from talos.metrics.keras_metrics import matthews_correlation_acc
-    from talos.metrics.keras_metrics import precision_acc
-    from talos.metrics.keras_metrics import recall_acc, fmeasure_acc
+    from talos.metrics.keras_metrics import matthews, precision, recall, f1score
 
     model = Sequential()
     model.add(Dense(params['first_neuron'],
@@ -67,10 +63,10 @@ def cervical_cancer(x_train, y_train, x_val, y_val, params):
                                     params['optimizer'])),
                   loss=params['losses'],
                   metrics=['acc',
-                           fmeasure_acc,
-                           recall_acc,
-                           precision_acc,
-                           matthews_correlation_acc])
+                           f1score,
+                           recall,
+                           precision,
+                           matthews])
 
     results = model.fit(x_train, y_train,
                         batch_size=params['batch_size'],
@@ -79,7 +75,7 @@ def cervical_cancer(x_train, y_train, x_val, y_val, params):
                         validation_data=[x_val, y_val],
                         callbacks=[early_stopper(params['epochs'],
                                                  mode='moderate',
-                                                 monitor='val_fmeasure')])
+                                                 monitor='val_f1score')])
 
     return results, model
 

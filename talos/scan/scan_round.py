@@ -4,6 +4,7 @@ def scan_round(self):
     on the level of execution of each round.'''
 
     import time as ti
+    import gc
 
     # print round params
     if self.print_params is True:
@@ -31,8 +32,16 @@ def scan_round(self):
     self.saved_weights.append(self.keras_model.get_weights())
 
     # clear tensorflow sessions
-    if self.clear_tf_session is True:
-        from keras import backend as K
-        K.clear_session()
+    if self.clear_session is True:
+
+        del self.keras_model
+        gc.collect()
+
+        # try TF specific and pass for everyone else
+        try:
+            from keras import backend as K
+            K.clear_session()
+        except:
+            pass
 
     return self

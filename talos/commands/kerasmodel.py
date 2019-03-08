@@ -1,18 +1,48 @@
 class KerasModel:
 
-    def __init__(self):
-
-        '''An input model for Scan(). Optimized for being used together with
-        Params(). For example:
-
-        Scan(x=x, y=y, params=Params().params, model=KerasModel().model)
-
-        NOTE: the grid from Params() is very large, so grid_downsample or
-        round_limit accordingly in Scan().
+    def __init__(self, task=None):
 
         '''
 
+        Creates an input model for Scan(). Optimized for being used together
+        with Params(). For example:
+
+        p = talos.Params().params
+        model = talos.KerasModel(task='binary').model
+
+        talos.Scan(x, y, p, model)
+
+        NOTE: the parameter space from Params() is very large, so use limits
+        in or reducers in Scan() accordingly.
+
+        task : string or list
+            If 'continuous' then mae is used for metric, if 'binary',
+            'multiclass', or 'multilabel', f1score is used. Accuracy is always
+            used. You can also input a list with one or more custom metrics or
+            names of Keras or Talos metrics.
+        '''
+
+        # pick the right metrics
+        self.metrics = self._set_metric(task)
+
+        # create the model
         self.model = self._create_input_model
+
+    def _set_metric(self, task):
+
+        """Sets the metric for the model based on the experiment type
+        or a list of metrics from user."""
+
+        import talos as ta
+
+        if task is None:
+            return ['acc']
+        elif task in ['binary', 'multiclass', 'multilabel']:
+            return [ta.utils.metric.f1score, 'acc']
+        elif task == 'continuous':
+            return [ta.utils.metrics.mae, 'acc']
+        elif isinstance(task, list):
+            return task + ['acc']
 
     def _create_input_model(self, x_train, y_train, x_val, y_val, params):
 
@@ -73,7 +103,7 @@ class KerasModel:
         # compile the model
         model.compile(optimizer=optimizer,
                       loss=params['losses'],
-                      metrics=['acc'])
+                      metrics=self.metrics)
 
         # fit the model
         out = model.fit(x_train, y_train,

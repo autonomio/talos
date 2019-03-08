@@ -161,7 +161,7 @@ class BinaryTest:
              reduction_metric='val_loss',
              minimize_loss=True,
              last_epoch_value=True,
-             clear_tf_session=False,
+             clear_session=False,
              disable_progress_bar=True,
              debug=True)
 
@@ -223,7 +223,7 @@ class MultiLabelTest:
              reduction_metric='val_loss',
              minimize_loss=True,
              last_epoch_value=True,
-             clear_tf_session=False,
+             clear_session=False,
              disable_progress_bar=True,
              debug=True,
              boolean_limit=lambda p: p['first_neuron'] * p['hidden_layers'] < 9

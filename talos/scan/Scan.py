@@ -133,7 +133,7 @@ class Scan:
                  minimize_loss=False,
                  seed=None,
                  last_epoch_value=False,
-                 clear_tf_session=True,
+                 clear_session=True,
                  disable_progress_bar=False,
                  print_params=False,
                  debug=False):
@@ -168,7 +168,7 @@ class Scan:
         # other
         self.debug = debug
         self.seed = seed
-        self.clear_tf_session = clear_tf_session
+        self.clear_session = clear_session
         self.disable_progress_bar = disable_progress_bar
         self.last_epoch_value = last_epoch_value
         self.print_params = print_params
