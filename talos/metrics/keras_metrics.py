@@ -33,6 +33,13 @@ def msle(y_true, y_pred):
     return K.mean(K.square(first_log - second_log), axis=-1)
 
 
+def rmsle(y_true, y_pred):
+    from keras import backend as K
+    first_log = K.log(K.clip(y_pred, K.epsilon(), None) + 1.)
+    second_log = K.log(K.clip(y_true, K.epsilon(), None) + 1.)
+    return K.sqrt(K.mean(K.square(first_log - second_log), axis=-1))
+
+
 def matthews(y_true, y_pred):
 
     from keras import backend as K
