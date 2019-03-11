@@ -1,6 +1,6 @@
 class KerasModel:
 
-    def __init__(self, task=None):
+    def __init__(self, task):
 
         '''
 
@@ -22,31 +22,30 @@ class KerasModel:
             names of Keras or Talos metrics.
         '''
 
+        self.task = task
+
         # pick the right metrics
-        self.metrics = self._set_metric(task)
+        self.metrics = self._set_metric()
 
         # create the model
         self.model = self._create_input_model
 
-    def _set_metric(self, task):
+    def _set_metric(self):
 
         """Sets the metric for the model based on the experiment type
         or a list of metrics from user."""
 
         import talos as ta
 
-        if task is None:
-            return ['acc']
-        elif task in ['binary', 'multiclass', 'multilabel']:
-            return [ta.utils.metric.f1score, 'acc']
-        elif task == 'continuous':
+        if self.task in ['binary', 'multiclass', 'multilabel']:
+            return [ta.utils.metrics.f1score, 'acc']
+        elif self.task == 'continuous':
             return [ta.utils.metrics.mae, 'acc']
-        elif isinstance(task, list):
-            return task + ['acc']
+        elif isinstance(self.task, list):
+            return self.task + ['acc']
 
     def _create_input_model(self, x_train, y_train, x_val, y_val, params):
 
-        import numpy as np
         import wrangle as wr
 
         from keras.models import Sequential
@@ -80,20 +79,18 @@ class KerasModel:
         model.add(Dropout(params['dropout']))
 
         # add hidden layers to the model
-        from talos.model.layers import hidden_layers
+        from talos.model.hidden_layers import hidden_layers
         hidden_layers(model, params, 1)
 
-        # output layer (this is scetchy)
-        try:
-            last_neuron = y_train.shape[1]
-        except IndexError:
-            if len(np.unique(y_train)) == 2:
-                last_neuron = 1
-            else:
-                last_neuron = len(np.unique(y_train))
+        # get the right activation and last_neuron based on task
+        from talos.model.output_layer import output_layer
+        activation, last_neuron = output_layer(self.task,
+                                               params['last_activation'],
+                                               y_train,
+                                               y_val)
 
         model.add(Dense(last_neuron,
-                        activation=params['last_activation']))
+                        activation=activation))
 
         # bundle the optimizer with learning rate changes
         from talos.model.normalizers import lr_normalizer

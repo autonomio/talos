@@ -124,7 +124,7 @@ class Params:
         if max_value is None and steps is None:
             values = [int(np.exp2(i)) for i in range(3, 11)]
         else:
-            values = range(bottom_value, max_value, steps)
+            values = list(range(bottom_value, max_value, steps))
 
         self._append_params('first_neuron', values)
 

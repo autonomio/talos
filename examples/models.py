@@ -1,7 +1,7 @@
 from keras.models import Sequential
 from keras.layers import Dropout, Dense
 from ..model.normalizers import lr_normalizer
-from ..model.layers import hidden_layers
+from ..model.hidden_layers import hidden_layers
 from ..metrics.keras_metrics import fmeasure
 
 

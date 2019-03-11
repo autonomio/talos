@@ -16,7 +16,7 @@ def test_auto_scan():
     for key in p.keys():
         p[key] = [p[key][0]]
 
-    ta.Scan(x, y, p, ta.KerasModel().model,
+    ta.Scan(x, y, p, ta.KerasModel('binary').model,
             boolean_limit=lambda p: p['batch_size'] < 150
             )
 
