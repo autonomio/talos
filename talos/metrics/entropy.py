@@ -18,10 +18,10 @@ def epoch_entropy(history):
     # TODO Right now this does not handle all cases well and needs
       to be thought about properly.
     '''
+    acc_entropy, loss_entropy = nan, nan
 
     keys = list(history.history.keys())
     no_of_items = len(keys)
-    acc_entropy, loss_entropy = nan, nan
 
     if no_of_items == 1:
         if 'loss' in keys:
@@ -33,11 +33,11 @@ def epoch_entropy(history):
             acc_entropy = entropy(history.history['acc'])
 
     elif no_of_items >= 4:
-        if 'acc' in keys:
+        if 'acc' in keys and 'val_acc' in keys:
             acc_entropy = entropy(history.history['val_acc'],
                                   history.history['acc'])
 
-        if 'loss' in keys:
+        if 'loss' in keys and 'val_loss' in keys:
             loss_entropy = entropy(history.history['val_loss'],
                                    history.history['loss'])
 
