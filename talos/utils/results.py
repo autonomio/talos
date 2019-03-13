@@ -1,6 +1,6 @@
 from numpy import array, argpartition, savetxt
 from pandas import DataFrame
-
+import csv
 
 def create_header(self, out):
 
@@ -9,15 +9,18 @@ def create_header(self, out):
     for the experiment output log.
     '''
 
-    _rr_out = []
+    _rr_out = {}
 
-    _rr_out.append('round_epochs')
-    [_rr_out.append(i) for i in list(out.history.keys())]
-    [_rr_out.append(key) for key in self.params.keys()]
+    _rr_out['round_epochs'] = []
+    for key in out.history.keys():
+        _rr_out[key] = []
+    for key in self.params.keys():
+        _rr_out[key] = []
 
-    self.peak_epochs.append(list(out.history.keys()))
+    for key in out.history.keys():
+        self.peak_epochs[key] = []
 
-    return ",".join(str(i) for i in _rr_out)
+    return _rr_out
 
 
 def run_round_results(self, out):
@@ -29,13 +32,12 @@ def run_round_results(self, out):
 
     '''
 
-    _rr_out = []
+    _rr_out = self.result
 
     self._round_epochs = len(list(out.history.values())[0])
 
     # otherwise proceed to create the value row
-    _rr_out.append(self._round_epochs)
-    p_epochs = []
+    _rr_out['round_epochs'].append(self._round_epochs)
 
     # iterates through the keys and records last or peak for metrics
     for key in out.history.keys():
@@ -54,37 +56,32 @@ def run_round_results(self, out):
         else:
             value_to_report = array(out.history[key])[best_epoch]
 
-        _rr_out.append(value_to_report)
-        p_epochs.append(best_epoch)
+        _rr_out[key].append(value_to_report)
 
         # this takes care of the separate entity with just peak epoch data
-    self.peak_epochs.append(p_epochs)
+        self.peak_epochs[key].append(best_epoch)
 
     for key in self.round_params.keys():
-        _rr_out.append(self.round_params[key])
-
-    return ",".join(str(i) for i in _rr_out)
+        _rr_out[key].append(self.round_params[key])
 
 
 def save_result(self):
     '''SAVES THE RESULTS/PARAMETERS TO A CSV SPECIFIC TO THE EXPERIMENT'''
 
-    savetxt(self.experiment_name + '.csv',
-            self.result,
-            fmt='%s',
-            delimiter=',')
+    with open(self.experiment_name + '.csv', 'w') as f:
+        w = csv.DictWriter(f, self.result.keys())
+        w.writeheader()
+        w.writerow(self.result)
 
 
 def result_todf(self):
     '''ADDS A DATAFRAME VERSION OF THE RESULTS TO THE CLASS OBJECT'''
 
     self.result = DataFrame(self.result)
-    self.result.columns = self.result.iloc[0]
-    self.result = self.result.drop(0)
 
     return self
 
 
 def peak_epochs_todf(self):
 
-    return DataFrame(self.peak_epochs, columns=self.peak_epochs[0]).drop(0)
+    return DataFrame(self.peak_epochs)

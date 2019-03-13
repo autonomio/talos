@@ -51,13 +51,10 @@ def scan_round(self):
         raise TalosReturnError("Make sure that input model returns in the order 'out, model'")
 
     if self.round_counter == 0:
-        _for_header = create_header(self, _hr_out)
-        self.result.append(_for_header)
+        self.result = create_header(self, _hr_out)
         save_result(self)
 
-    _hr_out = run_round_results(self, _hr_out)
-
-    self.result.append(_hr_out)
+    run_round_results(self, _hr_out)
     save_result(self)
 
     # apply reduction
