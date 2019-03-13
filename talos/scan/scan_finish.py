@@ -66,7 +66,4 @@ def scan_finish(self):
     # reset the index
     self.data.index = range(len(self.data))
 
-    # convert to numeric
-    self.data = string_cols_to_numeric(self.data)
-
     return self
