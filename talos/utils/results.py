@@ -1,6 +1,5 @@
 from numpy import array, argpartition, savetxt
 from pandas import DataFrame
-import csv
 
 def create_header(self, out):
 
@@ -68,10 +67,7 @@ def run_round_results(self, out):
 def save_result(self):
     '''SAVES THE RESULTS/PARAMETERS TO A CSV SPECIFIC TO THE EXPERIMENT'''
 
-    with open(self.experiment_name + '.csv', 'w') as f:
-        w = csv.DictWriter(f, self.result.keys())
-        w.writeheader()
-        w.writerow(self.result)
+    DataFrame(self.result).to_csv(self.experiment_name + '.csv', index=False)
 
 
 def result_todf(self):
