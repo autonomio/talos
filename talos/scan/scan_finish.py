@@ -2,7 +2,6 @@ import time
 from pandas import Series, DataFrame
 
 from ..scan.scan_addon import func_best_model, func_evaluate
-from ..utils.string_cols_to_numeric import string_cols_to_numeric
 
 
 attrs_final = ['data', 'x', 'y', 'peak_epochs_df', 'round_times',

@@ -15,7 +15,7 @@ from . import examples as templates
 
 del_from_utils = ['best_model', 'connection_check', 'detector',
                   'exceptions', 'last_neuron', 'load_model', 'validation_split',
-                  'pred_class', 'results', 'string_cols_to_numeric']
+                  'pred_class', 'results']
 
 for key in del_from_utils:
     if key.startswith('__') is False:
