@@ -36,19 +36,21 @@ class Evaluate:
         y : array
             The ground truth for x
         model_id : int
-            It's possible to evaluate a specific model based on ID. Can be None.
+            It's possible to evaluate a specific model based on ID.
+            Can be None.
         folds : int
             Number of folds to use for cross-validation
         sort_metric : string
-            A column name referring to the metric that was used in the scan_object
-            as a performance metric. This is used for sorting the results to pick
-            for evaluation.
+            A column name referring to the metric that was used in the
+            scan_object as a performance metric. This is used for sorting
+            the results to pick for evaluation.
         shuffle : bool
             Data is shuffled before evaluation.
         mode : string
             'binary', 'multi_class', 'multi_label', or 'regression'.
         asc : bool
-            False if the metric is to be optimized upwards (e.g. accuracy or f1_score)
+            False if the metric is to be optimized upwards
+            (e.g. accuracy or f1_score)
         print_out : bool
             Print out the results.
 
@@ -78,7 +80,9 @@ class Evaluate:
 
             if mode == 'multi_label':
                 y_pred = model.predict(kx[i]).argmax(axis=1)
-                scores = f1_score(y_pred, ky[i].argmax(axis=1), average='macro')
+                scores = f1_score(y_pred,
+                                  ky[i].argmax(axis=1),
+                                  average='macro')
 
             elif mode == 'regression':
                 y_pred = model.predict(kx[i])

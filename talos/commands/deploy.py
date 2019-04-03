@@ -5,18 +5,32 @@ import numpy as np
 
 from ..utils.best_model import best_model, activate_model
 
-# NOTE: this has some overlap with code in evaluate.py
-# and needs to be cleaned up.
-# TODO: needs to also deploy the hyperparameter configuration
-# and some kind of summary of the experiment and then finally
-# pack everything into a zip file
-
 
 class Deploy:
 
     '''Functionality for deploying a model to a filename'''
 
     def __init__(self, scan_object, model_name, metric='val_acc', asc=False):
+
+        '''Deploy a model to be used later or in a different system.
+
+        NOTE: for a metric that is to be minimized, set asc=True or otherwise
+        you will end up with the model that has the highest loss.
+
+        Deploy() takes in the object from Scan() and creates a package locally
+        that can be later activated with Restore().
+
+        scan_object : object
+            The object that is returned from Scan() upon completion.
+        model_name : str
+            Name for the .zip file to be created.
+        metric : str
+            The metric to be used for picking the best model.
+        asc: bool
+            Make this True for metrics that are to be minimized (e.g. loss) ,
+            and False when the metric is to be maximized (e.g. acc)
+
+        '''
 
         self.scan_object = scan_object
         os.mkdir(model_name)

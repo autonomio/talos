@@ -23,6 +23,10 @@ def network_shape(params, last_neuron):
     out = []
     n = first_neuron
 
+    # the case where hidden_layers is zero
+    if layers == 0:
+        return [0]
+
     # the cases where an angle is applied
     if isinstance(shape, float):
 

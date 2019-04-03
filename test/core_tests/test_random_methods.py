@@ -1,4 +1,4 @@
-from talos.examples.pipelines import titanic_pipeline
+import talos as ta
 
 
 def test_random_methods():
@@ -21,6 +21,6 @@ def test_random_methods():
                       'ambience']
 
     for method in random_methods:
-        titanic_pipeline(random_method=method)
+        ta.templates.pipelines.titanic(random_method=method)
 
     return "Finished testing random methods!"

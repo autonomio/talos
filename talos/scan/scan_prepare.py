@@ -1,15 +1,11 @@
 from time import strftime
+from datetime import datetime
 
 from ..utils.validation_split import validation_split
 from ..utils.detector import prediction_type
 from ..parameters.ParamGrid import ParamGrid
 from ..utils.pred_class import classify
 from ..utils.last_neuron import last_neuron
-
-
-TRAIN_VAL_RUNTIME_ERROR_MSG = """
-If x_val or y_val is inputted, then the other must be inputted as well.
-"""
 
 
 def scan_prepare(self):
@@ -24,7 +20,13 @@ def scan_prepare(self):
     if self.experiment_no is None:
         self.experiment_no = ''
 
-    self.experiment_name = self.dataset_name + '_' + self.experiment_no
+    if self.experiment_name is None:
+        self.experiment_name = self.dataset_name + '_' + self.experiment_no
+
+    # handle the case where a time limit is set
+    if self.time_limit is not None:
+        self._stoptime = datetime.strptime(self.time_limit,
+                                           "%Y-%m-%d %H:%M")
 
     # create the round times list
     self.round_times = []
@@ -33,7 +35,7 @@ def scan_prepare(self):
     self.custom_val_split = False
     if (self.x_val is not None and self.y_val is None) or \
        (self.x_val is None and self.y_val is not None):
-        raise RuntimeError(TRAIN_VAL_RUNTIME_ERROR_MSG)
+        raise RuntimeError("If x_val/y_val is inputted, other must as well.")
 
     elif (self.x_val is not None and self.y_val is not None):
         self.custom_val_split = True
@@ -42,12 +44,8 @@ def scan_prepare(self):
     self.paramgrid_object = ParamGrid(self)
     self.param_log = self.paramgrid_object.param_log
     self.param_grid = self.paramgrid_object.param_grid
+    self.param_reference = self.paramgrid_object.param_reference
     del self.paramgrid_object
-
-    # creates a reference dictionary for column number to label
-    self.param_reference = {}
-    for i, col in enumerate(self.params.keys()):
-        self.param_reference[col] = i
 
     self.round_counter = 0
     self.peak_epochs = []

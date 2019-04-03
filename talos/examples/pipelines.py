@@ -1,35 +1,50 @@
-import talos as ta
-
-from talos.examples.datasets import titanic
-from talos.examples.params import titanic_params
-from talos.examples.models import titanic_model
-
-from talos.examples.datasets import iris
-from talos.examples.models import iris_model
-from talos.examples.params import iris as iris_params
-
-
-def titanic_pipeline(round_limit=2, random_method='uniform_mersenne'):
+def breast_cancer(round_limit=2, random_method='uniform_mersenne'):
 
     '''Performs a Scan with Iris dataset and simple dense net'''
-
-    scan_object = ta.Scan(titanic()[0][:50],
-                          titanic()[1][:50],
-                          titanic_params(),
-                          titanic_model,
+    import talos as ta
+    scan_object = ta.Scan(ta.templates.datasets.breast_cancer()[0],
+                          ta.templates.datasets.breast_cancer()[1],
+                          ta.templates.params.breast_cancer(),
+                          ta.templates.models.breast_cancer,
                           round_limit=round_limit)
 
     return scan_object
 
 
-def iris_pipeline(round_limit=5, random_method='uniform_mersenne'):
+def cervical_cancer(round_limit=2, random_method='uniform_mersenne'):
 
     '''Performs a Scan with Iris dataset and simple dense net'''
+    import talos as ta
+    scan_object = ta.Scan(ta.templates.datasets.cervical_cancer()[0],
+                          ta.templates.datasets.cervical_cancer()[1],
+                          ta.templates.params.cervical_cancer(),
+                          ta.templates.models.cervical_cancer,
+                          round_limit=round_limit)
 
-    scan_object = ta.Scan(iris()[0],
-                          iris()[1],
-                          iris_params(),
-                          iris_model,
+    return scan_object
+
+
+def iris(round_limit=2, random_method='uniform_mersenne'):
+
+    '''Performs a Scan with Iris dataset and simple dense net'''
+    import talos as ta
+    scan_object = ta.Scan(ta.templates.datasets.iris()[0],
+                          ta.templates.datasets.iris()[1],
+                          ta.templates.params.iris(),
+                          ta.templates.models.iris,
+                          round_limit=round_limit)
+
+    return scan_object
+
+
+def titanic(round_limit=2, random_method='uniform_mersenne'):
+
+    '''Performs a Scan with Iris dataset and simple dense net'''
+    import talos as ta
+    scan_object = ta.Scan(ta.templates.datasets.titanic()[0][:50],
+                          ta.templates.datasets.titanic()[1][:50],
+                          ta.templates.params.titanic(),
+                          ta.templates.models.titanic,
                           round_limit=round_limit)
 
     return scan_object

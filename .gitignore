@@ -12,3 +12,4 @@ talos.egg-info
 *.h5
 *.json
 *.npy
+test.sh

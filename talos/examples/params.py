@@ -1,9 +1,4 @@
-from keras.optimizers import Adam, Nadam, RMSprop
-from keras.activations import relu, elu, softmax, sigmoid
-from keras.losses import logcosh, binary_crossentropy, categorical_crossentropy
-
-
-def titanic_params():
+def titanic():
 
     # here use a standard 2d dictionary for inputting the param boundaries
     p = {'lr': (0.5, 5, 10),
@@ -19,6 +14,10 @@ def titanic_params():
 
 
 def iris():
+
+    from keras.optimizers import Adam, Nadam
+    from keras.losses import logcosh, categorical_crossentropy
+    from keras.activations import relu, elu, softmax
 
     # here use a standard 2d dictionary for inputting the param boundaries
     p = {'lr': (0.5, 5, 10),
@@ -41,6 +40,10 @@ def iris():
 
 def breast_cancer():
 
+    from keras.optimizers import Adam, Nadam, RMSprop
+    from keras.losses import logcosh, binary_crossentropy
+    from keras.activations import relu, elu, sigmoid
+
     # then we can go ahead and set the parameter space
     p = {'lr': (0.5, 5, 10),
          'first_neuron': [4, 8, 16, 32, 64],
@@ -48,12 +51,14 @@ def breast_cancer():
          'batch_size': (2, 30, 10),
          'epochs': [50, 100, 150],
          'dropout': (0, 0.5, 5),
-         'weight_regulizer': [None],
-         'emb_output_dims': [None],
-         'shape': ['brick', 'long_funnel'],
+         'shapes': ['brick', 'triangle', 'funnel'],
          'optimizer': [Adam, Nadam, RMSprop],
          'losses': [logcosh, binary_crossentropy],
          'activation': [relu, elu],
          'last_activation': [sigmoid]}
 
     return p
+
+
+def cervical_cancer():
+    return breast_cancer()

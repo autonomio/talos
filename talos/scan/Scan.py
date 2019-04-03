@@ -5,43 +5,42 @@ from .scan_run import scan_run
 
 
 class Scan:
-    """Suite of operations for training and evaluating Keras neural networks.
+    """Hyperparamater scanning and optimization
 
-    Inputs train/dev data and a set of parameters as a dictionary. The name and
-    experiment number must also be chosen since they define the output
-    filenames. The model must also be specified of the form
+    USE: ta.Scan(x=x, y=y, params=params_dict, model=model)
 
-        my_model(x_train, y_train, x_val, y_val, params),
+    Takes in a Keras model, and a dictionary with the parameter
+    boundaries for the experiment.
 
-    and the dictionary
-
-        d = {
-            'fcc_layer_1_N': [50, 100, 200],
-            'fcc_layer_1_act': ['relu', 'tanh'],
-            'fcc_layer_1_dropout': (0, 0.1, 5)    # 5 points between 0 and 0.1
+        p = {
+            'epochs' : [50, 100, 200],
+            'activation' : ['relu'],
+            'dropout': (0, 0.1, 5)
         }
 
-    The dictionary is parsed for every run and only one entry per parameter
-    is fed into the neural network at a time.
+    Accepted input formats are [1] single value in a list, [0.1, 0.2]
+    multiple values in a list, and (0, 0.1, 5) a range of 5 values
+    from 0 to 0.1.
 
-    Important note: the user has two options when specifying input data.
+    Here is an example of the input model:
 
-    Option 1:
-        Specify x, y and val_split. The training and validation data mixture
-        (x, y) will be randomly split into the training and validation datasets
-        as per the split specified in val_split.
+    def model():
 
-    Option 2:
-        Specify x, y and x_val, y_val. This would allow the user to specify
-        their own validation datasets. Keras by default shuffles data during
-        training, so the user need only be sure that the split specified is
-        correct. This allows for not only reproducibility, but randomizing the
-        data on the user's own terms. This is critical if the user wishes to
-        augment their training data without augmenting their validation data
-        (which is the only acceptable practice!).
+        # any Keras model
+
+        return out, model
 
 
-    Parameters
+    You must replace the parameters in the model with references to
+    the dictionary, for example:
+
+    model.fit(epochs=params['epochs'])
+
+    To learn more, start from the examples and documentation
+    available here: https://github.com/autonomio/talos
+
+
+    PARAMETERS
     ----------
     x : ndarray
         1d or 2d array consisting of the training data. `x` should have the
@@ -55,30 +54,42 @@ class Scan:
     params : python dictionary
         Lists all permutations of hyperparameters, a subset of which will be
         selected at random for training and evaluation.
+    model : keras model
+        Any Keras model with relevant declrations like params['first_neuron']
     dataset_name : str
         References the name of the experiment. The dataset_name and
         experiment_no will be concatenated to produce the file name for the
         results saved in the local directory.
     experiment_no : str
         Indexes the user's choice of experiment number.
-    model : keras_model
-        A Keras style model which compiles and fits the data, and returns
-        the history and compiled model.
+    x_val : ndarray
+        User specified cross-validation data. (Default is None).
+    y_val : ndarray
+        User specified cross-validation labels. (Default is None).
     val_split : float, optional
         The proportion of the input `x` which is set aside as the
-        cross-validation data. (Default is 0.3).
+        validation data. (Default is 0.3).
     shuffle : bool, optional
         If True, shuffle the data in x and y before splitting into the train
         and cross-validation datasets. (Default is True).
     random_method : uniform, stratified, lhs, lhs_sudoku
         Determinines the way in which the grid_downsample is applied. The
         default setting is 'uniform'.
+    seed : int
+        Sets numpy random seed.
     search_method : {None, 'random', 'linear', 'reverse'}
         Determines the random sampling of the dictionary. `random` picks one
         hyperparameter point at random and removes it from the list, then
         samples again. `linear` starts from the start of the grid and moves
         forward, and `reverse` starts at the end of the grid and moves
         backwards.
+    max_iteration_start_time : None or str
+        Allows setting a time when experiment will be completed. Use the format
+        "%Y-%m-%d %H:%M" here.
+    permutation_filter : lambda function
+        Use it to filter permutations based on previous knowledge.
+        USE: permutation_filter=lambda p: p['batch_size'] < 150
+        This example removes any permutation where batch_size is below 150
     reduction_method : {None, 'correlation'}
         Method for honing in on the optimal hyperparameter subspace. (Default
         is None).
@@ -94,13 +105,11 @@ class Scan:
         Limits the number of rounds (permutations) in the experiment.
     reduction_metric : {'val_acc'}
         Metric used to tune the reductions.
-    x_val : ndarray
-        User specified cross-validation data. (Default is None).
-    y_val : ndarray
-        User specified cross-validation labels. (Default is None).
     last_epoch_value : bool
         Set to True if the last epoch metric values are logged as opposed
         to the default which is peak epoch values for each round.
+    disable_progress_bar : bool
+        Disable TQDM live progress bar.
     print_params : bool
         Print params for each round on screen (useful when using TrainingLog
         callback for visualization)
@@ -115,15 +124,18 @@ class Scan:
     def __init__(self, x, y, params, model,
                  dataset_name=None,
                  experiment_no=None,
+                 experiment_name=None,
                  x_val=None,
                  y_val=None,
                  val_split=.3,
                  shuffle=True,
                  round_limit=None,
+                 time_limit=None,
                  grid_downsample=1.0,
                  random_method='uniform_mersenne',
                  seed=None,
                  search_method='random',
+                 permutation_filter=None,
                  reduction_method=None,
                  reduction_interval=50,
                  reduction_window=20,
@@ -145,12 +157,16 @@ class Scan:
         self.model = model
         self.dataset_name = dataset_name
         self.experiment_no = experiment_no
+        self.experiment_name = experiment_name
         self.x_val = x_val
         self.y_val = y_val
         self.val_split = val_split
         self.shuffle = shuffle
         self.random_method = random_method
         self.search_method = search_method
+        self.round_limit = round_limit
+        self.time_limit = time_limit
+        self.permutation_filter = permutation_filter
         self.reduction_method = reduction_method
         self.reduction_interval = reduction_interval
         self.reduction_window = reduction_window
@@ -158,7 +174,6 @@ class Scan:
         self.reduction_threshold = reduction_threshold
         self.reduction_metric = reduction_metric
         self.reduce_loss = reduce_loss
-        self.round_limit = round_limit
         self.debug = debug
         self.seed = seed
         self.clear_tf_session = clear_tf_session

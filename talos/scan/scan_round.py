@@ -24,7 +24,7 @@ def scan_round(self):
         print(self.round_params)
 
     # set start time
-    round_start = strftime('%H%M%S')
+    round_start = strftime('%D-%H%M%S')
     start = time()
 
     # fit the model
@@ -37,10 +37,12 @@ def scan_round(self):
             print('ERROR MESSAGE : ' + err.args[0])
             raise TalosReturnError("Make sure that input model returns 'out, model' where out is history object from model.fit()")
 
+    # count the duration of the round
+    self._round_seconds = time() - start
+
     # set end time and log
-    round_end = strftime('%H%M%S')
-    round_seconds = time() - start
-    self.round_times.append([round_start, round_end, round_seconds])
+    round_end = strftime('%D-%H%M%S')
+    self.round_times.append([round_start, round_end, self._round_seconds])
 
     # create log and other stats
     try:
