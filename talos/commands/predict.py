@@ -1,8 +1,3 @@
-from numpy import mean, std
-
-from sklearn.metrics import f1_score
-
-from ..utils.validation_split import kfold
 from ..utils.best_model import best_model, activate_model
 
 

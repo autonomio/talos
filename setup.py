@@ -5,7 +5,7 @@
 DESCRIPTION = "Talos Hyperparameter Tuning for Keras"
 LONG_DESCRIPTION = """\
 Talos radically changes the ordinary Keras workflow by
-fullyautomating hyperparameter tuning and model evaluation.
+fully automating hyperparameter tuning and model evaluation.
 Talos exposes Keras functionality entirely and there is no new
 syntax or templates to learn.
 """
@@ -16,7 +16,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://autonom.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/autonomio/talos/'
-VERSION = '0.4.9'
+VERSION = '0.5.0'
 
 try:
     from setuptools import setup

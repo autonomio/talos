@@ -1,10 +1,9 @@
 from pandas import read_csv
 from ..utils.connection_check import is_connected
+from ..metrics.names import metric_names
 
 if is_connected() is True:
     from astetik import line, hist, corr, regs, bargrid, kde, box
-
-from ..metrics.names import metric_names
 
 
 class Reporting:
