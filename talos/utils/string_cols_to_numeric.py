@@ -1,7 +1,3 @@
-from types import FunctionType
-from inspect import isclass
-
-
 def isnumber(value):
 
     '''Checks if a string can be converted into
@@ -24,20 +20,13 @@ def string_cols_to_numeric(data, destructive=False):
         data = data.copy(deep=True)
 
     for col in data.columns:
-        # avoid common non-numeric cases
-        if data[col].dtype != 'O':
-            continue
-        if isclass(data[col][0]):
-            continue
-        if isinstance(data[col][0], FunctionType):
-            continue
-        if data[col].apply(isnumber).sum() == 0:
-            continue
 
-        # perform the conversion to int or float
-        try:
-            data[col] = data[col].astype(int)
-        except ValueError:
-            data[col] = data[col].astype(float)
+        if data[col].apply(isnumber).sum() == len(data):
+            try:
+                data[col] = data[col].astype(int)
+            except ValueError:
+                data[col] = data[col].astype(float)
+        else:
+            data[col] = data[col]
 
     return data

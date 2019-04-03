@@ -1,8 +1,9 @@
 import time
 from pandas import Series, DataFrame
 
-from ..utils.best_model import best_model
 from ..scan.scan_addon import func_best_model, func_evaluate
+from ..utils.string_cols_to_numeric import string_cols_to_numeric
+
 
 attrs_to_keep = ['data', 'x', 'y', 'peak_epochs_df',
                  'random_method', 'grid_downsample',
@@ -48,7 +49,7 @@ def scan_finish(self):
         out['x_shape'] = self.x.shape
     except AttributeError:
         out['x_shape'] = list
-        
+
     out['y_shape'] = self.y.shape
 
     # final cleanup
@@ -66,5 +67,8 @@ def scan_finish(self):
 
     # reset the index
     self.data.index = range(len(self.data))
+
+    # convert to numeric
+    self.data = string_cols_to_numeric(self.data)
 
     return self

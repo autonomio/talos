@@ -3,6 +3,21 @@ from keras.activations import relu, elu, softmax, sigmoid
 from keras.losses import logcosh, binary_crossentropy, categorical_crossentropy
 
 
+def titanic_params():
+
+    # here use a standard 2d dictionary for inputting the param boundaries
+    p = {'lr': (0.5, 5, 10),
+         'first_neuron': [4, 8, 16],
+         'batch_size': [20, 30, 40],
+         'dropout': (0, 0.5, 5),
+         'optimizer': ['Adam', 'Nadam'],
+         'losses': ['logcosh', 'binary_crossentropy'],
+         'activation': ['relu', 'elu'],
+         'last_activation': ['sigmoid']}
+
+    return p
+
+
 def iris():
 
     # here use a standard 2d dictionary for inputting the param boundaries
@@ -14,7 +29,8 @@ def iris():
          'dropout': (0, 0.5, 5),
          'weight_regulizer': [None],
          'emb_output_dims':  [None],
-         'shape': ['brick', 'rhombus'],
+         'shape': ['brick', 'triangle', 0.2],
+         'shapes': ['brick', 'triangle', 0.2],
          'optimizer': [Adam, Nadam],
          'losses': [logcosh, categorical_crossentropy],
          'activation': [relu, elu],

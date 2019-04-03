@@ -12,6 +12,11 @@ from ..commands.evaluate import Evaluate
 
 def func_best_model(scan_object, metric='val_acc', asc=False):
 
+    '''Picks the best model based on a given metric and
+    returns the index number for the model.
+
+    NOTE: for loss 'asc' should be True'''
+
     warnings.simplefilter('ignore')
 
     model_no = best_model(scan_object, metric, asc)
@@ -53,14 +58,13 @@ def func_evaluate(scan_object,
     for i in range(len(scan_object.data)):
 
         if i in list(picks):
-            evalulate_object = Evaluate(scan_object)
-            temp = evalulate_object.evaluate(x_val, y_val,
-                                             model_id=i,
-                                             metric=metric,
-                                             folds=folds,
-                                             shuffle=shuffle,
-                                             average=average,
-                                             asc=asc)
+            evaluate_object = Evaluate(scan_object)
+            temp = evaluate_object.evaluate(x_val, y_val,
+                                            model_id=i,
+                                            metric=metric,
+                                            folds=folds,
+                                            shuffle=shuffle,
+                                            asc=asc)
             out.append([mean(temp), std(temp)])
             pbar.update(1)
         else:

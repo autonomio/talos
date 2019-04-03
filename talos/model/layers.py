@@ -1,6 +1,6 @@
 from keras.layers import Dense, Dropout
-from .shapes import shapes
-from ..utils.exceptions import TalosTypeError
+from .network_shape import network_shape
+from ..utils.exceptions import TalosParamsError
 
 
 def hidden_layers(model, params, last_neuron):
@@ -55,14 +55,15 @@ def hidden_layers(model, params, last_neuron):
     except KeyError:
         bias_constraint = None
 
-    if isinstance(params['activation'], str) is True:
-        raise TalosTypeError('When hidden_layers are used, activation needs to be an object and not string')
+    # check for the params that are required for hidden_layers
+    for param in ['shapes', 'first_neuron', 'dropout']:
+        try:
+            params[param]
+        except KeyError as err:
+            if err.args[0] == param:
+                raise TalosParamsError("hidden_layers requires '" + param + "' in params")
 
-    try:
-        params['shapes']
-        layer_neurons = shapes(params, last_neuron)
-    except KeyError:
-        layer_neurons = [params['first_neuron']] * params['hidden_layers']
+    layer_neurons = network_shape(params, last_neuron)
 
     for i in range(params['hidden_layers']):
 
