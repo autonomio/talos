@@ -63,6 +63,11 @@ def hidden_layers(model, params, last_neuron):
             if err.args[0] == param:
                 raise TalosParamsError("hidden_layers requires '" + param + "' in params")
 
+    # To avoid errors value zero shouldn't be included in the params for 'hidden_layers'
+    # the for loop is interpreting value zero wrong because it causes one iteration
+    if params['hidden_layers'] == 0:
+        raise TalosParamsError("Value 0 is now allowed to be included in the 'hidden_layers' param. Please remove it.")
+    
     layer_neurons = network_shape(params, last_neuron)
 
     for i in range(params['hidden_layers']):
