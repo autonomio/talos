@@ -99,9 +99,6 @@ class Scan:
         Limits the number of rounds (permutations) in the experiment.
     reduction_metric : {'val_acc'}
         Metric used to tune the reductions.
-    last_epoch_value : bool
-        Set to True if the last epoch metric values are logged as opposed
-        to the default which is peak epoch values for each round.
     disable_progress_bar : bool
         Disable TQDM live progress bar.
     print_params : bool
@@ -132,7 +129,6 @@ class Scan:
                  reduction_metric='val_acc',
                  minimize_loss=False,
                  seed=None,
-                 last_epoch_value=False,
                  clear_session=True,
                  disable_progress_bar=False,
                  print_params=False,
@@ -170,11 +166,10 @@ class Scan:
         self.seed = seed
         self.clear_session = clear_session
         self.disable_progress_bar = disable_progress_bar
-        self.last_epoch_value = last_epoch_value
         self.print_params = print_params
         # input parameters section ends
 
-        self._null = self.runtime()
+        self.runtime()
 
     def runtime(self):
 

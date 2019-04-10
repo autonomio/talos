@@ -10,7 +10,7 @@ def logging_run(self, round_start, start, model_history):
     self.round_times.append([round_start, round_end, self._round_seconds])
 
     # handle first round only things
-    if self.param_object.round_counter == 1:
+    if self.first_round:
 
         # capture the history keys for later
         self._all_keys = list(model_history.history.keys())
@@ -18,9 +18,8 @@ def logging_run(self, round_start, start, model_history):
         self._val_keys = [k for k in self._all_keys if 'val_' in k]
 
         # create a header column for output
-        from .results import create_header
-        _results_header = create_header(self)
-        self.result.append(_results_header)
+        _results_header = ['round_epochs'] + self._all_keys + self._param_dict_keys
+        self.result.append(",".join(str(i) for i in _results_header))
 
         # save the results
         from .results import save_result

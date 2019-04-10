@@ -160,7 +160,6 @@ class BinaryTest:
              reduction_threshold=0.2,
              reduction_metric='val_loss',
              minimize_loss=True,
-             last_epoch_value=True,
              clear_session=False,
              disable_progress_bar=True,
              debug=True)
@@ -222,7 +221,6 @@ class MultiLabelTest:
              reduction_threshold=0.2,
              reduction_metric='val_loss',
              minimize_loss=True,
-             last_epoch_value=True,
              clear_session=False,
              disable_progress_bar=True,
              debug=True,

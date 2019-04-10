@@ -15,10 +15,10 @@ def scan_prepare(self):
        (self.x_val is None and self.y_val is not None):
         raise RuntimeError("If x_val/y_val is inputted, other must as well.")
 
-    elif (self.x_val is not None and self.y_val is not None):
+    elif self.x_val is not None and self.y_val is not None:
         self.custom_val_split = True
 
-    # create the paramater object and move to self
+    # create the parameter object and move to self
     from ..parameters.ParamSpace import ParamSpace
     self.param_object = ParamSpace(params=self.params,
                                    random_method=self.random_method,
@@ -28,6 +28,9 @@ def scan_prepare(self):
                                    boolean_limit=self.boolean_limit
                                    )
 
+    # mark that it's a first round
+    self.first_round = True
+
     # create various stores
     self.round_history = []
     self.peak_epochs = []
@@ -36,6 +39,9 @@ def scan_prepare(self):
     self.result = []
     self.saved_models = []
     self.saved_weights = []
+
+    # create reference for parameter keys
+    self._param_dict_keys = sorted(list(self.params.keys()))
 
     # create the data asset
     self.y_max = self.y.max()

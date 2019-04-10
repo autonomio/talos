@@ -20,10 +20,12 @@ def correlation(self):
 
     corr = data.copy(deep=True)
 
-    # drop the row for reduction metric and sort
     corr = corr.dropna()
-    corr = data.corr('spearman')
+    corr = corr.corr('spearman')
+
     corr = corr[self.reduction_metric]
+
+    # drop the row for reduction metric and sort
     corr = corr.apply(abs)[1:]
     corr = corr.sort_values(ascending=False)
 
@@ -44,9 +46,9 @@ def correlation(self):
     corr = wr.col_to_multilabel(data[[label]], label)
 
     # combine the reduction_metric with the multilabel data
-    corr = wr.df_merge(corr, data[self.reduction_metric])
+    corr = wr.df_merge(corr, pd.DataFrame(data[self.reduction_metric]))
 
-    # repeate same as above
+    # repeat same as above
     corr = corr.corr('spearman')
     corr = corr[self.reduction_metric]
     corr = corr.apply(abs)[1:]
