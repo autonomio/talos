@@ -14,7 +14,10 @@ def scan_run(self):
 
     # the main cycle of the experiment
     while True:
+
+        # get the parameters
         self.round_params = self.param_object.round_parameters()
+
         # break when there is no more permutations left
         if self.round_params is False:
             break

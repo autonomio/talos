@@ -138,7 +138,7 @@ class Scan:
 
         self.x = x
         self.y = y
-        self.params = OrderedDict(params)
+        self.params = params
         self.model = model
         self.experiment_name = experiment_name
         self.x_val = x_val

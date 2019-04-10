@@ -32,7 +32,7 @@ class ParamSpace:
         self.p = self._param_input_conversion()
 
         # create list of list from the params dictionary
-        self._params_temp = [list(self.p[key]) for key in self.p.keys()]
+        self._params_temp = [list(self.p[key]) for key in self.param_keys]
 
         # establish max dimensions
         self.dimensions = np.prod([len(l) for l in self._params_temp])
@@ -172,23 +172,24 @@ class ParamSpace:
 
                 # get the values based on the index
                 values = self.param_space[index]
-                t = self._round_parameters_todict(values)
+                round_parameters = self._round_parameters_todict(values)
 
                 # pass the parameters to Scan
-                return t
+                return round_parameters
 
         # the experiment is finished
         return False
 
     def _round_parameters_todict(self, values):
 
-        round_param_dict = {}
+        round_parameters = {}
 
-        for i, value in enumerate(values):
-            key = self.param_keys[i]
-            round_param_dict[key] = value
+        for i, key in enumerate(self.param_keys):
+            round_parameters[key] = values[i]
+            print(values[i], key)
 
-        return round_param_dict
+
+        return round_parameters
 
     def _convert_lambda(self, fn):
 
