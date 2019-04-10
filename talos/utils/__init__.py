@@ -2,7 +2,7 @@
 
 try:
     from kerasplotlib import TrainingLog as live
-except RuntimeError:
+except (RuntimeError, ImportError):
     print('Matplotlib backend loading failed')
 
 from ..model.normalizers import lr_normalizer

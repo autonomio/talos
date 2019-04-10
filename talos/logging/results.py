@@ -21,7 +21,7 @@ def run_round_results(self, out):
     for key in self.round_params.keys():
         _round_result_out.append(self.round_params[key])
 
-    return ",".join(str(i) for i in _round_result_out)
+    return _round_result_out
 
 
 def save_result(self):
@@ -42,9 +42,10 @@ def result_todf(self):
 
     import pandas as pd
 
-    self.result = pd.DataFrame(self.result)
-    self.result.columns = self.result.iloc[0]
-    self.result = self.result.drop(0)
+    # create dataframe for results
+    cols = self.result[0]
+    self.result = pd.DataFrame(self.result[1:])
+    self.result.columns = cols
 
     return self
 

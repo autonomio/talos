@@ -186,8 +186,6 @@ class ParamSpace:
 
         for i, key in enumerate(self.param_keys):
             round_parameters[key] = values[i]
-            print(values[i], key)
-
 
         return round_parameters
 

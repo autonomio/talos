@@ -19,7 +19,7 @@ def logging_run(self, round_start, start, model_history):
 
         # create a header column for output
         _results_header = ['round_epochs'] + self._all_keys + self._param_dict_keys
-        self.result.append(",".join(str(i) for i in _results_header))
+        self.result.append(_results_header)
 
         # save the results
         from .results import save_result

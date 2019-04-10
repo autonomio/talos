@@ -21,8 +21,7 @@ def scan_finish(self):
     self.learning_entropy.columns = self._metric_keys
 
     # clean the results into a dataframe
-    self.data = self.result[self.result.columns[0]].str.split(',', expand=True)
-    self.data.columns = self.result.columns[0].split(',')
+    self.data = self.result
 
     # remove redundant columns
     keys = list(self.__dict__.keys())
@@ -58,15 +57,11 @@ def scan_finish(self):
     # add best_model
 
     from ..scan.scan_addon import func_best_model, func_evaluate
-    from ..utils.string_cols_to_numeric import string_cols_to_numeric
 
     self.best_model = func_best_model.__get__(self)
     self.evaluate_models = func_evaluate.__get__(self)
 
     # reset the index
     self.data.index = range(len(self.data))
-
-    # convert to numeric
-    self.data = string_cols_to_numeric(self.data)
 
     return self
