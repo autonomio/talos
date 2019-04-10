@@ -18,9 +18,13 @@ def scan_prepare(self):
     elif self.x_val is not None and self.y_val is not None:
         self.custom_val_split = True
 
+    # create reference for parameter keys
+    self._param_dict_keys = sorted(list(self.params.keys()))
+
     # create the parameter object and move to self
     from ..parameters.ParamSpace import ParamSpace
     self.param_object = ParamSpace(params=self.params,
+                                   param_keys=self._param_dict_keys,
                                    random_method=self.random_method,
                                    fraction_limit=self.fraction_limit,
                                    round_limit=self.round_limit,
@@ -39,9 +43,6 @@ def scan_prepare(self):
     self.result = []
     self.saved_models = []
     self.saved_weights = []
-
-    # create reference for parameter keys
-    self._param_dict_keys = sorted(list(self.params.keys()))
 
     # create the data asset
     self.y_max = self.y.max()

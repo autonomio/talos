@@ -16,7 +16,7 @@ def correlation(self):
     import wrangle as wr
 
     data = pd.read_csv(self.experiment_name + '.csv')
-    data = data[[self.reduction_metric] + self.param_object.column_names]
+    data = data[[self.reduction_metric] + self._param_dict_keys]
 
     corr = data.copy(deep=True)
 
@@ -39,7 +39,7 @@ def correlation(self):
         return False
 
     label = corr.index.values[0]
-    if label not in self.param_object.column_names:
+    if label not in self._param_dict_keys:
         return False
 
     # convert parameter values to multilabel (2d)
@@ -59,7 +59,7 @@ def correlation(self):
         return False
 
     label = corr.index.values[0]
-    if label not in self.param_object.column_names:
+    if label not in self._param_dict_keys:
         return False
 
     value = corr.values[0]

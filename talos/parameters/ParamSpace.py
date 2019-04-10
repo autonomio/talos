@@ -9,6 +9,7 @@ class ParamSpace:
 
     def __init__(self,
                  params,
+                 param_keys,
                  random_method='uniform_mersenne',
                  fraction_limit=None,
                  round_limit=None,
@@ -17,6 +18,7 @@ class ParamSpace:
 
         # set all the arguments
         self.params = params
+        self.param_keys = param_keys
         self.fraction_limit = fraction_limit
         self.round_limit = round_limit
         self.time_limit = time_limit
@@ -25,9 +27,6 @@ class ParamSpace:
 
         # set a counter
         self.round_counter = 0
-
-        # capture the parameter names for columns later
-        self.column_names = self._generate_column_names()
 
         # handle tuple conversion to discrete values
         self.p = self._param_input_conversion()
@@ -52,20 +51,6 @@ class ParamSpace:
         # reset index
         self.param_index = list(range(len(self.param_index)))
 
-    def _generate_column_names(self):
-
-        '''Used for storing the corresponding
-        column names based on the input parameters.
-        Returns a dictionary where label is paramater
-        name and value is integer index.'''
-
-        out = []
-
-        for col in self.params.keys():
-            out.append(col)
-
-        return out
-
     def _param_input_conversion(self):
 
         '''Parameters may be input as lists of single or
@@ -76,7 +61,7 @@ class ParamSpace:
         out = {}
 
         # go through each parameter type
-        for param in self.params.keys():
+        for param in self.param_keys:
 
             # deal with range (tuple) values
             if isinstance(self.params[param], tuple):
@@ -175,13 +160,24 @@ class ParamSpace:
 
     def round_parameters(self):
 
+        # permutations remain in index
         if len(self.param_index) > 0:
-                if self._check_time_limit():
-                    self.round_counter += 1
-                    index = self.param_index.pop(0)
-                    values = self.param_space[index]
-                    return self._round_parameters_todict(values)
 
+            # time limit has not been met yet
+            if self._check_time_limit():
+                self.round_counter += 1
+
+                # get current index
+                index = self.param_index.pop(0)
+
+                # get the values based on the index
+                values = self.param_space[index]
+                t = self._round_parameters_todict(values)
+
+                # pass the parameters to Scan
+                return t
+
+        # the experiment is finished
         return False
 
     def _round_parameters_todict(self, values):
@@ -189,7 +185,7 @@ class ParamSpace:
         round_param_dict = {}
 
         for i, value in enumerate(values):
-            key = self.column_names[i]
+            key = self.param_keys[i]
             round_param_dict[key] = value
 
         return round_param_dict
@@ -205,7 +201,7 @@ class ParamSpace:
         fn_string = fn_string.replace('"', '\'')
 
         # look for column/label names
-        for i, name in enumerate(self.column_names):
+        for i, name in enumerate(self.param_keys):
             index = ':,' + str(i)
             fn_string = fn_string.replace(name, index)
 
@@ -222,7 +218,7 @@ class ParamSpace:
 
         '''Removes baesd on exact match but reversed'''
 
-        col = self.column_names.index(label)
+        col = self.param_keys.index(label)
         self.param_space = self.param_space[self.param_space[:, col] == value]
         self.param_index = list(range(len(self.param_space)))
 
@@ -230,7 +226,7 @@ class ParamSpace:
 
         '''Removes based on exact match'''
 
-        col = self.column_names.index(label)
+        col = self.param_keys.index(label)
         self.param_space = self.param_space[self.param_space[:, col] != value]
         self.param_index = list(range(len(self.param_space)))
 
@@ -238,7 +234,7 @@ class ParamSpace:
 
         '''Removes based on greater-or-equal'''
 
-        col = self.column_names.index(label)
+        col = self.param_keys.index(label)
         self.param_space = self.param_space[self.param_space[:, col] >= value]
         self.param_index = list(range(len(self.param_space)))
 
@@ -246,7 +242,7 @@ class ParamSpace:
 
         '''Removes based on lesser-or-equal'''
 
-        col = self.column_names.index(label)
+        col = self.param_keys.index(label)
         self.param_space = self.param_space[self.param_space[:, col] <= value]
         self.param_index = list(range(len(self.param_space)))
 
