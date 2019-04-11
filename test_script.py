@@ -18,12 +18,6 @@ if __name__ == '__main__':
 
     '''NOTE: test/core_tests/test_scan.py needs to be edited as well!'''
 
-    # reporting specific testing
-    from test.core_tests.test_scan import ReportingTest, DatasetTest
-
-    ReportingTest()
-    DatasetTest()
-
     # testing different model types
     from test.core_tests.test_scan import BinaryTest, MultiLabelTest
 
@@ -39,6 +33,12 @@ if __name__ == '__main__':
 
     # Scan() object tests
     scan_object = test_scan_object()
+
+    # reporting specific testing
+    from test.core_tests.test_scan import ReportingTest, DatasetTest
+
+    ReportingTest()
+    DatasetTest()
 
     # reporting tests
     test_reporting_object(scan_object)
