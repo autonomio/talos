@@ -1,6 +1,6 @@
 from keras.optimizers import SGD, Adam, Adadelta, Adagrad, Adamax, RMSprop
 from keras.optimizers import Nadam
-from ..utils.exceptions import TalosModelError
+from talos.utils.exceptions import TalosModelError
 
 
 def lr_normalizer(lr, optimizer):
@@ -27,6 +27,6 @@ def lr_normalizer(lr, optimizer):
     else:
         raise TalosModelError("Unhandled optimizer type in lr_normalizer: " +
                               str(optimizer) + ". Make sure you are using " +
-                              " an object from 'keras.optimizers'.")
+                              "an object from 'keras.optimizers'.")
 
     return lr

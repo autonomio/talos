@@ -9,6 +9,7 @@ from test.core_tests.test_random_methods import test_random_methods
 from test.core_tests.test_params_object import test_params_object
 from test.core_tests.test_auto_scan import test_auto_scan
 from test.core_tests.test_templates import test_templates
+from test.core_tests.test_lr_normalizer import test_lr_normalizer
 
 from talos.utils.generator import generator
 from talos.utils.gpu_utils import force_cpu
@@ -61,3 +62,5 @@ if __name__ == '__main__':
     test_random_methods()
     fit_generator = ta.utils.generator(scan_object.x, scan_object.y, 20)
     force_cpu()
+
+    test_lr_normalizer()
