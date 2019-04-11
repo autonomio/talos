@@ -11,7 +11,8 @@ def test_lr_normalizer():
 
     print('Testing lr_normalizer() and invalid optimizer type...')
 
-    # Using string as proxy for any invalid class (ex., tensorflow-sourced optimizer)
+    # Using string as proxy for any invalid class
+    # (ex., tensorflow-sourced optimizer)
     bad_optimizer = 'test'
 
     try:
