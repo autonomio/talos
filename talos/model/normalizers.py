@@ -25,7 +25,7 @@ def lr_normalizer(lr, optimizer):
     elif optimizer == Adamax or optimizer == Nadam:
         lr /= 500.0
     else:
-        raise TalosModelError("Unhandled optimizer type in lr_normalizer: " +
+        raise TalosModelError("Unhandled optimizer in lr_normalizer: " +
                               str(optimizer) + ". Make sure you are using " +
                               "an object from 'keras.optimizers'.")
 
