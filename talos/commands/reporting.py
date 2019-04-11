@@ -65,8 +65,11 @@ class Reporting:
         metric :: the metric to correlate against
 
         '''
-        import astetik as ast
-        return ast.line(self.data, metric)
+        try:
+            import astetik as ast
+            return ast.line(self.data, metric)
+        except:
+            print('Matplotlib Runtime Error. Plots will not work.')
 
     def plot_hist(self, metric='val_acc', bins=10):
 
@@ -78,8 +81,11 @@ class Reporting:
         bins :: number of bins to use in histogram
 
         '''
-        import astetik as ast
-        return ast.hist(self.data, metric, bins=bins)
+        try:
+            import astetik as ast
+            return ast.hist(self.data, metric, bins=bins)
+        except RuntimeError:
+            print('Matplotlib Runtime Error. Plots will not work.')
 
     def plot_corr(self, metric='val_acc', color_grades=5):
 
@@ -90,11 +96,12 @@ class Reporting:
         metric :: the metric to correlate against
         color_grades :: number of colors to use in heatmap'''
 
-        import astetik as ast
-
-        cols = self._cols(metric)
-
-        return ast.corr(self.data[cols], color_grades=color_grades)
+        try:
+            import astetik as ast
+            cols = self._cols(metric)
+            return ast.corr(self.data[cols], color_grades=color_grades)
+        except RuntimeError:
+            print('Matplotlib Runtime Error. Plots will not work.')
 
     def plot_regs(self, x='val_acc', y='val_loss'):
 
@@ -104,9 +111,11 @@ class Reporting:
         y = data for the y axis
         '''
 
-        import astetik as ast
-
-        return ast.regs(self.data, x, y)
+        try:
+            import astetik as ast
+            return ast.regs(self.data, x, y)
+        except RuntimeError:
+            print('Matplotlib Runtime Error. Plots will not work.')
 
     def plot_box(self, x, y='val_acc', hue=None):
 
@@ -116,31 +125,37 @@ class Reporting:
         y = data for the y axis
         hue = data for the hue separation
         '''
-        import astetik as ast
-
-        return ast.box(self.data, x, y, hue)
+        try:
+            import astetik as ast
+            return ast.box(self.data, x, y, hue)
+        except RuntimeError:
+            print('Matplotlib Runtime Error. Plots will not work.')
 
     def plot_bars(self, x, y, hue, col):
 
         '''A comparison plot with 4 axis'''
 
-        import astetik as ast
-
-        return ast.bargrid(self.data,
-                           x=x,
-                           y=y,
-                           hue=hue,
-                           col=col,
-                           col_wrap=4)
+        try:
+            import astetik as ast
+            return ast.bargrid(self.data,
+                               x=x,
+                               y=y,
+                               hue=hue,
+                               col=col,
+                               col_wrap=4)
+        except RuntimeError:
+            print('Matplotlib Runtime Error. Plots will not work.')
 
     def plot_kde(self, x='val_acc', y=None):
 
         '''Kernel Destiny Estimation type histogram with
         support for 1 or 2 axis of data'''
 
-        import astetik as ast
-
-        return ast.kde(self.data, x, y)
+        try:
+            import astetik as ast
+            return ast.kde(self.data, x, y)
+        except RuntimeError:
+            print('Matplotlib Runtime Error. Plots will not work.')
 
     def table(self, metric='val_acc', sort_by=None, ascending=False):
 

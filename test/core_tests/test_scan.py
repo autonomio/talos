@@ -253,8 +253,6 @@ class ReportingTest:
 
         r = Reporting('BinaryTest.csv')
 
-        print(len(r.data.val_acc))
-
         x = r.data
         x = r.correlate()
         x = r.high()
@@ -266,7 +264,6 @@ class ReportingTest:
         x = r.plot_hist()
         x = r.plot_line()
 
-        print("ReportingTest : Running MultiLabel test...")
         r = Reporting('MultiLabelTest.csv')
 
         x = r.data
