@@ -15,6 +15,7 @@ def test_reporting_object(scan_object):
     r.low()
 
     print(r.data)
+    print(r.data.dtypes)
 
     r.plot_bars('first_neuron', 'val_acc', 'batch_size', 'hidden_layers')
     r.plot_box('first_neuron')
