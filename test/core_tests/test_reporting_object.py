@@ -14,6 +14,9 @@ def test_reporting_object(scan_object):
     r.high()
     r.low()
 
+    print(r.data)
+    print(r.data.dtypes)
+
     r.plot_bars('first_neuron', 'val_acc', 'batch_size', 'hidden_layers')
     r.plot_box('first_neuron')
     r.plot_corr('val_loss')

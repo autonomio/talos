@@ -1,3 +1,4 @@
+wrangle
 pandas
 numpy
 keras
@@ -6,5 +7,4 @@ tqdm
 sklearn
 chances
 kerasplotlib
-wrangle
 requests

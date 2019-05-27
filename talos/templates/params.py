@@ -28,7 +28,6 @@ def iris():
          'dropout': (0, 0.5, 5),
          'weight_regulizer': [None],
          'emb_output_dims':  [None],
-         'shape': ['brick', 'triangle', 0.2],
          'shapes': ['brick', 'triangle', 0.2],
          'optimizer': [Adam, Nadam],
          'losses': [logcosh, categorical_crossentropy],

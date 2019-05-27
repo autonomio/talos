@@ -1,11 +1,3 @@
-import os
-import pandas as pd
-import shutil
-import numpy as np
-
-from ..utils.best_model import best_model, activate_model
-
-
 class Deploy:
 
     '''Functionality for deploying a model to a filename'''
@@ -32,6 +24,8 @@ class Deploy:
 
         '''
 
+        import os
+
         self.scan_object = scan_object
         os.mkdir(model_name)
         self.path = model_name + '/' + model_name
@@ -39,6 +33,8 @@ class Deploy:
         self.metric = metric
         self.asc = asc
         self.data = scan_object.data
+
+        from ..utils.best_model import best_model, activate_model
         self.best_model = best_model(scan_object, metric, asc)
         self.model = activate_model(scan_object, self.best_model)
 
@@ -71,6 +67,8 @@ class Deploy:
 
     def save_data(self):
 
+        import pandas as pd
+
         x = pd.DataFrame(self.scan_object.x[:100])
         y = pd.DataFrame(self.scan_object.y[:100])
 
@@ -83,6 +81,8 @@ class Deploy:
 
     def save_params(self):
 
+        import numpy as np
+
         np.save(self.path + '_params', self.scan_object.params)
 
     def save_readme(self):
@@ -94,6 +94,8 @@ class Deploy:
         text_file.close()
 
     def package(self):
+
+        import shutil
 
         shutil.make_archive(self.model_name, 'zip', self.model_name)
         shutil.rmtree(self.model_name)

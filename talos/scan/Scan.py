@@ -1,9 +1,3 @@
-from collections import OrderedDict
-
-from .scan_prepare import scan_prepare
-from .scan_run import scan_run
-
-
 class Scan:
     """Hyperparamater scanning and optimization
 
@@ -105,9 +99,6 @@ class Scan:
         Limits the number of rounds (permutations) in the experiment.
     reduction_metric : {'val_acc'}
         Metric used to tune the reductions.
-    last_epoch_value : bool
-        Set to True if the last epoch metric values are logged as opposed
-        to the default which is peak epoch values for each round.
     disable_progress_bar : bool
         Disable TQDM live progress bar.
     print_params : bool
@@ -118,73 +109,69 @@ class Scan:
 
     """
 
-    # TODO: refactor this so that we don't initialize global variables
     global self
 
     def __init__(self, x, y, params, model,
-                 dataset_name=None,
-                 experiment_no=None,
                  experiment_name=None,
                  x_val=None,
                  y_val=None,
                  val_split=.3,
-                 shuffle=True,
+                 random_method='uniform_mersenne',
+                 performance_target=None,
+                 fraction_limit=None,
                  round_limit=None,
                  time_limit=None,
-                 grid_downsample=1.0,
-                 random_method='uniform_mersenne',
-                 seed=None,
-                 search_method='random',
-                 permutation_filter=None,
+                 boolean_limit=None,
                  reduction_method=None,
                  reduction_interval=50,
                  reduction_window=20,
                  reduction_threshold=0.2,
                  reduction_metric='val_acc',
-                 reduce_loss=False,
-                 last_epoch_value=False,
-                 clear_tf_session=True,
+                 minimize_loss=False,
+                 seed=None,
+                 clear_session=True,
                  disable_progress_bar=False,
                  print_params=False,
                  debug=False):
 
-        # NOTE: these need to be follow the order from __init__
-        # and all paramaters needs to be included here and only here.
+        from collections import OrderedDict
 
         self.x = x
         self.y = y
-        self.params = OrderedDict(params)
+        self.params = params
         self.model = model
-        self.dataset_name = dataset_name
-        self.experiment_no = experiment_no
         self.experiment_name = experiment_name
         self.x_val = x_val
         self.y_val = y_val
         self.val_split = val_split
-        self.shuffle = shuffle
         self.random_method = random_method
-        self.search_method = search_method
+
+        # reducers
+        self.performance_target = performance_target
+        self.fraction_limit = fraction_limit
         self.round_limit = round_limit
         self.time_limit = time_limit
-        self.permutation_filter = permutation_filter
+        self.boolean_limit = boolean_limit
+
+        # reduction related
         self.reduction_method = reduction_method
         self.reduction_interval = reduction_interval
         self.reduction_window = reduction_window
-        self.grid_downsample = grid_downsample
         self.reduction_threshold = reduction_threshold
         self.reduction_metric = reduction_metric
-        self.reduce_loss = reduce_loss
+        self.minimize_loss = minimize_loss
+
+        # other
         self.debug = debug
         self.seed = seed
-        self.clear_tf_session = clear_tf_session
+        self.clear_session = clear_session
         self.disable_progress_bar = disable_progress_bar
-        self.last_epoch_value = last_epoch_value
         self.print_params = print_params
         # input parameters section ends
 
-        self._null = self.runtime()
+        self.runtime()
 
     def runtime(self):
 
-        self = scan_prepare(self)
+        from .scan_run import scan_run
         self = scan_run(self)

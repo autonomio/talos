@@ -109,6 +109,11 @@ If you want ask a **"how can I use Talos to..."** question, the right place is [
 
 If you found a bug or want to suggest a feature, check the [issues](https://github.com/autonomio/talos/issues) or [create](https://github.com/autonomio/talos/issues/new/choose) a new issue.
 
+### Citations
+
+If you use Talos for published work, please cite:
+
+`Autonomio Talos [Computer software]. (2018). Retrieved from http://github.com/autonomio/talos.`
 
 ### License
 

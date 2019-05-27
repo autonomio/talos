@@ -7,7 +7,7 @@ def test_scan_object():
     print("Running Scan object test...")
 
     # the create the test based on it
-    scan_object = ta.templates.pipelines.iris()
+    scan_object = ta.templates.pipelines.iris(round_limit=5)
     keras_model = scan_object.best_model()
     scan_object.evaluate_models(x_val=scan_object.x,
                                 y_val=scan_object.y)

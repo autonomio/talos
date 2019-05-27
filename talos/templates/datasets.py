@@ -29,8 +29,9 @@ def titanic():
                      left_index=True,
                      right_index=True)
 
-    x = x.dropna()
     x = x.values
+
+    print('BE CAREFUL, this dataset has nan values.')
 
     return x, y
 
