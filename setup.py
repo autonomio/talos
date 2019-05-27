@@ -24,7 +24,8 @@ try:
 except ImportError:
     from distutils.core import setup
 
-install_requires = ['numpy',
+install_requires = ['wrangle',
+                    'numpy',
                     'pandas',
                     'keras',
                     'astetik',
@@ -32,7 +33,6 @@ install_requires = ['numpy',
                     'tqdm',
                     'chances',
                     'kerasplotlib',
-                    'wrangle',
                     'requests']
 
 
