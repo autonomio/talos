@@ -8,6 +8,8 @@ def metric_names():
             'val_loss',
             'acc',
             'val_acc',
+            'categorical_accuracy',
+            'val_categorical_accuracy',
             'fmeasure_acc',
             'val_fmeasure_acc',
             'recall_acc',
