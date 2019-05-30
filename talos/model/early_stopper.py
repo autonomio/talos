@@ -29,9 +29,9 @@ def early_stopper(epochs,
                                 min_delta=0,
                                 patience=2,
                                 verbose=0, mode='auto')
-    elif isinstance(mode, list):
+    elif mode == 'custom':
         _es_out = EarlyStopping(monitor=monitor,
-                                min_delta=mode[0],
-                                patience=mode[1],
+                                min_delta=min_delta,
+                                patience=patience,
                                 verbose=0, mode='auto')
     return _es_out
