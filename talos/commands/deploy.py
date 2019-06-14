@@ -69,8 +69,14 @@ class Deploy:
 
         import pandas as pd
 
-        x = pd.DataFrame(self.scan_object.x[:100])
-        y = pd.DataFrame(self.scan_object.y[:100])
+        try:
+            x = pd.DataFrame(self.scan_object.x[:100])
+            y = pd.DataFrame(self.scan_object.y[:100])
+        
+        except ValueError:
+            t.x = np.zeros(500)
+            t.y = np.zeros(500)
+            print("data is not 2d, dummy data written instead.")
 
         x.to_csv(self.path + '_x.csv', header=None, index=None)
         y.to_csv(self.path + '_y.csv', header=None, index=None)
