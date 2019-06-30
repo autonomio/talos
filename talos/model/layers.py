@@ -4,10 +4,9 @@ from ..utils.exceptions import TalosParamsError
 
 
 def hidden_layers(model, params, last_neuron):
-
     '''HIDDEN LAYER Generator
 
-    NOTE: 'first_neuron', 'dropout', and 'hidden_layers' need
+    NOTE: 'shapes', 'first_neuron', 'dropout', and 'hidden_layers' need
     to be present in the params dictionary.
 
     Hidden layer generation for the cases where number
@@ -56,7 +55,7 @@ def hidden_layers(model, params, last_neuron):
         bias_constraint = None
 
     # check for the params that are required for hidden_layers
-    for param in ['shapes', 'first_neuron', 'dropout']:
+    for param in ['shapes', 'first_neuron', 'dropout', 'hidden_layers']:
         try:
             params[param]
         except KeyError as err:
