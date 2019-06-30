@@ -26,7 +26,10 @@ def hidden_layers(model, params, last_neuron):
     for i in range(params['hidden_layers']):
         model.add(Dense(
             layer_neurons[i],
-            kernel_initializer=params.get('kernel_initializer', 'glorot_uniform'),
+            kernel_initializer=params.get(
+                'kernel_initializer',
+                'glorot_uniform'
+            ),
             kernel_regularizer=params.get('kernel_regularizer'),
             bias_initializer=params.get('bias_initializer', 'zeros'),
             bias_regularizer=params.get('bias_regularizer'),
