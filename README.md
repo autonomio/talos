@@ -122,6 +122,8 @@ Daily development version:
 [stack overflow]: https://stackoverflow.com/questions/tagged/talos
 [spectrum chat]: https://spectrum.chat/talos
 
+<hr>
+
 ### 📢 Citations
 
 If you use Talos for published work, please cite:
