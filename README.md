@@ -50,6 +50,8 @@ Talos radically transforms ordinary Keras workflows without taking away any of K
 
 Talos is made for data scientists and data engineers that want to remain in **complete control of their Keras models**, but are tired of mindless parameter hopping and confusing optimization solutions that add complexity instead of reducing it. Within minutes, without learning any new syntax, Talos allows you to configure, perform, and evaluate hyperparameter optimization experiments that yield state-of-the-art results across a wide range of prediction tasks. Talos provides the **simplest and yet most powerful** available method for hyperparameter optimization with Keras.
 
+<hr>
+
 ### :wrench: Key Features
 
 Based on what no doubt constitutes a "biased" review (being our own) of more than ~30 hyperparameter tuning and optimization solutions, Talos comes on top in terms of intuitive, easy-to-learn, highly permissive access to critical hyperparameter optimization capabilities. Key features include:
@@ -67,6 +69,8 @@ Based on what no doubt constitutes a "biased" review (being our own) of more tha
 - Experiment analytics
 
 Talos works on **Linux, Mac OSX**, and **Windows** systems and can be operated cpu, gpu, and multi-gpu systems.
+
+<hr>
 
 ### 📈 Examples
 
@@ -88,6 +92,8 @@ For more information on how Talos can help with your Keras workflow, visit the [
 
 You may also want to check out a visualization of the [Talos Hyperparameter Tuning workflow](https://github.com/autonomio/talos/wiki/Workflow).
 
+<hr>
+
 ### 💾 Install
 
 Stable version:
@@ -97,6 +103,8 @@ Stable version:
 Daily development version:
 
 #### `pip install git+https://github.com/autonomio/talos.git@daily-dev`
+
+<hr>
 
 ### 💬 How to get Support
 
@@ -119,6 +127,8 @@ Daily development version:
 If you use Talos for published work, please cite:
 
 `Autonomio Talos [Computer software]. (2019). Retrieved from http://github.com/autonomio/talos.`
+
+<hr>
 
 ### 📃 License
 
