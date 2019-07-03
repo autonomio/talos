@@ -110,11 +110,11 @@ Daily development version:
 
 | I want to...                     | Go to...                                                  |
 | -------------------------------- | ---------------------------------------------------------- |
-| ❓ **...troubleshoot**           | [Docs] · [Wiki] · [GitHub Issue Tracker]                   |
-| 🐛 **...report a bug**           | [GitHub Issue Tracker]                                     |
-| 🎁 **...suggest a new feature**  | [GitHub Issue Tracker]                                     |
-| 💁 **...get support**            | [Stack Overflow] · [Spectrum Chat]                         |
-| :thought_balloon: **...have a discussion**      | [Spectrum Chat]                                            |
+| **...troubleshoot**           | [Docs] · [Wiki] · [GitHub Issue Tracker]                   |
+| **...report a bug**           | [GitHub Issue Tracker]                                     |
+| **...suggest a new feature**  | [GitHub Issue Tracker]                                     |
+| **...get support**            | [Stack Overflow] · [Spectrum Chat]                         |
+| **...have a discussion**      | [Spectrum Chat]                                            |
 
 [github issue tracker]: https://github.com/automio/talos/issues
 [docs]: https://autonomio.github.io/docs_talos
