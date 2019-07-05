@@ -1,41 +1,62 @@
-import numpy as np
-
-from talos.model.layers import hidden_layers
-from talos.model.normalizers import lr_normalizer
-
-from keras.models import Sequential
-from keras.layers import Dropout, Flatten
-from keras.layers import LSTM, Conv1D, SimpleRNN, Dense, Bidirectional
-
-try:
-    from wrangle.reshape_to_conv1d import reshape_to_conv1d as array_reshape_conv1d
-except ImportError:
-    from wrangle import array_reshape_conv1d
-
-
 class KerasModel:
 
-    def __init__(self):
-
-        '''An input model for Scan(). Optimized for being used together with
-        Params(). For example:
-
-        Scan(x=x, y=y, params=Params().params, model=KerasModel().model)
-
-        NOTE: the grid from Params() is very large, so grid_downsample or
-        round_limit accordingly in Scan().
+    def __init__(self, task):
 
         '''
 
+        Creates an input model for Scan(). Optimized for being used together
+        with Params(). For example:
+
+        p = talos.Params().params
+        model = talos.KerasModel(task='binary').model
+
+        talos.Scan(x, y, p, model)
+
+        NOTE: the parameter space from Params() is very large, so use limits
+        in or reducers in Scan() accordingly.
+
+        task : string or list
+            If 'continuous' then mae is used for metric, if 'binary',
+            'multiclass', or 'multilabel', f1score is used. Accuracy is always
+            used. You can also input a list with one or more custom metrics or
+            names of Keras or Talos metrics.
+        '''
+
+        self.task = task
+
+        # pick the right metrics
+        self.metrics = self._set_metric()
+
+        # create the model
         self.model = self._create_input_model
 
+    def _set_metric(self):
+
+        """Sets the metric for the model based on the experiment type
+        or a list of metrics from user."""
+
+        import talos as ta
+
+        if self.task in ['binary', 'multiclass', 'multilabel']:
+            return [ta.utils.metrics.f1score, 'acc']
+        elif self.task == 'continuous':
+            return [ta.utils.metrics.mae, 'acc']
+        elif isinstance(self.task, list):
+            return self.task + ['acc']
+
     def _create_input_model(self, x_train, y_train, x_val, y_val, params):
+
+        import wrangle as wr
+
+        from keras.models import Sequential
+        from keras.layers import Dropout, Flatten
+        from keras.layers import LSTM, Conv1D, SimpleRNN, Dense, Bidirectional
 
         model = Sequential()
 
         if params['network'] != 'dense':
-            x_train = array_reshape_conv1d(x_train)
-            x_val = array_reshape_conv1d(x_val)
+            x_train = wr.array_reshape_conv1d(x_train)
+            x_val = wr.array_reshape_conv1d(x_val)
 
         if params['network'] == 'conv1d':
             model.add(Conv1D(params['first_neuron'], x_train.shape[1]))
@@ -58,28 +79,28 @@ class KerasModel:
         model.add(Dropout(params['dropout']))
 
         # add hidden layers to the model
+        from talos.model.hidden_layers import hidden_layers
         hidden_layers(model, params, 1)
 
-        # output layer (this is scetchy)
-        try:
-            last_neuron = y_train.shape[1]
-        except IndexError:
-            if len(np.unique(y_train)) == 2:
-                last_neuron = 1
-            else:
-                last_neuron = len(np.unique(y_train))
+        # get the right activation and last_neuron based on task
+        from talos.model.output_layer import output_layer
+        activation, last_neuron = output_layer(self.task,
+                                               params['last_activation'],
+                                               y_train,
+                                               y_val)
 
         model.add(Dense(last_neuron,
-                        activation=params['last_activation']))
+                        activation=activation))
 
         # bundle the optimizer with learning rate changes
+        from talos.model.normalizers import lr_normalizer
         optimizer = params['optimizer'](lr=lr_normalizer(params['lr'],
                                                          params['optimizer']))
 
         # compile the model
         model.compile(optimizer=optimizer,
                       loss=params['losses'],
-                      metrics=['acc'])
+                      metrics=self.metrics)
 
         # fit the model
         out = model.fit(x_train, y_train,

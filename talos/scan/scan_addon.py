@@ -1,15 +1,3 @@
-# for func_best_model
-from ..utils.best_model import best_model, activate_model
-
-# for func_evaluate
-import warnings
-from tqdm import tqdm
-from numpy import mean, std
-import numpy as np
-
-from ..commands.evaluate import Evaluate
-
-
 def func_best_model(scan_object, metric='val_acc', asc=False):
 
     '''Picks the best model based on a given metric and
@@ -17,8 +5,11 @@ def func_best_model(scan_object, metric='val_acc', asc=False):
 
     NOTE: for loss 'asc' should be True'''
 
+    import warnings as warnings
+
     warnings.simplefilter('ignore')
 
+    from ..utils.best_model import best_model, activate_model
     model_no = best_model(scan_object, metric, asc)
     out = activate_model(scan_object, model_no)
 
@@ -40,6 +31,9 @@ def func_evaluate(scan_object,
     adding them to the data frame.
 
     '''
+    import warnings as warnings
+    from tqdm import tqdm
+    import numpy as np
 
     warnings.simplefilter('ignore')
 
@@ -55,8 +49,8 @@ def func_evaluate(scan_object,
 
     pbar = tqdm(total=data_len)
 
+    from ..commands.evaluate import Evaluate
     for i in range(len(scan_object.data)):
-
         if i in list(picks):
             evaluate_object = Evaluate(scan_object)
             temp = evaluate_object.evaluate(x_val, y_val,
@@ -65,7 +59,7 @@ def func_evaluate(scan_object,
                                             folds=folds,
                                             shuffle=shuffle,
                                             asc=asc)
-            out.append([mean(temp), std(temp)])
+            out.append([np.mean(temp), np.std(temp)])
             pbar.update(1)
         else:
             out.append([np.nan, np.nan])

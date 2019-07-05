@@ -1,11 +1,3 @@
-from pandas import read_csv
-from ..utils.connection_check import is_connected
-from ..metrics.names import metric_names
-
-if is_connected() is True:
-    from astetik import line, hist, corr, regs, bargrid, kde, box
-
-
 class Reporting:
 
     '''A suite of commands that are useful for analyzing the results
@@ -18,8 +10,10 @@ class Reporting:
         '''Takes as input a filename to the experiment
         log or the Scan object'''
 
+        import pandas as pd
+
         if isinstance(source, str):
-            self.data = read_csv(source)
+            self.data = pd.read_csv(source)
         else:
             self.data = source.data
 
@@ -53,6 +47,7 @@ class Reporting:
         '''Returns a correlation table against a given metric. Drops
         all other metrics and correlates against hyperparameters only.'''
 
+        from ..metrics.names import metric_names
         columns = [c for c in self.data.columns if c not in metric_names()]
         out = self.data[columns]
         out.insert(0, metric, self.data[metric])
@@ -70,8 +65,11 @@ class Reporting:
         metric :: the metric to correlate against
 
         '''
-
-        return line(self.data, metric)
+        try:
+            import astetik as ast
+            return ast.line(self.data, metric)
+        except:
+            print('Matplotlib Runtime Error. Plots will not work.')
 
     def plot_hist(self, metric='val_acc', bins=10):
 
@@ -83,8 +81,11 @@ class Reporting:
         bins :: number of bins to use in histogram
 
         '''
-
-        return hist(self.data, metric, bins=bins)
+        try:
+            import astetik as ast
+            return ast.hist(self.data, metric, bins=bins)
+        except RuntimeError:
+            print('Matplotlib Runtime Error. Plots will not work.')
 
     def plot_corr(self, metric='val_acc', color_grades=5):
 
@@ -95,9 +96,12 @@ class Reporting:
         metric :: the metric to correlate against
         color_grades :: number of colors to use in heatmap'''
 
-        cols = self._cols(metric)
-
-        return corr(self.data[cols], color_grades=color_grades)
+        try:
+            import astetik as ast
+            cols = self._cols(metric)
+            return ast.corr(self.data[cols], color_grades=color_grades)
+        except RuntimeError:
+            print('Matplotlib Runtime Error. Plots will not work.')
 
     def plot_regs(self, x='val_acc', y='val_loss'):
 
@@ -107,7 +111,11 @@ class Reporting:
         y = data for the y axis
         '''
 
-        return regs(self.data, x, y)
+        try:
+            import astetik as ast
+            return ast.regs(self.data, x, y)
+        except RuntimeError:
+            print('Matplotlib Runtime Error. Plots will not work.')
 
     def plot_box(self, x, y='val_acc', hue=None):
 
@@ -117,26 +125,37 @@ class Reporting:
         y = data for the y axis
         hue = data for the hue separation
         '''
-
-        return box(self.data, x, y, hue)
+        try:
+            import astetik as ast
+            return ast.box(self.data, x, y, hue)
+        except RuntimeError:
+            print('Matplotlib Runtime Error. Plots will not work.')
 
     def plot_bars(self, x, y, hue, col):
 
         '''A comparison plot with 4 axis'''
 
-        return bargrid(self.data,
-                       x=x,
-                       y=y,
-                       hue=hue,
-                       col=col,
-                       col_wrap=4)
+        try:
+            import astetik as ast
+            return ast.bargrid(self.data,
+                               x=x,
+                               y=y,
+                               hue=hue,
+                               col=col,
+                               col_wrap=4)
+        except RuntimeError:
+            print('Matplotlib Runtime Error. Plots will not work.')
 
     def plot_kde(self, x='val_acc', y=None):
 
         '''Kernel Destiny Estimation type histogram with
         support for 1 or 2 axis of data'''
 
-        return kde(self.data, x, y)
+        try:
+            import astetik as ast
+            return ast.kde(self.data, x, y)
+        except RuntimeError:
+            print('Matplotlib Runtime Error. Plots will not work.')
 
     def table(self, metric='val_acc', sort_by=None, ascending=False):
 
@@ -181,6 +200,7 @@ class Reporting:
 
         '''Helper to remove other than desired metric from data table'''
 
+        from ..metrics.names import metric_names
         cols = [col for col in self.data.columns if col not in metric_names()]
 
         if isinstance(metric, list) is False:

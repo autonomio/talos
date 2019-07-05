@@ -1,11 +1,3 @@
-from zipfile import ZipFile
-
-from pandas import read_csv
-from numpy import load
-
-from talos.utils.load_model import load_model
-
-
 class Restore:
 
     '''Restores the scan_object that had been stored locally as a result
@@ -21,6 +13,11 @@ class Restore:
 
     def __init__(self, path_to_zip):
 
+        from zipfile import ZipFile
+
+        import pandas as pd
+        import numpy as np
+
         # create paths
         self.path_to_zip = path_to_zip
         self.extract_to = path_to_zip.replace('.zip', '')
@@ -33,22 +30,24 @@ class Restore:
         z.extractall(self.extract_to)
 
         # add params dictionary
-        self.params = load(self.file_prefix + '_params.npy').item()
+        self.params = np.load(self.file_prefix + '_params.npy').item()
 
         # add experiment details
-        self.details = read_csv(self.file_prefix + '_details.txt', header=None)
+        self.details = pd.read_csv(self.file_prefix + '_details.txt',
+                                   header=None)
 
         # add x data sample
-        self.x = read_csv(self.file_prefix + '_x.csv', header=None)
+        self.x = pd.read_csv(self.file_prefix + '_x.csv', header=None)
 
         # add y data sample
-        self.y = read_csv(self.file_prefix + '_y.csv', header=None)
+        self.y = pd.read_csv(self.file_prefix + '_y.csv', header=None)
 
         # add model
+        from talos.utils.load_model import load_model
         self.model = load_model(self.file_prefix + '_model')
 
         # add results
-        self.results = read_csv(self.file_prefix + '_results.csv')
+        self.results = pd.read_csv(self.file_prefix + '_results.csv')
         self.results.drop('Unnamed: 0', axis=1, inplace=True)
 
         # clean up

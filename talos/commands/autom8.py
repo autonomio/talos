@@ -1,6 +1,3 @@
-from ..scan.Scan import Scan
-
-
 def Autom8(scan_object,
            x_val,
            y_val,

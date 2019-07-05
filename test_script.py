@@ -29,16 +29,16 @@ if __name__ == '__main__':
     MultiLabelTest().values_list_test()
     MultiLabelTest().values_range_test()
 
+    # MOVE TO command specific tests
+
+    # Scan() object tests
+    scan_object = test_scan_object()
+
     # reporting specific testing
     from test.core_tests.test_scan import ReportingTest, DatasetTest
 
     ReportingTest()
     DatasetTest()
-
-    # MOVE TO command specific tests
-
-    # Scan() object tests
-    scan_object = test_scan_object()
 
     # reporting tests
     test_reporting_object(scan_object)
