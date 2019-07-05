@@ -30,4 +30,4 @@ for sub in template_sub:
 del commands, scan, model, metrics, key
 del sub, keep_from_templates, template_sub
 
-__version__ = "0.6.0"
+__version__ = "0.6.1"

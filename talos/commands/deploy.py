@@ -2,7 +2,7 @@ class Deploy:
 
     '''Functionality for deploying a model to a filename'''
 
-    def __init__(self, scan_object, model_name, metric='val_acc', asc=False):
+    def __init__(self, scan_object, model_name, metric, asc=False):
 
         '''Deploy a model to be used later or in a different system.
 
@@ -68,14 +68,15 @@ class Deploy:
     def save_data(self):
 
         import pandas as pd
+        import numpy as np
 
         try:
             x = pd.DataFrame(self.scan_object.x[:100])
             y = pd.DataFrame(self.scan_object.y[:100])
-        
+
         except ValueError:
-            t.x = np.zeros(500)
-            t.y = np.zeros(500)
+            x = np.zeros(500)
+            y = np.zeros(500)
             print("data is not 2d, dummy data written instead.")
 
         x.to_csv(self.path + '_x.csv', header=None, index=None)

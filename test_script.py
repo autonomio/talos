@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
     ta.Autom8(scan_object, scan_object.x, scan_object.y)
     ta.Evaluate(scan_object)
-    ta.Deploy(scan_object, start_time)
+    ta.Deploy(scan_object, start_time, metric='val_acc')
     ta.Restore(start_time + '.zip')
 
     test_random_methods()
