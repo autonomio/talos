@@ -68,15 +68,14 @@ class Deploy:
     def save_data(self):
 
         import pandas as pd
-        import numpy as np
 
         try:
             x = pd.DataFrame(self.scan_object.x[:100])
             y = pd.DataFrame(self.scan_object.y[:100])
 
         except ValueError:
-            x = np.zeros(500)
-            y = np.zeros(500)
+            x = pd.DataFrame()
+            y = pd.DataFrame()
             print("data is not 2d, dummy data written instead.")
 
         x.to_csv(self.path + '_x.csv', header=None, index=None)

@@ -63,9 +63,6 @@ class Scan:
     val_split : float, optional
         The proportion of the input `x` which is set aside as the
         validation data. (Default is 0.3).
-    shuffle : bool, optional
-        If True, shuffle the data in x and y before splitting into the train
-        and cross-validation datasets. (Default is True).
     random_method : uniform, stratified, lhs, lhs_sudoku
         Determinines the way in which the grid_downsample is applied. The
         default setting is 'uniform'.
