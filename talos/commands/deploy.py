@@ -69,10 +69,12 @@ class Deploy:
 
         import pandas as pd
 
+        # input data is <= 2d
         try:
             x = pd.DataFrame(self.scan_object.x[:100])
             y = pd.DataFrame(self.scan_object.y[:100])
 
+        # input data is > 2d
         except ValueError:
             x = pd.DataFrame()
             y = pd.DataFrame()
