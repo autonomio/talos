@@ -2,11 +2,11 @@
 
 try:
     from kerasplotlib import TrainingLog as live
-except ImportError:
+except (RuntimeError, ImportError):
     print('Matplotlib backend loading failed')
 
 from ..model.normalizers import lr_normalizer
-from ..model.layers import hidden_layers
+from ..model.hidden_layers import hidden_layers
 from ..model.early_stopper import early_stopper
 from .generator import generator
 from . import gpu_utils

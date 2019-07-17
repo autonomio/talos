@@ -1,32 +1,37 @@
-from tqdm import tqdm
-from datetime import datetime
-
-from ..utils.results import result_todf, peak_epochs_todf
-from .scan_round import scan_round
-from .scan_finish import scan_finish
-
-
 def scan_run(self):
 
     '''The high-level management of the scan procedures
     onwards from preparation. Manages round_run()'''
 
+    from tqdm import tqdm
+
+    from .scan_prepare import scan_prepare
+    self = scan_prepare(self)
+
     # initiate the progress bar
-    self.pbar = tqdm(total=len(self.param_log),
+    self.pbar = tqdm(total=len(self.param_object.param_index),
                      disable=self.disable_progress_bar)
 
-    # start the main loop of the program
-    while len(self.param_log) != 0:
+    # the main cycle of the experiment
+    while True:
+
+        # get the parameters
+        self.round_params = self.param_object.round_parameters()
+
+        # break when there is no more permutations left
+        if self.round_params is False:
+            break
+        # otherwise proceed with next permutation
+        from .scan_round import scan_round
         self = scan_round(self)
         self.pbar.update(1)
-        if self.time_limit is not None:
-            if datetime.now() > self._stoptime:
-                print("Time limit reached, experiment finished")
-                break
+
+    # close progress bar before finishing
     self.pbar.close()
 
-    # save the results
-    self = result_todf(self)
-    self.peak_epochs_df = peak_epochs_todf(self)
+    # finish
+    from ..logging.logging_finish import logging_finish
+    self = logging_finish(self)
 
+    from .scan_finish import scan_finish
     self = scan_finish(self)

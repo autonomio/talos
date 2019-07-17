@@ -9,17 +9,9 @@ from .commands.autom8 import Autom8
 from .commands.params import Params
 from .commands.kerasmodel import KerasModel
 from . import utils
-from . import examples as templates
+from . import templates
 
 # the purpose of everything below is to keep the namespace completely clean
-
-del_from_utils = ['best_model', 'connection_check', 'detector',
-                  'exceptions', 'last_neuron', 'load_model', 'validation_split',
-                  'pred_class', 'results', 'string_cols_to_numeric']
-
-for key in del_from_utils:
-    if key.startswith('__') is False:
-        delattr(utils, key)
 
 template_sub = [templates.datasets,
                 templates.models,
@@ -35,7 +27,7 @@ for sub in template_sub:
             if key not in keep_from_templates:
                 delattr(sub, key)
 
-del commands, parameters, scan, reducers, model, metrics, key, del_from_utils
-del examples, sub, keep_from_templates, template_sub
+del commands, scan, model, metrics, key
+del sub, keep_from_templates, template_sub
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"

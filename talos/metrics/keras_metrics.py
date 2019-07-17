@@ -1,16 +1,47 @@
+def mae(y_true, y_pred):
+    from keras import backend as K
+    return K.mean(K.abs(y_pred - y_true), axis=-1)
 
 
+def mse(y_true, y_pred):
+    from keras import backend as K
+    return K.mean(K.square(y_pred - y_true), axis=-1)
 
-def root_mean_squared_error(y_true, y_pred):
+
+def rmae(y_true, y_pred):
+    from keras import backend as K
+    return K.sqrt(K.mean(K.abs(y_pred - y_true), axis=-1))
+
+
+def rmse(y_true, y_pred):
     from keras import backend as K
     return K.sqrt(K.mean(K.square(y_pred - y_true), axis=-1))
 
 
-def matthews_correlation_acc(y_true, y_pred):
+def mape(y_true, y_pred):
+    from keras import backend as K
+    diff = K.abs((y_true - y_pred) / K.clip(K.abs(y_true),
+                                            K.epsilon(),
+                                            None))
+    return 100. * K.mean(diff, axis=-1)
 
-    '''Calculates the Matthews correlation coefficient measure for quality
-    of binary classification problems.
-    '''
+
+def msle(y_true, y_pred):
+    from keras import backend as K
+    first_log = K.log(K.clip(y_pred, K.epsilon(), None) + 1.)
+    second_log = K.log(K.clip(y_true, K.epsilon(), None) + 1.)
+    return K.mean(K.square(first_log - second_log), axis=-1)
+
+
+def rmsle(y_true, y_pred):
+    from keras import backend as K
+    first_log = K.log(K.clip(y_pred, K.epsilon(), None) + 1.)
+    second_log = K.log(K.clip(y_true, K.epsilon(), None) + 1.)
+    return K.sqrt(K.mean(K.square(first_log - second_log), axis=-1))
+
+
+def matthews(y_true, y_pred):
+
     from keras import backend as K
     y_pred_pos = K.round(K.clip(y_pred, 0, 1))
     y_pred_neg = 1 - y_pred_pos
@@ -30,7 +61,7 @@ def matthews_correlation_acc(y_true, y_pred):
     return numerator / (denominator + K.epsilon())
 
 
-def precision_acc(y_true, y_pred):
+def precision(y_true, y_pred):
 
     '''Calculates the precision, a metric for multi-label classification of
     how many selected items are relevant.
@@ -42,7 +73,7 @@ def precision_acc(y_true, y_pred):
     return precision
 
 
-def recall_acc(y_true, y_pred):
+def recall(y_true, y_pred):
 
     '''Calculates the recall, a metric for multi-label classification of
     how many relevant items are selected.
@@ -54,7 +85,7 @@ def recall_acc(y_true, y_pred):
     return recall
 
 
-def fbeta_score_acc(y_true, y_pred, beta=1):
+def fbeta(y_true, y_pred, beta=1):
 
     '''Calculates the F score, the weighted harmonic mean of precision and recall.
     This is useful for multi-label classification, where input samples can be
@@ -76,14 +107,14 @@ def fbeta_score_acc(y_true, y_pred, beta=1):
     if K.sum(K.round(K.clip(y_true, 0, 1))) == 0:
         return 0
 
-    p = precision_acc(y_true, y_pred)
-    r = recall_acc(y_true, y_pred)
+    p = precision(y_true, y_pred)
+    r = recall(y_true, y_pred)
     bb = beta ** 2
     fbeta_score = (1 + bb) * (p * r) / (bb * p + r + K.epsilon())
     return fbeta_score
 
 
-def fmeasure_acc(y_true, y_pred):
+def f1score(y_true, y_pred):
     '''Calculates the f-measure, the harmonic mean of precision and recall.
     '''
-    return fbeta_score_acc(y_true, y_pred, beta=1)
+    return fbeta(y_true, y_pred, beta=1)

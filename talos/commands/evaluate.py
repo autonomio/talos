@@ -1,10 +1,3 @@
-from sklearn.metrics import mean_absolute_error, f1_score
-from numpy import mean, std
-
-from ..utils.validation_split import kfold
-from ..utils.best_model import best_model, activate_model
-
-
 class Evaluate:
 
     '''Class for evaluating models based on the Scan() object'''
@@ -58,12 +51,18 @@ class Evaluate:
 
         '''
 
+        import numpy as np
+        import sklearn as sk
+
         out = []
         if model_id is None:
+            from ..utils.best_model import best_model
             model_id = best_model(self.scan_object, metric, asc)
 
+        from ..utils.best_model import activate_model
         model = activate_model(self.scan_object, model_id)
 
+        from ..utils.validation_split import kfold
         kx, ky = kfold(x, y, folds, shuffle)
 
         for i in range(folds):
@@ -72,25 +71,25 @@ class Evaluate:
 
             if mode == 'binary':
                 y_pred = y_pred >= .5
-                scores = f1_score(y_pred, ky[i], average='binary')
+                scores = sk.metrics.f1_score(y_pred, ky[i], average='binary')
 
             elif mode == 'multi_class':
                 y_pred = y_pred.argmax(axis=-1)
-                scores = f1_score(y_pred, ky[i], average='macro')
+                scores = sk.metrics.f1_score(y_pred, ky[i], average='macro')
 
             if mode == 'multi_label':
                 y_pred = model.predict(kx[i]).argmax(axis=1)
-                scores = f1_score(y_pred,
-                                  ky[i].argmax(axis=1),
-                                  average='macro')
+                scores = sk.metrics.f1_score(y_pred,
+                                             ky[i].argmax(axis=1),
+                                             average='macro')
 
             elif mode == 'regression':
                 y_pred = model.predict(kx[i])
-                scores = mean_absolute_error(y_pred, ky[i])
+                scores = sk.metrics.mean_absolute_error(y_pred, ky[i])
 
             out.append(scores)
 
         if print_out is True:
-            print("mean : %.2f \n std : %.2f" % (mean(out), std(out)))
+            print("mean : %.2f \n std : %.2f" % (np.mean(out), np.std(out)))
 
         return out
