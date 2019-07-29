@@ -17,7 +17,7 @@ class Reporting:
         else:
             self.data = source.data
 
-    def high(self, metric='val_acc'):
+    def high(self, metric):
 
         '''Returns the highest value for a given metric'''
 
@@ -29,20 +29,20 @@ class Reporting:
 
         return len(self.data)
 
-    def rounds2high(self, metric='val_acc'):
+    def rounds2high(self, metric):
 
         '''Returns the number of rounds it took to get to the
         highest value for a given metric.'''
 
         return self.data[self.data[metric] == self.data[metric].max()].index[0]
 
-    def low(self, metric='val_acc'):
+    def low(self, metric):
 
         '''Returns the minimum value for a given metric'''
 
         return min(self.data[metric])
 
-    def correlate(self, metric='val_acc'):
+    def correlate(self, metric):
 
         '''Returns a correlation table against a given metric. Drops
         all other metrics and correlates against hyperparameters only.'''
@@ -56,7 +56,7 @@ class Reporting:
 
         return out[out != 1]
 
-    def plot_line(self, metric='val_acc'):
+    def plot_line(self, metric):
 
         '''A line plot for a given metric where rounds is on x-axis
 
@@ -71,7 +71,7 @@ class Reporting:
         except:
             print('Matplotlib Runtime Error. Plots will not work.')
 
-    def plot_hist(self, metric='val_acc', bins=10):
+    def plot_hist(self, metric, bins=10):
 
         '''A histogram for a given metric
 
@@ -87,7 +87,7 @@ class Reporting:
         except RuntimeError:
             print('Matplotlib Runtime Error. Plots will not work.')
 
-    def plot_corr(self, metric='val_acc', color_grades=5):
+    def plot_corr(self, metric, color_grades=5):
 
         '''A heatmap with a single metric and hyperparameters.
 
@@ -103,7 +103,7 @@ class Reporting:
         except RuntimeError:
             print('Matplotlib Runtime Error. Plots will not work.')
 
-    def plot_regs(self, x='val_acc', y='val_loss'):
+    def plot_regs(self, x, y):
 
         '''A regression plot with data on two axis
 
@@ -117,7 +117,7 @@ class Reporting:
         except RuntimeError:
             print('Matplotlib Runtime Error. Plots will not work.')
 
-    def plot_box(self, x, y='val_acc', hue=None):
+    def plot_box(self, x, y, hue=None):
 
         '''A box plot with data on two axis
 
@@ -146,7 +146,7 @@ class Reporting:
         except RuntimeError:
             print('Matplotlib Runtime Error. Plots will not work.')
 
-    def plot_kde(self, x='val_acc', y=None):
+    def plot_kde(self, x, y=None):
 
         '''Kernel Destiny Estimation type histogram with
         support for 1 or 2 axis of data'''
@@ -157,7 +157,7 @@ class Reporting:
         except RuntimeError:
             print('Matplotlib Runtime Error. Plots will not work.')
 
-    def table(self, metric='val_acc', sort_by=None, ascending=False):
+    def table(self, metric, sort_by=None, ascending=False):
 
         '''Shows a table with hyperparameters and a given metric
 
@@ -183,7 +183,7 @@ class Reporting:
 
         return out
 
-    def best_params(self, metric='val_acc', n=10, ascending=False):
+    def best_params(self, metric, n=10, ascending=False):
 
         '''Get the best parameters of the experiment based on a metric.
         Returns a numpy array with the values in a format that can be used

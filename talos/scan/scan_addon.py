@@ -26,9 +26,33 @@ def func_evaluate(scan_object,
                   average='binary',
                   asc=False):
 
-    '''
+    '''K-fold Cross Evaluator
+
     For creating scores from kfold cross-evaluation and
     adding them to the data frame.
+
+    scan_object : python class
+        The class object returned by Scan() upon completion of the experiment.
+    x_val : array or list of arrays
+        Input data (features) in the same format as used in Scan(), but should
+        not be the same data (or it will not be much of validation).
+    y_val : array or list of arrays
+        Input data (labels) in the same format as used in Scan(), but should
+        not be the same data (or it will not be much of validation).
+    n : int
+        The number of models to be evaluated. If set to 10, then 10 models
+        with the highest metric value are evaluated. See below.
+    metric : str
+        The metric to be used for picking the models to be evaluated.
+    folds : int
+        The number of folds to be used in the evaluation.
+    shuffle : bool
+        If the data is to be shuffled or not. Set always to False for timeseries
+        but keep in mind that you might get periodical/seasonal bias.
+    average : str
+        One of the supported averaging methods: 'binary', 'micro', or 'macro'
+    asc : bool
+        Set to True if the metric is to be minimized.
 
     '''
     import warnings as warnings

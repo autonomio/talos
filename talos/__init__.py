@@ -1,6 +1,7 @@
 # import commands
 from .scan.Scan import Scan
 from .commands.reporting import Reporting
+from .commands.reporting import Reporting as Analyze
 from .commands.predict import Predict
 from .commands.deploy import Deploy
 from .commands.evaluate import Evaluate

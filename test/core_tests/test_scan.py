@@ -254,28 +254,28 @@ class ReportingTest:
         r = Reporting('BinaryTest.csv')
 
         x = r.data
-        x = r.correlate()
-        x = r.high()
-        x = r.low()
+        x = r.correlate('val_acc')
+        x = r.high('val_acc')
+        x = r.low('val_acc')
         x = r.rounds()
-        x = r.rounds2high()
-        x = r.best_params()
-        x = r.plot_corr()
-        x = r.plot_hist()
-        x = r.plot_line()
+        x = r.rounds2high('val_acc')
+        x = r.best_params('val_acc')
+        x = r.plot_corr('val_acc')
+        x = r.plot_hist('val_acc')
+        x = r.plot_line('val_acc')
 
         r = Reporting('MultiLabelTest.csv')
 
         x = r.data
-        x = r.correlate()
-        x = r.high()
-        x = r.low()
+        x = r.correlate('val_acc')
+        x = r.high('val_acc')
+        x = r.low('val_acc')
         x = r.rounds()
-        x = r.rounds2high()
-        x = r.best_params()
-        x = r.plot_corr()
-        x = r.plot_hist()
-        x = r.plot_line()
+        x = r.rounds2high('val_acc')
+        x = r.best_params('val_acc')
+        x = r.plot_corr('val_acc')
+        x = r.plot_hist('val_acc')
+        x = r.plot_line('val_acc')
 
         del x
 
