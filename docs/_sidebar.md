@@ -21,7 +21,7 @@
  - [Using a generator](Examples_Generator.md)
  - [AutoML](Examples_AutoML.md)
 
-- Commands
+- Core Commands
 
  - [Scan](Scan.md)
  - [Analyze](Analyze.md)
@@ -29,7 +29,6 @@
  - [Predict](Predict.md)
  - [Deploy](Deploy.md)
  - [Restore](Restore.md)
- - [Autom8](Autom8.md)
 
 - Optimization Strategies
 
@@ -44,16 +43,21 @@
 
   - [Metrics](Metrics.md)
   - [Hidden Layers](Hidden_Layers.md)
-  - [Generator]()
+  - [Shapes](Hidden_Layers.md#shapes)
+  - [Generator](Generator.md)
   - [Learning Rate Normalizer](Learning_Rate_Normalizer.md)
-  - [Shapes]()
-  - [Templates]()
-  - [AutoModel]()
-  - [AutoParams]()
+  - [Templates](Templates.md)
   - [Monitoring](Monitoring.md)
   - [Parallelism](Parallelism.md)
 
+- AutoML
+
+  - [AutoModel](Auto_Model.md)
+  - [AutoParams](Auto_Params.md)
+  - [AutoScan](Auto_Scan.md)
+  - [AutoPredict](Auto_Predict.md)
+
+
 - Troubleshooting
 
- - [Common mistakes](Troubleshooting.md#common-mistakes)
- - [Asking help](Troubleshooting.md#common-mistakes)
+ - [Asking help](Asking_Help.md)

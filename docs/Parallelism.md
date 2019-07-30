@@ -12,17 +12,16 @@ Single GPU works out-of-the-box, as long as you have the GPU version of TensorFl
 
 ## Single GPU, Multiple Jobs
 
-> Parallel Scans with multiple GPU system
-
 ```python
 
 from talos.utils.gpu_utils import parallel_gpu_jobs
 
 # split GPU memory in two for two parallel jobs
 parallel_gpu_jobs(0.5)
+talos.Scan(...)
 
 ```
-> Run the above lines before the Scan() command
+NOTE: The above lines must be run before the Scan() command:
 
 A single GPU can be split to simultaneously perform several experiments. This is useful you want to work on more than one scope at one time, or when you're analyzing the results of an ongoing experiment with `Reporting()` and are ready to start the next experiment while keeping the first one running.
 
@@ -35,8 +34,9 @@ from talos.utils.gpu_utils import multi_gpu
 
 # split a single job to multiple GPUs
 model = multi_gpu(model)
+model.compile(...)
 ```
-> Include the above line in the input model before model.compile()
+NOTE: Include the above line in the input model before model.compile()
 
 Multiple GPUs on a single machine can be assigned to work on a single machine in a parallelism fashion. This is useful when you have more than one GPU on a single machine, and want to speed up the experiment. Each GPU roughly speaking reduces compute time linearly.
 
@@ -47,7 +47,8 @@ from talos.utils.gpu_utils import force_cpu
 
 # Force CPU use on a GPU system
 force_cpu()
+talos.Scan(...)
 ```
-> Run the above lines before the Scan() command
+NOTE: Run the above lines before the Scan() command
 
 Sometimes it's useful (for example when `batch_size` tends to be very small) to disable GPU and use CPU instead. This can be done simply by invoking `force_cpu()`.
