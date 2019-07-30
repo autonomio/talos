@@ -1,8 +1,6 @@
 ## Evaluate()
 
-The models that result from the experiment `Scan` object can be evaluated with `Evaluate()`. This way one or more models may be picked for deployment using k-fold cross-validation in a straightforward manner.
-
-> Evaluating model generality
+Once the `Scan()` experiment procedures have been completed, the resulting class object can be used as input for `Evaluate()` in order to evaluate one or more models.
 
 ```python
 from talos import Evaluate
@@ -16,13 +14,11 @@ e.evaluate(x, y, average='macro')
 
 NOTE: It's very important to save part of your data for evaluation, and keep it completely separated from the data you use for the actual experiment. A good approach would be where 50% of the data is saved for evaluation.
 
-### Evaluate Functions
+### Evaluate Properties
 
-See the function docstring for a more detailed description.
+`Evaluate()` has just one property, **`evaluate`**, which is used for evaluating one or more models.
 
-**`evaluate`** The highest result for a given metric
-
-### Evaluate Arguments
+### Evaluate.evaluate Arguments
 
 Parameter | Default | Description
 --------- | ------- | -----------
@@ -35,4 +31,4 @@ average | 'binary' | 'binary', 'micro', 'macro', 'samples', or 'weighted'
 metric | None | the metric against which the validation is performed
 asc | None | should be True if metric is a loss
 
-<aside class='notice'> The above arguments are for the <code>evaluate</code> attribute of the <code>Evaluate</code> object.</aside>
+The above arguments are for the <code>evaluate</code> attribute of the <code>Evaluate</code> object.

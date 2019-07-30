@@ -7,32 +7,27 @@ In order to identify the best model from a given experiment, or to perform predi
 ```python
 p = Predict('scan_object')
 
-# returns model_id for best performing model
-r.best_model(metric='val_fmeasure')
-
-# returns predictions for input x
-r.predict(x)
-
-# performs a 10-fold cross-validation for multi-class prediction
-r.evaluate(x, y, folds=10, average='macro')
+p.predict(x)
 ```
 
-### Predict Functions
+### Predict Properties
 
-See docstring for each function for a more detailed information, and the required input arguments.
+**`predict`** makes probability predictions on `x` which has to be in the same form as the input data used in the `Scan()` experiment.
 
-**`load_model`** Loads the Keras model with weights so it can be used in the local environment for predictions or other purpose. Requires `model_id` as argument. The `model_id` corresponds with the round in the experiment.
+```python
+scan_object.data
+```
 
-**`best_model`** Identifies the `model_id` for the best performing model based on a given metric (e.g. 'val_fmeasure').
+<hr>
 
-**`predict`** Makes predictions based on input `x` and `model_id`. If `model_id` is not given, best model will be used.
+**`predict_classes`** makes class predictions on `x` which has to be in the same form as the input data used in the `Scan()` experiment.
 
-**`predict_classes`** Same as predict, but predicts classes.
-
-**`evaluate`** Evaluates models using a k-fold crossvalidation.
+```python
+scan_object.data
+```
 
 ### Predict Arguments
 
-Parameter | Default | Description
---------- | ------- | -----------
-`scan_object` | None | the object from Scan() after experiment is completed
+Parameter | Description
+--------- | -----------
+`scan_object` | The resulting class object from `Scan()`

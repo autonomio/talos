@@ -2,7 +2,7 @@
 
 The experiment results can be analyzed through the [Analyze()](https://github.com/autonomio/talos/blob/master/talos/utils/reporting.py) utility. `Analyze()` may be used after Scan completes, or during an experiment (from a different shell / kernel).
 
-> Using reporting
+## Analyze Use
 
 ```python
 r = Reporting('experiment_log.csv')
