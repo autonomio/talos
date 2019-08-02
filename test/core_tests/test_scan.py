@@ -152,7 +152,7 @@ class BinaryTest:
              round_limit=5,
              experiment_name='BinaryTest',
              model=ta.templates.models.cervical_cancer,
-             random_method='crypto_uniform',
+             random_method='quantum',
              seed=2423,
              reduction_method='correlation',
              reduction_interval=3,
