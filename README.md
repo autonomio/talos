@@ -61,9 +61,9 @@ Based on what no doubt constitutes a "biased" review (being our own) of more tha
 - model generalization evaluator
 - experiment analytics
 - Random search
+- Pseudo, Quasi, and Quantum Random optimizers
 - Grid search
-- Correlation based optimization
-- Pseudo, Quasi, and Quantum Random functions
+- Probabilistic optimization
 - Model candidate generality evaluation
 - Live training monitor
 - Experiment analytics

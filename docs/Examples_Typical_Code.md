@@ -1,5 +1,7 @@
 [BACK](Examples_Typical.md)
 
+# Typical Case Example
+
 ```python
 import talos as ta
 from keras.models import Sequential

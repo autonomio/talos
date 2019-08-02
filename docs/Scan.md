@@ -61,7 +61,7 @@ NOTE: `metric` has to be one of the metrics used in the experiment, and `asc` ha
 
 <hr>
 
-**`data`** returns a pandas DataFrame with the results for the experiment together with the hyperparameter permutations.
+**`data`** returns a pandas DataFrame with the results for the experiment together with the hyperparameter permutation details.
 
 ```python
 scan_object.data

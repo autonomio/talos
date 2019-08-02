@@ -11,7 +11,7 @@ from keras.activations import relu, sigmoid
 from sklearn.model_selection import train_test_split as splt
 
 from talos.scan.Scan import Scan
-from talos.commands.reporting import Reporting
+from talos.commands.analyze import Analyze
 
 import talos as ta
 
@@ -251,29 +251,29 @@ class ReportingTest:
 
         print("ReportingTest : Running Binary test...")
 
-        r = Reporting('BinaryTest.csv')
+        r = Analyze('BinaryTest.csv')
 
         x = r.data
-        x = r.correlate('val_acc')
+        x = r.correlate('val_acc', ['val_loss'])
         x = r.high('val_acc')
         x = r.low('val_acc')
         x = r.rounds()
         x = r.rounds2high('val_acc')
-        x = r.best_params('val_acc')
-        x = r.plot_corr('val_acc')
+        x = r.best_params('val_acc', ['val_loss', 'acc', 'loss'])
+        x = r.plot_corr('val_acc', ['val_loss', 'acc', 'loss'])
         x = r.plot_hist('val_acc')
         x = r.plot_line('val_acc')
 
-        r = Reporting('MultiLabelTest.csv')
+        r = Analyze('MultiLabelTest.csv')
 
         x = r.data
-        x = r.correlate('val_acc')
+        x = r.correlate('val_acc', ['val_loss'])
         x = r.high('val_acc')
         x = r.low('val_acc')
         x = r.rounds()
         x = r.rounds2high('val_acc')
-        x = r.best_params('val_acc')
-        x = r.plot_corr('val_acc')
+        x = r.best_params('val_acc', ['val_loss', 'acc', 'loss'])
+        x = r.plot_corr('val_acc', ['val_loss', 'acc', 'loss'])
         x = r.plot_hist('val_acc')
         x = r.plot_line('val_acc')
 

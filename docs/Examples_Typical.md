@@ -5,14 +5,14 @@ This example highlights a typical and rather simple example of Talos experiment,
 ### Imports
 
 ```python
-import talos as ta
+import talos
 from keras.models import Sequential
 from keras.layers import Dense
 ```
 
 ### Loading Data
 ```python
-x, y = ta.templates.datasets.iris()
+x, y = talos.templates.datasets.iris()
 ```
 `x` and `y` are expected to be either numpy arrays or lists of numpy arrays.
 
@@ -67,7 +67,7 @@ Note that the parameter dictionary allows either list of values, or tuples with 
 
 ### Scan()
 ```python
-scan_object = ta.Scan(x, y, model=iris_model, params=p, fraction_limit=0.001)
+scan_object = talos.Scan(x, y, model=iris_model, params=p, fraction_limit=0.001)
 ```
 
 `Scan()` always needs to have `x`, `y`, `model`, and `params` arguments declared. Find the description for all `Scan()` arguments [here](Scan.md#scan-arguments).

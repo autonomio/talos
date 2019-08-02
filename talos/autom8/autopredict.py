@@ -1,31 +1,28 @@
-def Autom8(scan_object,
-           x_val,
-           y_val,
-           n=10,
-           metric='val_acc',
-           folds=5,
-           shuffle=True,
-           average='binary',
-           asc=False):
+def AutoPredict(scan_object,
+                x_val,
+                y_val,
+                x_pred,
+                n=10,
+                metric='val_acc',
+                folds=5,
+                shuffle=True,
+                average='binary',
+                asc=False):
 
-    '''Pipeline automator
+    '''Automatically handles the process of finding the best models from a
+    completed `Scan()` experiment, evaluates those models, and uses the winner
+    to make predictions on input data.
 
-    Reduces the idea to prediction pipeline into a single
-    command where a Scan() process is followed by evaluating
-    n best
-
-    Example use:
+    NOTE: the input data must be in same format as 'x' that was
+    used in `Scan()`.
 
     Parameters
     ----------
     scan_object : Scan() object
         A Scan() process needs to be completed first, and then the resulting
         object can be used as input here.
-    x_val : ndarray
+    x_val : ndarray or list of ndarray
         Data to be used for 'x' in evaluation. Note that should be in the same
-        format as the data which was used in the Scan() but not the same data.
-    y_val : python dictionary
-        Data to be used for 'y' in evaluation. Note that should be in the same
         format as the data which was used in the Scan() but not the same data.
     n : str
         Number of promising models to be included in the evaluation process.
@@ -81,12 +78,21 @@ def Autom8(scan_object,
                                 average=average,
                                 asc=False)
 
-    # make predictions with the best model
-    preds = scan_object.best_model('eval_f1score_mean')
-    scan_object.preds = preds.predict(x_val)
+    # get the best model based on evaluated score
+    scan_object.preds_model = scan_object.best_model('eval_f1score_mean')
 
-    # print out the best model parameters and stats
-    scan_object.preds_model = scan_object.data.sort_values('eval_f1score_mean',
+    # make predictions with the model
+    scan_object.preds_probabilities = scan_object.preds_model.predict(x_pred)
+
+    # make (class) predictiosn with the model
+    scan_object.preds_classes = scan_object.preds_model.predict_classes(x_pred)
+
+    # get the hyperparameter for the model
+    scan_object.preds_parameters = scan_object.data.sort_values('eval_f1score_mean',
                                                            ascending=False).iloc[0]
+
+    #scan_object.predictions = scan_object.preds_model.predict(x_pred)
+
+    print(">> Added model, probabilities, classes, and parameters to scan_object")
 
     return scan_object

@@ -10,14 +10,15 @@
 - Overview
 
  - [Key Features](Overview.md#key-features)
- - [Workflow](Overview.md#workflow)
+ - [How to Use](Overview.md#how-to-use)
  - [Creating an experiment](Overview.md#creating-an-experiment)
+ - [Workflow](Workflow.md)
 
 - Examples
 
  - [Typical](Examples_Typical.md)
- - [Multiple outputs](Examples_Multi_Output.md)
- - [Multiple inputs](Examples_Multi_Input.md)
+ - [Multiple outputs](Examples_Multiple_Outputs.md)
+ - [Multiple inputs](Examples_Multiple_Inputs.md)
  - [Using a generator](Examples_Generator.md)
  - [AutoML](Examples_AutoML.md)
 
@@ -35,9 +36,9 @@
   - [Overview](Optimization_Strategies.md#optimization-strategies)
   - [Random Search](Optimization_Strategies.md#random-search)
   - [Grid Search](Optimization_Strategies.md#grid-search)
-  - [Probabilistic Reduction](Optimization_Strategies.md#probabilistic-reduction)
   - [Early Stopping](Optimization_Strategies.md#early-stopping)
-  - [Custom Reducer](Optimization_Strategies.md#custom-reducer)
+  - [Probabilistic Reduction](Probabilistic_Reduction.md)
+  - [Custom Reducers](Custom_Reducers.md)
 
 - Utilities
 
@@ -46,18 +47,25 @@
   - [Shapes](Hidden_Layers.md#shapes)
   - [Generator](Generator.md)
   - [Learning Rate Normalizer](Learning_Rate_Normalizer.md)
-  - [Templates](Templates.md)
   - [Monitoring](Monitoring.md)
   - [Parallelism](Parallelism.md)
 
+- Templates
+
+  - [Overview](Templates.md)
+  - [Data](Templates.md#datasets)
+  - [Params](Templates.md#params)
+  - [Models](Templates.md#models)
+  - [Pipelines](Templates.md#pipelines)
+
 - AutoML
 
-  - [AutoModel](Auto_Model.md)
-  - [AutoParams](Auto_Params.md)
-  - [AutoScan](Auto_Scan.md)
-  - [AutoPredict](Auto_Predict.md)
-
+  - [AutoModel](AutoModel.md)
+  - [AutoParams](AutoParams.md)
+  - [AutoScan](AutoScan.md)
+  - [AutoPredict](AutoPredict.md)
 
 - Troubleshooting
 
  - [Asking help](Asking_Help.md)
+ - [Roadmap](Roadmap.md)

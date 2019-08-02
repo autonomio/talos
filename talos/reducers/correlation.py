@@ -1,4 +1,4 @@
-def correlation(self):
+def correlation(self, method):
 
     '''This is called from reduce_run.py.
 
@@ -12,57 +12,45 @@ def correlation(self):
     which particular value is to be dropped.
 
     '''
-    import pandas as pd
-    import wrangle as wr
 
-    data = pd.read_csv(self.experiment_name + '.csv')
-    data = data[[self.reduction_metric] + self._param_dict_keys]
+    import numpy as np
 
-    corr = data.copy(deep=True)
+    # transform the data properly first
+    from .reduce_utils import cols_to_multilabel
+    data = cols_to_multilabel(self)
 
-    corr = corr.dropna()
-    corr = corr.corr('spearman')
+    # get the correlations
+    corr_values = data.corr(method)[self.reduction_metric]
 
-    corr = corr[self.reduction_metric]
+    # drop the reduction metric row
+    corr_values.drop(self.reduction_metric, inplace=True)
 
-    # drop the row for reduction metric and sort
-    corr = corr.apply(abs)[1:]
-    corr = corr.sort_values(ascending=False)
+    # drop labels where value is NaN
+    corr_values.dropna(inplace=True)
 
-    # check if reduction threshold is met:
-    if corr.values[0] <= self.reduction_threshold is self.minimize_loss:
-        return False
+    # if all nans, then stop
+    if len(corr_values) <= 1:
+        print("all nans")
+        return self
 
-    # filter out where only one value is present
-    if len(corr) <= 1:
-        self._reduce_keys = None
-        return False
+    # sort based on the metric type
+    corr_values.sort_values(ascending=self.minimize_loss, inplace=True)
 
-    label = corr.index.values[0]
-    if label not in self._param_dict_keys:
-        return False
+    # if less than threshold, then stop
+    if abs(corr_values[-1]) < self.reduction_threshold:
+        print("below threshold")
+        return self
 
-    # convert parameter values to multilabel (2d)
-    corr = wr.col_to_multilabel(data[[label]], label)
+    # get the strongest correlation
+    corr_values = corr_values.index[-1]
 
-    # combine the reduction_metric with the multilabel data
-    corr = wr.df_merge(corr, pd.DataFrame(data[self.reduction_metric]))
+    # get the label, value, and dtype from the column header
+    label, dtype, value = corr_values.split('~')
 
-    # repeat same as above
-    corr = corr.corr('spearman')
-    corr = corr[self.reduction_metric]
-    corr = corr.apply(abs)[1:]
-    corr = corr.sort_values(ascending=False)
+    # convert things back to their original dtype
+    value = np.array([value]).astype(dtype)[0]
 
-    if len(corr) <= 1:
-        self._reduce_keys = None
-        return False
+    # this is where modify the parameter space accordingly
+    self.param_object.remove_is(label, value)
 
-    label = corr.index.values[0]
-    if label not in self._param_dict_keys:
-        return False
-
-    value = corr.values[0]
-    label = corr.index[0]
-
-    return value, label
+    return self

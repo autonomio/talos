@@ -11,13 +11,55 @@ Talos features focus on easy-of-use, intuitive workflow, do not introduce any ne
 - restore models onto a production system
 - create AutoML pipelines
 
-If you have an idea for a new feature, don't hesitate to [suggest it](https://github.com/autonomio/talos/issues/new). 
+If you have an idea for a new feature, don't hesitate to [suggest it](https://github.com/autonomio/talos/issues/new).
 
-# Workflow
+# How to Use
 
-The goal of a deep learning experiment is to find one or more model candidates that meet a given performance expectation. Talos makes this process as easy and streamlined as possible. Talos provides an intuitive API to manage both semi-automated and fully-automated deep learning workflows. The below example highlights a typical semi-automated workflow from idea to production ready model.
+Talos provides single-line commands for conducting and analyzing experiments, for evaluating models from the experiment, and making predictions with models. In addition, Talos provides s streamlined way to deploy and restore models across systems.
 
-![alt text](_media/talos_deep_learning_workflow.png")
+All primary commands except `Restore()` and `Deploy()` return a class object specific to the command, with various properties. These are outlined in the corresponding sections of the documentation.
+
+All primary commands except `Restore()` accept the class object resulting from `Scan()` as input.
+
+
+#### conduct an experiment
+
+```python
+scan_object = talos.Scan(x, y, model, params)
+```
+
+#### analyze the results of an experiment
+
+```python
+talos.Analyze(scan_object)
+```
+
+#### evaluate one or more models from the experiment
+
+```python
+talos.Evaluate(scan_object)
+```
+
+#### make predictions with a model from the experiment
+
+```python
+talos.Predict(scan_object)
+```
+
+#### create a deploy package
+
+```python
+talos.Deploy(scan_object, model_name='deployed_package.zip', metric='f1score')
+```
+
+#### deploy a model
+
+```python
+talos.Restore('deployed_package.zip')
+```
+
+In addition to the primary commands, various utilities can be accessed through `talos.utils`, datasets, parameters, and models from `talos.templates`, and AutoML features through `talos.autom8`.
+
 
 # Creating an Experiment
 

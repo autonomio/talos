@@ -22,13 +22,13 @@ NOTE: It's very important to save part of your data for evaluation, and keep it 
 
 Parameter | Default | Description
 --------- | ------- | -----------
-x | NA | the predictor data x
-y | NA | the prediction data y (truth)
-model_id | None | the model_id to be used
-folds | None | number of folds to be used for cross-validation
-shuffle | None | if data is shuffled before splitting
-average | 'binary' | 'binary', 'micro', 'macro', 'samples', or 'weighted'
-metric | None | the metric against which the validation is performed
-asc | None | should be True if metric is a loss
+`x` | NA | the predictor data x
+`y` | NA | the prediction data y (truth)
+`model_id` | None | the model_id to be used
+`folds` | None | number of folds to be used for cross-validation
+`shuffle` | None | if data is shuffled before splitting
+`average` | 'binary' | 'binary', 'micro', 'macro', 'samples', or 'weighted'
+`metric` | None | the metric against which the validation is performed
+`asc` | None | should be True if metric is a loss
 
 The above arguments are for the <code>evaluate</code> attribute of the <code>Evaluate</code> object.

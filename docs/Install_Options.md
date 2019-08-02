@@ -26,7 +26,7 @@ pip install talos==0.6.1
 
 #### Upgrade installation from PyPi
 ```python
-pip install -U talos
+pip install -U --no-deps talos
 ```
 
 #### Install from monthly

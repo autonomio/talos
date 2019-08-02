@@ -1,31 +1,38 @@
-class KerasModel:
+class AutoModel:
 
-    def __init__(self, task):
+    def __init__(self, task, metric=None):
 
         '''
 
         Creates an input model for Scan(). Optimized for being used together
         with Params(). For example:
 
-        p = talos.Params().params
-        model = talos.KerasModel(task='binary').model
+        p = talos.AutoParams().params
+        model = talos.AutoModel(task='binary').model
 
         talos.Scan(x, y, p, model)
 
         NOTE: the parameter space from Params() is very large, so use limits
         in or reducers in Scan() accordingly.
 
-        task : string or list
+        task : string or None
             If 'continuous' then mae is used for metric, if 'binary',
             'multiclass', or 'multilabel', f1score is used. Accuracy is always
-            used. You can also input a list with one or more custom metrics or
-            names of Keras or Talos metrics.
+            used.
+        metric : None or list
+            You can also input a list with one or more custom metrics or names
+            of Keras or Talos metrics.
         '''
 
         self.task = task
+        self.metric = metric
 
-        # pick the right metrics
-        self.metrics = self._set_metric()
+        if self.task is not None:
+            self.metrics = self._set_metric()
+        elif self.metric is not None and isinstance(self.metric, list):
+            self.metrics = self.metric + ['acc']
+        else:
+            print("Either pick task or provide list as input for metric.")
 
         # create the model
         self.model = self._create_input_model
@@ -41,8 +48,6 @@ class KerasModel:
             return [ta.utils.metrics.f1score, 'acc']
         elif self.task == 'continuous':
             return [ta.utils.metrics.mae, 'acc']
-        elif isinstance(self.task, list):
-            return self.task + ['acc']
 
     def _create_input_model(self, x_train, y_train, x_val, y_val, params):
 

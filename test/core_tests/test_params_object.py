@@ -7,7 +7,7 @@ def test_params_object():
 
     print('Start testing Params object...')
 
-    p = ta.Params()
+    p = ta.autom8.AutoParams()
 
     # without arguments
 
@@ -22,9 +22,8 @@ def test_params_object():
     p.optimizers()
     p.shapes()
     p.shapes_slope()
-    p.automated()
 
-    p = ta.Params(replace=False)
+    p = ta.autom8.AutoParams(replace=False)
 
     # with arguments
     p.activations()
@@ -38,6 +37,5 @@ def test_params_object():
     p.optimizers('multi_label')
     p.shapes()
     p.shapes_slope()
-    p.automated('sloped')
 
     return "Finished testing Params object!"

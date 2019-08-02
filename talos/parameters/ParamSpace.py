@@ -224,7 +224,6 @@ class ParamSpace:
     def remove_is(self, label, value):
 
         '''Removes based on exact match'''
-
         col = self.param_keys.index(label)
         self.param_space = self.param_space[self.param_space[:, col] != value]
         self.param_index = list(range(len(self.param_space)))

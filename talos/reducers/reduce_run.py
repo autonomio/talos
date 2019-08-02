@@ -20,6 +20,7 @@ def reduce_run(self):
     '''
 
     from .correlation import correlation
+    from .local_strategy import local_strategy
     from .limit_by_metric import limit_by_metric
 
     # check if performance target is met
@@ -30,22 +31,25 @@ def reduce_run(self):
         if status is True:
             self.param_object.param_index = []
 
-    # stop here is no reduction method is set
+    # stop here if no reduction method is set
     if self.reduction_method is None:
         return self
 
     # setup what's required for updating progress bar
     left = (self.param_object.round_counter + 1)
     right = self.reduction_interval
-    index_len = len(self.param_object.param_index)
-    len_before_reduce = index_len
+    len_before_reduce = len(self.param_object.param_index)
 
     # apply window based reducers
     if left % right == 0:
 
         # check if correlation reducer can do something
+        if self.reduction_method in ['pearson', 'kendall', 'spearman']:
+            self = correlation(self, self.reduction_method)
+
+        # check if correlation reducer can do something
         if self.reduction_method == 'correlation':
-            label_and_value = correlation(self)
+            self = correlation(self, 'spearman')
 
         # check if random forrest can do something
         if self.reduction_method == 'random_forrest':
@@ -59,13 +63,11 @@ def reduce_run(self):
         if self.reduction_method == 'monte_carlo':
             pass
 
-        # modify the parameter space accordingly
-        if label_and_value is not False:
-            self.param_object.remove_is(label_and_value[0],
-                                        label_and_value[1])
+        if self.reduction_method == 'local_strategy':
+            self = local_strategy(self)
 
         # finish up by updating progress bar
-        total_reduced = len_before_reduce - index_len
+        total_reduced = len_before_reduce - len(self.param_object.param_index)
         total_reduced = max(0, total_reduced)
         self.pbar.update(total_reduced)
 

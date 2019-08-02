@@ -11,12 +11,12 @@ def test_auto_scan():
     x = x[:50]
     y = y[:50]
 
-    p = ta.Params().params
+    p = ta.autom8.AutoParams().params
 
     for key in p.keys():
         p[key] = [p[key][0]]
 
-    ta.Scan(x, y, p, ta.KerasModel('binary').model,
+    ta.Scan(x, y, p, ta.autom8.AutoModel('binary').model,
             boolean_limit=lambda p: p['batch_size'] < 150
             )
 

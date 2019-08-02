@@ -1,16 +1,16 @@
 # import commands
 from .scan.Scan import Scan
-from .commands.reporting import Reporting
-from .commands.reporting import Reporting as Analyze
+from .commands.analyze import Analyze
+from .commands.analyze import Analyze as Reporting
 from .commands.predict import Predict
 from .commands.deploy import Deploy
 from .commands.evaluate import Evaluate
 from .commands.restore import Restore
-from .commands.autom8 import Autom8
-from .commands.params import Params
-from .commands.kerasmodel import KerasModel
+
+# import extras
 from . import utils
 from . import templates
+from . import autom8
 
 # the purpose of everything below is to keep the namespace completely clean
 
@@ -20,7 +20,7 @@ template_sub = [templates.datasets,
                 templates.pipelines]
 
 keep_from_templates = ['iris', 'cervical_cancer', 'titanic', 'breast_cancer',
-                       'icu_mortality']
+                       'icu_mortality', 'telco_churn']
 
 for sub in template_sub:
     for key in list(sub.__dict__):

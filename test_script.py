@@ -53,7 +53,10 @@ if __name__ == '__main__':
     p.predict(scan_object.x)
     p.predict_classes(scan_object.x)
 
-    ta.Autom8(scan_object, scan_object.x, scan_object.y)
+    ta.autom8.AutoPredict(scan_object,
+                          scan_object.x,
+                          scan_object.y,
+                          scan_object.x)
     ta.Evaluate(scan_object)
     ta.Deploy(scan_object, start_time, metric='val_acc')
     ta.Restore(start_time + '.zip')

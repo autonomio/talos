@@ -1,4 +1,4 @@
-class Reporting:
+class Analyze:
 
     '''A suite of commands that are useful for analyzing the results
     of a completed scan, or during a scan.
@@ -42,13 +42,19 @@ class Reporting:
 
         return min(self.data[metric])
 
-    def correlate(self, metric):
+    def correlate(self, metric, exclude):
 
         '''Returns a correlation table against a given metric. Drops
-        all other metrics and correlates against hyperparameters only.'''
+        all other metrics and correlates against hyperparameters only.
 
-        from ..metrics.names import metric_names
-        columns = [c for c in self.data.columns if c not in metric_names()]
+        metric | str | Column label for the metric to correlate with
+        exclude | list | Column label/s to be excluded from the correlation
+
+        NOTE: You should use `exclude` to avoid correlating with other metrics.
+
+        '''
+
+        columns = [c for c in self.data.columns if c not in exclude + [metric]]
         out = self.data[columns]
         out.insert(0, metric, self.data[metric])
 
@@ -62,7 +68,7 @@ class Reporting:
 
         NOTE: remember to invoke %matplotlib inline if in notebook
 
-        metric :: the metric to correlate against
+        metric | str | Column label for the metric to correlate with
 
         '''
         try:
@@ -77,8 +83,8 @@ class Reporting:
 
         NOTE: remember to invoke %matplotlib inline if in notebook
 
-        metric :: the metric to correlate against
-        bins :: number of bins to use in histogram
+        metric | str | Column label for the metric to correlate with
+        bins | int | Number of bins to use in histogram
 
         '''
         try:
@@ -87,18 +93,21 @@ class Reporting:
         except RuntimeError:
             print('Matplotlib Runtime Error. Plots will not work.')
 
-    def plot_corr(self, metric, color_grades=5):
+    def plot_corr(self, metric, exclude, color_grades=5):
 
         '''A heatmap with a single metric and hyperparameters.
 
         NOTE: remember to invoke %matplotlib inline if in notebook
 
-        metric :: the metric to correlate against
-        color_grades :: number of colors to use in heatmap'''
+        metric | str | Column label for the metric to correlate with
+        exclude | list | Column label/s to be excluded from the correlation
+        color_grades | int | Number of colors to use in heatmap
+
+        '''
 
         try:
             import astetik as ast
-            cols = self._cols(metric)
+            cols = self._cols(metric, exclude)
             return ast.corr(self.data[cols], color_grades=color_grades)
         except RuntimeError:
             print('Matplotlib Runtime Error. Plots will not work.')
@@ -157,7 +166,7 @@ class Reporting:
         except RuntimeError:
             print('Matplotlib Runtime Error. Plots will not work.')
 
-    def table(self, metric, sort_by=None, ascending=False):
+    def table(self, metric, exclude=[], sort_by=None, ascending=False):
 
         '''Shows a table with hyperparameters and a given metric
 
@@ -168,13 +177,14 @@ class Reporting:
 
         PARAMS:
 
-        metric :: accepts single column name as string or multiple in list
-        sort_by :: the colunm name sorting should be based on
-        ascending :: if sorting is ascending or not
+        metric | str or list | Column labels for the metric to correlate with
+        exclude | list | Column label/s to be excluded from the correlation
+        sort_by | str | The colunm name sorting should be based on
+        ascending | bool | Set to True when `sort_by` is to be minimized eg. loss
 
         '''
 
-        cols = self._cols(metric)
+        cols = self._cols(metric, exclude)
 
         if sort_by is None:
             sort_by = metric
@@ -183,25 +193,31 @@ class Reporting:
 
         return out
 
-    def best_params(self, metric, n=10, ascending=False):
+    def best_params(self, metric, exclude, n=10, ascending=False):
 
         '''Get the best parameters of the experiment based on a metric.
         Returns a numpy array with the values in a format that can be used
-        with the talos backend in Scan(). Adds an index as the last column.'''
+        with the talos backend in Scan(). Adds an index as the last column.
 
-        cols = self._cols(metric)
+        metric | str or list | Column labels for the metric to correlate with
+        exclude | list | Column label/s to be excluded from the correlation
+        n | int | Number of hyperparameter permutations to be returned
+        ascending | bool | Set to True when `metric` is to be minimized eg. loss
+
+        '''
+
+        cols = self._cols(metric, exclude)
         out = self.data[cols].sort_values(metric, ascending=ascending)
         out = out.drop(metric, axis=1).head(n)
         out.insert(out.shape[1], 'index_num', range(len(out)))
 
         return out.values
 
-    def _cols(self, metric):
+    def _cols(self, metric, exclude):
 
         '''Helper to remove other than desired metric from data table'''
 
-        from ..metrics.names import metric_names
-        cols = [col for col in self.data.columns if col not in metric_names()]
+        cols = [col for col in self.data.columns if col not in exclude + [metric]]
 
         if isinstance(metric, list) is False:
             metric = [metric]

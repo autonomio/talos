@@ -11,7 +11,9 @@ class Evaluate:
         self.scan_object = scan_object
         self.data = scan_object.data
 
-    def evaluate(self, x, y,
+    def evaluate(self,
+                 x,
+                 y,
                  model_id=None,
                  folds=5,
                  shuffle=True,
