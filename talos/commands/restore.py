@@ -33,7 +33,7 @@ class Restore:
         z.extractall(self.extract_to)
 
         # add params dictionary
-        self.params = load(self.file_prefix + '_params.npy').item()
+        self.params = load(self.file_prefix + '_params.npy', allow_pickle=True).item()
 
         # add experiment details
         self.details = read_csv(self.file_prefix + '_details.txt', header=None)
