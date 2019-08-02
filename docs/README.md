@@ -41,7 +41,7 @@ Talos also supports easy deployment of models and experiment assets from the exp
 # System Requirements
 
 - Linux, Mac OSX or Windows system
-- Python 3.5 or higher
+- Python 3.5 or higher (Talos versions 0.5.0 and below support 2.7)
 - TensorFlow, Theano, or CNTK
 
 Talos incorporates grid, random, and probabilistic hyperparameter optimization strategies, with focus on maximizing the flexibility, efficiency, and result of random strategy. Talos users benefit from access to pseudo, quasi, true, and quantum random methods.  

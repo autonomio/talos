@@ -213,7 +213,7 @@ class MultiLabelTest:
              round_limit=5,
              experiment_name='MultiLabelTest',
              model=ta.templates.models.iris,
-             random_method='crypto_uniform',
+             random_method='uniform_crypto',
              seed=2423,
              reduction_method='correlation',
              reduction_interval=3,

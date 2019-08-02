@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import time
 
-import talos as ta
+import talos
 
 from test.core_tests.test_scan_object import test_scan_object
 from test.core_tests.test_reporting_object import test_reporting_object
@@ -9,14 +9,16 @@ from test.core_tests.test_random_methods import test_random_methods
 from test.core_tests.test_params_object import test_params_object
 from test.core_tests.test_auto_scan import test_auto_scan
 from test.core_tests.test_templates import test_templates
+from test.core_tests.minimal import minimal
 
-from talos.utils.generator import generator
 from talos.utils.gpu_utils import force_cpu
 
 
 if __name__ == '__main__':
 
     '''NOTE: test/core_tests/test_scan.py needs to be edited as well!'''
+
+    minimal()
 
     # testing different model types
     from test.core_tests.test_scan import BinaryTest, MultiLabelTest
@@ -49,18 +51,18 @@ if __name__ == '__main__':
     # create a string for name of deploy file
     start_time = str(time.strftime("%s"))
 
-    p = ta.Predict(scan_object)
+    p = talos.Predict(scan_object)
     p.predict(scan_object.x)
     p.predict_classes(scan_object.x)
 
-    ta.autom8.AutoPredict(scan_object,
-                          scan_object.x,
-                          scan_object.y,
-                          scan_object.x)
-    ta.Evaluate(scan_object)
-    ta.Deploy(scan_object, start_time, metric='val_acc')
-    ta.Restore(start_time + '.zip')
+    talos.autom8.AutoPredict(scan_object,
+                             scan_object.x,
+                             scan_object.y,
+                             scan_object.x)
+    talos.Evaluate(scan_object)
+    talos.Deploy(scan_object, start_time, metric='val_acc')
+    talos.Restore(start_time + '.zip')
 
     test_random_methods()
-    fit_generator = ta.utils.generator(scan_object.x, scan_object.y, 20)
+    fit_generator = talos.utils.generator(scan_object.x, scan_object.y, 20)
     force_cpu()
