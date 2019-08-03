@@ -17,7 +17,7 @@ def test_rest(scan_object):
     x = x[:50]
     y = y[:50]
 
-    callbacks = [talos.utils.live(),
+    callbacks = [
                  talos.utils.early_stopper(10),
                  talos.utils.ExperimentLogCallback('test', {})]
 
