@@ -182,9 +182,9 @@ class Scan:
         self.clear_session = clear_session
         # input parameters section ends
 
-        self.runtime()
+        self._runtime()
 
-    def runtime(self):
+    def _runtime(self):
 
         from .scan_run import scan_run
         self = scan_run(self)

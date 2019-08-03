@@ -28,5 +28,7 @@ Scan(print_params=True)
 Epoch-by-epoch training data is available during the experiment using the `ExperimentLogCallback`:
 
 ```python
-
+model.fit(...
+          callbacks=[talos.utils.ExperimentLogCallback('filename_or_path', params)])
 ```
+NOTE: `params` is the params dictionary in the `Scan()` input model.
