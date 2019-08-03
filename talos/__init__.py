@@ -1,3 +1,6 @@
+import warnings
+warnings.simplefilter('ignore')
+
 # import commands
 from .scan.Scan import Scan
 from .commands.analyze import Analyze

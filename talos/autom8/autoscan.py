@@ -9,7 +9,9 @@ class AutoScan:
         the actual experiment.
 
         `task` | str | 'binary', 'multi_class', 'multi_label', or 'continuous'
-        `max_param_values` | int | Number of parameter values to be included
+        `max_param_values` | int | Number of parameter values to be included.
+                                   Note, this will only work when `params` is
+                                   not passed as kwargs in `AutoScan.start`.
         '''
 
         self.task = task
@@ -28,11 +30,15 @@ class AutoScan:
 
         import talos
 
-        p = talos.autom8.AutoParams(task=self.task)
-        p.resample_params(self.max_param_values)
-        params = p.params
-
         m = talos.autom8.AutoModel(self.task).model
-        scan_object = talos.Scan(x, y, params, m, **kwargs)
+
+        try:
+            kwargs['params']
+            scan_object = talos.Scan(x, y, model=m, **kwargs)
+        except KeyError:
+            p = talos.autom8.AutoParams(task=self.task)
+            p.resample_params(self.max_param_values)
+            params = p.params
+            scan_object = talos.Scan(x, y, params, m, **kwargs)
 
         return scan_object

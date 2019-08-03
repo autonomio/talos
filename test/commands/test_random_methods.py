@@ -1,13 +1,12 @@
-import talos as ta
-
-
 def test_random_methods():
 
     '''Tests all the available random methods
     in reducers/sample_reducer.py that are invoked
     that are invoked through Scan(random_method)'''
 
-    print('Start testing random methods...')
+    print('\n >>> start Random Methods... \n')
+
+    import talos
 
     random_methods = ['sobol',
                       'quantum',
@@ -21,6 +20,6 @@ def test_random_methods():
                       'ambience']
 
     for method in random_methods:
-        ta.templates.pipelines.titanic(random_method=method)
+        talos.templates.pipelines.titanic(random_method=method)
 
-    return "Finished testing random methods!"
+    print('finish Random Methods \n')

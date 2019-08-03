@@ -38,8 +38,18 @@ Argument | Input | Description
 `minimize_loss` | bool | `reduction_metric` is a loss
 `disable_progress_bar` | bool | Disable live updating progress bar
 `print_params` | bool | Print each permutation hyperparameters
-`debug` | bool | Turn on debug messages
 `clear_tf_session` | bool | Clear backend session between permutations
+
+NOTE: `boolean_limit` will only work if its the last argument in `Scan()` and the following bracket is on a newline:
+
+```python
+
+talos.Scan(...
+           boolean_limit=lambda p: p['first_neuron'] * p['hidden_layers'] < 220
+          )
+```
+
+
 
 ## Scan Object Properties
 
@@ -82,7 +92,7 @@ scan_object.details
 ```python
 scan_object.evaluate_models(x_val=x_val,
                             y_val=y_val,
-                            n=10,
+                            n_models=10,
                             metric='f1score',
                             folds=5,
                             shuffle=True,
@@ -95,7 +105,7 @@ Argument | Description
 `scan_object` | The class object returned by Scan() upon completion of the experiment.
 `x_val` | Input data (features) in the same format as used in Scan(), but should not be the same data (or it will not be much of validation).
 `y_val` | Input data (labels) in the same format as used in Scan(), but should not be the same data (or it will not be much of validation).
-`n` | The number of models to be evaluated. If set to 10, then 10 models with the highest metric value are evaluated. See below.
+`n_models` | The number of models to be evaluated. If set to 10, then 10 models with the highest metric value are evaluated. See below.
 `metric` | The metric to be used for picking the models to be evaluated.
 `folds` | The number of folds to be used in the evaluation.
 `shuffle` | If the data is to be shuffled or not. Set always to False for timeseries but keep in mind that you might get periodical/seasonal bias.

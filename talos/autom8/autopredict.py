@@ -2,11 +2,11 @@ def AutoPredict(scan_object,
                 x_val,
                 y_val,
                 x_pred,
-                n=10,
+                task,
                 metric='val_acc',
+                n_models=10,
                 folds=5,
                 shuffle=True,
-                average='binary',
                 asc=False):
 
     '''Automatically handles the process of finding the best models from a
@@ -24,13 +24,22 @@ def AutoPredict(scan_object,
     x_val : ndarray or list of ndarray
         Data to be used for 'x' in evaluation. Note that should be in the same
         format as the data which was used in the Scan() but not the same data.
-    n : str
-        Number of promising models to be included in the evaluation process.
-        Time increase linearly with number of models.
+    y_val : ndarray or list of ndarray
+        Data to be used for 'y' in evaluation. Note that should be in the same
+        format as the data which was used in the Scan() but not the same data.
+    y_pred : ndarray or list of ndarray
+        Input data to be used for the actual predictions in evaluation. Note
+        it should be in the same format as the data which was used in the
+        Scan() but not the same data.
+    task : string
+        'binary', 'multi_class', 'multi_label', or 'continuous'.
     metric : str
         The metric to be used for deciding which models are promising.
         Basically the 'n' argument and 'metric' argument are combined to pick
         'n' best performing models based on 'metric'.
+    n_models : str
+        Number of promising models to be included in the evaluation process.
+        Time increase linearly with number of models.
     folds : int
         Number of folds to be used in cross-validation.
     shuffle : bool
@@ -71,11 +80,11 @@ def AutoPredict(scan_object,
     # evaluate and add the evaluation scores
     scan_object.evaluate_models(x_val,
                                 y_val,
-                                n=n,
+                                n_models=n_models,
+                                task=task,
                                 metric=metric,
                                 folds=folds,
                                 shuffle=shuffle,
-                                average=average,
                                 asc=False)
 
     # get the best model based on evaluated score
@@ -90,8 +99,6 @@ def AutoPredict(scan_object,
     # get the hyperparameter for the model
     scan_object.preds_parameters = scan_object.data.sort_values('eval_f1score_mean',
                                                            ascending=False).iloc[0]
-
-    #scan_object.predictions = scan_object.preds_model.predict(x_pred)
 
     print(">> Added model, probabilities, classes, and parameters to scan_object")
 

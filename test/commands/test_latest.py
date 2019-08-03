@@ -1,4 +1,6 @@
-def minimal():
+def test_latest():
+
+    print('\n >>> start Latest Features... \n')
 
     import talos
     from keras.models import Sequential
@@ -44,4 +46,4 @@ def minimal():
                              params=p,
                              round_limit=5)
 
-    return "Custom Model completed."
+    print('finised Latest Features \n')

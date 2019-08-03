@@ -28,8 +28,9 @@ def reduce_run(self):
         status = limit_by_metric(self)
 
         # handle the case where performance target is met
-        if status is True:
+        if status == True:
             self.param_object.param_index = []
+            print("Target %.3f have been met." % self.performance_target[1])
 
     # stop here if no reduction method is set
     if self.reduction_method is None:
@@ -70,5 +71,10 @@ def reduce_run(self):
         total_reduced = len_before_reduce - len(self.param_object.param_index)
         total_reduced = max(0, total_reduced)
         self.pbar.update(total_reduced)
+
+        if total_reduced > 0:
+            # print out the the status
+            drop_share = total_reduced / len_before_reduce * 100
+            print("Total %.1f%% permutations reduced" % drop_share)
 
     return self

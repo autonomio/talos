@@ -22,3 +22,11 @@ Scan(print_params=True)
 **Live Monitoring :** Live monitoring provides an epoch-by-epoch updating line graph that is enabled through the `live()` custom callback.
 
 **Round Hyperparameters :** Displays the hyperparameters for each permutation. Does not work together with live monitoring.
+
+### Local Monitoring
+
+Epoch-by-epoch training data is available during the experiment using the `ExperimentLogCallback`:
+
+```python
+
+```

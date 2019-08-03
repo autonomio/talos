@@ -80,11 +80,14 @@ class AutoParams:
             self.params['network'] = 'dense'
         self.last_activations()
 
-    def shapes(self):
+    def shapes(self, shapes='auto'):
 
         '''Uses triangle, funnel, and brick shapes.'''
 
-        self._append_params('shapes', ['triangle', 'funnel', 'brick'])
+        if shapes == 'auto':
+            self._append_params('shapes', ['triangle', 'funnel', 'brick'])
+        else:
+            self._append_params('shapes', shapes)
 
     def shapes_slope(self, min=0, max=.6, steps=.1):
 
@@ -93,10 +96,10 @@ class AutoParams:
 
         self._append_params('shapes', np.arange(min, max, steps).tolist())
 
-    def layers(self, min_layers=0, max_layers=6):
+    def layers(self, min_layers=0, max_layers=6, steps=1):
 
         self._append_params('hidden_layers',
-                            list(range(min_layers, max_layers)))
+                            list(range(min_layers, max_layers, steps)))
 
     def dropout(self, min=0, max=.85, steps=0.1):
 
@@ -137,7 +140,7 @@ class AutoParams:
         if losses == 'auto':
             self._append_params('losses', loss[self._task])
         else:
-            self._append_params('losses', [losses])
+            self._append_params('losses', losses)
 
     def neurons(self, min=8, max=None, steps=None):
 
@@ -171,15 +174,22 @@ class AutoParams:
         if max is None and steps is None:
             values = [int(np.exp2(i/2))+50 for i in range(3, 15)]
         else:
-            values = range(min, max, steps)
+            values = list(range(min, max, steps))
 
         self._append_params('epochs', values)
 
-    def kernel_initializers(self):
+    def kernel_initializers(self, kernel_inits='auto'):
 
-        self._append_params('kernel_initializer',
-                            ['glorot_uniform', 'glorot_normal',
-                             'random_uniform', 'random_normal'])
+        '''
+        kernel_inits | list | one or more kernel initializers
+        '''
+
+        if kernel_inits == 'auto':
+            self._append_params('kernel_initializer',
+                                ['glorot_uniform', 'glorot_normal',
+                                 'random_uniform', 'random_normal'])
+        else:
+            self._append_params('kernel_initializer', kernel_inits)
 
     def lr(self, learning_rates='auto'):
 
@@ -219,14 +229,17 @@ class AutoParams:
         else:
             self._append_params('network', networks)
 
-    def last_activations(self):
+    def last_activations(self, last_activations='auto'):
 
         '''If `last_activations='auto'` then activations will be picked
         automatically based on `AutoParams` property `task`.
         Otherwise input a list with one or more activations will be used.
         '''
 
-        self._append_params('last_activation', last_activation[self._task])
+        if last_activations == 'auto':
+            self._append_params('last_activation', last_activation[self._task])
+        else:
+            self._append_params('last_activation', last_activations)
 
     def resample_params(self, n):
 

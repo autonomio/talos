@@ -218,36 +218,38 @@ class ParamSpace:
         '''Removes baesd on exact match but reversed'''
 
         col = self.param_keys.index(label)
-        self.param_space = self.param_space[self.param_space[:, col] == value]
-        self.param_index = list(range(len(self.param_space)))
+        drop = np.where(self.param_space[:, col] != value)[0].tolist()
+        self.param_index = [x for x in self.param_index if x not in drop]
 
     def remove_is(self, label, value):
 
         '''Removes based on exact match'''
+
         col = self.param_keys.index(label)
-        self.param_space = self.param_space[self.param_space[:, col] != value]
-        self.param_index = list(range(len(self.param_space)))
+        drop = np.where(self.param_space[:, col] == value)[0].tolist()
+        self.param_index = [x for x in self.param_index if x not in drop]
 
     def remove_ge(self, label, value):
 
         '''Removes based on greater-or-equal'''
 
         col = self.param_keys.index(label)
-        self.param_space = self.param_space[self.param_space[:, col] >= value]
-        self.param_index = list(range(len(self.param_space)))
+        drop = np.where(self.param_space[:, col] >= value)[0].tolist()
+        self.param_index = [x for x in self.param_index if x not in drop]
 
     def remove_le(self, label, value):
 
         '''Removes based on lesser-or-equal'''
 
         col = self.param_keys.index(label)
-        self.param_space = self.param_space[self.param_space[:, col] <= value]
-        self.param_index = list(range(len(self.param_space)))
+        drop = np.where(self.param_space[:, col] <= value)[0].tolist()
+        self.param_index = [x for x in self.param_index if x not in drop]
 
     def remove_lambda(self, function):
 
         '''Removes based on a lambda function'''
 
         index = self._convert_lambda(function)(self.param_space)
+        print(index)
         self.param_space = self.param_space[index]
         self.param_index = list(range(len(self.param_space)))

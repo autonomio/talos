@@ -1,27 +1,28 @@
-import talos as ta
+def test_analyze(scan_object):
 
-
-def test_reporting_object(scan_object):
+    import talos
 
     '''Tests all the attributes available in the Reporting() object'''
 
-    print('Start testing Reporting object...')
+    print('\n >>> Start Analyze()... \n')
 
     # for now test with old name
-    r = ta.Analyze(scan_object)
+    r = talos.Reporting(scan_object)
 
-    # and then new
-    r = ta.Analyze(scan_object)
+    # read from file
+    r = talos.Reporting('test.csv')
+
+    # and then from scan object
+    r = talos.Analyze(scan_object)
+
+    # test the object properties
     r.best_params('val_loss', ['val_acc'])
     r.correlate('val_loss', ['val_acc'])
     r.data
     r.high('val_acc')
     r.low('val_acc')
 
-    print(r.data)
-    print(r.data.dtypes)
-
-    r.plot_bars('first_neuron', 'val_acc', 'batch_size', 'hidden_layers')
+    r.plot_bars('first_neuron', 'val_acc', 'dropout', 'hidden_layers')
     r.plot_box('first_neuron', 'val_acc')
     r.plot_corr('val_loss', ['val_acc'])
     r.plot_hist('val_acc')
@@ -32,4 +33,4 @@ def test_reporting_object(scan_object):
     r.rounds2high('val_acc')
     r.table('val_loss', ['val_acc'])
 
-    return "Finished testing Reporting object!"
+    print('finish Analyze() \n')

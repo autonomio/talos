@@ -25,9 +25,9 @@ Argument | Input | Description
 `x_val` | array or list of arrays | validation data features
 `y_val` | array or list of arrays | validation data labels
 `y_pred` | array or list of arrays | prediction data features
-`n` | int | number of promising models to be included in the evaluation process
+`task` | string | 'binary', 'multi_class', 'multi_label', or 'continuous'
 `metric` | None | the metric against which the validation is performed
+`n_models` | int | number of promising models to be included in the evaluation process
 `folds` | None | number of folds to be used for cross-validation
 `shuffle` | None | if data is shuffled before splitting
-`average` | str | 'binary', 'micro', 'macro', 'samples', or 'weighted'
 `asc` | None | should be True if metric is a loss

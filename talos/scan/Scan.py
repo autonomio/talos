@@ -115,8 +115,6 @@ class Scan:
     print_params : bool
         Print params for each round on screen (useful when using TrainingLog
         callback for visualization)
-    debug : bool
-        Implements debugging feedback. (Default is False).
 
     # OTHER ARGUMENTS
     -----------------
@@ -146,7 +144,6 @@ class Scan:
                  minimize_loss=False,
                  disable_progress_bar=False,
                  print_params=False,
-                 debug=False,
                  clear_session=True,):
 
         self.x = x
@@ -180,7 +177,6 @@ class Scan:
         # display
         self.disable_progress_bar = disable_progress_bar
         self.print_params = print_params
-        self.debug = debug
 
         # other
         self.clear_session = clear_session

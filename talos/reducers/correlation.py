@@ -30,7 +30,6 @@ def correlation(self, method):
 
     # if all nans, then stop
     if len(corr_values) <= 1:
-        print("all nans")
         return self
 
     # sort based on the metric type
@@ -38,7 +37,6 @@ def correlation(self, method):
 
     # if less than threshold, then stop
     if abs(corr_values[-1]) < self.reduction_threshold:
-        print("below threshold")
         return self
 
     # get the strongest correlation
