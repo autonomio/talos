@@ -7,7 +7,10 @@ def test_rest(scan_object):
 
     name = str(hash(random.random()))
 
+    print('\n ...Deploy()... \n')
     talos.Deploy(scan_object, name, 'val_acc')
+
+    print('\n ...Restore()... \n')
     talos.Restore(name + '.zip')
 
     x, y = talos.templates.datasets.breast_cancer()
@@ -34,17 +37,33 @@ def test_rest(scan_object):
     from keras.models import Sequential
     from keras.layers import Dense
 
-    model = Sequential()
-    model.add(Dense(10))
-    model.add(Dense(1))
-    model.compile('adam', 'logcosh', metrics=metrics)
+    print('\n ...callbacks and metrics... \n')
+
+    model1 = Sequential()
+    model1.add(Dense(10, input_dim=x.shape[1]))
+    model1.add(Dense(1))
+    model1.compile('adam', 'logcosh', metrics=metrics)
+    model1.fit(x, y, callbacks=callbacks)
+
+    print('\n ...generator... \n')
+
+    model2 = Sequential()
+    model2.add(Dense(10, input_dim=x.shape[1]))
+    model2.add(Dense(1))
+    model2.compile('adam', 'logcosh')
+    model2.fit_generator(talos.utils.generator(x, y, 10), 5)
+
+    print('\n ...SequenceGenerator... \n')
+
+    model3 = Sequential()
+    model3.add(Dense(10, input_dim=x.shape[1]))
+    model3.add(Dense(1))
+    model3.compile('adam', 'logcosh')
+    model3.fit_generator(talos.utils.SequenceGenerator(x, y, 10))
+
+    print('\n ...gpu_utils... \n')
 
     talos.utils.gpu_utils.force_cpu()
-
-    model.fit(x, y, callbacks=callbacks)
-
-    model.fit_generator(talos.utils.generator(x, y, 10), 5)
-
-    model.fit_generator(talos.utils.SequenceGenerator(x, y, 10))
+    talos.utils.gpu_utils.parallel_gpu_jobs()
 
     print('finised testing the rest \n')
