@@ -64,7 +64,7 @@ class Scan:
 
     random_method : str
         Determinines the way in which the grid_downsample is applied. The
-        default setting is 'uniform'.
+        default setting is 'uniform_mersenne'.
     seed : int
         Sets numpy random seed.
 

@@ -32,6 +32,6 @@ for sub in template_sub:
                 delattr(sub, key)
 
 del commands, scan, model, metrics, key
-del sub, keep_from_templates, template_sub
+del sub, keep_from_templates, template_sub, warnings
 
-__version__ = "0.6.1"
+__version__ = "0.6.2"

@@ -11,8 +11,6 @@ if __name__ == '__main__':
     scan_object = test_scan()
     test_analyze(scan_object)
     test_random_methods()
-
-    talos.Deploy(scan_object, 'testnew', 'val_acc')
-    talos.Restore('testnew.zip')
+    test_rest(scan_object)
 
     print("\n All tests successfully completed :) Good work. \n ")

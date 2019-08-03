@@ -1,9 +1,6 @@
 # In this init we load everything under utils in the Talos namespace
 
-try:
-    from kerasplotlib import TrainingLog as live
-except (RuntimeError, ImportError):
-    print('Matplotlib backend loading failed')
+from kerasplotlib import TrainingLog as live
 
 from ..model.normalizers import lr_normalizer
 from ..model.hidden_layers import hidden_layers

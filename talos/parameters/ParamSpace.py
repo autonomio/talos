@@ -250,6 +250,5 @@ class ParamSpace:
         '''Removes based on a lambda function'''
 
         index = self._convert_lambda(function)(self.param_space)
-        print(index)
         self.param_space = self.param_space[index]
         self.param_index = list(range(len(self.param_space)))
