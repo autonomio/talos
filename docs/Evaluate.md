@@ -1,4 +1,4 @@
-## Evaluate()
+# Evaluate()
 
 Once the `Scan()` experiment procedures have been completed, the resulting class object can be used as input for `Evaluate()` in order to evaluate one or more models.
 

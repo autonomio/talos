@@ -24,7 +24,7 @@
   <a href="#Examples">Examples</a> •
   <a href="#Install">Install</a> •
   <a href="#Support">Support</a> •
-  <a href="https://autonomio.github.io/docs_talos">Docs</a> •
+  <a href="https://autonomio.github.io/talos/">Docs</a> •
   <a href="https://github.com/autonomio/talos/issues">Issues</a> •
   <a href="#License">License</a> •
   <a href="https://github.com/autonomio/talos/archive/master.zip">Download</a>
@@ -88,7 +88,7 @@ The *Simple* example below is more than enough for starting to use Talos with an
 
 [Field Report](https://towardsdatascience.com/hyperparameter-optimization-with-keras-b82e6364ca53)  [~15 mins]
 
-For more information on how Talos can help with your Keras workflow, visit the [User Manual](https://autonomio.github.io/docs_talos).
+For more information on how Talos can help with your Keras workflow, visit the [User Manual](https://autonomio.github.io/talos/).
 
 You may also want to check out a visualization of the [Talos Hyperparameter Tuning workflow](https://github.com/autonomio/talos/wiki/Workflow).
 
@@ -117,7 +117,7 @@ Daily development version:
 | **...have a discussion**      | [Spectrum Chat]                                            |
 
 [github issue tracker]: https://github.com/automio/talos/issues
-[docs]: https://autonomio.github.io/docs_talos
+[docs]: https://autonomio.github.io/talos/
 [wiki]: https://github.com/autonomio/talos/wiki
 [stack overflow]: https://stackoverflow.com/questions/tagged/talos
 [spectrum chat]: https://spectrum.chat/talos
