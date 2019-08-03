@@ -44,19 +44,11 @@ def scan_prepare(self):
     self.saved_models = []
     self.saved_weights = []
 
-    # create the data asset
-    self.y_max = self.y.max()
-
     # handle validation split
     from ..utils.validation_split import validation_split
     self = validation_split(self)
 
     # set data and len
-    self.shape = [self.x.shape, self.y.shape]
     self._data_len = len(self.x)
-
-    # infer prediction type
-    from ..utils.detector import prediction_type
-    self = prediction_type(self)
 
     return self

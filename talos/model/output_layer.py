@@ -7,11 +7,11 @@ def output_layer(task, last_activation, y_train, y_val):
         activation = last_activation
         last_neuron = 1
 
-    elif task == 'multiclass':
+    elif task == 'multi_class':
         activation = last_activation
-        last_neuron = np.unique(np.hstack((y_train, y_val)))
+        last_neuron = len(np.unique(np.hstack((y_train, y_val))))
 
-    elif task == 'multilabel':
+    elif task == 'multi_label':
         activation = last_activation
         last_neuron = y_train.shape[1]
 

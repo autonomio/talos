@@ -7,13 +7,11 @@ def limit_by_metric(self):
     USE: space.check_metric(model_history)
     '''
 
-    temp = self.performance_target
-
-    metric = temp[0]
-    threshold = temp[1]
-    loss = temp[2]
+    metric = self.performance_target[0]
+    threshold = self.performance_target[1]
+    loss = self.performance_target[2]
 
     if loss is True:
-        return min(self.model_history[metric]) < threshold
+        return self.model_history.history[metric][-1] <= threshold
     elif loss is False:
-        return max(self.model_history[metric]) > threshold
+        return self.model_history.history[metric][-1] >= threshold

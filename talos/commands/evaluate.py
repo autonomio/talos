@@ -11,12 +11,14 @@ class Evaluate:
         self.scan_object = scan_object
         self.data = scan_object.data
 
-    def evaluate(self, x, y,
+    def evaluate(self,
+                 x,
+                 y,
+                 task,
+                 metric,
                  model_id=None,
                  folds=5,
                  shuffle=True,
-                 metric='val_acc',
-                 mode='multi_label',
                  asc=False,
                  print_out=False):
 
@@ -39,8 +41,8 @@ class Evaluate:
             the results to pick for evaluation.
         shuffle : bool
             Data is shuffled before evaluation.
-        mode : string
-            'binary', 'multi_class', 'multi_label', or 'regression'.
+        task : string
+            'binary', 'multi_class', 'multi_label', or 'continuous'.
         asc : bool
             False if the metric is to be optimized upwards
             (e.g. accuracy or f1_score)
@@ -69,21 +71,23 @@ class Evaluate:
 
             y_pred = model.predict(kx[i], verbose=0)
 
-            if mode == 'binary':
+            if task == 'binary':
                 y_pred = y_pred >= .5
                 scores = sk.metrics.f1_score(y_pred, ky[i], average='binary')
 
-            elif mode == 'multi_class':
+            elif task == 'multi_class':
                 y_pred = y_pred.argmax(axis=-1)
+                print(y_pred)
+                print(ky[i])
                 scores = sk.metrics.f1_score(y_pred, ky[i], average='macro')
 
-            if mode == 'multi_label':
+            if task == 'multi_label':
                 y_pred = model.predict(kx[i]).argmax(axis=1)
                 scores = sk.metrics.f1_score(y_pred,
                                              ky[i].argmax(axis=1),
                                              average='macro')
 
-            elif mode == 'regression':
+            elif task == 'continuous':
                 y_pred = model.predict(kx[i])
                 scores = sk.metrics.mean_absolute_error(y_pred, ky[i])
 

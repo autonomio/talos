@@ -43,7 +43,10 @@ def scan_finish(self):
     except AttributeError:
         out['x_shape'] = 'list'
 
-    out['y_shape'] = self.y.shape
+    try:
+        out['y_shape'] = self.y.shape
+    except AttributeError:
+        out['y_shape'] = 'list'
 
     # final cleanup
     keys = list(self.__dict__.keys())

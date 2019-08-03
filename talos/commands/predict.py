@@ -3,12 +3,13 @@ class Predict:
     '''Class for making predictions on the models that are stored
     in the Scan() object'''
 
-    def __init__(self, scan_object):
+    def __init__(self, scan_object, task):
 
         '''Takes in as input a Scan() object'''
 
         self.scan_object = scan_object
         self.data = scan_object.data
+        self.task = task
 
     def predict(self, x, model_id=None, metric='val_acc', asc=False):
 

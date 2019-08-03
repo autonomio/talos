@@ -30,7 +30,8 @@ class Restore:
         z.extractall(self.extract_to)
 
         # add params dictionary
-        self.params = np.load(self.file_prefix + '_params.npy').item()
+        self.params = np.load(self.file_prefix + '_params.npy',
+                              allow_pickle=True).item()
 
         # add experiment details
         self.details = pd.read_csv(self.file_prefix + '_details.txt',

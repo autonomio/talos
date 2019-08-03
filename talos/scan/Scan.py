@@ -34,28 +34,23 @@ class Scan:
     available here: https://github.com/autonomio/talos
 
 
-    PARAMETERS
-    ----------
+    # CORE ARGUMENTS
+    ----------------
     x : ndarray
-        1d or 2d array consisting of the training data. `x` should have the
-        shape (m, n), where m is the number of training examples and n is the
-        number of features. Extra dimensions can be added to account for the
-        channels entry in convolutional neural networks.
+        1d or 2d array, or a list of arrays with features for the prediction
+        task.
     y : ndarray
-        The labels corresponding to the training data. `y` should have the
-        shape (m, c) where c is the number of classes. A binary classification
-        problem will have c=1.
-    params : python dictionary
+        1d or 2d array, or a list of arrays with labels for the prediction
+        task.
+    params : dict
         Lists all permutations of hyperparameters, a subset of which will be
         selected at random for training and evaluation.
     model : keras model
         Any Keras model with relevant declrations like params['first_neuron']
-    dataset_name : str
-        References the name of the experiment. The dataset_name and
-        experiment_no will be concatenated to produce the file name for the
-        results saved in the local directory.
-    experiment_no : str
-        Indexes the user's choice of experiment number.
+    experiment_name : str
+        Experiment name will be used to produce the file name for the
+        results saved in the local directory. Make sure to change it between
+        experiments to avoid log of previous experiment from being overwritten.
     x_val : ndarray
         User specified cross-validation data. (Default is None).
     y_val : ndarray
@@ -63,50 +58,68 @@ class Scan:
     val_split : float, optional
         The proportion of the input `x` which is set aside as the
         validation data. (Default is 0.3).
-    shuffle : bool, optional
-        If True, shuffle the data in x and y before splitting into the train
-        and cross-validation datasets. (Default is True).
-    random_method : uniform, stratified, lhs, lhs_sudoku
+
+    # RANDOMNESS ARGUMENTS
+    ----------------------
+
+    random_method : str
         Determinines the way in which the grid_downsample is applied. The
-        default setting is 'uniform'.
+        default setting is 'uniform_mersenne'.
     seed : int
         Sets numpy random seed.
-    search_method : {None, 'random', 'linear', 'reverse'}
-        Determines the random sampling of the dictionary. `random` picks one
-        hyperparameter point at random and removes it from the list, then
-        samples again. `linear` starts from the start of the grid and moves
-        forward, and `reverse` starts at the end of the grid and moves
-        backwards.
-    max_iteration_start_time : None or str
-        Allows setting a time when experiment will be completed. Use the format
-        "%Y-%m-%d %H:%M" here.
-    permutation_filter : lambda function
-        Use it to filter permutations based on previous knowledge.
-        USE: permutation_filter=lambda p: p['batch_size'] < 150
-        This example removes any permutation where batch_size is below 150
-    reduction_method : {None, 'correlation'}
-        Method for honing in on the optimal hyperparameter subspace. (Default
-        is None).
-    reduction_interval : int
-        The number of reduction method rounds that will be performed. (Default
-        is None).
-    reduction_window : int
-        The number of rounds of the reduction method before observing the
-        results. (Default is None).
-    grid_downsample : int
+
+    # LIMITER ARGUMENTS
+    -------------------
+
+    performance_target : None or list [metric, threshold, loss or not]
+        Allows setting a threshold for a given metric, at which point the
+        experiment will be concluded as successful.
+        E.g. performance_target=['f1score', 0.8, False]
+    fraction_limit : int
         The fraction of `params` that will be tested (Default is None).
+        Previously grid_downsample.
     round_limit : int
         Limits the number of rounds (permutations) in the experiment.
-    reduction_metric : {'val_acc'}
-        Metric used to tune the reductions.
+    time_limit : None or str
+        Allows setting a time when experiment will be completed. Use the format
+        "%Y-%m-%d %H:%M" here.
+    boolean_limit : None or lambda function
+        Allows setting a limit to accepted permutations as a lambda function.
+        E.g. example lambda p: p['first_neuron'] * p['hidden_layers'] < 220
+
+    # OPTIMIZER ARGUMENTS
+    ---------------------
+    reduction_method : None or string
+        If None, random search will be used as the optimization strategy.
+        Otherwise use the name of the specific strategy, e.g. 'correlation'.
+    reduction_interval : None or int
+        The number of reduction method rounds that will be performed. (Default
+        is None).
+    reduction_window : None or int
+        The number of rounds of the reduction method before observing the
+        results. (Default is None).
+    reduction_threshold: None or float
+        The minimum value for reduction to be applied. For example, when
+        the 'correlation' reducer finds correlation below the threshold,
+        nothing is reduced.
+    reduction_metric : None or str
+        Metric used to tune the reductions. minimize_loss has to be set to True
+        if this is a loss.
+    minimize_loss : bool
+        Must be set to True if a reduction_metric is a loss.
+
+    # OUTPUT ARGUMENTS
+    ------------------
     disable_progress_bar : bool
         Disable TQDM live progress bar.
     print_params : bool
         Print params for each round on screen (useful when using TrainingLog
         callback for visualization)
-    debug : bool
-        Implements debugging feedback. (Default is False).
 
+    # OTHER ARGUMENTS
+    -----------------
+    clear_session : bool
+        If the backend session is cleared between every permutation.
     """
 
     global self
@@ -117,6 +130,7 @@ class Scan:
                  y_val=None,
                  val_split=.3,
                  random_method='uniform_mersenne',
+                 seed=None,
                  performance_target=None,
                  fraction_limit=None,
                  round_limit=None,
@@ -128,13 +142,9 @@ class Scan:
                  reduction_threshold=0.2,
                  reduction_metric='val_acc',
                  minimize_loss=False,
-                 seed=None,
-                 clear_session=True,
                  disable_progress_bar=False,
                  print_params=False,
-                 debug=False):
-
-        from collections import OrderedDict
+                 clear_session=True,):
 
         self.x = x
         self.y = y
@@ -144,16 +154,19 @@ class Scan:
         self.x_val = x_val
         self.y_val = y_val
         self.val_split = val_split
-        self.random_method = random_method
 
-        # reducers
+        # randomness
+        self.random_method = random_method
+        self.seed = seed
+
+        # limiters
         self.performance_target = performance_target
         self.fraction_limit = fraction_limit
         self.round_limit = round_limit
         self.time_limit = time_limit
         self.boolean_limit = boolean_limit
 
-        # reduction related
+        # optimization
         self.reduction_method = reduction_method
         self.reduction_interval = reduction_interval
         self.reduction_window = reduction_window
@@ -161,12 +174,12 @@ class Scan:
         self.reduction_metric = reduction_metric
         self.minimize_loss = minimize_loss
 
-        # other
-        self.debug = debug
-        self.seed = seed
-        self.clear_session = clear_session
+        # display
         self.disable_progress_bar = disable_progress_bar
         self.print_params = print_params
+
+        # other
+        self.clear_session = clear_session
         # input parameters section ends
 
         self.runtime()
