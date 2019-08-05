@@ -32,7 +32,7 @@ class AutoScan:
 
         import talos
 
-        m = talos.autom8.AutoModel(self.task).model
+        m = talos.autom8.AutoModel(self.task, self.experiment_name).model
 
         try:
             kwargs['params']
