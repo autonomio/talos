@@ -48,9 +48,10 @@ class Scan:
     model : keras model
         Any Keras model with relevant declrations like params['first_neuron']
     experiment_name : str
-        Experiment name will be used to produce the file name for the
-        results saved in the local directory. Make sure to change it between
-        experiments to avoid log of previous experiment from being overwritten.
+        Experiment name will be used to produce a folder (unless already) it's
+        there from previous iterations of the experiment. Logs of the
+        experiment are saved in the folder with timestamp of start
+        time as filenames.
     x_val : ndarray
         User specified cross-validation data. (Default is None).
     y_val : ndarray
@@ -124,8 +125,12 @@ class Scan:
 
     global self
 
-    def __init__(self, x, y, params, model,
-                 experiment_name=None,
+    def __init__(self,
+                 x,
+                 y,
+                 params,
+                 model,
+                 experiment_name,
                  x_val=None,
                  y_val=None,
                  val_split=.3,

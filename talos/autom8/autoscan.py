@@ -2,7 +2,8 @@ class AutoScan:
 
     def __init__(self,
                  task,
-                 max_param_values):
+                 max_param_values,
+                 experiment_name):
 
         '''Configure the `AutoScan()` experiment and then use
         the property `start` in the returned class object to start
@@ -16,6 +17,7 @@ class AutoScan:
 
         self.task = task
         self.max_param_values = max_param_values
+        self.experiment_name = experiment_name
 
     def start(self, x, y, **kwargs):
 
@@ -34,11 +36,19 @@ class AutoScan:
 
         try:
             kwargs['params']
-            scan_object = talos.Scan(x, y, model=m, **kwargs)
+            scan_object = talos.Scan(x, y,
+                                     model=m,
+                                     experiment_name=self.experiment_name,
+                                     **kwargs)
         except KeyError:
             p = talos.autom8.AutoParams(task=self.task)
             p.resample_params(self.max_param_values)
             params = p.params
-            scan_object = talos.Scan(x, y, params, m, **kwargs)
+            scan_object = talos.Scan(x=x,
+                                     y=y,
+                                     params=params,
+                                     model=m,
+                                     experiment_name=self.experiment_name,
+                                     **kwargs)
 
         return scan_object

@@ -3,7 +3,7 @@ def scan_round(self):
     '''The main operational function that manages the experiment
     on the level of execution of each round.'''
 
-    import time as ti
+    import time
     import gc
 
     # print round params
@@ -11,8 +11,8 @@ def scan_round(self):
         print(self.round_params)
 
     # set start time
-    round_start = ti.strftime('%D-%H%M%S')
-    start = ti.time()
+    round_start = time.strftime('%D-%H%M%S')
+    start = time.time()
 
     # fit the model
     from ..model.ingest_model import ingest_model

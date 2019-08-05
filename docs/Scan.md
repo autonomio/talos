@@ -19,7 +19,7 @@ Argument | Input | Description
 `y` | array or list of arrays | prediction outcome variable
 `params` | dict | the parameter dictionary
 `model` | function | the Keras model as a function
-`experiment_name` | str | Used for experiment log
+`experiment_name` | str | Used for creating the experiment logging folder
 `x_val` | array or list of arrays | validation data for x
 `y_val` | array or list of arrays | validation data for y
 `val_split` | float | validation data split ratio

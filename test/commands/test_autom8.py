@@ -37,25 +37,25 @@ def test_autom8():
 
     x, y = wrangle.utils.create_synth_data('binary', 50, 10, 1)
     p.losses(['binary_crossentropy'])
-    auto = talos.autom8.AutoScan('binary', 1)
+    auto = talos.autom8.AutoScan('binary', 1, 'testinga')
     scan_object = auto.start(x, y, params=p.params)
     talos.autom8.AutoPredict(scan_object, x, y, x, 'binary')
 
     x, y = wrangle.utils.create_synth_data('multi_label', 50, 10, 4)
     p.losses(['categorical_crossentropy'])
-    auto = talos.autom8.AutoScan('multi_label', 1)
+    auto = talos.autom8.AutoScan('multi_label', 1, 'testingb')
     auto.start(x, y, params=p.params)
     talos.autom8.AutoPredict(scan_object, x, y, x, 'multi_label')
 
     x, y = wrangle.utils.create_synth_data('multi_class', 50, 10, 3)
     p.losses(['sparse_categorical_crossentropy'])
-    auto = talos.autom8.AutoScan('multi_class', 1)
+    auto = talos.autom8.AutoScan('multi_class', 1, 'testingc')
     auto.start(x, y, params=p.params)
     talos.autom8.AutoPredict(scan_object, x, y, x, 'multi_class')
 
     x, y = wrangle.utils.create_synth_data('regression', 50, 10, 1)
     p.losses(['mae'])
-    auto = talos.autom8.AutoScan('continuous', 1)
+    auto = talos.autom8.AutoScan('continuous', 1, 'testingd')
     auto.start(x, y, params=p.params)
     talos.autom8.AutoPredict(scan_object, x, y, x, 'continuous')
 

@@ -30,7 +30,7 @@ def save_result(self):
 
     import numpy as np
 
-    np.savetxt(self.experiment_name + '.csv',
+    np.savetxt(self._experiment_log,
                self.result,
                fmt='%s',
                delimiter=',')

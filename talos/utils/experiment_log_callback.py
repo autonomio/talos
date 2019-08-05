@@ -3,15 +3,33 @@ from keras.callbacks import Callback
 
 class ExperimentLogCallback(Callback):
 
-    def __init__(self, name, params):
+    def __init__(self,
+                 experiment_name,
+                 params):
 
         '''Takes as input the name of the experiment which will be
         used for creating a .log file with the outputs and the params
-        dictionary from the input model in `Scan()`'''
+        dictionary from the input model in `Scan()`
+
+        experiment_name | str | must match the experiment_name in `Scan()`
+
+        '''
 
         super(ExperimentLogCallback, self).__init__()
 
-        self.name = name
+        import glob
+        import os
+
+        # get the experiment id first
+        list_of_files = glob.glob('./' + experiment_name + '/*.csv')
+        try:
+            latest_file = max(list_of_files, key=os.path.getmtime)
+        except ValueError:
+            print("`experiment_name` has to match `Scan(experiment_name)`")
+
+        self.name = latest_file.replace('.csv', '') + '.log'
+
+        # rest of the config variables
         self.params = params
         self.counter = 1
         self.new_file = True
@@ -24,7 +42,7 @@ class ExperimentLogCallback(Callback):
 
     def on_train_end(self, logs={}):
 
-        f = open(self.name + '.log', 'a+')
+        f = open(self.name, 'a+')
         [f.write(','.join(map(str, i)) + '\n') for i in self.final_out]
         f.close()
 
@@ -37,7 +55,7 @@ class ExperimentLogCallback(Callback):
         if len(self.final_out) == 0:
 
             try:
-                open(self.name + '.log', 'r')
+                open(self.name, 'r')
             except FileNotFoundError:
 
                 self.epoch_out.append('id')

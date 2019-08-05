@@ -48,7 +48,7 @@ def correlation(self, method):
     # convert things back to their original dtype
     value = np.array([value]).astype(dtype)[0]
 
-    # this is where modify the parameter space accordingly
+    # this is where we modify the parameter space accordingly
     self.param_object.remove_is(label, value)
 
     return self

@@ -20,6 +20,9 @@ def reduce_run(self):
     '''
 
     from .correlation import correlation
+    from .forrest import forrest
+    from .trees import trees
+
     from .local_strategy import local_strategy
     from .limit_by_metric import limit_by_metric
 
@@ -53,12 +56,12 @@ def reduce_run(self):
             self = correlation(self, 'spearman')
 
         # check if random forrest can do something
-        if self.reduction_method == 'random_forrest':
-            pass
+        if self.reduction_method == 'forrest':
+            self = forrest(self)
 
         # check if random forrest can do something
-        if self.reduction_method == 'extra_trees':
-            pass
+        if self.reduction_method == 'trees':
+            self = trees(self)
 
         # check if monte carlo can do something
         if self.reduction_method == 'monte_carlo':
