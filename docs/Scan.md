@@ -38,7 +38,8 @@ Argument | Input | Description
 `minimize_loss` | bool | `reduction_metric` is a loss
 `disable_progress_bar` | bool | Disable live updating progress bar
 `print_params` | bool | Print each permutation hyperparameters
-`clear_tf_session` | bool | Clear backend session between permutations
+`clear_session` | bool | Clear backend session between permutations
+`save_weights` | bool | Save model weights (increases memory pressure for large models)
 
 NOTE: `boolean_limit` will only work if its the last argument in `Scan()` and the following bracket is on a newline:
 

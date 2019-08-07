@@ -77,7 +77,7 @@ class AutoParams:
         if self._network:
             self.networks()
         else:
-            self.params['network'] = 'dense'
+            self.params['network'] = ['dense']
         self.last_activations()
 
     def shapes(self, shapes='auto'):

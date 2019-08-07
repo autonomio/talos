@@ -11,7 +11,7 @@ def test_analyze(scan_object):
     r = talos.Reporting(scan_object)
 
     # read from file
-    list_of_files = glob.glob('./test_latest/' + '/*.csv')
+    list_of_files = glob.glob('./testing_latest/' + '/*.csv')
 
     r = talos.Reporting(list_of_files[-1])
 
