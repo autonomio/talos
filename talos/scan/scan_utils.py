@@ -10,8 +10,8 @@ def initialize_log(self):
     except FileExistsError:
         pass
 
-    _experiment_id = time.strftime('%D%H%M%S').replace('/', '')
-    _file_name = _experiment_id + '.csv'
+    self._experiment_id = time.strftime('%D%H%M%S').replace('/', '')
+    _file_name = self._experiment_id + '.csv'
     _experiment_log = './' + self.experiment_name + '/' + _file_name
 
     f = open(_experiment_log, 'w')

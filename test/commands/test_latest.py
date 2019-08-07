@@ -45,6 +45,7 @@ def test_latest():
                              model=iris_model,
                              params=p,
                              experiment_name='test_latest',
-                             round_limit=5)
+                             round_limit=5,
+                             reduction_method='gamify')
 
     print('finised Latest Features \n')
