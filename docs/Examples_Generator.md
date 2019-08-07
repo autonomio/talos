@@ -18,7 +18,7 @@ NOTE: In this example we will be using the `SequenceGenerator()` available in Ta
 
 ### Loading Data
 ```python
-x, y = ta.templates.datasets.iris()
+x_train, y_train, x_val, y_val = talos.templates.datasets.mnist()
 ```
 `x` and `y` are expected to be either numpy arrays or lists of numpy arrays.
 
@@ -28,7 +28,7 @@ x, y = ta.templates.datasets.iris()
 def mnist_model(x_train, y_train, x_val, y_val, params):
 
     model = Sequential()
-    model.add(Conv2D(32, kernel_size=(3, 3), activation=params['activation'], input_shape=input_shape))
+    model.add(Conv2D(32, kernel_size=(3, 3), activation=params['activation'], input_shape=(28, 28, 1)))
     model.add(Flatten())
     model.add(Dense(128, activation=params['activation']))
     model.add(Dropout(params['dropout']))
@@ -41,11 +41,11 @@ def mnist_model(x_train, y_train, x_val, y_val, params):
     out = model.fit_generator(SequenceGenerator(x_train,
                                                 y_train,
                                                 batch_size=params['batch_size']),
-                              epochs=params['epochs'],
-                              validation_data=[x_val, y_val],
-                              callbacks=[],
-                              workers=4,
-                              verbose=0)
+                                                epochs=params['epochs'],
+                                                validation_data=[x_val, y_val],
+                                                callbacks=[],
+                                                workers=4,
+                                                verbose=0)
 
     return out, model
 ```
