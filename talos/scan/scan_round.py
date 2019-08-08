@@ -29,7 +29,11 @@ def scan_round(self):
 
     # save model and weights
     self.saved_models.append(self.keras_model.to_json())
-    self.saved_weights.append(self.keras_model.get_weights())
+
+    if self.save_weights:
+        self.saved_weights.append(self.keras_model.get_weights())
+    else:
+        self.saved_weights.append(None)
 
     # clear tensorflow sessions
     if self.clear_session is True:

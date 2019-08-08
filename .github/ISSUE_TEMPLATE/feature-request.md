@@ -16,13 +16,14 @@ Thanks a lot for suggesting a feature to Talos. Please take a moment to go throu
 
 #### 3) I believe this feature is... (choose one)
 
-- [] ...critically important
-- [] ...must have
-- [] ...nice to have
+- [ ] ...critically important
+- [ ] ...must have
+- [ ] ...nice to have
 
 #### 4) Given the chance, I'd be happy to make a PR for this feature...
 
-- [] ...definitely
-- [] ...possibly
-- [] ...unlikely
+- [ ] ...definitely
+- [ ] ...possibly
+- [ ] ...unlikely
+
 -------------------------------------------------------------------------

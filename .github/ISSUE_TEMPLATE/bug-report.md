@@ -33,5 +33,6 @@ Thank you very much for reporting a bug on Talos. Before you do, please go throu
 
 NOTE: If the data is sensitive and can't be shared, [create dummy data](https://scikit-learn.org/stable/modules/classes.html#samples-generator) that mimics it.
 
-A self-contained Jupyter Notebook, Google Colab, or similar is highly preferred and will speed up helping you with your issue.
+**A self-contained Jupyter Notebook, Google Colab, or similar is highly preferred and will speed up helping you with your issue.**
+
 -------------------------------------------------------------------------
