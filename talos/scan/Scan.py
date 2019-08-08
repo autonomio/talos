@@ -121,6 +121,10 @@ class Scan:
     -----------------
     clear_session : bool
         If the backend session is cleared between every permutation.
+    save_weights : bool
+        If set to False, then model weights will not be saved and best_model
+        and some other features will not work. Will reduce memory pressure
+        on very large models and high number of rounds/permutations.
     """
 
     global self
@@ -149,7 +153,8 @@ class Scan:
                  minimize_loss=False,
                  disable_progress_bar=False,
                  print_params=False,
-                 clear_session=True,):
+                 clear_session=True,
+                 save_weights=True):
 
         self.x = x
         self.y = y
@@ -183,8 +188,9 @@ class Scan:
         self.disable_progress_bar = disable_progress_bar
         self.print_params = print_params
 
-        # other
+        # performance
         self.clear_session = clear_session
+        self.save_weights = save_weights
         # input parameters section ends
 
         self._runtime()

@@ -46,6 +46,7 @@ def test_latest():
                              params=p,
                              experiment_name='testing_latest',
                              round_limit=5,
-                             reduction_method='gamify')
+                             reduction_method='gamify',
+                             save_weights=False)
 
     print('finised Latest Features \n')
