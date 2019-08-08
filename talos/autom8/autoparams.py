@@ -46,9 +46,10 @@ class AutoParams:
             self.params = {}
         else:
             self.params = params
-
         if auto:
             self._automated()
+            self.resample_params(4)
+
 
     def _automated(self, shapes='fixed'):
 
