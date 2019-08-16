@@ -3,7 +3,7 @@ def scan_round(self):
     '''The main operational function that manages the experiment
     on the level of execution of each round.'''
 
-    import time as ti
+    import time
     import gc
 
     # print round params
@@ -11,12 +11,12 @@ def scan_round(self):
         print(self.round_params)
 
     # set start time
-    round_start = ti.strftime('%D-%H%M%S')
-    start = ti.time()
+    round_start = time.strftime('%D-%H%M%S')
+    start = time.time()
 
     # fit the model
     from ..model.ingest_model import ingest_model
-    self.model_history, self.keras_model = ingest_model(self)
+    self.model_history, self.round_model = ingest_model(self)
     self.round_history.append(self.model_history.history)
 
     # handle logging of results
@@ -27,14 +27,27 @@ def scan_round(self):
     from ..reducers.reduce_run import reduce_run
     self = reduce_run(self)
 
-    # save model and weights
-    self.saved_models.append(self.keras_model.to_json())
-    self.saved_weights.append(self.keras_model.get_weights())
+    try:
+        # save model and weights
+        self.saved_models.append(self.round_model.to_json())
+
+        if self.save_weights:
+            self.saved_weights.append(self.round_model.get_weights())
+        else:
+            self.saved_weights.append(None)
+
+    except AttributeError as e:
+        # make sure that the error message is from torch
+        if str(e) == "'Model' object has no attribute 'to_json'":
+            if self.save_weights:
+                self.saved_models.append(self.round_model.state_dict())
+            else:
+                self.saved_weights.append(None)
 
     # clear tensorflow sessions
     if self.clear_session is True:
 
-        del self.keras_model
+        del self.round_model
         gc.collect()
 
         # try TF specific and pass for everyone else

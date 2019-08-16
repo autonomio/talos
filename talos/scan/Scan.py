@@ -48,9 +48,10 @@ class Scan:
     model : keras model
         Any Keras model with relevant declrations like params['first_neuron']
     experiment_name : str
-        Experiment name will be used to produce the file name for the
-        results saved in the local directory. Make sure to change it between
-        experiments to avoid log of previous experiment from being overwritten.
+        Experiment name will be used to produce a folder (unless already) it's
+        there from previous iterations of the experiment. Logs of the
+        experiment are saved in the folder with timestamp of start
+        time as filenames.
     x_val : ndarray
         User specified cross-validation data. (Default is None).
     y_val : ndarray
@@ -120,12 +121,20 @@ class Scan:
     -----------------
     clear_session : bool
         If the backend session is cleared between every permutation.
+    save_weights : bool
+        If set to False, then model weights will not be saved and best_model
+        and some other features will not work. Will reduce memory pressure
+        on very large models and high number of rounds/permutations.
     """
 
     global self
 
-    def __init__(self, x, y, params, model,
-                 experiment_name=None,
+    def __init__(self,
+                 x,
+                 y,
+                 params,
+                 model,
+                 experiment_name,
                  x_val=None,
                  y_val=None,
                  val_split=.3,
@@ -144,7 +153,8 @@ class Scan:
                  minimize_loss=False,
                  disable_progress_bar=False,
                  print_params=False,
-                 clear_session=True,):
+                 clear_session=True,
+                 save_weights=True):
 
         self.x = x
         self.y = y
@@ -178,13 +188,14 @@ class Scan:
         self.disable_progress_bar = disable_progress_bar
         self.print_params = print_params
 
-        # other
+        # performance
         self.clear_session = clear_session
+        self.save_weights = save_weights
         # input parameters section ends
 
-        self.runtime()
+        self._runtime()
 
-    def runtime(self):
+    def _runtime(self):
 
         from .scan_run import scan_run
         self = scan_run(self)

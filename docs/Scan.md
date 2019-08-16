@@ -19,7 +19,7 @@ Argument | Input | Description
 `y` | array or list of arrays | prediction outcome variable
 `params` | dict | the parameter dictionary
 `model` | function | the Keras model as a function
-`experiment_name` | str | Used for experiment log
+`experiment_name` | str | Used for creating the experiment logging folder
 `x_val` | array or list of arrays | validation data for x
 `y_val` | array or list of arrays | validation data for y
 `val_split` | float | validation data split ratio
@@ -38,7 +38,8 @@ Argument | Input | Description
 `minimize_loss` | bool | `reduction_metric` is a loss
 `disable_progress_bar` | bool | Disable live updating progress bar
 `print_params` | bool | Print each permutation hyperparameters
-`clear_tf_session` | bool | Clear backend session between permutations
+`clear_session` | bool | Clear backend session between permutations
+`save_weights` | bool | Save model weights (increases memory pressure for large models)
 
 NOTE: `boolean_limit` will only work if its the last argument in `Scan()` and the following bracket is on a newline:
 

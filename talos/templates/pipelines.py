@@ -6,6 +6,7 @@ def breast_cancer(round_limit=2, random_method='uniform_mersenne'):
                           ta.templates.datasets.breast_cancer()[1],
                           ta.templates.params.breast_cancer(),
                           ta.templates.models.breast_cancer,
+                          'test',
                           round_limit=round_limit)
 
     return scan_object
@@ -19,6 +20,7 @@ def cervical_cancer(round_limit=2, random_method='uniform_mersenne'):
                           ta.templates.datasets.cervical_cancer()[1],
                           ta.templates.params.cervical_cancer(),
                           ta.templates.models.cervical_cancer,
+                          'test',
                           round_limit=round_limit)
 
     return scan_object
@@ -32,6 +34,7 @@ def iris(round_limit=2, random_method='uniform_mersenne'):
                           ta.templates.datasets.iris()[1],
                           ta.templates.params.iris(),
                           ta.templates.models.iris,
+                          'test',
                           round_limit=round_limit)
 
     return scan_object
@@ -45,6 +48,7 @@ def titanic(round_limit=2, random_method='uniform_mersenne'):
                           ta.templates.datasets.titanic()[1][:50],
                           ta.templates.params.titanic(),
                           ta.templates.models.titanic,
+                          'test',
                           round_limit=round_limit)
 
     return scan_object

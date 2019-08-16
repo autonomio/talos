@@ -23,7 +23,7 @@ template_sub = [templates.datasets,
                 templates.pipelines]
 
 keep_from_templates = ['iris', 'cervical_cancer', 'titanic', 'breast_cancer',
-                       'icu_mortality', 'telco_churn']
+                       'icu_mortality', 'telco_churn', 'mnist']
 
 for sub in template_sub:
     for key in list(sub.__dict__):
@@ -34,4 +34,4 @@ for sub in template_sub:
 del commands, scan, model, metrics, key
 del sub, keep_from_templates, template_sub, warnings
 
-__version__ = "0.6.2"
+__version__ = "0.6.3"

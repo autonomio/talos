@@ -20,6 +20,10 @@ def reduce_run(self):
     '''
 
     from .correlation import correlation
+    from .forrest import forrest
+    from .trees import trees
+    from .gamify import gamify
+
     from .local_strategy import local_strategy
     from .limit_by_metric import limit_by_metric
 
@@ -41,6 +45,10 @@ def reduce_run(self):
     right = self.reduction_interval
     len_before_reduce = len(self.param_object.param_index)
 
+    # check if monte carlo can do something
+    if self.reduction_method == 'gamify':
+        self = gamify(self)
+
     # apply window based reducers
     if left % right == 0:
 
@@ -53,16 +61,12 @@ def reduce_run(self):
             self = correlation(self, 'spearman')
 
         # check if random forrest can do something
-        if self.reduction_method == 'random_forrest':
-            pass
+        if self.reduction_method == 'forrest':
+            self = forrest(self)
 
         # check if random forrest can do something
-        if self.reduction_method == 'extra_trees':
-            pass
-
-        # check if monte carlo can do something
-        if self.reduction_method == 'monte_carlo':
-            pass
+        if self.reduction_method == 'trees':
+            self = trees(self)
 
         if self.reduction_method == 'local_strategy':
             self = local_strategy(self)

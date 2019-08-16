@@ -46,9 +46,9 @@ class AutoParams:
             self.params = {}
         else:
             self.params = params
-
         if auto:
             self._automated()
+            self.resample_params(4)
 
     def _automated(self, shapes='fixed'):
 
@@ -77,7 +77,7 @@ class AutoParams:
         if self._network:
             self.networks()
         else:
-            self.params['network'] = 'dense'
+            self.params['network'] = ['dense']
         self.last_activations()
 
     def shapes(self, shapes='auto'):
@@ -186,7 +186,9 @@ class AutoParams:
 
         if kernel_inits == 'auto':
             self._append_params('kernel_initializer',
-                                ['glorot_uniform', 'glorot_normal',
+                                ['uniform', 'normal', 'he_normal',
+                                 'he_uniform', 'lecun_normal',
+                                 'glorot_uniform', 'glorot_normal',
                                  'random_uniform', 'random_normal'])
         else:
             self._append_params('kernel_initializer', kernel_inits)

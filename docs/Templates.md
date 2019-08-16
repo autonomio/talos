@@ -30,6 +30,7 @@ talos.templates.datasets.breast_cancer()
 - telco_churn
 - titanic
 - iris
+- mnist
 
 <hr>
 
