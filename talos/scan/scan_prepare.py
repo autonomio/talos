@@ -3,11 +3,9 @@ def scan_prepare(self):
     '''Includes all preparation procedures up until starting the first scan
     through scan_run()'''
 
-    import time as ti
+    from .scan_utils import initialize_log
 
-    # create the name for the experiment
-    if self.experiment_name is None:
-        self.experiment_name = ti.strftime('%D%H%M%S').replace('/', '')
+    self._experiment_log = initialize_log(self)
 
     # for the case where x_val or y_val is missing when other is present
     self.custom_val_split = False

@@ -10,5 +10,6 @@ from . import gpu_utils
 import talos.metrics.keras_metrics as metrics
 from .sequence_generator import SequenceGenerator
 from .experiment_log_callback import ExperimentLogCallback
+from .torch_history import TorchHistory
 
 del experiment_log_callback, sequence_generator

@@ -33,7 +33,7 @@ def test_latest():
 
         out = model.fit(x_train,
                         y_train,
-                        callbacks=[talos.utils.ExperimentLogCallback('minimal_iris', params)],
+                        callbacks=[talos.utils.ExperimentLogCallback('testing_latest', params)],
                         batch_size=params['batch_size'],
                         epochs=params['epochs'],
                         validation_data=[x_val, y_val],
@@ -44,6 +44,9 @@ def test_latest():
     scan_object = talos.Scan(x, y,
                              model=iris_model,
                              params=p,
-                             round_limit=5)
+                             experiment_name='testing_latest',
+                             round_limit=5,
+                             reduction_method='gamify',
+                             save_weights=False)
 
     print('finised Latest Features \n')

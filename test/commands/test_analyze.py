@@ -1,16 +1,19 @@
 def test_analyze(scan_object):
 
-    import talos
-
     '''Tests all the attributes available in the Reporting() object'''
 
     print('\n >>> Start Analyze()... \n')
+
+    import talos
+    import glob
 
     # for now test with old name
     r = talos.Reporting(scan_object)
 
     # read from file
-    r = talos.Reporting('test.csv')
+    list_of_files = glob.glob('./testing_latest/' + '/*.csv')
+
+    r = talos.Reporting(list_of_files[-1])
 
     # and then from scan object
     r = talos.Analyze(scan_object)

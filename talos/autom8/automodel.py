@@ -1,6 +1,6 @@
 class AutoModel:
 
-    def __init__(self, task, metric=None):
+    def __init__(self, task, experiment_name, metric=None):
 
         '''
 
@@ -19,12 +19,16 @@ class AutoModel:
             If 'continuous' then mae is used for metric, if 'binary',
             'multiclass', or 'multilabel', f1score is used. Accuracy is always
             used.
+        experiment_name | str | Must be same as in `Scan()`
         metric : None or list
             You can also input a list with one or more custom metrics or names
             of Keras or Talos metrics.
         '''
 
+        from talos.utils.experiment_log_callback import ExperimentLogCallback
+
         self.task = task
+        self.experiment_name = experiment_name
         self.metric = metric
 
         if self.task is not None:
@@ -36,6 +40,7 @@ class AutoModel:
 
         # create the model
         self.model = self._create_input_model
+        self.callback = ExperimentLogCallback
 
     def _set_metric(self):
 
@@ -79,7 +84,8 @@ class AutoModel:
         elif params['network'] == 'dense':
             model.add(Dense(params['first_neuron'],
                             input_dim=x_train.shape[1],
-                            activation='relu'))
+                            activation='relu',
+                            kernel_initializer=params['kernel_initializer']))
 
         model.add(Dropout(params['dropout']))
 
@@ -95,7 +101,8 @@ class AutoModel:
                                                y_val)
 
         model.add(Dense(last_neuron,
-                        activation=activation))
+                        activation=activation,
+                        kernel_initializer=params['kernel_initializer']))
 
         # bundle the optimizer with learning rate changes
         from talos.model.normalizers import lr_normalizer
@@ -112,6 +119,7 @@ class AutoModel:
                         batch_size=params['batch_size'],
                         epochs=params['epochs'],
                         verbose=0,
+                        callbacks=[self.callback(self.experiment_name, params)],
                         validation_data=[x_val, y_val])
 
         # pass the output to Talos
