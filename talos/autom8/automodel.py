@@ -84,7 +84,8 @@ class AutoModel:
         elif params['network'] == 'dense':
             model.add(Dense(params['first_neuron'],
                             input_dim=x_train.shape[1],
-                            activation='relu'))
+                            activation='relu',
+                            kernel_initializer=params['kernel_initializer']))
 
         model.add(Dropout(params['dropout']))
 
@@ -100,7 +101,8 @@ class AutoModel:
                                                y_val)
 
         model.add(Dense(last_neuron,
-                        activation=activation))
+                        activation=activation,
+                        kernel_initializer=params['kernel_initializer']))
 
         # bundle the optimizer with learning rate changes
         from talos.model.normalizers import lr_normalizer

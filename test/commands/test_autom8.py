@@ -53,7 +53,7 @@ def test_autom8():
     auto.start(x, y, params=p.params)
     talos.autom8.AutoPredict(scan_object, x, y, x, 'multi_class')
 
-    x, y = wrangle.utils.create_synth_data('regression', 50, 10, 1)
+    x, y = wrangle.utils.create_synth_data('continuous', 50, 10, 1)
     p.losses(['mae'])
     auto = talos.autom8.AutoScan('continuous', 'testingd', 1)
     auto.start(x, y, params=p.params)

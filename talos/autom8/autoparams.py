@@ -50,7 +50,6 @@ class AutoParams:
             self._automated()
             self.resample_params(4)
 
-
     def _automated(self, shapes='fixed'):
 
         '''Automatically generate a comprehensive
@@ -187,7 +186,9 @@ class AutoParams:
 
         if kernel_inits == 'auto':
             self._append_params('kernel_initializer',
-                                ['glorot_uniform', 'glorot_normal',
+                                ['uniform', 'normal', 'he_normal',
+                                 'he_uniform', 'lecun_normal',
+                                 'glorot_uniform', 'glorot_normal',
                                  'random_uniform', 'random_normal'])
         else:
             self._append_params('kernel_initializer', kernel_inits)
