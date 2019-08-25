@@ -2,10 +2,10 @@ def local_strategy(self):
 
     try:
         import importlib
-        importlib.reload(gamify)
+        importlib.reload(talos_strategy)
     except NameError:
-        from gamify import gamify
+        from talos_strategy import talos_strategy
 
-    self = gamify(self)
+    self = talos_strategy(self)
 
     return self
