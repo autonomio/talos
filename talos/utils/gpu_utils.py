@@ -12,10 +12,10 @@ def parallel_gpu_jobs(allow_growth=True, fraction=.5):
     import keras.backend as K
     import tensorflow as tf
 
-    gpu_options = K.tf.GPUOptions(allow_growth=allow_growth,
+    gpu_options = tf.GPUOptions(allow_growth=allow_growth,
                                   per_process_gpu_memory_fraction=fraction)
     config = tf.ConfigProto(gpu_options=gpu_options)
-    session = K.tf.Session(config=config)
+    session = tf.Session(config=config)
     K.set_session(session)
 
 
