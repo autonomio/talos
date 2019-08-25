@@ -57,13 +57,15 @@ Talos is made for data scientists and data engineers that want to remain in **co
 Based on what no doubt constitutes a "biased" review (being our own) of more than ~30 hyperparameter tuning and optimization solutions, Talos comes on top in terms of intuitive, easy-to-learn, highly permissive access to critical hyperparameter optimization capabilities. Key features include:
 
 - Single-line optimize-to-predict pipeline `talos.Scan(x, y, model, params).predict(x_test, y_test)`
-- automated hyperparameter optimization
-- model generalization evaluator
-- experiment analytics
-- Random search
-- Pseudo, Quasi, and Quantum Random optimizers
+- Automated hyperparameter optimization
+- Model generalization evaluator
+- Experiment analytics
+- Pseudo, Quasi, and Quantum Random search options
 - Grid search
-- Probabilistic optimization
+- Probabilistic optimizers
+- Single file custom optimization strategies
+- Dynamically change optimization strategy during experiment
+- Support for man-machine cooperative optimization strategy
 - Model candidate generality evaluation
 - Live training monitor
 - Experiment analytics

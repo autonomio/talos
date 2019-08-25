@@ -39,6 +39,8 @@
   - [Early Stopping](Optimization_Strategies.md#early-stopping)
   - [Probabilistic Reduction](Probabilistic_Reduction.md)
   - [Custom Reducers](Custom_Reducers.md)
+  - [Local Strategy](Local_Strategy.md)
+  - [Gamify](Gamify.md)
 
 - Utilities
 

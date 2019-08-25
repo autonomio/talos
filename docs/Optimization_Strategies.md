@@ -5,7 +5,9 @@ Talos supports several common optimization strategies:
 - Grid search
 - Random search
 - Probabilistic reduction
-- Custom Strategies
+- Custom Strategies (arbitrary single python file optimizer)
+- Local Stragies (can change anytime during experiment)
+- Gamify (man-machine cooperation)
 
 The object of abstraction is the keras model configuration, of which n number of permutations is tried in a Talos experiment.
 
