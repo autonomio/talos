@@ -54,7 +54,7 @@ See docstrings for each function for a more detailed description.
 
 **`plot_bars`** A bar chart that allows up to 4 axis of data to be shown at once
 
-**`plot_bars`** Kernel Destiny Estimation type histogram with support for 1 or 2 axis of data
+**`plot_kde`** Kernel Destiny Estimation type histogram with support for 1 or 2 axis of data
 
 **`table`** A sortable dataframe with a given metric and hyperparameters
 
