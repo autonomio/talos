@@ -1,6 +1,3 @@
-import sys
-
-
 class TalosReturnError(Exception):
     pass
 
@@ -16,5 +13,6 @@ class TalosTypeError(Exception):
 class TalosModelError(Exception):
     pass
 
+
 class TalosDataError(Exception):
-	pass
+    pass

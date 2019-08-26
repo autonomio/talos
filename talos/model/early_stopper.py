@@ -1,7 +1,7 @@
 from keras.callbacks import EarlyStopping
 
 
-def early_stopper(epochs,
+def early_stopper(epochs=None,
                   monitor='val_loss',
                   mode='moderate',
                   min_delta=None,
@@ -13,11 +13,18 @@ def early_stopper(epochs,
     better. Offers two pre-determined settings 'moderate'
     and 'strict' and allows input of list with two values:
 
-    min_delta = the limit for change at which point flag is raised
-
-    patience = the number of epochs before termination from flag
+    `epochs` | int | The number of epochs for the permutation e.g. params['epochs']
+    `monitor` | int | The metric to monitor for change
+    `mode` | str | One of the presets `lazy`, `moderate`, `strict` or `None`
+    `min_delta` | float | The limit for change at which point flag is raised
+    `patience` | str | the number of epochs before termination from flag
 
     '''
+    if mode == 'lazy':
+        _es_out = EarlyStopping(monitor=monitor,
+                                min_delta=0,
+                                patience=int(epochs / 3),
+                                verbose=0, mode='auto')
 
     if mode == 'moderate':
         _es_out = EarlyStopping(monitor=monitor,
@@ -29,7 +36,7 @@ def early_stopper(epochs,
                                 min_delta=0,
                                 patience=2,
                                 verbose=0, mode='auto')
-    elif isinstance(mode, list):
+    else:
         _es_out = EarlyStopping(monitor=monitor,
                                 min_delta=mode[0],
                                 patience=mode[1],

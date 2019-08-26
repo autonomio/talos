@@ -1,9 +1,4 @@
-import chances
-
-from ..utils.exceptions import TalosDataError
-
-
-def sample_reducer(self, length, max_value):
+def sample_reducer(limit, max_value, random_method):
 
     '''Sample Reducer (Helper)
 
@@ -23,17 +18,21 @@ def sample_reducer(self, length, max_value):
 
     '''
 
-    random_method = self.main_self.random_method
+    import chances as ch
 
     # calculate the size of the downsample
-    n = int(max_value * self.main_self.grid_downsample)
+    if isinstance(limit, float):
+        n = int(max_value * limit)
+    if isinstance(limit, int):
+        n = limit
 
     # throw an error if
+    from ..utils.exceptions import TalosDataError
     if n < 1:
-        raise TalosDataError("No permutations in grid. Incease grid_downsample")
+        raise TalosDataError("Limiters lead to < 1 permutations.")
 
     # Initialize Randomizer()
-    r = chances.Randomizer(max_value, length)
+    r = ch.Randomizer(max_value, n)
 
     # use the user selected method
     if random_method == 'sobol':
@@ -57,7 +56,7 @@ def sample_reducer(self, length, max_value):
     elif random_method == 'ambience':
         out = r.ambience()
     else:
-        print('check random_method, no eligble method found. Using uniform mersenne.')
+        print('No eligble random_method found. Using uniform_mersenne.')
         out = r.uniform_mersenne()
 
     return out

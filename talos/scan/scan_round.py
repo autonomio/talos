@@ -1,83 +1,60 @@
-from time import strftime, time
-
-from keras import backend as K
-
-from ..parameters.round_params import round_params
-from ..utils.results import create_header
-from ..metrics.entropy import epoch_entropy
-from ..model.ingest_model import ingest_model
-from ..utils.results import run_round_results, save_result
-from ..reducers.reduce_run import reduce_run
-from ..utils.exceptions import TalosReturnError, TalosTypeError
-
-
 def scan_round(self):
 
     '''The main operational function that manages the experiment
     on the level of execution of each round.'''
 
-    # determine the parameters for the particular execution
-    self.round_params = round_params(self)
+    import time
+    import gc
 
     # print round params
     if self.print_params is True:
         print(self.round_params)
 
     # set start time
-    round_start = strftime('%D-%H%M%S')
-    start = time()
+    round_start = time.strftime('%D-%H%M%S')
+    start = time.time()
 
     # fit the model
+    from ..model.ingest_model import ingest_model
+    self.model_history, self.round_model = ingest_model(self)
+    self.round_history.append(self.model_history.history)
+
+    # handle logging of results
+    from ..logging.logging_run import logging_run
+    self = logging_run(self, round_start, start, self.model_history)
+
+    # apply reductions
+    from ..reducers.reduce_run import reduce_run
+    self = reduce_run(self)
+
     try:
-        _hr_out, self.keras_model = ingest_model(self)
-    except TypeError as err:
-        if err.args[0] == "unsupported operand type(s) for +: 'int' and 'numpy.str_'":
-            raise TalosTypeError("Activation should be as object and not string in params")
+        # save model and weights
+        self.saved_models.append(self.round_model.to_json())
+
+        if self.save_weights:
+            self.saved_weights.append(self.round_model.get_weights())
         else:
-            print('ERROR MESSAGE : ' + err.args[0])
-            raise TalosReturnError("Make sure that input model returns 'out, model' where out is history object from model.fit()")
+            self.saved_weights.append(None)
 
-    # count the duration of the round
-    self._round_seconds = time() - start
-
-    # set end time and log
-    round_end = strftime('%D-%H%M%S')
-    self.round_times.append([round_start, round_end, self._round_seconds])
-
-    # create log and other stats
-    try:
-        self.epoch_entropy.append(epoch_entropy(_hr_out))
-    except (TypeError, AttributeError):
-        raise TalosReturnError("Make sure that input model returns in the order 'out, model'")
-
-    if self.round_counter == 0:
-        _for_header = create_header(self, _hr_out)
-        self.result.append(_for_header)
-        save_result(self)
-
-    _hr_out = run_round_results(self, _hr_out)
-
-    self.result.append(_hr_out)
-    save_result(self)
-
-    # apply reduction
-    if self.reduction_method is not None:
-        if (self.round_counter + 1) % self.reduction_interval == 0:
-            len_before_reduce = len(self.param_log)
-            self = reduce_run(self)
-            total_reduced = len_before_reduce - len(self.param_log)
-            # update the progress bar
-            self.pbar.update(total_reduced)
-
-    # save model and weights
-    self.saved_models.append(self.keras_model.to_json())
-    self.saved_weights.append(self.keras_model.get_weights())
+    except AttributeError as e:
+        # make sure that the error message is from torch
+        if str(e) == "'Model' object has no attribute 'to_json'":
+            if self.save_weights:
+                self.saved_models.append(self.round_model.state_dict())
+            else:
+                self.saved_weights.append(None)
 
     # clear tensorflow sessions
-    if self.clear_tf_session is True:
-        K.clear_session()
+    if self.clear_session is True:
 
-    # round is completed
-    self.round_counter += 1
+        del self.round_model
+        gc.collect()
+
+        # try TF specific and pass for everyone else
+        try:
+            from keras import backend as K
+            K.clear_session()
+        except:
+            pass
 
     return self

@@ -24,7 +24,7 @@
   <a href="#Examples">Examples</a> •
   <a href="#Install">Install</a> •
   <a href="#Support">Support</a> •
-  <a href="https://autonomio.github.io/docs_talos">Docs</a> •
+  <a href="https://autonomio.github.io/talos/">Docs</a> •
   <a href="https://github.com/autonomio/talos/issues">Issues</a> •
   <a href="#License">License</a> •
   <a href="https://github.com/autonomio/talos/archive/master.zip">Download</a>
@@ -50,25 +50,31 @@ Talos radically transforms ordinary Keras workflows without taking away any of K
 
 Talos is made for data scientists and data engineers that want to remain in **complete control of their Keras models**, but are tired of mindless parameter hopping and confusing optimization solutions that add complexity instead of reducing it. Within minutes, without learning any new syntax, Talos allows you to configure, perform, and evaluate hyperparameter optimization experiments that yield state-of-the-art results across a wide range of prediction tasks. Talos provides the **simplest and yet most powerful** available method for hyperparameter optimization with Keras.
 
-### Key Features
+<hr>
+
+### :wrench: Key Features
 
 Based on what no doubt constitutes a "biased" review (being our own) of more than ~30 hyperparameter tuning and optimization solutions, Talos comes on top in terms of intuitive, easy-to-learn, highly permissive access to critical hyperparameter optimization capabilities. Key features include:
 
 - Single-line optimize-to-predict pipeline `talos.Scan(x, y, model, params).predict(x_test, y_test)`
-- automated hyperparameter optimization
-- model generalization evaluator
-- experiment analytics
-- Random search
+- Automated hyperparameter optimization
+- Model generalization evaluator
+- Experiment analytics
+- Pseudo, Quasi, and Quantum Random search options
 - Grid search
-- Correlation based optimization
-- Pseudo, Quasi, and Quantum Random functions
+- Probabilistic optimizers
+- Single file custom optimization strategies
+- Dynamically change optimization strategy during experiment
+- Support for man-machine cooperative optimization strategy
 - Model candidate generality evaluation
 - Live training monitor
 - Experiment analytics
 
 Talos works on **Linux, Mac OSX**, and **Windows** systems and can be operated cpu, gpu, and multi-gpu systems.
 
-### Examples
+<hr>
+
+### 📈 Examples
 
 Get the below code [here](https://gist.github.com/mikkokotila/4c0d6298ff0a22dc561fb387a1b4b0bb). More examples further below.
 
@@ -84,11 +90,13 @@ The *Simple* example below is more than enough for starting to use Talos with an
 
 [Field Report](https://towardsdatascience.com/hyperparameter-optimization-with-keras-b82e6364ca53)  [~15 mins]
 
-For more information on how Talos can help with your Keras workflow, visit the [User Manual](https://autonomio.github.io/docs_talos).
+For more information on how Talos can help with your Keras workflow, visit the [User Manual](https://autonomio.github.io/talos/).
 
 You may also want to check out a visualization of the [Talos Hyperparameter Tuning workflow](https://github.com/autonomio/talos/wiki/Workflow).
 
-### Install
+<hr>
+
+### 💾 Install
 
 Stable version:
 
@@ -98,18 +106,34 @@ Daily development version:
 
 #### `pip install git+https://github.com/autonomio/talos.git@daily-dev`
 
-### Support
+<hr>
 
-Check out [common errors](https://github.com/autonomio/talos/wiki/Troubleshooting) in the Wiki.
+### 💬 How to get Support
 
+| I want to...                     | Go to...                                                  |
+| -------------------------------- | ---------------------------------------------------------- |
+| **...troubleshoot**           | [Docs] · [Wiki] · [GitHub Issue Tracker]                   |
+| **...report a bug**           | [GitHub Issue Tracker]                                     |
+| **...suggest a new feature**  | [GitHub Issue Tracker]                                     |
+| **...get support**            | [Stack Overflow] · [Spectrum Chat]                         |
+| **...have a discussion**      | [Spectrum Chat]                                            |
 
-Check the [Docs](https://autonomio.github.io/docs_talos) which is generally keeping up with Master (and pip package).
+[github issue tracker]: https://github.com/automio/talos/issues
+[docs]: https://autonomio.github.io/talos/
+[wiki]: https://github.com/autonomio/talos/wiki
+[stack overflow]: https://stackoverflow.com/questions/tagged/talos
+[spectrum chat]: https://spectrum.chat/talos
 
-If you want ask a **"how can I use Talos to..."** question, the right place is [StackOverflow](https://stackoverflow.com/questions/ask).
+<hr>
 
-If you found a bug or want to suggest a feature, check the [issues](https://github.com/autonomio/talos/issues) or [create](https://github.com/autonomio/talos/issues/new/choose) a new issue.
+### 📢 Citations
 
+If you use Talos for published work, please cite:
 
-### License
+`Autonomio Talos [Computer software]. (2019). Retrieved from http://github.com/autonomio/talos.`
+
+<hr>
+
+### 📃 License
 
 [MIT License](https://github.com/autonomio/talos/blob/master/LICENSE)

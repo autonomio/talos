@@ -16,7 +16,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://autonom.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/autonomio/talos/'
-VERSION = '0.5.0'
+VERSION = '0.6.3'
 
 try:
     from setuptools import setup
@@ -24,7 +24,8 @@ try:
 except ImportError:
     from distutils.core import setup
 
-install_requires = ['numpy',
+install_requires = ['wrangle',
+                    'numpy',
                     'pandas',
                     'keras',
                     'astetik',
@@ -32,7 +33,6 @@ install_requires = ['numpy',
                     'tqdm',
                     'chances',
                     'kerasplotlib',
-                    'wrangle',
                     'requests']
 
 
@@ -52,13 +52,15 @@ if __name__ == "__main__":
           install_requires=install_requires,
           packages=['talos',
                     'talos.scan',
-                    'talos.examples',
+                    'talos.templates',
                     'talos.utils',
                     'talos.model',
                     'talos.parameters',
                     'talos.reducers',
                     'talos.metrics',
-                    'talos.commands'],
+                    'talos.commands',
+                    'talos.logging',
+                    'talos.autom8'],
 
           classifiers=['Intended Audience :: Science/Research',
                        'Programming Language :: Python :: 2.7',

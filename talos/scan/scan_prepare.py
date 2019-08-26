@@ -1,35 +1,11 @@
-from time import strftime
-from datetime import datetime
-
-from ..utils.validation_split import validation_split
-from ..utils.detector import prediction_type
-from ..parameters.ParamGrid import ParamGrid
-from ..utils.pred_class import classify
-from ..utils.last_neuron import last_neuron
-
-
 def scan_prepare(self):
 
     '''Includes all preparation procedures up until starting the first scan
     through scan_run()'''
 
-    # create the name for the experiment
-    if self.dataset_name is None:
-        self.dataset_name = strftime('%D%H%M%S').replace('/', '')
+    from .scan_utils import initialize_log
 
-    if self.experiment_no is None:
-        self.experiment_no = ''
-
-    if self.experiment_name is None:
-        self.experiment_name = self.dataset_name + '_' + self.experiment_no
-
-    # handle the case where a time limit is set
-    if self.time_limit is not None:
-        self._stoptime = datetime.strptime(self.time_limit,
-                                           "%Y-%m-%d %H:%M")
-
-    # create the round times list
-    self.round_times = []
+    self._experiment_log = initialize_log(self)
 
     # for the case where x_val or y_val is missing when other is present
     self.custom_val_split = False
@@ -37,33 +13,40 @@ def scan_prepare(self):
        (self.x_val is None and self.y_val is not None):
         raise RuntimeError("If x_val/y_val is inputted, other must as well.")
 
-    elif (self.x_val is not None and self.y_val is not None):
+    elif self.x_val is not None and self.y_val is not None:
         self.custom_val_split = True
 
-    # create the paramater object and move to self
-    self.paramgrid_object = ParamGrid(self)
-    self.param_log = self.paramgrid_object.param_log
-    self.param_grid = self.paramgrid_object.param_grid
-    self.param_reference = self.paramgrid_object.param_reference
-    del self.paramgrid_object
+    # create reference for parameter keys
+    self._param_dict_keys = sorted(list(self.params.keys()))
 
-    self.round_counter = 0
+    # create the parameter object and move to self
+    from ..parameters.ParamSpace import ParamSpace
+    self.param_object = ParamSpace(params=self.params,
+                                   param_keys=self._param_dict_keys,
+                                   random_method=self.random_method,
+                                   fraction_limit=self.fraction_limit,
+                                   round_limit=self.round_limit,
+                                   time_limit=self.time_limit,
+                                   boolean_limit=self.boolean_limit
+                                   )
+
+    # mark that it's a first round
+    self.first_round = True
+
+    # create various stores
+    self.round_history = []
     self.peak_epochs = []
     self.epoch_entropy = []
-    self.round_models = []
-
-    # create the data asset
-    self.y_max = self.y.max()
-    self = validation_split(self)
-    self.shape = classify(self.y)
-    self.last_neuron = last_neuron(self)
-
-    self._data_len = len(self.x)
-    self = prediction_type(self)
+    self.round_times = []
     self.result = []
-
-    # model saving
     self.saved_models = []
     self.saved_weights = []
+
+    # handle validation split
+    from ..utils.validation_split import validation_split
+    self = validation_split(self)
+
+    # set data and len
+    self._data_len = len(self.x)
 
     return self
