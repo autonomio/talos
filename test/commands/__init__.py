@@ -5,3 +5,4 @@ from .test_scan import test_scan
 from .test_analyze import test_analyze
 from .test_random_methods import test_random_methods
 from .test_rest import test_rest
+from .test_lr_normalizer import test_lr_normalizer

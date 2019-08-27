@@ -18,8 +18,7 @@ def hidden_layers(model, params, last_neuron):
     for param in ['shapes', 'first_neuron', 'dropout', 'hidden_layers']:
         if param not in params:
             raise TalosParamsError(
-                "hidden_layers requires '" + param + "' in params"
-            )
+                "hidden_layers requires '" + param + "' in params")
 
     layer_neurons = network_shape(params, last_neuron)
 

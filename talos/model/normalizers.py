@@ -1,7 +1,3 @@
-from keras.optimizers import SGD, Adam, Adadelta, Adagrad, Adamax, RMSprop
-from keras.optimizers import Nadam
-
-
 def lr_normalizer(lr, optimizer):
     """Assuming a default learning rate 1, rescales the learning rate
     such that learning rates amongst different optimizers are more or less
@@ -15,6 +11,10 @@ def lr_normalizer(lr, optimizer):
         The optimizer. For example, Adagrad, Adam, RMSprop.
     """
 
+    from keras.optimizers import SGD, Adam, Adadelta, Adagrad, Adamax, RMSprop
+    from keras.optimizers import Nadam
+    from talos.utils.exceptions import TalosModelError
+
     if optimizer == Adadelta:
         pass
     elif optimizer == SGD or optimizer == Adagrad:
@@ -23,5 +23,7 @@ def lr_normalizer(lr, optimizer):
         lr /= 1000.0
     elif optimizer == Adamax or optimizer == Nadam:
         lr /= 500.0
+    else:
+        raise TalosModelError(str(optimizer) + " is not supported by lr_normalizer")
 
     return lr
