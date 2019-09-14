@@ -31,5 +31,5 @@ p = {'activation':['relu', 'elu'],
        'batch_size': (20, 50, 5),
        'epochs': [10, 20]}
 
-scan_object = ta.Scan(x, y, model=iris_model, params=p, fraction_limit=0.001)
+scan_object = ta.Scan(x, y, model=iris_model, params=p, fraction_limit=0.1)
 ```
