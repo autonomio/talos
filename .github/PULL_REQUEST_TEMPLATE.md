@@ -6,8 +6,13 @@ the below items:
 #### Sanity
 
 - [ ] I'm aware of the implications of the proposed changes
-- [ ] [Docs](https://autonomio.github.io/talos) are updated where relevant
 - [ ] Code is [PEP8](https://www.python.org/dev/peps/pep-0008/)
+- [ ] I'm making the PR to `master`
+
+#### Docs
+
+- [ ] [Docs](https://autonomio.github.io/talos) are updated
+- [ ] [Docs](https://autonomio.github.io/talos) version is correct (index.html and \_coverpage.md)
 
 #### Tests
 
