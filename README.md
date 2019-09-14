@@ -104,7 +104,7 @@ Stable version:
 
 Daily development version:
 
-#### `pip install git+https://github.com/autonomio/talos.git@daily-dev`
+#### `pip install git+https://github.com/autonomio/talos`
 
 <hr>
 
