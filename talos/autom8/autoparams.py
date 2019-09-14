@@ -20,7 +20,8 @@ class AutoParams:
                  task='binary',
                  replace=True,
                  auto=True,
-                 network=True):
+                 network=True,
+                 resample_params=4):
 
         '''A facility for generating or appending params dictionary.
 
@@ -36,6 +37,7 @@ class AutoParams:
              Adds several network architectures as parameters. This is to be
              used as an input together with KerasModel(). If False then only
              'dense' will be added.
+        resample_params | int or False | The number of values per parameter
         '''
 
         self._task = task
@@ -48,7 +50,9 @@ class AutoParams:
             self.params = params
         if auto:
             self._automated()
-            self.resample_params(4)
+
+        if resample_params is not False:
+            self.resample_params(resample_params)
 
     def _automated(self, shapes='fixed'):
 
