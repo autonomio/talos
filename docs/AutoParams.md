@@ -44,6 +44,7 @@ Argument | Input | Description
 `replace` | bool | Replace current dictionary entries with new ones.
 `auto` | bool | automatically generate or append params dictionary with all available parameters.
 `network` | network | If `True` several model architectures will be added
+`resample_params` | int or False | The number of values per parameter
 
 ## AutoParams Properties
 
@@ -71,7 +72,7 @@ All other properties relate with manipulating individual parameters in the param
 
 **`lr`** For controlling the corresponding parameter in the parameters dictionary.
 
-**`networks`** For controlling the Talos present network architectures (`dense`, `lstm`, `bidirectional_lstm`, `conv1d`, and `simplernn`). NOTE: the use of preset networks requires the use of the input model from `AutoModel()` for `Scan()`. 
+**`networks`** For controlling the Talos present network architectures (`dense`, `lstm`, `bidirectional_lstm`, `conv1d`, and `simplernn`). NOTE: the use of preset networks requires the use of the input model from `AutoModel()` for `Scan()`.
 
 **`neurons`** For controlling the corresponding parameter (i.e. `first_neuron`) in the parameters dictionary.
 

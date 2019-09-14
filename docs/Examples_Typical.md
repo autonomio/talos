@@ -67,7 +67,7 @@ Note that the parameter dictionary allows either list of values, or tuples with 
 
 ### Scan()
 ```python
-scan_object = talos.Scan(x, y, model=iris_model, params=p, fraction_limit=0.001)
+scan_object = talos.Scan(x, y, model=iris_model, params=p, fraction_limit=0.1)
 ```
 
 `Scan()` always needs to have `x`, `y`, `model`, and `params` arguments declared. Find the description for all `Scan()` arguments [here](Scan.md#scan-arguments).
