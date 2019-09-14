@@ -1,6 +1,6 @@
 ![logo](_media/talos_logo_bg.png)
 
-## v.0.6.3
+## v.0.6.4
 
 > Hyperparameter Scanning for Keras and Tensorflow
 
