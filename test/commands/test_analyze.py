@@ -25,7 +25,7 @@ def test_analyze(scan_object):
     r.high('val_acc')
     r.low('val_acc')
 
-    r.plot_bars('first_neuron', 'val_acc', 'dropout', 'hidden_layers')
+    # r.plot_bars('first_neuron', 'val_acc', 'dropout', 'hidden_layers')
     r.plot_box('first_neuron', 'val_acc')
     r.plot_corr('val_loss', ['val_acc'])
     r.plot_hist('val_acc')
