@@ -34,8 +34,8 @@ jobs:
       run: |
         export MPLBACKEND=agg
         pip install tensorflow
-        python test_script.py    
+        pip install coveralls
+        coverage run --source=talos test_script.py  
     - name: Coverage
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.github_token }}
+      run: |
+        coveralls
