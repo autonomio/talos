@@ -3,13 +3,12 @@ def test_rest(scan_object):
     print('\n >>> start testing the rest... \n')
 
     import talos
-    import random
 
     print('\n ...Deploy()... \n')
-    talos.Deploy(scan_object, 'testing_deploy', 'val_acc')
+    talos.Deploy(scan_object, 'test_deploy', 'val_acc')
 
     print('\n ...Restore()... \n')
-    talos.Restore('testing_deploy' + '.zip')
+    talos.Restore('test_deploy' + '.zip')
 
     x, y = talos.templates.datasets.breast_cancer()
     x = x[:50]
