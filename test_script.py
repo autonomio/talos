@@ -2,7 +2,6 @@
 
 if __name__ == '__main__':
 
-    import talos
     from test.commands import *
 
     test_latest()

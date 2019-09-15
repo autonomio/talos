@@ -15,6 +15,5 @@ def test_lr_normalizer():
         lr_normalizer(1, bad_optimizer)
     except TalosModelError:
         print('Invalid model optimizer caught successfully!')
-        pass
     else:
         print('Invalid (string) model optimizer type not caught.')

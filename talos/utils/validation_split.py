@@ -33,10 +33,12 @@ def random_shuffle(self):
 
     def randomize(x):
 
-        import numpy as np
+        '''
+        Helper function to support the case
+        where x consist of a list of arrays.
+        '''
 
-        '''Helper function to support the case
-        where x consist of a list of arrays.'''
+        import numpy as np
 
         if self.seed is not None:
             np.random.seed(self.seed)
@@ -78,7 +80,7 @@ def kfold(x, y, folds=10, shuffled=True):
     lo = 0
     hi = step
 
-    for i in range(folds):
+    for _i in range(folds):
         out_x.append(x[lo:hi])
         out_y.append(y[lo:hi])
 

@@ -93,22 +93,26 @@ class AutoParams:
         else:
             self._append_params('shapes', shapes)
 
-    def shapes_slope(self, min=0, max=.6, steps=.1):
+    def shapes_slope(self, min_slope=0, max_slope=.6, steps=.1):
 
         '''Uses a single decimal float for values below 0.5 to
         reduce the width of the following layer.'''
 
-        self._append_params('shapes', np.arange(min, max, steps).tolist())
+        self._append_params('shapes', np.arange(min_slope,
+                                                max_slope,
+                                                steps).tolist())
 
     def layers(self, min_layers=0, max_layers=6, steps=1):
 
         self._append_params('hidden_layers',
                             list(range(min_layers, max_layers, steps)))
 
-    def dropout(self, min=0, max=.85, steps=0.1):
+    def dropout(self, min_dropout=0, max_dropout=.85, steps=0.1):
 
         self._append_params('dropout',
-                            np.round(np.arange(min, max, steps), 2).tolist())
+                            np.round(np.arange(min_dropout,
+                                               max_dropout,
+                                               steps), 2).tolist())
 
     def optimizers(self, optimizers='auto'):
 
@@ -158,7 +162,7 @@ class AutoParams:
 
         self._append_params('first_neuron', values)
 
-    def batch_size(self, min=8, max=None, steps=None):
+    def batch_size(self, min_size=8, max_size=None, steps=None):
 
         '''`max` and `steps` has to be either `None` or
         integer value at the same time.'''
@@ -166,11 +170,11 @@ class AutoParams:
         if max is None and steps is None:
             values = [int(np.exp2(i/2)) for i in range(3, 15)]
         else:
-            values = list(range(min, max, steps))
+            values = list(range(min_size, max_size, steps))
 
         self._append_params('batch_size', values)
 
-    def epochs(self, min=50, max=None, steps=None):
+    def epochs(self, min_epochs=50, max_epochs=None, steps=None):
 
         '''`max` and `steps` has to be either `None` or
         integer value at the same time.'''
@@ -178,7 +182,7 @@ class AutoParams:
         if max is None and steps is None:
             values = [int(np.exp2(i/2))+50 for i in range(3, 15)]
         else:
-            values = list(range(min, max, steps))
+            values = list(range(min_epochs, max_epochs, steps))
 
         self._append_params('epochs', values)
 
