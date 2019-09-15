@@ -1,3 +1,5 @@
+#!/bin/bash
+
 export MPLBACKEND=agg
 
 mprof run ./test/performance/memory_pressure.py
