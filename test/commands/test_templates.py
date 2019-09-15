@@ -34,6 +34,10 @@ def test_templates():
 
     x, y = talos.templates.datasets.icu_mortality(50)
     x, y = talos.templates.datasets.telco_churn(.3)
+    x, y, x1, y1 = talos.templates.datasets.mnist()
+    x, y = talos.templates.datasets.breast_cancer()
+    x, y = talos.templates.datasets.cervical_cancer()
+    x, y = talos.templates.datasets.titanic()
 
     talos.templates.pipelines.breast_cancer(random_method='quantum')
     talos.templates.pipelines.cervical_cancer(random_method='sobol')
