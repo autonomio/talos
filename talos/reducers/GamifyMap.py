@@ -38,8 +38,8 @@ class GamifyMap:
         for key in gamify_from_json:
             param_vals = {}
             for val in gamify_from_json[key]:
-                param_vals[g.gamify_map[key][val][1]] = gamify_from_json[key][val][:2]
-            gamify_dict[g.gamify_map[key][val][0]] = param_vals
+                param_vals[self.gamify_map[key][val][1]] = gamify_from_json[key][val][:2]
+            gamify_dict[self.gamify_map[key][val][0]] = param_vals
 
         return gamify_dict
 
