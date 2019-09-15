@@ -12,6 +12,9 @@ notifications:
 python:
  - '3.6'
 
+script:
+ - echo
+
 deploy:
   provider: pypi
   user: "mikkokotila"
