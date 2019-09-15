@@ -14,24 +14,28 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+    - name: Dependencies
       run: |
         export MPLBACKEND=agg
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Lint with flake8
+    - name: Style
       run: |
         pip install flake8
         # stop the build if there are Python syntax errors or undefined names
         flake8 . --count --select=E9,F63,F7 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Run Talos tests
+    - name: Tests
       run: |
         export MPLBACKEND=agg
         pip install tensorflow
-        python test_script.py
+        python test_script.py    
+    - name: Coverage
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.github_token }}
