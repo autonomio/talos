@@ -38,5 +38,4 @@ jobs:
         coverage run --source=talos ./test_script.py  
     - name: Coverage
       run: |
-        export COVERALLS_REPO_TOKEN=9ueK6WgqaUwjpOuQlUvJAdtZrDMKOkpwt
         coveralls
