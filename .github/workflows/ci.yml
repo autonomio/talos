@@ -33,4 +33,5 @@ jobs:
     - name: Run Talos tests
       run: |
         export MPLBACKEND=agg
+        pip install tensorflow
         python test_script.py
