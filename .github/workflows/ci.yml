@@ -37,5 +37,6 @@ jobs:
         pip install coveralls
         coverage run --source=talos ./test_script.py  
     - name: Coverage
-      run: |
-        coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.github_token }}
