@@ -150,15 +150,15 @@ class AutoParams:
         else:
             self._append_params('losses', losses)
 
-    def neurons(self, min=8, max=None, steps=None):
+    def neurons(self, min_neuron=8, max_neuron=None, steps=None):
 
         '''`max` and `steps` has to be either `None` or
         integer value at the same time.'''
 
-        if max is None and steps is None:
+        if max_neuron is None and steps is None:
             values = [int(np.exp2(i)) for i in range(3, 11)]
         else:
-            values = list(range(min, max, steps))
+            values = list(range(min_neuron, max_neuron, steps))
 
         self._append_params('first_neuron', values)
 
@@ -179,7 +179,7 @@ class AutoParams:
         '''`max_epochs` and `steps` has to be either `None` or
         integer value at the same time.'''
 
-        if max is None and steps is None:
+        if max_epochs is None and steps is None:
             values = [int(np.exp2(i/2))+50 for i in range(3, 15)]
         else:
             values = list(range(min_epochs, max_epochs, steps))
