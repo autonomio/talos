@@ -44,7 +44,7 @@ def test_autom8():
     x, y = wrangle.utils.create_synth_data('multi_label', 50, 10, 4)
     p.losses(['categorical_crossentropy'])
     auto = talos.autom8.AutoScan('multi_label', 'testingb', 1)
-    auto.start(x, y, params=p.params)
+    auto.start(x, y)
     talos.autom8.AutoPredict(scan_object, x, y, x, 'multi_label')
 
     x, y = wrangle.utils.create_synth_data('multi_class', 50, 10, 3)
