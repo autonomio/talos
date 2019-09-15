@@ -1,10 +1,10 @@
-name: Python package
+name: Build
 
 on: [push]
 
 jobs:
   build:
-    name: Test on python ${{ matrix.python-version }} and ${{ matrix.os }}
+    name: Python ${{ matrix.python-version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       max-parallel: 9
