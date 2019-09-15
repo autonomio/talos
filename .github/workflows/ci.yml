@@ -20,6 +20,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        export MPLBACKEND=agg
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Lint with flake8
