@@ -49,6 +49,7 @@ def titanic(round_limit=2, random_method='uniform_mersenne'):
                           ta.templates.params.titanic(),
                           ta.templates.models.titanic,
                           'test',
+                          random_method=random_method,
                           round_limit=round_limit)
 
     return scan_object
