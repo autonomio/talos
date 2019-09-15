@@ -34,4 +34,5 @@ jobs:
         pip install pytest
         pytest
     - name: Run Talos tests
+      run: |
         python test_script.py
