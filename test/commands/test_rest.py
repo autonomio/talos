@@ -4,11 +4,15 @@ def test_rest(scan_object):
 
     import talos
 
+    import random
+
+    deploy_filename = 'test' + str(random.randint(1, 20000000000))
+
     print('\n ...Deploy()... \n')
-    talos.Deploy(scan_object, 'test_deploy', 'val_acc')
+    talos.Deploy(scan_object, deploy_filename, 'val_acc')
 
     print('\n ...Restore()... \n')
-    talos.Restore('test_deploy' + '.zip')
+    talos.Restore(deploy_filename + '.zip')
 
     x, y = talos.templates.datasets.breast_cancer()
     x = x[:50]
