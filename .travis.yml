@@ -1,4 +1,10 @@
-dist: trusty
+os:
+ - linux
+ - osx
+ - windows
+dist:
+ - xenial
+ - bionic
 sudo: required
 before_install:
 language: python
