@@ -164,10 +164,10 @@ class AutoParams:
 
     def batch_size(self, min_size=8, max_size=None, steps=None):
 
-        '''`max` and `steps` has to be either `None` or
+        '''`max_size` and `steps` has to be either `None` or
         integer value at the same time.'''
 
-        if max is None and steps is None:
+        if max_size is None and steps is None:
             values = [int(np.exp2(i/2)) for i in range(3, 15)]
         else:
             values = list(range(min_size, max_size, steps))
@@ -176,7 +176,7 @@ class AutoParams:
 
     def epochs(self, min_epochs=50, max_epochs=None, steps=None):
 
-        '''`max` and `steps` has to be either `None` or
+        '''`max_epochs` and `steps` has to be either `None` or
         integer value at the same time.'''
 
         if max is None and steps is None:
