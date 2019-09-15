@@ -37,6 +37,7 @@ jobs:
         python test_script.py
     - name: Coverage
       run: |
+        export MPLBACKEND=agg
         pip install coverage
         coverage run --source=talos ./test_script.py
     
