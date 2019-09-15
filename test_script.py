@@ -12,6 +12,7 @@ if __name__ == '__main__':
     test_analyze(scan_object)
     test_random_methods()
     test_lr_normalizer()
+    test_reducers()
     test_rest(scan_object)
 
     print("\n All tests successfully completed :) Good work. \n ")

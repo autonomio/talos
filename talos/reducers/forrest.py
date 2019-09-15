@@ -41,4 +41,4 @@ def forrest(self):
     # this is where we modify the parameter space accordingly
     self.param_object.remove_is(label, value)
 
-    return value, label
+    return self
