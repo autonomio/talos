@@ -5,11 +5,13 @@ if __name__ == '__main__':
     from test.commands import *
 
     test_latest()
+    test_random_methods()
+
     test_autom8()
     test_templates()
     scan_object = test_scan()
     test_analyze(scan_object)
-    test_random_methods()
+
     test_lr_normalizer()
     test_predict()
     test_reducers()
