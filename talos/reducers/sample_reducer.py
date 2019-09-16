@@ -26,6 +26,8 @@ def sample_reducer(limit, max_value, random_method):
     if isinstance(limit, int):
         n = limit
 
+    max_value = int(max_value)
+
     # throw an error if
     from ..utils.exceptions import TalosDataError
     if n < 1:
