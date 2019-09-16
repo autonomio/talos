@@ -17,7 +17,8 @@ def test_random_methods():
                       'latin_improved',
                       'uniform_mersenne',
                       'uniform_crypto',
-                      'ambience']
+                      'ambience'
+                      ]
 
     for method in random_methods:
         talos.templates.pipelines.titanic(random_method=method)
