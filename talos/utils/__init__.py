@@ -11,5 +11,6 @@ import talos.metrics.keras_metrics as metrics
 from .sequence_generator import SequenceGenerator
 from .experiment_log_callback import ExperimentLogCallback
 from .torch_history import TorchHistory
+from wrangle import array_split as val_split
 
 del experiment_log_callback, sequence_generator
