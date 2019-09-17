@@ -91,7 +91,12 @@ def func_evaluate(scan_object,
 
     pbar.close()
 
-    scan_object.data['eval_f1score_mean'] = [i[0] for i in out]
-    scan_object.data['eval_f1score_std'] = [i[1] for i in out]
+    if task == 'continuous':
+        heading = 'eval_' + 'mae'
+    else:
+        heading = 'eval_' + 'f1score'
+
+    scan_object.data[heading + '_mean'] = [i[0] for i in out]
+    scan_object.data[heading + '_std'] = [i[1] for i in out]
 
     print(">> Added evaluation score columns to scan_object.data")
