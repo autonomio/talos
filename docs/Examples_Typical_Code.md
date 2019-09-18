@@ -33,3 +33,5 @@ p = {'activation':['relu', 'elu'],
 
 scan_object = ta.Scan(x, y, model=iris_model, params=p, fraction_limit=0.1)
 ```
+
+`Scan()` always needs to have `x`, `y`, `model`, and `params` arguments declared. Find the description for all `Scan()` arguments [here](Scan.md#scan-arguments).
