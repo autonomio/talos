@@ -15,7 +15,11 @@ def hidden_layers(model, params, last_neuron):
     with matching hyperparameters.'''
 
     # check for the params that are required for hidden_layers
-    for param in ['shapes', 'first_neuron', 'dropout', 'hidden_layers']:
+    for param in ['shapes',
+                  'first_neuron',
+                  'dropout',
+                  'hidden_layers',
+                  'activation']:
         if param not in params:
             raise TalosParamsError(
                 "hidden_layers requires '" + param + "' in params")
