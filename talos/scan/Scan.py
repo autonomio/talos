@@ -127,8 +127,6 @@ class Scan:
         on very large models and high number of rounds/permutations.
     """
 
-    global self
-
     def __init__(self,
                  x,
                  y,
@@ -193,9 +191,6 @@ class Scan:
         self.save_weights = save_weights
         # input parameters section ends
 
-        self._runtime()
-
-    def _runtime(self):
-
+        # start runtime
         from .scan_run import scan_run
-        self = scan_run(self)
+        scan_run(self)
