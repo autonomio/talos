@@ -47,7 +47,7 @@ Talos allows several options for testing network architectures as a parameter. `
 
     # alternates between two preset shapes
     p = {...
-         'shapes': ['brick', 'triangle'],
+         'shapes': ['brick', 'triangle', 'funnel'],
          ...}
 
     # a linear contraction of set value from input layer to output layer
