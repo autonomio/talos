@@ -43,10 +43,10 @@ TL;DR
 
 Talos radically transforms ordinary Keras workflows without taking away any of Keras.
 
-- works with ANY Keras model
-- takes minutes to implement
-- no new syntax to learn
-- adds zero new overhead to your workflow
+  - works with ANY Keras model
+  - takes minutes to implement
+  - no new syntax to learn
+  - adds zero new overhead to your workflow
 
 Talos is made for data scientists and data engineers that want to remain in **complete control of their Keras models**, but are tired of mindless parameter hopping and confusing optimization solutions that add complexity instead of reducing it. Within minutes, without learning any new syntax, Talos allows you to configure, perform, and evaluate hyperparameter optimization experiments that yield state-of-the-art results across a wide range of prediction tasks. Talos provides the **simplest and yet most powerful** available method for hyperparameter optimization with Keras.
 
@@ -56,19 +56,19 @@ Talos is made for data scientists and data engineers that want to remain in **co
 
 Based on what no doubt constitutes a "biased" review (being our own) of more than ~30 hyperparameter tuning and optimization solutions, Talos comes on top in terms of intuitive, easy-to-learn, highly permissive access to critical hyperparameter optimization capabilities. Key features include:
 
-- Single-line optimize-to-predict pipeline `talos.Scan(x, y, model, params).predict(x_test, y_test)`
-- Automated hyperparameter optimization
-- Model generalization evaluator
-- Experiment analytics
-- Pseudo, Quasi, and Quantum Random search options
-- Grid search
-- Probabilistic optimizers
-- Single file custom optimization strategies
-- Dynamically change optimization strategy during experiment
-- Support for man-machine cooperative optimization strategy
-- Model candidate generality evaluation
-- Live training monitor
-- Experiment analytics
+  - Single-line optimize-to-predict pipeline `talos.Scan(x, y, model, params).predict(x_test, y_test)`
+  - Automated hyperparameter optimization
+  - Model generalization evaluator
+  - Experiment analytics
+  - Pseudo, Quasi, and Quantum Random search options
+  - Grid search
+  - Probabilistic optimizers
+  - Single file custom optimization strategies
+  - Dynamically change optimization strategy during experiment
+  - Support for man-machine cooperative optimization strategy
+  - Model candidate generality evaluation
+  - Live training monitor
+  - Experiment analytics
 
 Talos works on **Linux, Mac OSX**, and **Windows** systems and can be operated cpu, gpu, and multi-gpu systems.
 
@@ -118,12 +118,6 @@ Daily development version:
 | **...get support**            | [Stack Overflow] · [Spectrum Chat]                         |
 | **...have a discussion**      | [Spectrum Chat]                                            |
 
-[github issue tracker]: https://github.com/automio/talos/issues
-[docs]: https://autonomio.github.io/talos/
-[wiki]: https://github.com/autonomio/talos/wiki
-[stack overflow]: https://stackoverflow.com/questions/tagged/talos
-[spectrum chat]: https://spectrum.chat/talos
-
 <hr>
 
 ### 📢 Citations
@@ -137,3 +131,9 @@ If you use Talos for published work, please cite:
 ### 📃 License
 
 [MIT License](https://github.com/autonomio/talos/blob/master/LICENSE)
+
+[github issue tracker]: https://github.com/automio/talos/issues
+[docs]: https://autonomio.github.io/talos/
+[wiki]: https://github.com/autonomio/talos/wiki
+[stack overflow]: https://stackoverflow.com/questions/tagged/talos
+[spectrum chat]: https://spectrum.chat/talos
