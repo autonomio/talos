@@ -4,9 +4,14 @@
 
 ```python
 import talos
-import torch
+import numpy as np
 
-import pandas as pd
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch_optimizer import torch_optimizer
+
+from sklearn.metrics import f1_score
 
 # load the data
 x, y = talos.templates.datasets.breast_cancer()
@@ -20,16 +25,6 @@ x_val = torch.from_numpy(x_val).float()
 y_val = torch.from_numpy(y_val).long()
 
 def breast_cancer(x_train, y_train, x_val, y_val, params):
-
-    import torch.nn as nn
-    import torch.nn.functional as F
-
-    import numpy as np
-
-    from torch_optimizer import torch_optimizer
-
-    from sklearn.metrics import accuracy_score
-    from sklearn.metrics import f1_score
 
     # takes in a module and applies the specified weight initialization
     def weights_init_uniform_rule(m):
