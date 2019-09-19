@@ -1,14 +1,23 @@
-[BACK](Examples_PyTorch.md)
+# PyTorch
 
-# PyTorch Example
+This example highlights how Talos can be used with PyTorch models. The single-file example can be found [here](Examples_PyTorch_Code.md).
+
+### Imports
 
 ```python
 import talos
+import numpy as np
+
 import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch_optimizer import torch_optimizer
 
-import pandas as pd
+from sklearn.metrics import f1_score
+```
 
-# load the data
+### Loading Data
+```python
 x, y = talos.templates.datasets.breast_cancer()
 x = talos.utils.rescale_meanzero(x)
 x_train, y_train, x_val, y_val = talos.utils.val_split(x, y, .2)
@@ -18,18 +27,12 @@ x_train = torch.from_numpy(x_train).float()
 y_train = torch.from_numpy(y_train).long()
 x_val = torch.from_numpy(x_val).float()
 y_val = torch.from_numpy(y_val).long()
+```
+Unlike Keras, PyTorch expects the input data to be converted into tensors.
 
+### Defining the Model
+```python
 def breast_cancer(x_train, y_train, x_val, y_val, params):
-
-    import torch.nn as nn
-    import torch.nn.functional as F
-
-    import numpy as np
-
-    from torch_optimizer import torch_optimizer
-
-    from sklearn.metrics import accuracy_score
-    from sklearn.metrics import f1_score
 
     # takes in a module and applies the specified weight initialization
     def weights_init_uniform_rule(m):
@@ -108,15 +111,45 @@ def breast_cancer(x_train, y_train, x_val, y_val, params):
 
     # Get history object
     return net, net.parameters()
+```
+In order to unify `Scan()` API for Keras and PyTorch, a Keras-like history with epoch-by-epoch metrics is required. This is achieved with `talos.utils.TorchHistory` helper:
 
+```python
+class BreastCancerNet(nn.Module, talos.utils.TorchHistory):
+```
 
+In each iteration (epoch), metrics must be computed and then appended to the history object:
+
+```python
+# append history
+net.append_loss(loss.item())
+net.append_metric(metric)
+net.append_val_loss(val_loss.item())
+net.append_val_metric(val_metric)
+```
+
+Finally, the input model must return the history and the model itself:
+
+```python
+return net, net.parameters()
+```
+
+### Parameter Dictionary
+
+```python
 p = {'activation':['relu', 'elu'],
        'optimizer': ['Nadam', 'Adam'],
        'losses': ['logcosh'],
        'hidden_layers':[0, 1, 2],
        'batch_size': (20, 50, 5),
        'epochs': [10, 20]}
+```
+Note that the parameter dictionary allows either list of values, or tuples with range in the form `(min, max, step)`
 
+
+### Scan()
+
+```python
 scan_object = talos.Scan(x=x_train,
                          y=y_train,
                          x_val=x_val,
@@ -126,3 +159,5 @@ scan_object = talos.Scan(x=x_train,
                          experiment_name='breast_cancer',
                          round_limit=100)
 ```
+
+`Scan()` always needs to have `x`, `y`, `model`, and `params` arguments declared. Find the description for all `Scan()` arguments [here](Scan.md#scan-arguments).
