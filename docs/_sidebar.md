@@ -21,6 +21,7 @@
  - [Multiple inputs](Examples_Multiple_Inputs.md)
  - [Using a generator](Examples_Generator.md)
  - [AutoML](Examples_AutoML.md)
+ - [PyTorch](Examples_PyTorch.md)
 
 - Core Commands
 
