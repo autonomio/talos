@@ -1,15 +1,14 @@
 # first import things as you would usually
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
-from keras.optimizers import Adam, Nadam
 from keras.losses import categorical_crossentropy, logcosh
 from keras.activations import relu, elu, softmax
 
 # import talos
-import talos as ta
+import talos
 
 # load rthe iris dataset
-x, y = ta.datasets.iris()
+x, y = talos.datasets.iris()
 
 # then define the parameter boundaries
 
@@ -51,9 +50,8 @@ def iris_model(x_train, y_train, x_val, y_val, params):
 
 
 # and run the scan
-h = ta.Scan(x, y,
-            params=p,
-            dataset_name='first_test',
-            experiment_no='aaa',
-            model=iris_model,
-            grid_downsample=0.5)
+h = talos.Scan(x, y,
+               params=p,
+               experiment_name='first_test',
+               model=iris_model,
+               fraction_limit=0.5)
