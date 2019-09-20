@@ -2,7 +2,7 @@
 
 Thank you very much for taking the effort to contribute Talos. Below you will find some simple and mostly obvious guidelines on how to do it in the most valuable way.
 
-1. [Ways to Contribute](#ways-to-contribute)
+ 1. [Ways to Contribute](#ways-to-contribute)
 
     1.1. [Code](#code)
 
@@ -14,9 +14,9 @@ Thank you very much for taking the effort to contribute Talos. Below you will fi
 
     1.5. [Documentation](#documentation)
 
-    1.6. [Examples](#examples)
+  1.6. [Examples](#examples)
 
-2. [Important Precautions for Code Contributions](#precautions)
+ 2. [Important Precautions for Code Contributions](#precautions)
 
     2.1. [Planning](#code)
 
@@ -26,9 +26,9 @@ Thank you very much for taking the effort to contribute Talos. Below you will fi
 
     2.4. [Branch Management](#branch_management)
 
-3. [Pull Requests](#pull_requests)
+ 3. [Pull Requests](#pull_requests)
 
-4. [Specific Guidelines for Github](#github)
+ 4. [Specific Guidelines for Github](#github)
 
 ## 1. Ways to contribute <a name="ways-to-contribute"></a>
 
@@ -40,12 +40,12 @@ There are several ways programmers, data scientists and others can contribute to
 
 **AUTONOMIO DEV PHILOSOPHY**
 
-- Doing is more interesting than achieving
-- Having fun is more important than being productive
-- Code coverage can, and needs to be 100%
-- User docs are more important than new features
-- Testing is more important than building  
-- Creating great stuff takes long time
+  - Doing is more interesting than achieving
+  - Having fun is more important than being productive
+  - Code coverage can, and needs to be 100%
+  - User docs are more important than new features
+  - Testing is more important than building  
+  - Creating great stuff takes long time
 
 **CODING STYLE GUIDELINES**
 
@@ -55,25 +55,25 @@ We follow pep8. Because [reading docs](http://legacy.python.org/dev/peps/pep-000
 
 We also make the best effort in moving towards following pep20:
 
-- Beautiful is better than ugly
-- Explicit is better than implicit
-- Simple is better than complex
-- Complex is better than complicated
-- Flat is better than nested
-- Sparse is better than dense
-- Readability counts
-- Special cases aren't special enough to break the rules
-- Although practicality beats purity
-- Errors should never pass silently
-- Unless explicitly silenced
-- In the face of ambiguity, refuse the temptation to guess
-- There should be one-- and preferably only one --obvious way to do it
-- Although that way may not be obvious at first unless you're Dutch
-- Now is better than never
-- Although never is often better than right now
-- If the implementation is hard to explain, it's a bad idea
-- If the implementation is easy to explain, it may be a good idea
-- Namespaces are one honking great idea -- let's do more of those
+  - Beautiful is better than ugly
+  - Explicit is better than implicit
+  - Simple is better than complex
+  - Complex is better than complicated
+  - Flat is better than nested
+  - Sparse is better than dense
+  - Readability counts
+  - Special cases aren't special enough to break the rules
+  - Although practicality beats purity
+  - Errors should never pass silently
+  - Unless explicitly silenced
+  - In the face of ambiguity, refuse the temptation to guess
+  - There should be one-- and preferably only one --obvious way to do it
+  - Although that way may not be obvious at first unless you're Dutch
+  - Now is better than never
+  - Although never is often better than right now
+  - If the implementation is hard to explain, it's a bad idea
+  - If the implementation is easy to explain, it may be a good idea
+  - Namespaces are one honking great idea -- let's do more of those
 
 ##### 1.1.1. Contribute to Open Issues
 
@@ -176,21 +176,21 @@ If you've been assigned as a reviewer of a given pull request, unless you've bee
 
 The documentation should:
 
-- be easy to understand
-- develop together with code (when new functions are added docs are updated)
-- use code examples together with the descriptions
+  - be easy to understand
+  - develop together with code (when new functions are added docs are updated)
+  - use code examples together with the descriptions
 
 An example of a reasonable quality documentation [here](https://mikkokotila.github.io/slate/#introduction).
 
 ### 2.4. Branch Management <a name="branch_management"></a>
 
-- Nothing ever gets pushed directly to master
-- Merges to master should always be reviewed
-- Features are updated to personal branch and from there to dev
-- Once master is stable, it gets merged with production which updates pypi
-- New release is made from each production merge
-- Personal dev branches may be opened by repo members
-- Non-members should have a private fork
+  - Nothing ever gets pushed directly to master
+  - Merges to master should always be reviewed
+  - Features are updated to personal branch and from there to dev
+  - Once master is stable, it gets merged with production which updates pypi
+  - New release is made from each production merge
+  - Personal dev branches may be opened by repo members
+  - Non-members should have a private fork
 
 
 #### 3. Pull Requests <a name="pull_requests"></a>
