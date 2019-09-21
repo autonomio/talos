@@ -1,8 +1,3 @@
-from keras.layers import Dense, Dropout
-from .network_shape import network_shape
-from ..utils.exceptions import TalosParamsError
-
-
 def hidden_layers(model, params, last_neuron):
     '''HIDDEN LAYER Generator
 
@@ -15,16 +10,20 @@ def hidden_layers(model, params, last_neuron):
     with matching hyperparameters.'''
 
     # check for the params that are required for hidden_layers
-    for param in ['shapes',
-                  'first_neuron',
-                  'dropout',
-                  'hidden_layers',
-                  'activation']:
+
+    from keras.layers import Dense, Dropout
+    from .network_shape import network_shape
+    from ..utils.exceptions import TalosParamsError
+
+    required = ['shapes', 'first_neuron', 'dropout', 'hidden_layers', 'activation']
+    for param in required:
         if param not in params:
-            raise TalosParamsError(
-                "hidden_layers requires '" + param + "' in params")
+            message = "hidden_layers requires '" + param + "' in params"
+            raise TalosParamsError(message)
 
     layer_neurons = network_shape(params, last_neuron)
+
+    print(layer_neurons)
 
     for i in range(params['hidden_layers']):
         model.add(Dense(

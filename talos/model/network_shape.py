@@ -1,6 +1,3 @@
-import numpy as np
-
-
 def network_shape(params, last_neuron):
 
     '''Provides the ability to include network shape in experiments. If params
@@ -16,6 +13,8 @@ def network_shape(params, last_neuron):
     last_neuron : int
          Number of neurons on the output layer in the Keras model.
     '''
+    import numpy as np
+    from ..utils.exceptions import TalosParamsError
 
     layers = params['hidden_layers']
     shape = params['shapes']
@@ -54,8 +53,13 @@ def network_shape(params, last_neuron):
                           last_neuron,
                           layers+2,
                           dtype=int).tolist()
+
         out.pop(0)
         out.pop(-1)
         out.reverse()
+
+    else:
+        message = "'shapes' must be float or in ['funnel', 'brick', 'triangle']"
+        raise TalosParamsError(message)
 
     return out
