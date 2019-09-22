@@ -12,7 +12,7 @@ def test_rest(scan_object):
     talos.Deploy(scan_object, deploy_filename, 'val_acc')
 
     print('\n ...Restore()... \n')
-    talos.Restore(deploy_filename + '.zip')
+    restored = talos.Restore(deploy_filename + '.zip')
 
     x, y = talos.templates.datasets.breast_cancer()
     x = x[:50]
@@ -70,4 +70,9 @@ def test_rest(scan_object):
     talos.utils.gpu_utils.force_cpu()
     talos.utils.gpu_utils.parallel_gpu_jobs()
 
-    print('finised testing the rest \n')
+    print('\n ...gpu_utils... \n')
+
+    from talos.utils.test_utils import create_param_space
+    create_param_space(restored.results, 5)
+
+    print('finished testing the rest \n')
