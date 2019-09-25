@@ -13,5 +13,7 @@ from .rescale_meanzero import rescale_meanzero
 from .experiment_log_callback import ExperimentLogCallback
 from .torch_history import TorchHistory
 from wrangle import array_split as val_split
+from power_draw_callback import PowerDrawCallback
+from power_draw_append import power_draw_append
 
 del experiment_log_callback, sequence_generator
