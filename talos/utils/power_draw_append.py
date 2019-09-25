@@ -6,7 +6,8 @@ def power_draw_append(history, power_draw):
     import numpy as np
 
     joined = power_draw.log['epoch_begin'] + power_draw.log['epoch_end']
-    avg_watts = (np.array(joined)) / 2
+    sums = np.array(power_draw.log['epoch_begin']) + np.array(power_draw.log['epoch_end'])
+    avg_watts = sums / 2
 
     history.history['watts_min'] = [min(joined)]
     history.history['watts_max'] = [max(joined)]
