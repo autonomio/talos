@@ -15,5 +15,6 @@ from .torch_history import TorchHistory
 from wrangle import array_split as val_split
 from .power_draw_callback import PowerDrawCallback
 from .power_draw_append import power_draw_append
+from .recover_best_model import recover_best_model
 
 del experiment_log_callback, sequence_generator
