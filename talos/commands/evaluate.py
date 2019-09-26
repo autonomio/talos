@@ -77,8 +77,6 @@ class Evaluate:
 
             elif task == 'multi_class':
                 y_pred = y_pred.argmax(axis=-1)
-                print(y_pred)
-                print(ky[i])
                 scores = sk.metrics.f1_score(y_pred, ky[i], average='macro')
 
             if task == 'multi_label':
