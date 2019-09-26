@@ -23,8 +23,6 @@ def hidden_layers(model, params, last_neuron):
 
     layer_neurons = network_shape(params, last_neuron)
 
-    print(layer_neurons)
-
     for i in range(params['hidden_layers']):
         model.add(Dense(
             layer_neurons[i],
