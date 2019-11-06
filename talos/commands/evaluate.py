@@ -72,7 +72,7 @@ class Evaluate:
             y_pred = model.predict(kx[i], verbose=0)
 
             if task == 'binary':
-                y_pred = y_pred >= .5
+                y_pred = np.array(y_pred) >= .5
                 scores = sk.metrics.f1_score(y_pred, ky[i], average='binary')
 
             elif task == 'multi_class':
