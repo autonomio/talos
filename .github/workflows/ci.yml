@@ -9,8 +9,8 @@ jobs:
     strategy:
       max-parallel: 9
       matrix:
-        python-version: [3.5, 3.6, 3.7]
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: [3.6, 3.7]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
     - uses: actions/checkout@v1
@@ -33,7 +33,7 @@ jobs:
     - name: Tests
       run: |
         export MPLBACKEND=agg
-        pip install tensorflow
+        pip install tensorflow==1.15.0
         pip install coveralls
         coverage run --source=talos ./test_script.py
     - name: Coverage
