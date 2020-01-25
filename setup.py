@@ -24,10 +24,12 @@ try:
 except ImportError:
     from distutils.core import setup
 
-install_requires = ['wrangle',
+install_requires = ['statsmodels>=0.11.0',
+                    'wrangle',
                     'numpy',
                     'pandas',
-                    'keras',
+                    'tensorflow<=1.5.0',
+                    'keras==2.3.0',
                     'astetik',
                     'sklearn',
                     'tqdm',
