@@ -16,7 +16,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://autonom.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/autonomio/talos/'
-VERSION = '0.6.6'
+VERSION = '0.6.7'
 
 try:
     from setuptools import setup
@@ -25,7 +25,7 @@ except ImportError:
     from distutils.core import setup
 
 install_requires = ['statsmodels>=0.11.0',
-                    'wrangle',
+                    'wrangle>=0.6.7',
                     'numpy',
                     'pandas',
                     'tensorflow==1.14.0',
