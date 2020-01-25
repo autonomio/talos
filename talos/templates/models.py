@@ -1,7 +1,7 @@
 def breast_cancer(x_train, y_train, x_val, y_val, params):
 
-    from keras.models import Sequential
-    from keras.layers import Dropout, Dense
+    from tensorflow.keras.models import Sequential
+    from tensorflow.keras.layers import Dropout, Dense
     from talos.model import lr_normalizer, early_stopper, hidden_layers
 
     from talos.metrics.keras_metrics import matthews, precision, recall, f1score
@@ -41,8 +41,8 @@ def breast_cancer(x_train, y_train, x_val, y_val, params):
 
 def cervical_cancer(x_train, y_train, x_val, y_val, params):
 
-    from keras.models import Sequential
-    from keras.layers import Dropout, Dense
+    from tensorflow.keras.models import Sequential
+    from tensorflow.keras.layers import Dropout, Dense
     from talos.model import lr_normalizer, early_stopper, hidden_layers
 
     from talos.metrics.keras_metrics import matthews, precision, recall, f1score
@@ -82,8 +82,8 @@ def cervical_cancer(x_train, y_train, x_val, y_val, params):
 
 def titanic(x_train, y_train, x_val, y_val, params):
 
-    from keras.models import Sequential
-    from keras.layers import Dropout, Dense
+    from tensorflow.keras.models import Sequential
+    from tensorflow.keras.layers import Dropout, Dense
 
     # note how instead of passing the value, we pass a dictionary entry
     model = Sequential()
@@ -114,8 +114,8 @@ def titanic(x_train, y_train, x_val, y_val, params):
 
 def iris(x_train, y_train, x_val, y_val, params):
 
-    from keras.models import Sequential
-    from keras.layers import Dropout, Dense
+    from tensorflow.keras.models import Sequential
+    from tensorflow.keras.layers import Dropout, Dense
     from talos.model import lr_normalizer, early_stopper, hidden_layers
 
     # note how instead of passing the value, we pass a dictionary entry

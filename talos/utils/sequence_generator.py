@@ -1,4 +1,4 @@
-from keras.utils import Sequence
+from tensorflow.keras.utils import Sequence
 
 
 class SequenceGenerator(Sequence):

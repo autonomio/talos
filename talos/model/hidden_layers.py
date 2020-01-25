@@ -11,7 +11,7 @@ def hidden_layers(model, params, last_neuron):
 
     # check for the params that are required for hidden_layers
 
-    from keras.layers import Dense, Dropout
+    from tensorflow.keras.layers import Dense, Dropout
     from .network_shape import network_shape
     from ..utils.exceptions import TalosParamsError
 

@@ -6,8 +6,8 @@ This example highlights a typical and rather simple example of Talos experiment,
 
 ```python
 import talos
-from keras.models import Sequential
-from keras.layers import Dense
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
 ```
 
 ### Loading Data

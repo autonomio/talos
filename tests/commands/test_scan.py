@@ -4,11 +4,11 @@ def test_scan():
 
     import talos
 
-    from keras.losses import binary_crossentropy
-    from keras.optimizers import Adam
-    from keras.activations import relu, elu
-    from keras.layers import Dense
-    from keras.models import Sequential
+    from tensorflow.keras.losses import binary_crossentropy
+    from tensorflow.keras.optimizers import Adam
+    from tensorflow.keras.activations import relu, elu
+    from tensorflow.keras.layers import Dense
+    from tensorflow.keras.models import Sequential
 
     p = {'activation': [relu, elu],
          'optimizer': ['Nadam', Adam],
@@ -53,7 +53,7 @@ def test_scan():
                              y=y,
                              params=p,
                              model=iris_model,
-                             experiment_name='testingq',
+                             experiment_name='test_q',
                              val_split=0.3,
                              random_method='uniform_mersenne',
                              round_limit=15,
@@ -78,7 +78,7 @@ def test_scan():
                y_val=y,
                params=p,
                model=iris_model,
-               experiment_name='iris_test',
+               experiment_name='test_iris',
                fraction_limit=.05)
 
     # config invoked
@@ -86,7 +86,7 @@ def test_scan():
                y=y,
                params=p,
                model=iris_model,
-               experiment_name="testing2",
+               experiment_name="test_2",
                x_val=x,
                y_val=y,
                random_method='latin_suduko',
@@ -101,7 +101,7 @@ def test_scan():
                y=y,
                params=p,
                model=iris_model,
-               experiment_name="testing3",
+               experiment_name="test_3",
                x_val=None,
                y_val=None,
                val_split=0.3,

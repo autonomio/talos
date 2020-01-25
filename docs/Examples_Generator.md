@@ -10,8 +10,8 @@ The single-file code example can be found [here](Examples_Generator_Code.md).
 import talos
 from talos.utils import SequenceGenerator
 
-from keras.models import Sequential
-from keras.layers import Dense, Conv2D, Flatten, Dropout
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout
 ```
 NOTE: In this example we will be using the `SequenceGenerator()` available in Talos.
 

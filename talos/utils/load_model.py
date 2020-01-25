@@ -1,4 +1,4 @@
-from keras.models import model_from_json
+from tensorflow.keras.models import model_from_json
 
 
 def load_model(saved_model):

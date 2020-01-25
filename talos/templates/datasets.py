@@ -80,7 +80,7 @@ def titanic():
 def iris():
 
     import pandas as pd
-    from keras.utils import to_categorical
+    from tensorflow.keras.utils import to_categorical
     base = 'https://raw.githubusercontent.com/autonomio/datasets/master/autonomio-datasets/'
     df = pd.read_csv(base + 'iris.csv')
     df['species'] = df['species'].factorize()[0]

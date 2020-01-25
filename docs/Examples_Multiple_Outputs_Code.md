@@ -6,8 +6,8 @@
 import talos
 import wrangle
 
-from keras.layers import Input, Dense, Dropout
-from keras.models import Model
+from tensorflow.keras.layers import Input, Dense, Dropout
+from tensorflow.keras.models import Model
 
 x, y = talos.templates.datasets.telco_churn()
 

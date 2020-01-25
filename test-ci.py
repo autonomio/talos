@@ -2,7 +2,7 @@
 
 if __name__ == '__main__':
 
-    from test.commands import *
+    from tests.commands import *
 
     test_latest()
     test_random_methods()

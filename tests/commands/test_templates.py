@@ -9,28 +9,28 @@ def test_templates():
     y = y[:50]
     model = talos.templates.models.titanic
     p = talos.templates.params.titanic()
-    talos.Scan(x, y, p, model, 'test', round_limit=2)
+    talos.Scan(x, y, p, model, 'test_', round_limit=2)
 
     x, y = talos.templates.datasets.iris()
     x = x[:50]
     y = y[:50]
     model = talos.templates.models.iris
     p = talos.templates.params.iris()
-    talos.Scan(x, y, p, model, 'test', round_limit=2)
+    talos.Scan(x, y, p, model, 'test_', round_limit=2)
 
     x, y = talos.templates.datasets.cervical_cancer()
     x = x[:50]
     y = y[:50]
     model = talos.templates.models.cervical_cancer
     p = talos.templates.params.cervical_cancer()
-    talos.Scan(x, y, p, model, 'test', round_limit=2)
+    talos.Scan(x, y, p, model, 'test_', round_limit=2)
 
     x, y = talos.templates.datasets.breast_cancer()
     x = x[:50]
     y = y[:50]
     model = talos.templates.models.breast_cancer
     p = talos.templates.params.breast_cancer()
-    talos.Scan(x, y, p, model, 'test', round_limit=2)
+    talos.Scan(x, y, p, model, 'test_', round_limit=2)
 
     x, y = talos.templates.datasets.icu_mortality(50)
     x, y = talos.templates.datasets.telco_churn(.3)
