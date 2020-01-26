@@ -73,6 +73,8 @@ def test_rest(scan_object):
     print('\n ...gpu_utils... \n')
 
     from talos.utils.test_utils import create_param_space
-    create_param_space(restored.results, 5)
+    create_param_space(restored.results, 8)
+
+
 
     print('finished testing the rest \n')

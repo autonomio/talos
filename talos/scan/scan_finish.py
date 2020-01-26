@@ -67,4 +67,7 @@ def scan_finish(self):
     # reset the index
     self.data.index = range(len(self.data))
 
+    # add the timings
+    self.data = self.round_times.merge(self.data, left_index=True, right_index=True)
+
     return self
