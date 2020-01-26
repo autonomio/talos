@@ -1,10 +1,10 @@
 ![logo](_media/talos_logo_bg.png)
 
-## v.0.6.4
+## v1.0
 
-> Hyperparameter Scanning for Keras and Tensorflow
+> Hyperparameter Experiments with Tensorflow, PyTorch and Keras
 
 [GitHub](https://github.com/autonomio/talos/)
-[Getting Started](#talos)
+[Getting Started](https://autonomio.github.io/talos/#/README?id=quick-start)
 
 ![color](#f0f0f0)

@@ -5,7 +5,7 @@ def test_scan():
     import talos
 
     from tensorflow.keras.losses import binary_crossentropy
-    from tensorflow.keras.optimizers import Adam
+    from tensorflow.keras.optimizers import Adam, Nadam
     from tensorflow.keras.activations import relu, elu
     from tensorflow.keras.layers import Dense
     from tensorflow.keras.models import Sequential
@@ -49,9 +49,19 @@ def test_scan():
 
     x, y = talos.templates.datasets.iris()
 
+    p_for_q = {'activation':['relu', 'elu'],
+               'optimizer': ['Nadam', 'Adam'],
+               'losses': ['logcosh'],
+               'shapes': ['brick'],
+               'first_neuron': [16, 32, 64, 128],
+               'hidden_layers':[0, 1, 2, 3],
+               'dropout': [.2, .3, .4],
+               'batch_size': [20, 30, 40, 50],
+               'epochs': [10]}
+
     scan_object = talos.Scan(x=x,
                              y=y,
-                             params=p,
+                             params=p_for_q,
                              model=iris_model,
                              experiment_name='test_q',
                              val_split=0.3,
@@ -62,9 +72,8 @@ def test_scan():
                              reduction_window=9,
                              reduction_threshold=0.01,
                              reduction_metric='val_acc',
-                             minimize_loss=False,
-                             boolean_limit=lambda p: p['first_neuron'] * p['hidden_layers'] < 220
-                             )
+                             minimize_loss=False)
+
 
     x = x[:50]
     y = y[:50]
@@ -110,14 +119,15 @@ def test_scan():
                performance_target=['val_acc', 0.1, False],
                fraction_limit=None,
                time_limit="2099-09-09 09:09",
-               boolean_limit=None,
                reduction_method='spearman',
                reduction_interval=2,
                reduction_window=2,
                reduction_threshold=0.2,
                reduction_metric='loss',
                minimize_loss=True,
-               clear_session=False)
+               clear_session=False,
+               boolean_limit=lambda p: p['first_neuron'] * p['hidden_layers'] < 220
+               )
 
     print('finised Scan() \n')
 

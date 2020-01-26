@@ -134,7 +134,7 @@ def iris(x_train, y_train, x_val, y_val, params):
     model.add(Dense(y_train.shape[1],
                     activation=params['last_activation']))
 
-    # here are using a learning rate boundary
+    # using a learning rate boundary
     model.compile(optimizer=params['optimizer']
                   (lr=lr_normalizer(params['lr'],
                                     params['optimizer'])),

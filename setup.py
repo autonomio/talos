@@ -27,7 +27,7 @@ except ImportError:
     from distutils.core import setup
 
 install_requires = ['tensorflow>=2.0.0',
-                    'statsmodels==0.11.0',
+                    'statsmodels>=0.11.0',
                     'wrangle',
                     'numpy',
                     'pandas',
