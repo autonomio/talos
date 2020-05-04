@@ -3,9 +3,11 @@ import inspect
 import numpy as np
 import itertools as it
 from datetime import datetime
+from yamlable import yaml_info, YamlAble
 
 
-class ParamSpace:
+@yaml_info(yaml_tag_ns="com.talos.parameters")
+class ParamSpace(YamlAble):
 
     def __init__(self,
                  params,
@@ -252,3 +254,38 @@ class ParamSpace:
         index = self._convert_lambda(function)(self.param_space)
         self.param_space = self.param_space[index]
         self.param_index = list(range(len(self.param_space)))
+
+    def write_to_file(self, filename: str):
+
+        '''Writes all ParamSpace attributes to a YAML file'''
+
+        from yaml import safe_dump as dump
+        with open(filename, 'w') as file_object:
+            dump(self.__dict__, file_object, default_flow_style=False)
+
+    def read_from_file(self, filename: str):
+
+        '''Reads all ParamSpace attributes from a YAML file'''
+
+        from yaml import safe_load as load
+        with open(filename) as file_object:
+            params = load(file_object)
+        for key, val in params.items():
+            self.__dict__[key] = val
+
+    @classmethod
+    def __from_yaml_dict__(cls, dct, yaml_tag):
+        param_object = ParamSpace(
+            dct['params'],
+            dct['param_keys'],
+            dct['random_method'],
+            dct['fraction_limit'],
+            dct['round_limit'],
+            dct['time_limit'],
+            dct['boolean_limit'],
+        )
+        param_object.dimensions = dct['dimensions']
+        param_object.param_space = dct['param_space']
+        param_object.param_index = dct['param_index']
+        return param_object
+        

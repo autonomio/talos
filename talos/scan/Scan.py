@@ -125,6 +125,12 @@ class Scan:
         If set to False, then model weights will not be saved and best_model
         and some other features will not work. Will reduce memory pressure
         on very large models and high number of rounds/permutations.
+    allow_resume : bool
+        If set to True, executing Scan() several times with the same
+        experiment_name will append results to the experiment log. This is
+        especially useful on machines that are prone to crashes. Note that
+        this will not keep track of the parameter space (yet) and the user
+        should be careful when choosing parameters for the parameter space.
     """
 
     def __init__(self,
@@ -152,7 +158,8 @@ class Scan:
                  disable_progress_bar=False,
                  print_params=False,
                  clear_session=True,
-                 save_weights=True):
+                 save_weights=True,
+                 allow_resume=False):
 
         self.x = x
         self.y = y
@@ -189,6 +196,7 @@ class Scan:
         # performance
         self.clear_session = clear_session
         self.save_weights = save_weights
+        self.allow_resume = allow_resume
         # input parameters section ends
 
         # start runtime
