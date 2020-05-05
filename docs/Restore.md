@@ -1,7 +1,7 @@
 # Restore()
 
 The `Deploy()` .zip package can be read back into a copy of the original experiment assets with `Restore()`.
-å
+
 ```python
 from talos import Restore
 
