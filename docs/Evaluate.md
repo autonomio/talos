@@ -24,6 +24,7 @@ Parameter | Default | Description
 --------- | ------- | -----------
 `x` | NA | the predictor data x
 `y` | NA | the prediction data y (truth)
+`task`| NA | One of the following strings: 'binary', 'multi_class', 'multi_label', or 'continuous'.
 `model_id` | None | the model_id to be used
 `folds` | None | number of folds to be used for cross-validation
 `shuffle` | None | if data is shuffled before splitting
