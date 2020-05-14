@@ -2,7 +2,7 @@ def scan_run(self):
 
     '''The high-level management of the scan procedures
     onwards from preparation. Manages round_run()'''
-
+    # pylint: disable=protected-access,import-outside-toplevel
     import yaml
     import pickle
     from os.path import isfile

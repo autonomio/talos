@@ -2,6 +2,7 @@ def initialize_log(self):
     """
     Create a log file and return the file path
     """
+    # pylint: disable=protected-access
     import time
     import os
     from re import search
@@ -17,8 +18,8 @@ def initialize_log(self):
         (match := search(r"\.csv$", file))
         for file in os.listdir("./" + self.experiment_name)
     ):
-        self._experiment_id = match.string # pylint: disable=undefined-variable
-        _file_name = self._experiment_id + ".csv"
+        _file_name = match.string  # pylint: disable=undefined-variable
+        self._experiment_id = _file_name.replace(".csv", "")
         _experiment_log = "./" + self.experiment_name + "/" + _file_name
     else:
         self._experiment_id = time.strftime("%D%H%M%S").replace("/", "")
@@ -36,6 +37,7 @@ def initialize_config(self) -> str:
     """
     Construct and return a config file path
     """
+    # pylint: disable=protected-access
     import time
     import os
     from re import search
@@ -67,10 +69,12 @@ def initialize_config(self) -> str:
 
     return _config_file
 
+
 def initialize_pickle(self) -> str:
     """
     Construct and return a pickle file path
     """
+    # pylint: disable=protected-access
     import time
     import os
     from re import search

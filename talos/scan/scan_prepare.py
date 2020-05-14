@@ -2,23 +2,20 @@ def scan_prepare(self):
 
     '''Includes all preparation procedures up until starting the first scan
     through scan_run()'''
-
+    # pylint: disable=protected-access,import-outside-toplevel
     from .scan_utils import initialize_log, initialize_config, initialize_pickle
 
     self._experiment_log = initialize_log(self)
     if self.allow_resume:
         self._config_file = initialize_config(self)
-        self._keys_file = self._config_file.replace('yaml','keys.yaml')
+        self._keys_file = self._config_file.replace('yaml', 'keys.yaml')
         self._pickle_file = initialize_pickle(self)
 
     # for the case where x_val or y_val is missing when other is present
     self.custom_val_split = False
-    if (self.x_val is not None and self.y_val is None) or \
-       (self.x_val is None and self.y_val is not None):
+    if not all([self.x_val, self.y_val]):
         raise RuntimeError("If x_val/y_val is inputted, other must as well.")
-
-    elif self.x_val is not None and self.y_val is not None:
-        self.custom_val_split = True
+    self.custom_val_split = True
 
     # create reference for parameter keys
     self._param_dict_keys = sorted(list(self.params.keys()))
