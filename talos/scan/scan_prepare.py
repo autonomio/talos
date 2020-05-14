@@ -12,10 +12,13 @@ def scan_prepare(self):
         self._pickle_file = initialize_pickle(self)
 
     # for the case where x_val or y_val is missing when other is present
-    self.custom_val_split = False
-    if not all([self.x_val, self.y_val]):
+    # XOR: if only one is truthy, raise Error, if both are truthy or falsy, continue
+    if bool(self.x_val) ^ bool(self.y_val):
         raise RuntimeError("If x_val/y_val is inputted, other must as well.")
-    self.custom_val_split = True
+    if all([self.x_val, self.y_val]):
+        self.custom_val_split = True
+    else:
+        self.custom_val_split = False
 
     # create reference for parameter keys
     self._param_dict_keys = sorted(list(self.params.keys()))
