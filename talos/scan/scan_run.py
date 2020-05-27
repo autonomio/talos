@@ -12,13 +12,16 @@ def scan_run(self):
     self = scan_prepare(self)
 
     # initiate the progress bar
-    if self.allow_resume:
-        self.pbar = tqdm(total=max(self.param_object.param_index)+1,
-                         disable=self.disable_progress_bar,
-                         initial=self.param_object.param_index[0])
-    else:
+    if not self.allow_resume:
         self.pbar = tqdm(total=len(self.param_object.param_index),
-                         disable=self.disable_progress_bar)
+                        disable=self.disable_progress_bar)
+    else:
+        try:
+            self.pbar = tqdm(total=max(self.param_object.param_index)+1,
+                                disable=self.disable_progress_bar,
+                                initial=self.param_object.param_index[0])
+        except ValueError:
+            self.pbar = tqdm(total=0, desc="Already finished!")
 
     # the main cycle of the experiment
     while True:
