@@ -22,6 +22,10 @@ def validation_split(self):
         self.x_val = self.x[limit:]
         self.y_val = self.y[limit:]
 
+        if self.sample_weight is not None:
+            self.sample_weight_train = self.sample_weight[:limit]
+            self.sample_weight_val = self.sample_weight[limit:]
+
     return self
 
 
@@ -62,6 +66,8 @@ def random_shuffle(self):
         self.x = self.x[ix]
 
     self.y = self.y[ix]
+    if self.sample_weight is not None:
+        self.sample_weight = self.sample_weight[ix]
 
 
 def kfold(x, y, folds=10, shuffled=True):
