@@ -22,6 +22,7 @@ Argument | Input | Description
 `experiment_name` | str | Used for creating the experiment logging folder
 `x_val` | array or list of arrays | validation data for x
 `y_val` | array or list of arrays | validation data for y
+`sample_weight` | array or list of arrays | Weights for each example in the data see [Keras fit method](https://keras.io/api/models/model_training_apis/#fit-method)
 `val_split` | float | validation data split ratio
 `random_method` | str | the random method to be used
 `seed` | float | Seed for random states
@@ -50,6 +51,19 @@ talos.Scan(...
           )
 ```
 
+NOTE: `model` must have the following signature:
+
+```python
+
+def my_model(x_train, y_train, x_val, y_val, params, *kwargs):
+```
+
+Unless `sample_weight` is passed in which case it must have:
+
+```python
+
+def my_model(x_train, y_train, x_val, y_val, params, sample_weight, *kwargs):
+```
 
 
 ## Scan Object Properties
