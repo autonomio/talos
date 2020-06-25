@@ -157,7 +157,7 @@ class Scan:
 
         self.x = x
         self.y = y
-        self.params = parasm
+        self.params = params
         self.model = model
         self.experiment_name = experiment_name
         self.x_val = x_val
