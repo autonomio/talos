@@ -20,7 +20,13 @@ def test_scan(test_sample_weights=False):
          'dropout': (.05, .35, .1),
          'epochs': [50]}
 
-    def iris_model(x_train, y_train, x_val, y_val, params, sample_weights=None):
+    def iris_model(x_train,
+                   y_train,
+                   x_val,
+                   y_val,
+                   params,
+                   sample_weights=None
+                  ):
 
         model = Sequential()
         model.add(Dense(params['first_neuron'],
@@ -51,7 +57,6 @@ def test_scan(test_sample_weights=False):
 
     x, y = talos.templates.datasets.iris()
 
-
     if not test_sample_weights:
         scan_object = talos.Scan(x=x,
                                  y=y,
@@ -68,7 +73,7 @@ def test_scan(test_sample_weights=False):
                                  reduction_metric='val_acc',
                                  minimize_loss=False,
                                  boolean_limit=lambda p: p['first_neuron'] * p['hidden_layers'] < 220
-        )
+                                )
     else:
         scan_object = talos.Scan(x=x,
                                  y=y,
@@ -86,7 +91,7 @@ def test_scan(test_sample_weights=False):
                                  reduction_metric='val_acc',
                                  minimize_loss=False,
                                  boolean_limit=lambda p: p['first_neuron'] * p['hidden_layers'] < 220
-        )
+                                )
 
     x = x[:50]
     y = y[:50]
