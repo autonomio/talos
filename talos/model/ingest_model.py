@@ -10,9 +10,9 @@ def ingest_model(self):
                           self.y_val,
                           self.round_params,
                           self.sample_weight_train)
-    else:
-        return self.model(self.x_train,
-                          self.y_train,
-                          self.x_val,
-                          self.y_val,
-                          self.round_params)
+
+    return self.model(self.x_train,
+                      self.y_train,
+                      self.x_val,
+                      self.y_val,
+                      self.round_params)
