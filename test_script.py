@@ -12,6 +12,9 @@ if __name__ == '__main__':
     scan_object = test_scan()
     test_analyze(scan_object)
 
+    scan_object_with_weights = test_scan(test_sample_weights=True)
+    test_analyze(scan_object_with_weights)
+
     test_lr_normalizer()
     test_predict()
     test_reducers()
