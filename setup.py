@@ -20,6 +20,7 @@ LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/autonomio/talos/'
 VERSION = '1.0'
 
+
 try:
     from setuptools import setup
     _has_setuptools = True
