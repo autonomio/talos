@@ -132,7 +132,7 @@ If you use Talos for published work, please cite:
 
 [MIT License](https://github.com/autonomio/talos/blob/master/LICENSE)
 
-[github issue tracker]: https://github.com/automio/talos/issues
+[github issue tracker]: https://github.com/autonomio/talos/issues
 [docs]: https://autonomio.github.io/talos/
 [wiki]: https://github.com/autonomio/talos/wiki
 [stack overflow]: https://stackoverflow.com/questions/tagged/talos
