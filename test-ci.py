@@ -14,7 +14,7 @@ if __name__ == '__main__':
     test_autom8()
     test_templates()
     
-    test_analyze(scan_object)
+    # test_analyze(scan_object)
 
     test_lr_normalizer()
     test_predict()

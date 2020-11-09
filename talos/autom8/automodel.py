@@ -120,7 +120,7 @@ class AutoModel:
                         epochs=params['epochs'],
                         verbose=0,
                         callbacks=[self.callback(self.experiment_name, params)],
-                        validation_data=[x_val, y_val])
+                        validation_data=(x_val, y_val))
 
         # pass the output to Talos
         return out, model

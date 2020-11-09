@@ -31,7 +31,7 @@ def recover_best_model():
         out = model.fit(x_train, y_train,
                         batch_size=params['batch_size'],
                         epochs=params['epochs'],
-                        validation_data=[x_val, y_val],
+                        validation_data=(x_val, y_val),
                         verbose=0)
 
         return out, model

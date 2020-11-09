@@ -36,7 +36,7 @@ def test_latest():
                         callbacks=[talos.utils.ExperimentLogCallback('test_latest', params)],
                         batch_size=params['batch_size'],
                         epochs=params['epochs'],
-                        validation_data=[x_val, y_val],
+                        validation_data=(x_val, y_val),
                         verbose=0)
 
         return out, model
