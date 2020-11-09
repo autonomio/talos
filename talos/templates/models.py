@@ -31,7 +31,7 @@ def breast_cancer(x_train, y_train, x_val, y_val, params):
                         batch_size=params['batch_size'],
                         epochs=params['epochs'],
                         verbose=0,
-                        validation_data=[x_val, y_val],
+                        validation_data=(x_val, y_val),
                         callbacks=[early_stopper(params['epochs'],
                                                  mode='moderate',
                                                  monitor='val_f1score')])
@@ -72,7 +72,7 @@ def cervical_cancer(x_train, y_train, x_val, y_val, params):
                         batch_size=params['batch_size'],
                         epochs=params['epochs'],
                         verbose=0,
-                        validation_data=[x_val, y_val],
+                        validation_data=(x_val, y_val),
                         callbacks=[early_stopper(params['epochs'],
                                                  mode='moderate',
                                                  monitor='val_f1score')])
@@ -107,7 +107,7 @@ def titanic(x_train, y_train, x_val, y_val, params):
                     batch_size=params['batch_size'],
                     epochs=2,
                     verbose=0,
-                    validation_data=[x_val, y_val])
+                    validation_data=(x_val, y_val))
 
     return out, model
 
@@ -146,7 +146,7 @@ def iris(x_train, y_train, x_val, y_val, params):
                     batch_size=params['batch_size'],
                     epochs=params['epochs'],
                     verbose=0,
-                    validation_data=[x_val, y_val],
+                    validation_data=(x_val, y_val),
                     callbacks=[early_stopper(params['epochs'], mode=[1, 1])])
 
     return out, model
