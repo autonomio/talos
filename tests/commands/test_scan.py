@@ -42,7 +42,7 @@ def test_scan():
         out = model.fit(x_train, y_train,
                         batch_size=25,
                         epochs=params['epochs'],
-                        validation_data=[x_val, y_val],
+                        validation_data=(x_val, y_val),
                         verbose=0)
 
         return out, model
