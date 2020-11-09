@@ -1,5 +1,3 @@
-
-
 def recover_best_model(x_train,
                        y_train,
                        x_val,
@@ -39,7 +37,6 @@ def recover_best_model(x_train,
     df = pd.read_csv(experiment_log)
 
     # handle input data scenarios
-
     if x_cross is None or y_cross is None:
         x_cross = x_val
         y_cross = y_val

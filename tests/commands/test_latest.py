@@ -3,8 +3,8 @@ def test_latest():
     print('\n >>> start Latest Features... \n')
 
     import talos
-    from keras.models import Sequential
-    from keras.layers import Dense
+    from tensorflow.keras.models import Sequential
+    from tensorflow.keras.layers import Dense
 
     x, y = talos.templates.datasets.iris()
 
@@ -33,7 +33,7 @@ def test_latest():
 
         out = model.fit(x_train,
                         y_train,
-                        callbacks=[talos.utils.ExperimentLogCallback('testing_latest', params)],
+                        callbacks=[talos.utils.ExperimentLogCallback('test_latest', params)],
                         batch_size=params['batch_size'],
                         epochs=params['epochs'],
                         validation_data=[x_val, y_val],
@@ -44,7 +44,7 @@ def test_latest():
     scan_object = talos.Scan(x, y,
                              model=iris_model,
                              params=p,
-                             experiment_name='testing_latest',
+                             experiment_name='test_latest',
                              round_limit=5,
                              reduction_method='gamify',
                              save_weights=False)

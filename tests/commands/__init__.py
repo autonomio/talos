@@ -1,3 +1,4 @@
+from .recover_best_model import recover_best_model
 from .test_analyze import test_analyze
 from .test_autom8 import test_autom8
 from .test_latest import test_latest

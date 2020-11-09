@@ -1,4 +1,4 @@
-from keras.callbacks import Callback
+from tensorflow.keras.callbacks import Callback
 
 
 class ExperimentLogCallback(Callback):
@@ -25,7 +25,7 @@ class ExperimentLogCallback(Callback):
         try:
             latest_file = max(list_of_files, key=os.path.getmtime)
         except ValueError:
-            print("`experiment_name` has to match `Scan(experiment_name)`")
+            print("\n TALOS ERROR: `experiment_name` has to match `Scan(experiment_name)`\n")
 
         self.name = latest_file.replace('.csv', '') + '.log'
 

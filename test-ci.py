@@ -2,14 +2,18 @@
 
 if __name__ == '__main__':
 
-    from test.commands import *
+    from tests.commands import *
 
     test_latest()
+
+    scan_object = test_scan()
+    recover_best_model()
+
     test_random_methods()
 
     test_autom8()
     test_templates()
-    scan_object = test_scan()
+    
     test_analyze(scan_object)
 
     test_lr_normalizer()

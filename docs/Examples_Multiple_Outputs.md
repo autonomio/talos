@@ -10,8 +10,8 @@ The single-file code example can be found [here](Examples_Multiple_Outputs_Code.
 import talos
 import wrangle
 
-from keras.layers import Input, Dense, Dropout
-from keras.models import Model
+from tensorflow.keras.layers import Input, Dense, Dropout
+from tensorflow.keras.models import Model
 
 ```
 NOTE: In this example we use another Autonomio package 'wrangle' for splitting the data.

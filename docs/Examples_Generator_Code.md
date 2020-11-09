@@ -6,8 +6,8 @@
 import talos
 from talos.utils import SequenceGenerator
 
-from keras.models import Sequential
-from keras.layers import Dense, Conv2D, Flatten, Dropout
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout
 
 x, y = ta.templates.datasets.iris()
 

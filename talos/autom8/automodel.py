@@ -58,9 +58,9 @@ class AutoModel:
 
         import wrangle as wr
 
-        from keras.models import Sequential
-        from keras.layers import Dropout, Flatten
-        from keras.layers import LSTM, Conv1D, SimpleRNN, Dense, Bidirectional
+        from tensorflow.keras.models import Sequential
+        from tensorflow.keras.layers import Dropout, Flatten
+        from tensorflow.keras.layers import LSTM, Conv1D, SimpleRNN, Dense, Bidirectional
 
         model = Sequential()
 

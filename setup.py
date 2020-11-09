@@ -1,13 +1,15 @@
 #! /usr/bin/env python
 #
-# Copyright (C) 2018 Mikko Kotila
+# Copyright (C) 2020 Mikko Kotila
 
 DESCRIPTION = "Talos Hyperparameter Tuning for Keras"
 LONG_DESCRIPTION = """\
-Talos radically changes the ordinary Keras workflow by
+Talos radically changes the ordinary deep learning workflow by
 fully automating hyperparameter tuning and model evaluation.
-Talos exposes Keras functionality entirely and there is no new
-syntax or templates to learn.
+Talos supports Tensorflow and Pytorch.
+
+Talos exposes backend functionality entirely and there is 
+no new syntax or templates to learn.
 """
 
 DISTNAME = 'talos'
@@ -16,7 +18,8 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://autonom.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/autonomio/talos/'
-VERSION = '0.6.7'
+VERSION = '1.0'
+
 
 try:
     from setuptools import setup
@@ -24,12 +27,11 @@ try:
 except ImportError:
     from distutils.core import setup
 
-install_requires = ['statsmodels>=0.11.0',
-                    'wrangle>=0.6.7',
+install_requires = ['tensorflow>=2.0.0',
+                    'statsmodels>=0.11.0',
+                    'wrangle',
                     'numpy',
                     'pandas',
-                    'tensorflow==1.14.0',
-                    'keras==2.3.0',
                     'astetik',
                     'sklearn',
                     'tqdm',

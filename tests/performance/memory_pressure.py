@@ -1,9 +1,9 @@
 import talos
 from talos.utils import SequenceGenerator
 
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Flatten
+from tensorflow.keras.layers import Conv2D
 
 p = {'activation': ['relu'],
      'optimizer': ['AdaDelta'],

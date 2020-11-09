@@ -1,5 +1,5 @@
 import numpy as np
-from keras.optimizers import Adam, Nadam, Adadelta, SGD
+from tensorflow.keras.optimizers import Adam, Nadam, Adadelta, SGD
 
 
 loss = {'binary': ['binary_crossentropy', 'logcosh'],

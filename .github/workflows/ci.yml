@@ -35,7 +35,7 @@ jobs:
         export MPLBACKEND=agg
         pip install tensorflow==1.15.0
         pip install coveralls
-        coverage run --source=talos ./test_script.py
+        coverage run --source=talos ./test-ci.py
     - name: Coverage
       env:
         COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}

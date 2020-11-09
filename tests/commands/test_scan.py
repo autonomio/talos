@@ -4,11 +4,11 @@ def test_scan():
 
     import talos
 
-    from keras.losses import binary_crossentropy
-    from keras.optimizers import Adam
-    from keras.activations import relu, elu
-    from keras.layers import Dense
-    from keras.models import Sequential
+    from tensorflow.keras.losses import binary_crossentropy
+    from tensorflow.keras.optimizers import Adam, Nadam
+    from tensorflow.keras.activations import relu, elu
+    from tensorflow.keras.layers import Dense
+    from tensorflow.keras.models import Sequential
 
     p = {'activation': [relu, elu],
          'optimizer': ['Nadam', Adam],
@@ -49,11 +49,21 @@ def test_scan():
 
     x, y = talos.templates.datasets.iris()
 
+    p_for_q = {'activation':['relu', 'elu'],
+               'optimizer': ['Nadam', 'Adam'],
+               'losses': ['logcosh'],
+               'shapes': ['brick'],
+               'first_neuron': [16, 32, 64, 128],
+               'hidden_layers':[0, 1, 2, 3],
+               'dropout': [.2, .3, .4],
+               'batch_size': [20, 30, 40, 50],
+               'epochs': [10]}
+
     scan_object = talos.Scan(x=x,
                              y=y,
-                             params=p,
+                             params=p_for_q,
                              model=iris_model,
-                             experiment_name='testingq',
+                             experiment_name='test_q',
                              val_split=0.3,
                              random_method='uniform_mersenne',
                              round_limit=15,
@@ -62,9 +72,8 @@ def test_scan():
                              reduction_window=9,
                              reduction_threshold=0.01,
                              reduction_metric='val_acc',
-                             minimize_loss=False,
-                             boolean_limit=lambda p: p['first_neuron'] * p['hidden_layers'] < 220
-                             )
+                             minimize_loss=False)
+
 
     x = x[:50]
     y = y[:50]
@@ -78,7 +87,7 @@ def test_scan():
                y_val=y,
                params=p,
                model=iris_model,
-               experiment_name='iris_test',
+               experiment_name='test_iris',
                fraction_limit=.05)
 
     # config invoked
@@ -86,7 +95,7 @@ def test_scan():
                y=y,
                params=p,
                model=iris_model,
-               experiment_name="testing2",
+               experiment_name="test_2",
                x_val=x,
                y_val=y,
                random_method='latin_suduko',
@@ -101,7 +110,7 @@ def test_scan():
                y=y,
                params=p,
                model=iris_model,
-               experiment_name="testing3",
+               experiment_name="test_3",
                x_val=None,
                y_val=None,
                val_split=0.3,
@@ -110,14 +119,15 @@ def test_scan():
                performance_target=['val_acc', 0.1, False],
                fraction_limit=None,
                time_limit="2099-09-09 09:09",
-               boolean_limit=None,
                reduction_method='spearman',
                reduction_interval=2,
                reduction_window=2,
                reduction_threshold=0.2,
                reduction_metric='loss',
                minimize_loss=True,
-               clear_session=False)
+               clear_session=False,
+               boolean_limit=lambda p: p['first_neuron'] * p['hidden_layers'] < 220
+               )
 
     print('finised Scan() \n')
 

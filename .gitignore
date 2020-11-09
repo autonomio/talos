@@ -13,3 +13,5 @@ talos.egg-info
 *.json
 *.npy
 test.sh
+.vscode
+.test_*

@@ -1,9 +1,7 @@
 def test_predict():
 
     print("\n >>> start Predict()...")
-
-    import sys
-    sys.path.insert(0, '/Users/mikko/Documents/GitHub/talos')
+    
     import talos
 
     x, y = talos.templates.datasets.iris()

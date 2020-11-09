@@ -6,10 +6,10 @@
 import talos
 import wrangle
 
-from keras.layers import Input, Dense, Dropout
-from keras.models import Model
-from keras.utils import plot_model
-from keras.layers.merge import concatenate
+from tensorflow.keras.layers import Input, Dense, Dropout
+from tensorflow.keras.models import Model
+from tensorflow.keras.utils import plot_model
+from tensorflow.keras.layers.merge import concatenate
 
 x, y = talos.templates.datasets.iris()
 x_train, y_train, x_val, y_val = wrangle.array_split(x, y, .5)

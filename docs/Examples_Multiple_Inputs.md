@@ -10,10 +10,10 @@ The single-file code example can be found [here](Examples_Multiple_Inputs_Code.m
 import talos
 import wrangle
 
-from keras.layers import Input, Dense, Dropout
-from keras.models import Model
-from keras.utils import plot_model
-from keras.layers.merge import concatenate
+from tensorflow.keras.layers import Input, Dense, Dropout
+from tensorflow.keras.models import Model
+from tensorflow.keras.utils import plot_model
+from tensorflow.keras.layers.merge import concatenate
 ```
 NOTE: In this example we use another Autonomio package 'wrangle' for splitting the data.
 

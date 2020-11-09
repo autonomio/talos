@@ -6,7 +6,7 @@ def test_rest(scan_object):
 
     import random
 
-    deploy_filename = 'test' + str(random.randint(1, 20000000000))
+    deploy_filename = 'test_' + str(random.randint(1, 20000000000))
 
     print('\n ...Deploy()... \n')
     talos.Deploy(scan_object, deploy_filename, 'val_acc')
@@ -38,8 +38,8 @@ def test_rest(scan_object):
                talos.utils.metrics.rmse,
                talos.utils.metrics.rmsle]
 
-    from keras.models import Sequential
-    from keras.layers import Dense
+    from tensorflow.keras.models import Sequential
+    from tensorflow.keras.layers import Dense
 
     print('\n ...callbacks and metrics... \n')
 
@@ -73,6 +73,8 @@ def test_rest(scan_object):
     print('\n ...gpu_utils... \n')
 
     from talos.utils.test_utils import create_param_space
-    create_param_space(restored.results, 5)
+    create_param_space(restored.results, 8)
+
+
 
     print('finished testing the rest \n')

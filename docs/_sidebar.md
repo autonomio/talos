@@ -6,6 +6,11 @@
  - [System Requirements](README.md#system-requirements)
  - [Install Options](Install_Options.md)
 
+- Supported Backends
+
+ - [TensorFlow](Backends.md#Tensorflow)
+ - [PyTorch](Backends.md#PyTorch)
+ - [Keras](Backends.md#Keras)
 
 - Overview
 
@@ -45,13 +50,14 @@
 
 - Utilities
 
-  - [Metrics](Metrics.md)
-  - [Hidden Layers](Hidden_Layers.md)
-  - [Shapes](Hidden_Layers.md#shapes)
+  - [Energy Draw](Energy_Draw.md)
   - [Generator](Generator.md)
+  - [Hidden Layers](Hidden_Layers.md)
   - [Learning Rate Normalizer](Learning_Rate_Normalizer.md)
+  - [Metrics](Metrics.md)
   - [Monitoring](Monitoring.md)
   - [Parallelism](Parallelism.md)
+  - [Shapes](Hidden_Layers.md#shapes)
 
 - Templates
 
@@ -70,5 +76,5 @@
 
 - Troubleshooting
 
- - [Asking help](Asking_Help.md)
- - [Roadmap](Roadmap.md)
+  - [Asking help](Asking_Help.md)
+  - [Roadmap](Roadmap.md)
