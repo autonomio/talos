@@ -40,7 +40,7 @@ def test_latest():
                         verbose=0)
 
         return out, model
-
+```
     scan_object = talos.Scan(x, y,
                              model=iris_model,
                              params=p,
@@ -48,5 +48,5 @@ def test_latest():
                              round_limit=5,
                              reduction_method='gamify',
                              save_weights=False)
-
+```
     print('finised Latest Features \n')
