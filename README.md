@@ -21,7 +21,7 @@
 <p align="center">
   <a href="#Talos">Talos</a> •
   <a href="#Key-Features">Key Features</a> •
-  <a href="#Examples">Examples</a> •
+  <a href="#:arrow_forward: Examples">Examples</a> •
   <a href="#Install">Install</a> •
   <a href="#Support">Support</a> •
   <a href="https://autonomio.github.io/talos/">Docs</a> •
@@ -74,7 +74,7 @@ Talos works on **Linux, Mac OSX**, and **Windows** systems and can be operated c
 
 <hr>
 
-### 📈 Examples
+### :arrow_forward: Examples
 
 Get the below code [here](https://gist.github.com/mikkokotila/4c0d6298ff0a22dc561fb387a1b4b0bb). More examples further below.
 
