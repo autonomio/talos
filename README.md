@@ -116,7 +116,6 @@ Daily development version:
 | **...report a bug**           | [GitHub Issue Tracker]                                     |
 | **...suggest a new feature**  | [GitHub Issue Tracker]                                     |
 | **...get support**            | [Stack Overflow] · [Spectrum Chat]                         |
-| **...have a discussion**      | [Spectrum Chat]                                            |
 
 <hr>
 
@@ -124,7 +123,7 @@ Daily development version:
 
 If you use Talos for published work, please cite:
 
-`Autonomio Talos [Computer software]. (2019). Retrieved from http://github.com/autonomio/talos.`
+`Autonomio Talos [Computer software]. (2020). Retrieved from http://github.com/autonomio/talos.`
 
 <hr>
 
@@ -136,4 +135,3 @@ If you use Talos for published work, please cite:
 [docs]: https://autonomio.github.io/talos/
 [wiki]: https://github.com/autonomio/talos/wiki
 [stack overflow]: https://stackoverflow.com/questions/tagged/talos
-[spectrum chat]: https://spectrum.chat/talos
