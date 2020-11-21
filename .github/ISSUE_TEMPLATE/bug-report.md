@@ -31,7 +31,7 @@ Thank you very much for reporting a bug on Talos. Before you do, please go throu
 - [ ] My bug report includes a `Scan()` command
 - [ ] My bug report question includes a link to a sample of the data
 
-NOTE: If the data is sensitive and can't be shared, [create dummy data](https://scikit-learn.org/stable/modules/classes.html#samples-generator) that mimics it.
+NOTE: If the data is sensitive and can't be shared, [create dummy data](https://scikit-learn.org/stable/modules/classes.html#samples-generator) that mimics it or provide a command for generating it.
 
 **A self-contained Jupyter Notebook, Google Colab, or similar is highly preferred and will speed up helping you with your issue.**
 
