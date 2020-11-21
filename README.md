@@ -4,7 +4,7 @@
   <br>
 </h1>
 
-<h3 align="center">Hyperparameter Optimization for TensorFlow (tf.keras) and PyTorch</h3>
+<h3 align="center">Hyperparameter Optimization for Keras, TensorFlow (tf.keras) and PyTorch</h3>
 
 <p align="center">
 
@@ -31,7 +31,7 @@
 </p>
 <hr>
 <p align="center">
-Talos radically changes the ordinary TensorFlow (tf.keras) and PyTorch workflow by <strong>fully automating hyperparameter tuning</strong> and <strong>model evaluation</strong>. Talos exposes TensorFlow (tf.keras) and PyTorch functionality entirely and there is no new syntax or templates to learn.
+Talos radically changes the ordinary Keras, TensorFlow (tf.keras), and PyTorch workflow by <strong>fully automating hyperparameter tuning</strong> and <strong>model evaluation</strong>. Talos exposes Keras and TensorFlow (tf.keras) and PyTorch functionality entirely and there is no new syntax or templates to learn.
 </p>
 <p align="center">
 <img src='https://i.ibb.co/3NFH646/keras-model-to-talos.gif' width=550px>
@@ -41,9 +41,9 @@ Talos radically changes the ordinary TensorFlow (tf.keras) and PyTorch workflow 
 
 TL;DR
 
-Talos radically transforms ordinary TensorFlow (tf.keras) and PyTorch workflows without taking away.
+Talos radically transforms ordinary Keras, TensorFlow (tf.keras), and PyTorch workflows without taking away.
 
-  - works with ANY TensorFlow (tf.keras) or PyTorch model
+  - works with ANY Keras, TensorFlow (tf.keras) or PyTorch model
   - takes minutes to implement
   - no new syntax to learn
   - adds zero new overhead to your workflow
@@ -90,7 +90,7 @@ The *Simple* example below is more than enough for starting to use Talos with an
 
 [Field Report](https://towardsdatascience.com/hyperparameter-optimization-with-keras-b82e6364ca53)  [~15 mins]
 
-For more information on how Talos can help with your TensorFlow (tf.keras) and PyTorch workflow, visit the [User Manual](https://autonomio.github.io/talos/).
+For more information on how Talos can help with your Keras, TensorFlow (tf.keras) and PyTorch workflow, visit the [User Manual](https://autonomio.github.io/talos/).
 
 You may also want to check out a visualization of the [Talos Hyperparameter Tuning workflow](https://github.com/autonomio/talos/wiki/Workflow).
 
