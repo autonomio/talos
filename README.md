@@ -115,7 +115,7 @@ Daily development version:
 | **...troubleshoot**           | [Docs] · [Wiki] · [GitHub Issue Tracker]                   |
 | **...report a bug**           | [GitHub Issue Tracker]                                     |
 | **...suggest a new feature**  | [GitHub Issue Tracker]                                     |
-| **...get support**            | [Stack Overflow] · [Spectrum Chat]                         |
+| **...get support**            | [Stack Overflow]                     |
 
 <hr>
 
