@@ -19,14 +19,14 @@
 </p>
 
 <p align="center">
-  <a href="#Talos">Talos</a> •
-  <a href="#Key-Features">Key Features</a> •
-  <a href="#Examples">Examples</a> •
-  <a href="#Install">Install</a> •
-  <a href="#Support">Support</a> •
+  <a href="#talos">Talos</a> •
+  <a href="#wrench-key-features">Key Features</a> •
+  <a href="#arrow_forward-examples">Examples</a> •
+  <a href="#floppy_disk-install">Install</a> •
+  <a href="#speech_balloon-how-to-get-support">Support</a> •
   <a href="https://autonomio.github.io/talos/">Docs</a> •
   <a href="https://github.com/autonomio/talos/issues">Issues</a> •
-  <a href="#License">License</a> •
+  <a href="#page_with_curl-license">License</a> •
   <a href="https://github.com/autonomio/talos/archive/master.zip">Download</a>
 </p>
 <hr>
@@ -74,7 +74,7 @@ Talos works on **Linux, Mac OSX**, and **Windows** systems and can be operated c
 
 <hr>
 
-### 📈 Examples
+### :arrow_forward: Examples
 
 Get the below code [here](https://gist.github.com/mikkokotila/4c0d6298ff0a22dc561fb387a1b4b0bb). More examples further below.
 
@@ -96,7 +96,7 @@ You may also want to check out a visualization of the [Talos Hyperparameter Tuni
 
 <hr>
 
-### 💾 Install
+### :floppy_disk: Install
 
 Stable version:
 
@@ -108,7 +108,7 @@ Daily development version:
 
 <hr>
 
-### 💬 How to get Support
+### :speech_balloon: How to get Support
 
 | I want to...                     | Go to...                                                  |
 | -------------------------------- | ---------------------------------------------------------- |
@@ -120,7 +120,7 @@ Daily development version:
 
 <hr>
 
-### 📢 Citations
+### :loudspeaker: Citations
 
 If you use Talos for published work, please cite:
 
@@ -128,7 +128,7 @@ If you use Talos for published work, please cite:
 
 <hr>
 
-### 📃 License
+### :page_with_curl: License
 
 [MIT License](https://github.com/autonomio/talos/blob/master/LICENSE)
 
