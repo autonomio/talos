@@ -49,7 +49,7 @@ class ParamSpace:
             self.param_space = self.param_space[index]
 
         # reset index
-        self.param_index = list(range(len(self.param_space)))))
+        self.param_index = list(range(len(self.param_space)))
 
     def _param_input_conversion(self):
 
