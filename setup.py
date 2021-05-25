@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 #
-# Copyright (C) 2020 Mikko Kotila
+# Copyright (C) 2021 Mikko Kotila
 
 DESCRIPTION = "Talos Hyperparameter Tuning for Keras"
 LONG_DESCRIPTION = """\
