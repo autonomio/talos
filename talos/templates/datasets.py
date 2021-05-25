@@ -139,11 +139,11 @@ def mnist():
 
     x_train, y_train, x_val, y_val'''
 
-    import keras
+    import tensorflow as tf
     import numpy as np
 
     # the data, split between train and test sets
-    (x_train, y_train), (x_val, y_val) = keras.datasets.mnist.load_data()
+    (x_train, y_train), (x_val, y_val) = tf.keras.datasets.mnist.load_data()
 
     # input image dimensions
     img_rows, img_cols = 28, 28
