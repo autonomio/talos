@@ -167,8 +167,8 @@ def mnist():
     classes = len(np.unique(y_train))
 
     # convert class vectors to binary class matrices
-    y_train = keras.utils.to_categorical(y_train, classes)
-    y_val = keras.utils.to_categorical(y_val, classes)
+    y_train = tf.keras.utils.to_categorical(y_train, classes)
+    y_val = tf.keras.utils.to_categorical(y_val, classes)
 
     print("Use input_shape %s" % str(input_shape))
 
