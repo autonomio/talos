@@ -108,7 +108,7 @@ class Analyze:
         try:
             import astetik as ast
             cols = self._cols(metric, exclude)
-            return ast.corr(self.data[cols], color_grades=color_grades)
+            return ast.corr(self.data[cols], color_grades=color_grades, mask=False)
         except RuntimeError:
             print('Matplotlib Runtime Error. Plots will not work.')
 
