@@ -139,16 +139,16 @@ def mnist():
 
     x_train, y_train, x_val, y_val'''
 
-    import keras
+    import tensorflow as tf
     import numpy as np
 
     # the data, split between train and test sets
-    (x_train, y_train), (x_val, y_val) = keras.datasets.mnist.load_data()
+    (x_train, y_train), (x_val, y_val) = tf.keras.datasets.mnist.load_data()
 
     # input image dimensions
     img_rows, img_cols = 28, 28
 
-    if keras.backend.image_data_format() == 'channels_first':
+    if tf.keras.backend.image_data_format() == 'channels_first':
 
         x_train = x_train.reshape(x_train.shape[0], 1, img_rows, img_cols)
         x_val = x_val.reshape(x_val.shape[0], 1, img_rows, img_cols)
@@ -167,8 +167,8 @@ def mnist():
     classes = len(np.unique(y_train))
 
     # convert class vectors to binary class matrices
-    y_train = keras.utils.to_categorical(y_train, classes)
-    y_val = keras.utils.to_categorical(y_val, classes)
+    y_train = tf.keras.utils.to_categorical(y_train, classes)
+    y_val = tf.keras.utils.to_categorical(y_val, classes)
 
     print("Use input_shape %s" % str(input_shape))
 
