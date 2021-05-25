@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 #
-# Copyright (C) 2020 Mikko Kotila
+# Copyright (C) 2021 Mikko Kotila
 
 DESCRIPTION = "Talos Hyperparameter Tuning for Keras"
 LONG_DESCRIPTION = """\
@@ -18,7 +18,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://autonom.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/autonomio/talos/'
-VERSION = '1.0'
+VERSION = '1.0.1'
 
 
 try:
