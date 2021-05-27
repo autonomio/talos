@@ -4,6 +4,7 @@ def recover_best_model(x_train,
                        y_val,
                        experiment_log,
                        input_model,
+                       metric,
                        x_cross=None,
                        y_cross=None,
                        n_models=5,
@@ -15,10 +16,11 @@ def recover_best_model(x_train,
     y_train | array | same as was used in the experiment
     x_val | array | same as was used in the experiment
     y_val | array | same as was used in the experiment
-    x_cross | array | data for the cross-validation or None for use x_val
-    y_cross | array | data for the cross-validation or None for use y_val
     experiment_log | str | path to the Talos experiment log
     input_model | function | model used in the experiment
+    metric | str | use this metric to pick evaluation candidates
+    x_cross | array | data for the cross-validation or None for use x_val
+    y_cross | array | data for the cross-validation or None for use y_val
     n_models | int | number of models to cross-validate
     task | str | binary, multi_class, multi_label or continuous
 
@@ -48,8 +50,8 @@ def recover_best_model(x_train,
     for i in range(n_models):
 
         # get the params for the model and train it
-        params = df.sort_values('val_acc', ascending=False).drop('val_acc', 1).iloc[i].to_dict()
-        history, model = input_model(x_train, y_train, x_val, y_val, params)
+        params = df.sort_values(metric, ascending=False).drop(metric, 1).iloc[i].to_dict()
+        _history, model = input_model(x_train, y_train, x_val, y_val, params)
 
         # start kfold cross-validation
         out = []
@@ -83,7 +85,7 @@ def recover_best_model(x_train,
         results.append(np.mean(out))
         models.append(model)
 
-    out = df.sort_values('val_acc', ascending=False).head(n_models)
+    out = df.sort_values(metric, ascending=False).head(n_models)
     out['crossval_mean_f1score'] = results
 
     return out, models

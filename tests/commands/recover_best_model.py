@@ -42,6 +42,7 @@ def recover_best_model():
                        y_val=y,
                        experiment_log=experiment_log,
                        input_model=iris_model,
+                       metric='acc',
                        x_cross=x,
                        y_cross=y,
                        n_models=5,
