@@ -7,7 +7,7 @@ mprof run ./tests/performance/memory_pressure.py
 python3 ./tests/performance/memory_pressure_check.py
 
 # run CI tests
-python3 test-ci.py
+python test-ci.py
 
 # cleanup
 rm mprofile_*.dat
