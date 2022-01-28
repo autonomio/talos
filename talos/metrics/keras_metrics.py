@@ -1,25 +1,25 @@
 def mae(y_true, y_pred):
-    from keras import backend as K
+    from tensorflow.keras import backend as K
     return K.mean(K.abs(y_pred - y_true), axis=-1)
 
 
 def mse(y_true, y_pred):
-    from keras import backend as K
+    from tensorflow.keras import backend as K
     return K.mean(K.square(y_pred - y_true), axis=-1)
 
 
 def rmae(y_true, y_pred):
-    from keras import backend as K
+    from tensorflow.keras import backend as K
     return K.sqrt(K.mean(K.abs(y_pred - y_true), axis=-1))
 
 
 def rmse(y_true, y_pred):
-    from keras import backend as K
+    from tensorflow.keras import backend as K
     return K.sqrt(K.mean(K.square(y_pred - y_true), axis=-1))
 
 
 def mape(y_true, y_pred):
-    from keras import backend as K
+    from tensorflow.keras import backend as K
     diff = K.abs((y_true - y_pred) / K.clip(K.abs(y_true),
                                             K.epsilon(),
                                             None))
@@ -27,14 +27,14 @@ def mape(y_true, y_pred):
 
 
 def msle(y_true, y_pred):
-    from keras import backend as K
+    from tensorflow.keras import backend as K
     first_log = K.log(K.clip(y_pred, K.epsilon(), None) + 1.)
     second_log = K.log(K.clip(y_true, K.epsilon(), None) + 1.)
     return K.mean(K.square(first_log - second_log), axis=-1)
 
 
 def rmsle(y_true, y_pred):
-    from keras import backend as K
+    from tensorflow.keras import backend as K
     first_log = K.log(K.clip(y_pred, K.epsilon(), None) + 1.)
     second_log = K.log(K.clip(y_true, K.epsilon(), None) + 1.)
     return K.sqrt(K.mean(K.square(first_log - second_log), axis=-1))
@@ -42,7 +42,7 @@ def rmsle(y_true, y_pred):
 
 def matthews(y_true, y_pred):
 
-    from keras import backend as K
+    from tensorflow.keras import backend as K
     y_pred_pos = K.round(K.clip(y_pred, 0, 1))
     y_pred_neg = 1 - y_pred_pos
 
@@ -63,7 +63,7 @@ def matthews(y_true, y_pred):
 
 def precision(y_true, y_pred):
 
-    from keras import backend as K
+    from tensorflow.keras import backend as K
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
     precision = true_positives / (predicted_positives + K.epsilon())
@@ -72,7 +72,7 @@ def precision(y_true, y_pred):
 
 def recall(y_true, y_pred):
 
-    from keras import backend as K
+    from tensorflow.keras import backend as K
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
     recall = true_positives / (possible_positives + K.epsilon())
@@ -81,7 +81,7 @@ def recall(y_true, y_pred):
 
 def fbeta(y_true, y_pred, beta=1):
 
-    from keras import backend as K
+    from tensorflow.keras import backend as K
     if beta < 0:
         raise ValueError('The lowest choosable beta is zero (only precision).')
 
