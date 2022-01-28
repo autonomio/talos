@@ -1,5 +1,9 @@
 def test_latest():
 
+    import warnings
+
+    warnings.simplefilter('ignore')
+
     print('\n >>> start Latest Features... \n')
 
     import talos
