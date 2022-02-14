@@ -9,6 +9,7 @@ from .commands.predict import Predict
 from .commands.deploy import Deploy
 from .commands.evaluate import Evaluate
 from .commands.restore import Restore
+from .commands.distribute import DistributeScan
 
 # import extras
 from . import utils
