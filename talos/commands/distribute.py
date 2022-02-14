@@ -1,14 +1,17 @@
 from ..scan.Scan import Scan
 import json
+import socket
 import paramiko
+import sys
+import os
 class DistributeScan(Scan):
     def __init__(self,
-                 config_path,
                  x,
                  y,
                  params,
                  model,
                  experiment_name,
+                 config_path,
                  x_val=None,
                  y_val=None,
                  val_split=.3,
@@ -29,12 +32,12 @@ class DistributeScan(Scan):
                  print_params=False,
                  clear_session=True,
                  save_weights=True):
-        self.config_path=config_path
         self.x = x
         self.y = y
         self.params = params
         self.model = model
         self.experiment_name = experiment_name
+        self.config_path=config_path
         self.x_val = x_val
         self.y_val = y_val
         self.val_split = val_split
@@ -90,3 +93,26 @@ class DistributeScan(Scan):
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(host, port, username, password)
         return client
+    def get_ip():
+        hostname = socket.gethostname()
+        local_ip = socket.gethostbyname(hostname)
+        
+    def ssh_run(self):
+        client=self.ssh_connect()
+        sftp = client.open_sftp()
+        path = os.getcwd()
+        try:
+            os.mkdir(path + '/' + self.experiment_name)
+        except FileExistsError:
+            pass
+        sftp.put(__file__, path+'/{}/temp.py'.format(self.experiment_name))
+        sftp.close()
+        # Run the transmitted script remotely without args and show its output.
+        # SSHClient.exec_command() returns the tuple (stdin,stdout,stderr)
+        stdout = client.exec_command('python3 {}/{}/temp.py'.format(path,self.experiment_name))[1]
+        for line in stdout:
+            # Process each line in the remote output
+            print(line)
+
+        client.close()
+        sys.exit(0)
