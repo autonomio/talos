@@ -11,7 +11,6 @@ class DistributeScan(Scan):
                  params,
                  model,
                  experiment_name,
-                 config_path,
                  x_val=None,
                  y_val=None,
                  val_split=.3,
@@ -31,13 +30,17 @@ class DistributeScan(Scan):
                  disable_progress_bar=False,
                  print_params=False,
                  clear_session=True,
-                 save_weights=True):
+                 save_weights=True,
+                 config_path='config.json',
+                 file_path='script.py',
+                 destination_path="/temp.py"
+                 
+                ):
         self.x = x
         self.y = y
         self.params = params
         self.model = model
         self.experiment_name = experiment_name
-        self.config_path=config_path
         self.x_val = x_val
         self.y_val = y_val
         self.val_split = val_split
@@ -68,10 +71,20 @@ class DistributeScan(Scan):
         # performance
         self.clear_session = clear_session
         self.save_weights = save_weights
+
+        #distributed configurations
+        self.config_path=config_path
+        self.file_path=file_path
+        self.destination_path=self.destination_path
+
         # input parameters section ends
     def load_config(self):
         config_path=self.config_path
         with open(config_path, 'r') as f:
+          data = json.load(f)
+        return data
+    def load_params(self,param_file="params.json"):
+        with open(os.path.join(os.getcwd(),param_file), 'r') as f:
           data = json.load(f)
         return data
     def split_params(self,n_splits=2):
@@ -93,26 +106,52 @@ class DistributeScan(Scan):
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(host, port, username, password)
         return client
-    def get_ip():
-        hostname = socket.gethostname()
-        local_ip = socket.gethostbyname(hostname)
         
     def ssh_run(self):
         client=self.ssh_connect()
         sftp = client.open_sftp()
-        path = os.getcwd()
-        try:
-            os.mkdir(path + '/' + self.experiment_name)
-        except FileExistsError:
-            pass
-        sftp.put(__file__, path+'/{}/temp.py'.format(self.experiment_name))
+        sftp.put(self.file_path, '{}'.format(self.destination_path))
         sftp.close()
         # Run the transmitted script remotely without args and show its output.
         # SSHClient.exec_command() returns the tuple (stdin,stdout,stderr)
-        stdout = client.exec_command('python3 {}/{}/temp.py'.format(path,self.experiment_name))[1]
+        stdout = client.exec_command('python3 {}'.format(self.destination_path))[1]
         for line in stdout:
             # Process each line in the remote output
             print(line)
 
         client.close()
         sys.exit(0)
+        
+    def run_scan_new_params(self,p):
+        super.__init__(  self.x,               
+                         self.y,
+                         p,
+                         self.model,
+                         self.experiment_name,
+                         x_val=self.x_val,
+                         y_val=self.y_val,
+                         val_split=self.val_split,
+                         random_method=self.random_method,
+                         seed=self.seed,
+                         performance_target=self.performance_target,
+                         fraction_limit=self.fraction_limit,
+                         round_limit=self.round_limit,
+                         time_limit=self.time_limit,
+                         boolean_limit=self.boolean_limit,
+                         reduction_method=self.reduction_method,
+                         reduction_interval=self.reduction_interval,
+                         reduction_window=self.reduction_window,
+                         reduction_threshold=self.reduction_threshold,
+                         reduction_metric=self.reduction_metric,
+                         minimize_loss=self.minimize_loss,
+                         disable_progress_bar=self.disable_progress_bar,
+                         print_params=self.print_params,
+                         clear_session=self.clear_session,
+                         save_weights=self.save_weights,)
+        
+    def run(self):
+        param_dicts=self.split_params(n_splits=2)#Change this to number of machine ids
+        self.run_scan_new_params(param_dicts[0]) #run the scan in current machine using first split
+        ### write the rest of the machine code here
+            
+                
