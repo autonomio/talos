@@ -68,21 +68,26 @@ class DistributeScan(Scan):
     def distributed_run(self,run_local=False):
         clients=self.ssh_connect()
         n_splits=len(clients)
+        threads=[]
+        
         if run_local:
             n_splits+=1
             params_list=self.split_params(n_splits=n_splits)
-            self.run_local(params_list[0])
+            params=params_list[0]
+            t = threading.Thread(target=self.run_local, args=(params,))
+            t.start()
+            threads.append(t)
             params_list=params_list[1:]
         else:
             params_list=self.split_params(n_splits=n_splits)
-        for machine_id,client in enumerate(clients):
-            self.ssh_run(client,params_list[machine_id])
             
-        
-        # self.ssh_run(clients,params_list)
-    
-
-
+        for machine_id,client in enumerate(clients):
+            t = threading.Thread(target=self.ssh_run, args=(client,params_list[machine_id],))
+            t.start()
+            threads.append(t)
+            
+        for t in threads:
+            t.join()
     
             
             
