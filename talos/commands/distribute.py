@@ -4,6 +4,7 @@ import socket
 import paramiko
 import sys
 import os
+import threading
 class DistributeScan(Scan):
     def __init__(self,
                  params,
@@ -47,26 +48,39 @@ class DistributeScan(Scan):
             client.connect(host, port, username, password)
             clients.append(client)
         return clients
+    def ssh_run(self,client,params):
+        sftp = client.open_sftp()
+        sftp.put(self.file_path, '{}'.format(self.destination_path))
+        sftp.close()
+        # Run the transmitted script remotely without args and show its output.
+        # SSHClient.exec_command() returns the tuple (stdin,stdout,stderr)
+        stdin,stdout,stderr = client.exec_command('python3 {} "{}" '.format(self.destination_path,params))
 
-    def ssh_run(self):
+        for line in stderr:
+            # Process each line in the remote output
+            print(line)
+        for line in stdout:
+            print(line)
+        client.close()
+    def run_local(self,params):
+        os.system('python3 {} "{}" '.format(self.file_path,params))
 
+    def distributed_run(self,run_local=False):
         clients=self.ssh_connect()
-        params_list=self.split_params(n_splits=len(clients))
+        n_splits=len(clients)
+        if run_local:
+            n_splits+=1
+            params_list=self.split_params(n_splits=n_splits)
+            self.run_local(params_list[0])
+            params_list=params_list[1:]
+        else:
+            params_list=self.split_params(n_splits=n_splits)
         for machine_id,client in enumerate(clients):
-            sftp = client.open_sftp()
-            sftp.put(self.file_path, '{}'.format(self.destination_path))
-            sftp.close()
-            # Run the transmitted script remotely without args and show its output.
-            # SSHClient.exec_command() returns the tuple (stdin,stdout,stderr)
-            params=params_list[machine_id]
-            stdin,stdout,stderr = client.exec_command('python3 {} "{}" '.format(self.destination_path,params))
-
-            for line in stderr:
-                # Process each line in the remote output
-                print(line)
-            for line in stdout:
-                print(line)
-            client.close()
+            self.ssh_run(client,params_list[machine_id])
+            
+        
+        # self.ssh_run(clients,params_list)
+    
 
 
     
