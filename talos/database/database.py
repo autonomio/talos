@@ -8,38 +8,9 @@ import pandas as pd
 
 
 class Database:
-    """
-    Fetches the query results from database.
 
-    Attributes
-    ----------
-    data_dir: `str` or `pathlib.Path` object
-            absolute path to folder containing all input files.
-    schema_dir: `str` or `pathlib.Path` object
-            path to folder containing `json` schemas of input files.
-            If not specified, auto-generated schema will be used.
-
-    Methods
-    -------
-    fetch_data(question, query, db_type, username='', password='', database='', host='', port='', drop_db=True)
-        Function that fetches the data for the query from the database on local system.
-    fetch_data_aws(question, query, db_type, username='', password='', database='', host='', port='', drop_db=True)
-        Function that fetches the data for the query from the database on AWS.
-    """
     def __init__(self,username,password,host,port=None,db_type="postgres",database_name="EXPERIMENT_LOG",table_name="experiment_log"):
-        """
-        Constructs all the necessary attributes for the database object.
-
-        Attributes
-        ----------
-        data_dir: `str` or `pathlib.Path` object
-                absolute path to folder containing all input files.
-        schema_dir: `str` or `pathlib.Path` object
-                path to folder containing `json` schemas of input files.
-                If not specified, auto-generated schema will be used.
-        data_process: `data_utils` class object
-        nlp: `NLP` class object
-        """
+     
 
         self.db_type=db_type
         self.database_name=database_name
