@@ -11,10 +11,12 @@ from .commands.evaluate import Evaluate
 from .commands.restore import Restore
 from .commands.distribute import DistributeScan
 
+
 # import extras
 from . import utils
 from . import templates
 from . import autom8
+from database.database import Database
 
 # the purpose of everything below is to keep the namespace completely clean
 
