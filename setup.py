@@ -57,6 +57,7 @@ if __name__ == "__main__":
           packages=['talos',
                     'talos.scan',
                     'talos.templates',
+                    'talos.database',
                     'talos.utils',
                     'talos.model',
                     'talos.parameters',
