@@ -8,23 +8,28 @@ import threading
 class DistributeScan(Scan):
     def __init__(self,
                  params,
-                 config_path='config.json',
+                 config='config.json',
                  file_path='script.py',
                  destination_path="./temp.py"
                  
                 ):
         #distributed configurations
         self.params = params
-        self.config_path=config_path
+        self.config=config
         self.file_path=file_path
         self.destination_path=destination_path
 
         # input parameters section ends
     def load_config(self):
-        config_path=self.config_path
-        with open(config_path, 'r') as f:
-          data = json.load(f)
-        return data["machines"]
+        config=self.config
+        if type(config)==str:
+            with open(config, 'r') as f:
+              data = json.load(f)
+            return data["machines"]
+        elif type(config)==dict:
+            return config["machines"]
+        else:
+            TypeError("Please enter the config path or pass the config parameters as a dictionary")
     def split_params(self,n_splits=2):
         d=self.params
         dicts=[{} for i in range(n_splits)]
@@ -66,6 +71,20 @@ class DistributeScan(Scan):
         os.system('python3 {} "{}" '.format(self.file_path,params))
 
     def distributed_run(self,run_local=False):
+        """
+        run the file in distributed systems. 
+        Uses threading in the main machine to connect to multiple systems. 
+
+        Parameters
+        ----------
+        run_local : TYPE, optional
+            DESCRIPTION. The default is False.
+
+        Returns
+        -------
+        None.
+
+        """
         clients=self.ssh_connect()
         n_splits=len(clients)
         threads=[]
