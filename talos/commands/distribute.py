@@ -30,15 +30,34 @@ class DistributeScan(Scan):
             return config["machines"]
         else:
             TypeError("Please enter the config path or pass the config parameters as a dictionary")
-    def split_params(self,n_splits=2):
-        d=self.params
-        dicts=[{} for i in range(n_splits)]
-        def _chunkify(lst,n):
-          return [lst[i::n] for i in range(n)]
-        for k,v in d.items():
-            for i in range(n_splits):
-                dicts[i][k]=_chunkify(v, n_splits)[i]
-        return dicts
+   
+    def create_param_space(self,n_splits=2):
+        
+        from ..parameters.ParamSpace import ParamSpace
+        params=self.params
+        param_keys=params.keys()
+        param_grid= ParamSpace(params, param_keys)._param_space_creation()
+        
+        def __column(matrix, i):
+            return [row[i] for row in matrix]
+        
+        new_params={k:[] for k in param_keys}
+        for key_index,key in enumerate(param_keys):
+            new_params[key]=__column(param_grid,key_index)
+            
+        def __split_params(n_splits=n_splits):
+            d=new_params
+            dicts=[{} for i in range(n_splits)]
+            def _chunkify(lst,n):
+              return [lst[i::n] for i in range(n)]
+            for k,v in d.items():
+                for i in range(n_splits):
+                    dicts[i][k]=_chunkify(v, n_splits)[i]
+            return dicts
+        
+        new_params=__split_params(n_splits)
+        return new_params
+        
 
     def ssh_connect(self):
         configs=self.load_config()
@@ -91,17 +110,17 @@ class DistributeScan(Scan):
         
         if run_local:
             n_splits+=1
-            params_list=self.split_params(n_splits=n_splits)
-            params=params_list[0]
+            params_dict=self.create_param_space(n_splits=n_splits)
+            params=params_dict[0]
             t = threading.Thread(target=self.run_local, args=(params,))
             t.start()
             threads.append(t)
-            params_list=params_list[1:]
+            params_dict=params_dict[1:]
         else:
-            params_list=self.split_params(n_splits=n_splits)
+            params_dict=self.create_param_space(n_splits=n_splits)
             
         for machine_id,client in enumerate(clients):
-            t = threading.Thread(target=self.ssh_run, args=(client,params_list[machine_id],))
+            t = threading.Thread(target=self.ssh_run, args=(client,params_dict[machine_id],))
             t.start()
             threads.append(t)
             
