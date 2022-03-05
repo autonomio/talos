@@ -10,7 +10,8 @@ class DistributeScan(Scan):
                  params,
                  config='config.json',
                  file_path='script.py',
-                 destination_path="./temp.py"
+                 destination_path="./temp.py",
+                 experiment_name="talos_experiment"
                  
                 ):
         #distributed configurations
@@ -18,6 +19,8 @@ class DistributeScan(Scan):
         self.config=config
         self.file_path=file_path
         self.destination_path=destination_path
+        self.experiment_name=experiment_name
+        self.dest_dir=os.path.dirname(self.destination_path)+"/"+self.experiment_name
 
         # input parameters section ends
     def load_config(self):
@@ -75,21 +78,50 @@ class DistributeScan(Scan):
     def ssh_run(self,client,params):
         sftp = client.open_sftp()
         sftp.put(self.file_path, '{}'.format(self.destination_path))
-        sftp.close()
         # Run the transmitted script remotely without args and show its output.
         # SSHClient.exec_command() returns the tuple (stdin,stdout,stderr)
-        stdin,stdout,stderr = client.exec_command('python3 {} "{}" '.format(self.destination_path,params))
-
+        stdin,stdout,stderr = client.exec_command('python3 {} "{}" {}'.format(self.destination_path,params,self.dest_dir))
         for line in stderr:
             # Process each line in the remote output
             print(line)
         for line in stdout:
             print(line)
-        client.close()
-    def run_local(self,params):
-        os.system('python3 {} "{}" '.format(self.file_path,params))
+            
+        #fetch the latest csv
+        localpath = self.experiment_name
+        remotepath = self.dest_dir
 
-    def distributed_run(self,run_local=False):
+        sftp.chdir(remotepath)
+        for f in sorted(sftp.listdir_attr(), key=lambda k: k.st_mtime, reverse=True):
+            sftp.get(f.filename,localpath+"/"+f.filename )
+            break
+
+        sftp.close()
+        client.close()
+        
+    def run_local(self,params):
+        os.system('python3 {} "{}" {} '.format(self.file_path,params,self.dest_dir))
+    
+    # def fetch_csv(self,clients):
+    #     if not os.path.exists(self.dest_dir):
+    #         os.makedirs(self.dest_dir)
+    #     for client in clients:
+    #         sftp_client = client.open_sftp()
+    #         localpath = self.experiment_name
+    #         remotepath = self.dest_dir
+
+    #         sftp_client.chdir(remotepath)
+    #         for f in sorted(sftp_client.listdir_attr(), key=lambda k: k.st_mtime, reverse=True):
+    #             sftp_client.get(f.filename,localpath+"/"+f.filename )
+    #             break
+
+    #         sftp_client.close()
+    #         client.close()
+            
+        
+        
+
+    def distributed_run(self,run_local=False,db_machine_id=0):
         """
         run the file in distributed systems. 
         Uses threading in the main machine to connect to multiple systems. 
@@ -98,6 +130,9 @@ class DistributeScan(Scan):
         ----------
         run_local : TYPE, optional
             DESCRIPTION. The default is False.
+        db_machine_id: int
+            DESCRIPTION. The default is 0. Indicates the centralised store where
+                         the data gets merged.
 
         Returns
         -------
@@ -126,6 +161,8 @@ class DistributeScan(Scan):
             
         for t in threads:
             t.join()
+        
+        
     
             
             
