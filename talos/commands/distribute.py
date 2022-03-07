@@ -5,6 +5,8 @@ import paramiko
 import sys
 import os
 import threading
+import datetime
+import pandas as pd
 class DistributeScan(Scan):
     def __init__(self,
                  params,
@@ -21,6 +23,7 @@ class DistributeScan(Scan):
         self.destination_path=destination_path
         self.experiment_name=experiment_name
         self.dest_dir=os.path.dirname(self.destination_path)+"/"+self.experiment_name
+        self.save_timestamp = int(datetime.datetime.now().timestamp())
 
         # input parameters section ends
     def load_config(self):
@@ -66,16 +69,19 @@ class DistributeScan(Scan):
         configs=self.load_config()
         clients=[]
         for config in configs:
+            client = paramiko.SSHClient()
+            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             host = config['TALOS_IP_ADDRESS']
             port = config['TALOS_PORT']
             username = config['TALOS_USER']
-            password = config['TALOS_PASSWORD']
-            client = paramiko.SSHClient()
-            client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            client.connect(host, port, username, password)
+            if "TALOS_PASSWORD" in config.keys():
+                password = config['TALOS_PASSWORD']
+                client.connect(host, port, username, password)
+            elif "TALOS_KEY_FILENAME" in config.keys():
+                client.connect(host, port, username, key_filename=config["TALOS_KEY_FILENAME"])
             clients.append(client)
         return clients
-    def ssh_run(self,client,params):
+    def ssh_run(self,client,params,machine_id):
         sftp = client.open_sftp()
         sftp.put(self.file_path, '{}'.format(self.destination_path))
         # Run the transmitted script remotely without args and show its output.
@@ -93,7 +99,7 @@ class DistributeScan(Scan):
 
         sftp.chdir(remotepath)
         for f in sorted(sftp.listdir_attr(), key=lambda k: k.st_mtime, reverse=True):
-            sftp.get(f.filename,localpath+"/"+f.filename )
+            sftp.get(f.filename,localpath+"/"+str(self.save_timestamp)+"_machine_"+str(machine_id)+".csv")
             break
 
         sftp.close()
@@ -101,26 +107,14 @@ class DistributeScan(Scan):
         
     def run_local(self,params):
         os.system('python3 {} "{}" {} '.format(self.file_path,params,self.dest_dir))
-    
-    # def fetch_csv(self,clients):
-    #     if not os.path.exists(self.dest_dir):
-    #         os.makedirs(self.dest_dir)
-    #     for client in clients:
-    #         sftp_client = client.open_sftp()
-    #         localpath = self.experiment_name
-    #         remotepath = self.dest_dir
-
-    #         sftp_client.chdir(remotepath)
-    #         for f in sorted(sftp_client.listdir_attr(), key=lambda k: k.st_mtime, reverse=True):
-    #             sftp_client.get(f.filename,localpath+"/"+f.filename )
-    #             break
-
-    #         sftp_client.close()
-    #         client.close()
-            
+               
+    def merge_csvs(self):
+        localpath=self.experiment_name
+        filepaths=[os.path.join(localpath,i) for i in os.listdir(localpath) if i.startswith(str(self.save_timestamp))]
+        dfs=[pd.read_csv(f) for f in filepaths]
+        results=pd.concat(dfs)
+        results.to_csv(os.path.join(localpath,str(self.save_timestamp)+"_results.csv"))
         
-        
-
     def distributed_run(self,run_local=False,db_machine_id=0):
         """
         run the file in distributed systems. 
@@ -155,13 +149,14 @@ class DistributeScan(Scan):
             params_dict=self.create_param_space(n_splits=n_splits)
             
         for machine_id,client in enumerate(clients):
-            t = threading.Thread(target=self.ssh_run, args=(client,params_dict[machine_id],))
+            t = threading.Thread(target=self.ssh_run, args=(client,params_dict[machine_id],machine_id+1))
             t.start()
             threads.append(t)
             
         for t in threads:
             t.join()
         
+        self.merge_csvs()
         
     
             
