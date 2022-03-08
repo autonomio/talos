@@ -131,10 +131,7 @@ class DistributeScan(Scan):
                 client.connect(host, port, username, password)
             elif "TALOS_KEY_FILENAME" in config.keys():
                 client.connect(
-                    host,
-                    port,
-                    username,
-                    key_filename=config["TALOS_KEY_FILENAME"]
+                    host, port, username, key_filename=config["TALOS_KEY_FILENAME"]
                 )
 
             clients.append(client)
@@ -163,8 +160,7 @@ class DistributeScan(Scan):
         # Run the transmitted script remotely without args and show its output.
         # SSHClient.exec_command() returns the tuple (stdin,stdout,stderr)
         stdin, stdout, stderr = client.exec_command(
-            'python3 {} "{}" {}'.format(
-                self.destination_path, params, self.dest_dir)
+            'python3 {} "{}" {}'.format(self.destination_path, params, self.dest_dir)
         )
         if stderr:
             for line in stderr:
@@ -181,9 +177,7 @@ class DistributeScan(Scan):
         remotepath = self.dest_dir
 
         sftp.chdir(remotepath)
-        for f in sorted(sftp.listdir_attr(),
-                        key=lambda k: k.st_mtime,
-                        reverse=True):
+        for f in sorted(sftp.listdir_attr(), key=lambda k: k.st_mtime, reverse=True):
             sftp.get(
                 f.filename,
                 localpath
@@ -212,8 +206,7 @@ class DistributeScan(Scan):
         None.
 
         """
-        os.system('python3 {} "{}" {} '.format(
-            self.file_path, params, self.dest_dir))
+        os.system('python3 {} "{}" {} '.format(self.file_path, params, self.dest_dir))
 
     def merge_csvs(self):
         """
@@ -268,15 +261,15 @@ class DistributeScan(Scan):
             db = Database(username, password, host, port)
         else:
             db = Database()
+
+        timestamp_col = [self.save_timestamp for i in range(len(data_frame))]
+        data_frame["timestamp"] = timestamp_col
         db.write_to_db(data_frame)
+
         return db
 
     def distributed_run(
-        self,
-        run_local=False,
-        db_machine_id=0,
-        db_config=None,
-        show_results=False
+        self, run_local=False, db_machine_id=0, db_config=None, show_results=False
     ):
         """
 
