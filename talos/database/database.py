@@ -9,7 +9,7 @@ import pandas as pd
 
 class Database:
 
-    def __init__(self,username,password,host,port=None,db_type="postgres",database_name="EXPERIMENT_LOG",table_name="experiment_log"):
+    def __init__(self,username=None,password=None,host=None,port=None,db_type="sqlite",database_name="EXPERIMENT_LOG",table_name="experiment_log"):
      
 
         self.db_type=db_type
@@ -17,7 +17,7 @@ class Database:
         self.table_name=table_name
         DB_URL=""
         if db_type == 'sqlite':
-            DB_URL = 'sqlite://'
+            DB_URL = 'sqlite:///'+database_name+".db"
         elif db_type == 'mysql':
             if port is None:    port = 3306
             DB_URL = 'mysql+pymysql://' + username + ':' + password + '@' + host + ':' + str(port)+'/'+database_name

@@ -1,4 +1,5 @@
 from ..scan.Scan import Scan
+
 import json
 import socket
 import paramiko
@@ -114,8 +115,23 @@ class DistributeScan(Scan):
         dfs=[pd.read_csv(f) for f in filepaths]
         results=pd.concat(dfs)
         results.to_csv(os.path.join(localpath,str(self.save_timestamp)+"_results.csv"))
+        return results
+    
+    def update_db(self,data_frame,config=None):
+        from ..database.database import Database
+        if config:
+            username=config["DB_USERNAME"]
+            password=config["DB_PASSWORD"]
+            host=config["DB_HOST"]
+            port=config["DB_PORT"]
+            db=Database(username,password,host,port)
+        else:
+            db=Database()
+        db.write_to_db(data_frame)
+        return db
         
-    def distributed_run(self,run_local=False,db_machine_id=0):
+        
+    def distributed_run(self,run_local=False,db_machine_id=0,db_config=None,show_results=False):
         """
         run the file in distributed systems. 
         Uses threading in the main machine to connect to multiple systems. 
@@ -156,7 +172,10 @@ class DistributeScan(Scan):
         for t in threads:
             t.join()
         
-        self.merge_csvs()
+        results=self.merge_csvs()
+        db=self.update_db(results,db_config)
+        if show_results:
+            print(db.show_table_content())
         
     
             
