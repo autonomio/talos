@@ -48,21 +48,17 @@ class DistributeScan(Scan):
             os.path.dirname(self.destination_path) + "/" + self.experiment_name
         )
         self.save_timestamp = int(datetime.datetime.now().timestamp())
-
-    def load_config(self):
-        """
-        load the machine configurations from a json file
-        or directly from a dictionary.
-        """
-        config = self.config
+        
         if type(config) == str:
             with open(config, "r") as f:
-                data = json.load(f)
-            return data["machines"]
+                self.config_data = json.load(f)
+            
         elif type(config) == dict:
-            return config["machines"]
+            self.config_data=config
+            
         else:
             TypeError("""Enter config path or config dict""")
+
 
     def create_param_space(self, n_splits=2):
         """
@@ -118,7 +114,7 @@ class DistributeScan(Scan):
             DESCRIPTION. List of client objects of machines after connection.
 
         """
-        configs = self.load_config()
+        configs = self.config_data["machines"]
         clients = []
         for config in configs:
             client = paramiko.SSHClient()
@@ -258,7 +254,18 @@ class DistributeScan(Scan):
             password = config["DB_PASSWORD"]
             host = config["DB_HOST"]
             port = config["DB_PORT"]
-            db = Database(username, password, host, port)
+            database_name=config["DATABASE_NAME"]
+            db_type=config["DB_TYPE"]
+            table_name=config["DB_TABLE_NAME"]
+            encoding=config["DB_ENCODING"]
+            db = Database(username, 
+                          password, 
+                          host,
+                          port,
+                          database_name=database_name,
+                          db_type=db_type,
+                          table_name=table_name,
+                          encoding=encoding)
         else:
             db = Database()
 
@@ -269,7 +276,7 @@ class DistributeScan(Scan):
         return db
 
     def distributed_run(
-        self, run_local=False, db_machine_id=0, db_config=None, show_results=False
+        self, run_local=False, db_machine_id=0, show_results=False
     ):
         """
 
@@ -281,8 +288,6 @@ class DistributeScan(Scan):
         db_machine_id:TYPE : `int`
             DESCRIPTION. The default is 0. Indicates the centralised store
                           where the data gets merged.
-        db_config : TYPE: `dict`, optional
-            DESCRIPTION. The default is None.
         show_results : TYPE: `bool`, optional
             DESCRIPTION. The default is False.
 
@@ -303,6 +308,7 @@ class DistributeScan(Scan):
             t.start()
             threads.append(t)
             params_dict = params_dict[1:]
+            
         else:
             params_dict = self.create_param_space(n_splits=n_splits)
 
@@ -318,6 +324,11 @@ class DistributeScan(Scan):
             t.join()
 
         results = self.merge_csvs()
+        
+        db_config=None
+        if "database" in self.config_data.keys():
+            db_config=self.config_data["database"]   
+            
         db = self.update_db(results, db_config)
         if show_results:
             print(db.show_table_content())
