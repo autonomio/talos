@@ -250,14 +250,19 @@ class DistributeScan(Scan):
         from ..database.database import Database
 
         if config:
-            username = config["DB_USERNAME"]
-            password = config["DB_PASSWORD"]
-            host = config["DB_HOST"]
-            port = config["DB_PORT"]
-            database_name=config["DATABASE_NAME"]
-            db_type=config["DB_TYPE"]
-            table_name=config["DB_TABLE_NAME"]
-            encoding=config["DB_ENCODING"]
+            machine_config=config["machines"]
+            db_config=config["database"]
+            username = db_config["DB_USERNAME"]
+            password = db_config["DB_PASSWORD"]
+            
+            host_machine_id = db_config["DB_HOST_MACHINE_ID"]-1 #Subtract 1 to handle machines list
+            host=machine_config[host_machine_id]["TALOS_IP_ADDRESS"]
+            
+            port = db_config["DB_PORT"]
+            database_name=db_config["DATABASE_NAME"]
+            db_type=db_config["DB_TYPE"]
+            table_name=db_config["DB_TABLE_NAME"]
+            encoding=db_config["DB_ENCODING"]
             db = Database(username, 
                           password, 
                           host,
@@ -276,7 +281,7 @@ class DistributeScan(Scan):
         return db
 
     def distributed_run(
-        self, run_local=False, db_machine_id=0, show_results=False
+        self, run_central_node=False, db_machine_id=0, show_results=False
     ):
         """
 
@@ -300,7 +305,7 @@ class DistributeScan(Scan):
         n_splits = len(clients)
         threads = []
 
-        if run_local:
+        if run_central_node:
             n_splits += 1
             params_dict = self.create_param_space(n_splits=n_splits)
             params = params_dict[0]
@@ -327,7 +332,7 @@ class DistributeScan(Scan):
         
         db_config=None
         if "database" in self.config_data.keys():
-            db_config=self.config_data["database"]   
+            db_config=self.config_data  
             
         db = self.update_db(results, db_config)
         if show_results:
