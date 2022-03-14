@@ -14,7 +14,7 @@ class Database:
         db_type="sqlite",
         database_name="EXPERIMENT_LOG",
         table_name="experiment_log",
-        encoding="latin1"
+        encoding="LATIN1"
     ):
         """
 

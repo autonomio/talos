@@ -12,9 +12,10 @@ class DistributeScan(Scan):
     def __init__(
         self,
         params,
-        config="config.json",
-        file_path="script.py",
-        destination_path="./temp.py",
+        config="./config.json",
+        file_path="./temp.py",
+        local_distribute_path="./talos_distribute.py",
+        remote_distribute_filepath="./talos_distribute.py",
         experiment_name="talos_experiment",
     ):
         """
@@ -42,8 +43,11 @@ class DistributeScan(Scan):
         self.params = params
         self.config = config
         self.file_path = file_path
-        self.destination_path = destination_path
+        self.destination_path = "./"+self.file_path
+        self.remote_distribute_filepath=remote_distribute_filepath
         self.experiment_name = experiment_name
+        self.local_distribute_path=local_distribute_path
+        
         self.dest_dir = (
             os.path.dirname(self.destination_path) + "/" + self.experiment_name
         )
@@ -160,12 +164,18 @@ class DistributeScan(Scan):
         )
         if stderr:
             for line in stderr:
+                try:
                 # Process each error  line in the remote output
-                print(line)
+                    print(line)
+                except:
+                    print("Can't Output error")
 
         for line in stdout:
-            # Process each error  line in the remote output
-            print(line)
+            try:
+            # Process each  line in the remote output
+                print(line)
+            except:
+                print("Can't Output error")
 
         # fetch the latest csv
         localpath = self.experiment_name
@@ -204,6 +214,57 @@ class DistributeScan(Scan):
         """
         os.system('python3 {} "{}" {} '.format(self.file_path, params, self.dest_dir))
 
+    def execute_distribute_in_remote(self,config):
+        
+        db_machine_id=int(config["database"]["DB_HOST_MACHINE_ID"])-1
+        cental_config=config["machines"][db_machine_id]
+        
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        host = cental_config["TALOS_IP_ADDRESS"]
+        port = cental_config["TALOS_PORT"]
+        username = cental_config["TALOS_USER"]
+        if "TALOS_PASSWORD" in cental_config.keys():
+            password = cental_config["TALOS_PASSWORD"]
+            client.connect(host, port, username, password)
+        elif "TALOS_KEY_FILENAME" in cental_config.keys():
+            client.connect(
+                host, port, username, key_filename=cental_config["TALOS_KEY_FILENAME"]
+            )
+            
+        sftp = client.open_sftp()
+        sftp.put(self.local_distribute_path, "{}".format(self.remote_distribute_filepath))
+        sftp.put(self.file_path, "{}".format(self.destination_path))
+        
+        #config changes when running distribute in remote machine
+        new_config={}
+        new_config["machines"]=config["machines"]
+        new_config["machines"] = new_config["machines"][:db_machine_id]+ new_config["machines"][db_machine_id+1:]  #all machine ids except the current              
+        new_config["run_central_node"]=True
+        new_config["remote_database"]=True
+        new_config["remote_db_credentials"]=config["database"]
+        with open('new_config.json', 'w') as outfile:
+            json.dump(new_config, outfile)
+            
+        sftp.put("new_config.json", "./config.json")
+        
+        # Run the transmitted script remotely without args and show its output.
+        # SSHClient.exec_command() returns the tuple (stdin,stdout,stderr)
+        stdin, stdout, stderr = client.exec_command(
+            'python3 {}'.format(self.remote_distribute_filepath)
+        )
+        if stderr:
+            for line in stderr:
+                # Process each error  line in the remote output
+                print(line)
+
+        for line in stdout:
+            # Process each error  line in the remote output
+            print(line)
+        
+        sftp.close()
+        client.close()
+    
     def merge_csvs(self):
         """
 
@@ -249,13 +310,36 @@ class DistributeScan(Scan):
         """
         from ..database.database import Database
 
-        if config:
+  
+        
+        if "remote_db_credentials" in config.keys():
+            
+            username = config["remote_db_credentials"]["DB_USERNAME"]
+            password = config["remote_db_credentials"]["DB_PASSWORD"]
+            host="localhost"
+            port = config["remote_db_credentials"]["DB_PORT"]
+            database_name=config["remote_db_credentials"]["DATABASE_NAME"]
+            db_type=config["remote_db_credentials"]["DB_TYPE"]
+            table_name=config["remote_db_credentials"]["DB_TABLE_NAME"]
+            encoding=config["remote_db_credentials"]["DB_ENCODING"]
+            
+            db = Database(username, 
+                              password, 
+                              host,
+                              port,
+                              database_name=database_name,
+                              db_type=db_type,
+                              table_name=table_name,
+                              encoding=encoding)
+            
+        elif "database" in config.keys():
+        
             machine_config=config["machines"]
             db_config=config["database"]
             username = db_config["DB_USERNAME"]
             password = db_config["DB_PASSWORD"]
             
-            host_machine_id = db_config["DB_HOST_MACHINE_ID"]-1 #Subtract 1 to handle machines list
+            host_machine_id = int(db_config["DB_HOST_MACHINE_ID"])-1 #Subtract 1 to handle machines list
             host=machine_config[host_machine_id]["TALOS_IP_ADDRESS"]
             
             port = db_config["DB_PORT"]
@@ -263,14 +347,17 @@ class DistributeScan(Scan):
             db_type=db_config["DB_TYPE"]
             table_name=db_config["DB_TABLE_NAME"]
             encoding=db_config["DB_ENCODING"]
+            
             db = Database(username, 
-                          password, 
-                          host,
-                          port,
-                          database_name=database_name,
-                          db_type=db_type,
-                          table_name=table_name,
-                          encoding=encoding)
+                              password, 
+                              host,
+                              port,
+                              database_name=database_name,
+                              db_type=db_type,
+                              table_name=table_name,
+                              encoding=encoding)
+            
+       
         else:
             db = Database()
 
@@ -281,7 +368,7 @@ class DistributeScan(Scan):
         return db
 
     def distributed_run(
-        self, run_central_node=False, db_machine_id=0, show_results=False
+        self, db_machine_id=0, show_results=False
     ):
         """
 
@@ -294,16 +381,23 @@ class DistributeScan(Scan):
             DESCRIPTION. The default is 0. Indicates the centralised store
                           where the data gets merged.
         show_results : TYPE: `bool`, optional
-            DESCRIPTION. The default is False.
+            DESCRIPTION. The default is False. Shows results from database.
 
         Returns
         -------
         None.
 
         """
+           
+        config=self.config_data
+        if "database" in self.config_data.keys():
+            self.execute_distribute_in_remote(config)
+            exit()
+            
         clients = self.ssh_connect()
         n_splits = len(clients)
         threads = []
+        run_central_node=self.config_data["run_central_node"]
 
         if run_central_node:
             n_splits += 1
@@ -329,11 +423,7 @@ class DistributeScan(Scan):
             t.join()
 
         results = self.merge_csvs()
-        
-        db_config=None
-        if "database" in self.config_data.keys():
-            db_config=self.config_data  
-            
-        db = self.update_db(results, db_config)
+        print(config,"----------------------------")
+        db = self.update_db(results, config)
         if show_results:
             print(db.show_table_content())
