@@ -130,10 +130,10 @@ class ParamSpace:
         '''
 
         # handle the cases where parameter space is still large
-        if len(self.param_index) > 100000:
+        if len(self.param_index) < 100000:
 
             final_grid = list(it.product(*self._params_temp))
-            out = np.array(final_grid, dtype='object')
+            return np.array(final_grid, dtype='object')
 
         # handle the cases where parameter space is already smaller
         else:
@@ -145,9 +145,7 @@ class ParamSpace:
                     p.insert(0, l[s])
                 final_grid.append(tuple(p))
 
-            out = np.array(final_grid, dtype='object')
-
-        return out
+            return np.array(final_grid, dtype='object')
 
     def _check_time_limit(self):
 
