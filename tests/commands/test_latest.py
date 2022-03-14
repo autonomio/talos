@@ -22,6 +22,10 @@ def test_latest():
          'batch_size': [20, 30, 40, 50],
          'epochs': [10]}
 
+    from talos.parameters.DistributeParamSpace import DistributeParamSpace
+
+    _ = DistributeParamSpace(params=p, param_keys=p.keys(), machines=5)
+
     def iris_model(x_train, y_train, x_val, y_val, params):
 
         model = Sequential()
