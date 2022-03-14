@@ -51,7 +51,7 @@ class DistributeScan(Scan):
         self.dest_dir = (
             os.path.dirname(self.destination_path) + "/" + self.experiment_name
         )
-        self.save_timestamp = int(datetime.datetime.now().timestamp())
+        self.save_timestamp = str(int(datetime.datetime.now().timestamp()))
         
         if type(config) == str:
             with open(config, "r") as f:
@@ -276,11 +276,21 @@ class DistributeScan(Scan):
             after merging results from multiple machines.
 
         """
-        localpath = self.experiment_name
+        os.mkdir(os.path.join(self.experiment_name,self.save_timestamp))
+        localpath = os.path.join(self.experiment_name,self.save_timestamp)
+        
+        source = self.experiment_name
+        destination = localpath
+        allfiles = os.listdir(source)
+          
+        for f in allfiles:
+            if f.endswith(".csv"):
+                os.rename(os.path.join(source,f), os.path.join(destination ,f))#move files 
+        
         filepaths = [
             os.path.join(localpath, i)
             for i in os.listdir(localpath)
-            if i.startswith(str(self.save_timestamp))
+            if i.endswith(".csv")
         ]
         dfs = [pd.read_csv(f) for f in filepaths]
         results = pd.concat(dfs)
