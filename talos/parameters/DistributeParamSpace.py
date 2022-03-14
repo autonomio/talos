@@ -18,9 +18,6 @@ class DistributeParamSpace:
 
         '''
 
-        import numpy as np
-        import copy
-
         from talos.parameters.ParamSpace import ParamSpace
         
         self._params = ParamSpace(params=params,
@@ -39,6 +36,9 @@ class DistributeParamSpace:
         
         '''Takes in a ParamSpace object and splits it so that
         it can be used in DistributeScan experiments.'''
+
+        import numpy as np
+        import copy
 
         out = {}
 
