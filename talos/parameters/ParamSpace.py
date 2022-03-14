@@ -129,13 +129,11 @@ class ParamSpace:
         actual parameter permutations for the experiment.
         '''
 
-        # handle the cases where parameter space is still large
         if len(self.param_index) < 100000:
 
             final_grid = list(it.product(*self._params_temp))
             return np.array(final_grid, dtype='object')
 
-        # handle the cases where parameter space is already smaller
         else:
             final_grid = []
             for i in self.param_index:
