@@ -44,6 +44,8 @@ class Predict:
 
         '''
 
+        import numpy as np
+
         if model_id is None:
             from ..utils.best_model import best_model
             model_id = best_model(self.scan_object, metric, asc)
@@ -51,4 +53,8 @@ class Predict:
         from ..utils.best_model import activate_model
         model = activate_model(self.scan_object, model_id)
 
-        return model.predict_classes(x)
+        # make (class) predictiosn with the model
+        preds = model.predict(x)   
+        preds_classes = np.argmax(preds, axis=1)
+
+        return preds_classes

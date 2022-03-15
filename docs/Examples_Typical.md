@@ -62,7 +62,7 @@ p = {'activation':['relu', 'elu'],
      'epochs': [10, 20]}
 ```
 
-Note that the parameter dictionary allows either list of values, or tuples with range in the form `(min, max, step)`
+Note that the parameter dictionary allows either list of values, or tuples with range in the form `(min, max, number_of_values)`
 
 
 ### Scan()

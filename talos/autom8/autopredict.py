@@ -77,6 +77,8 @@ def AutoPredict(scan_object,
 
     '''
 
+    import numpy as np
+
     # evaluate and add the evaluation scores
     scan_object.evaluate_models(x_val,
                                 y_val,
@@ -94,7 +96,8 @@ def AutoPredict(scan_object,
     scan_object.preds_probabilities = scan_object.preds_model.predict(x_pred)
 
     # make (class) predictiosn with the model
-    scan_object.preds_classes = scan_object.preds_model.predict_classes(x_pred)
+    preds = scan_object.preds_model.predict(x_pred)   
+    scan_object.preds_classes = np.argmax(preds, axis=1)
 
     # get the hyperparameter for the model
     scan_object.preds_parameters = scan_object.data.sort_values('eval_f1score_mean',
