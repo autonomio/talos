@@ -33,7 +33,7 @@ def scan_prepare(self):
                                     boolean_limit=self.boolean_limit)
 
     # handle the case when self.params already is ParamSpace object
-    elif type(self.params) == 'talos.parameters.ParamSpace.ParamSpace':
+    elif 'talos.parameters.ParamSpace.ParamSpace' in str(type(self.params)):
         
         self._param_dict_keys = sorted(list(self.params.param_keys))
         self.param_object = self.params
