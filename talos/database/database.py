@@ -14,7 +14,7 @@ class Database:
         db_type="sqlite",
         database_name="EXPERIMENT_LOG",
         table_name="experiment_log",
-        encoding="LATIN1"
+        encoding="LATIN1",
     ):
         """
 
@@ -43,7 +43,7 @@ class Database:
         self.db_type = db_type
         self.database_name = database_name
         self.table_name = table_name
-        self.encoding=encoding
+        self.encoding = encoding
         DB_URL = ""
         if db_type == "sqlite":
             DB_URL = "sqlite:///" + database_name + ".db"
@@ -84,22 +84,27 @@ class Database:
         Create database if it doesn't exists.
         """
         try:
-            
-            engine = create_engine(self.DB_URL, echo=False,
-                                  isolation_level="AUTOCOMMIT" 
-                                  )
-            
+
+            engine = create_engine(
+                self.DB_URL, echo=False, isolation_level="AUTOCOMMIT"
+            )
+
             if not database_exists(engine.url):
-                
-                new_engine = create_engine(self.DB_URL.replace(self.database_name,""), echo=False,
-                                      isolation_level="AUTOCOMMIT" 
-                                      )
-                conn=new_engine.connect()
-                conn.execute("""
-                             CREATE DATABASE {} ENCODING '{}' 
-                             """.format(self.database_name,
-                                        self.encoding))
-            
+
+                new_engine = create_engine(
+                    self.DB_URL.replace(self.database_name, ""),
+                    echo=False,
+                    isolation_level="AUTOCOMMIT",
+                )
+                conn = new_engine.connect()
+                conn.execute(
+                    """
+                    CREATE DATABASE {} ENCODING '{}'
+                    """.format(
+                        self.database_name, self.encoding
+                    )
+                )
+
         except DatabaseError as e:
             import traceback
 
@@ -141,7 +146,7 @@ class Database:
 
         """
         engine = self.create_db()
-        data_frame.to_sql(self.table_name, con=engine, if_exists="append",index=False)
+        data_frame.to_sql(self.table_name, con=engine, if_exists="append", index=False)
 
     def query_table(self, query):
         """
