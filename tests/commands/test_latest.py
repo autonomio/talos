@@ -1,5 +1,9 @@
 def test_latest():
 
+    import warnings
+
+    warnings.simplefilter('ignore')
+
     print('\n >>> start Latest Features... \n')
 
     import talos
@@ -17,6 +21,10 @@ def test_latest():
          'dropout': [.2, .3, .4],
          'batch_size': [20, 30, 40, 50],
          'epochs': [10]}
+
+    from talos.parameters.DistributeParamSpace import DistributeParamSpace
+
+    _ = DistributeParamSpace(params=p, param_keys=p.keys(), machines=5)
 
     def iris_model(x_train, y_train, x_val, y_val, params):
 
