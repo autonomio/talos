@@ -1,5 +1,5 @@
 class DistributeParamSpace:
-    
+
     def __init__(self,
                  params,
                  param_keys,
@@ -9,7 +9,7 @@ class DistributeParamSpace:
                  time_limit=None,
                  boolean_limit=None,
                  machines=2):
-    
+
         '''Splits ParamSpace object based on number
         of machines.
 
@@ -19,21 +19,21 @@ class DistributeParamSpace:
         '''
 
         from talos.parameters.ParamSpace import ParamSpace
-        
+
         self._params = ParamSpace(params=params,
-                                 param_keys=param_keys,
-                                 random_method='uniform_mersenne',
-                                 fraction_limit=None,
-                                 round_limit=None,
-                                 time_limit=None,
-                                 boolean_limit=None)
-        
+                                  param_keys=param_keys,
+                                  random_method='uniform_mersenne',
+                                  fraction_limit=None,
+                                  round_limit=None,
+                                  time_limit=None,
+                                  boolean_limit=None)
+
         self.machines = machines
-        
+
         self.param_spaces = self._split_param_space()
-        
+
     def _split_param_space(self):
-        
+
         '''Takes in a ParamSpace object and splits it so that
         it can be used in DistributeScan experiments.'''
 
