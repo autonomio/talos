@@ -16,6 +16,10 @@ class DistributeParamSpace:
         params | object | ParamSpace class object
         machines | int | number of machines to split for
 
+        NOTE: `Scan()` limits will not be applied if ParamSpace object
+        is passed directly into `Scan()` as `params` argument so they
+        should be passed directly into `DistributeParamSpace` instead.
+
         '''
 
         from talos.parameters.ParamSpace import ParamSpace

@@ -16,19 +16,30 @@ def scan_prepare(self):
     elif self.x_val is not None and self.y_val is not None:
         self.custom_val_split = True
 
-    # create reference for parameter keys
-    self._param_dict_keys = sorted(list(self.params.keys()))
+    # handle the case where self.params is dictionary
+    if isinstance(self.params, dict):
 
-    # create the parameter object and move to self
-    from ..parameters.ParamSpace import ParamSpace
-    self.param_object = ParamSpace(params=self.params,
-                                   param_keys=self._param_dict_keys,
-                                   random_method=self.random_method,
-                                   fraction_limit=self.fraction_limit,
-                                   round_limit=self.round_limit,
-                                   time_limit=self.time_limit,
-                                   boolean_limit=self.boolean_limit
-                                   )
+        # create reference for parameter keys
+        self._param_dict_keys = sorted(list(self.params.keys()))
+
+        # create the parameter object and move to self
+        from ..parameters.ParamSpace import ParamSpace
+        self.param_object = ParamSpace(params=self.params,
+                                    param_keys=self._param_dict_keys,
+                                    random_method=self.random_method,
+                                    fraction_limit=self.fraction_limit,
+                                    round_limit=self.round_limit,
+                                    time_limit=self.time_limit,
+                                    boolean_limit=self.boolean_limit)
+
+    # handle the case when self.params already is ParamSpace object
+    elif 'talos.parameters.ParamSpace.ParamSpace' in str(type(self.params)):
+        
+        self._param_dict_keys = sorted(list(self.params.param_keys))
+        self.param_object = self.params
+
+    else:
+        raise TypeError('params has to be either dictionary or ParamSpace object.')
 
     # mark that it's a first round
     self.first_round = True
