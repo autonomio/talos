@@ -11,12 +11,36 @@ import pandas as pd
 class DistributeScan(Scan):
     def __init__(
         self,
+        x,
+        y,
         params,
+        model,
+        experiment_name,
+        x_val=None,
+        y_val=None,
+        val_split=.3,
+        random_method='uniform_mersenne',
+        seed=None,
+        performance_target=None,
+        fraction_limit=None,
+        round_limit=None,
+        time_limit=None,
+        boolean_limit=None,
+        reduction_method=None,
+        reduction_interval=50,
+        reduction_window=20,
+        reduction_threshold=0.2,
+        reduction_metric='val_acc',
+        minimize_loss=False,
+        disable_progress_bar=False,
+        print_params=False,
+        clear_session=True,
+        save_weights=True,
         config="./config.json",
         file_path="./temp.py",
+        destination_path="./newtemp.py",
         local_distribute_path="./talos_distribute.py",
         remote_distribute_filepath="./talos_distribute.py",
-        experiment_name="talos_experiment",
     ):
         """
 
@@ -39,17 +63,51 @@ class DistributeScan(Scan):
         None.
 
         """
-        # distributed configurations
+        self.x = x
+        self.y = y
         self.params = params
+        self.model = model
+        self.experiment_name = experiment_name
+        self.x_val = x_val
+        self.y_val = y_val
+        self.val_split = val_split
+
+        # randomness
+        self.random_method = random_method
+        self.seed = seed
+
+        # limiters
+        self.performance_target = performance_target
+        self.fraction_limit = fraction_limit
+        self.round_limit = round_limit
+        self.time_limit = time_limit
+        self.boolean_limit = boolean_limit
+
+        # optimization
+        self.reduction_method = reduction_method
+        self.reduction_interval = reduction_interval
+        self.reduction_window = reduction_window
+        self.reduction_threshold = reduction_threshold
+        self.reduction_metric = reduction_metric
+        self.minimize_loss = minimize_loss
+
+        # display
+        self.disable_progress_bar = disable_progress_bar
+        self.print_params = print_params
+
+        # performance
+        self.clear_session = clear_session
+        self.save_weights = save_weights
+        
+        # distributed configurations
         self.config = config
         self.file_path = file_path
-        self.destination_path = "./" + self.file_path
+        self.destination_path = destination_path
         self.remote_distribute_filepath = remote_distribute_filepath
-        self.experiment_name = experiment_name
         self.local_distribute_path = local_distribute_path
 
         self.dest_dir = (
-            os.path.dirname(self.destination_path) + "/" + self.experiment_name
+            os.path.dirname(self.destination_path)
         )
         self.save_timestamp = str(int(datetime.datetime.now().timestamp()))
 
@@ -59,6 +117,9 @@ class DistributeScan(Scan):
 
         elif type(config) == dict:
             self.config_data = config
+            with open("config.json", "w") as outfile:
+                json.dump(self.config_data, outfile)
+                    
 
         else:
             TypeError("""Enter config path or config dict""")
@@ -79,33 +140,65 @@ class DistributeScan(Scan):
 
         """
 
-        from ..parameters.ParamSpace import ParamSpace
+        from ..parameters.DistributeParamSpace import DistributeParamSpace
 
         params = self.params
         param_keys = params.keys()
-        param_grid = ParamSpace(params, param_keys)._param_space_creation()
-
-        def __column(matrix, i):
-            return [row[i] for row in matrix]
-
-        new_params = {k: [] for k in param_keys}
-        for key_index, key in enumerate(param_keys):
-            new_params[key] = __column(param_grid, key_index)
-
-        def __split_params(n_splits=n_splits):
-            d = new_params
-            dicts = [{} for i in range(n_splits)]
-
-            def _chunkify(lst, n):
-                return [lst[i::n] for i in range(n)]
-
-            for k, v in d.items():
-                for i in range(n_splits):
-                    dicts[i][k] = _chunkify(v, n_splits)[i]
-            return dicts
-
-        new_params = __split_params(n_splits)
-        return new_params
+        
+        random_method=self.random_method
+        fraction_limit=self.fraction_limit
+        round_limit=self.round_limit
+        time_limit=self.time_limit
+        boolean_limit=self.boolean_limit
+        
+        param_grid = DistributeParamSpace(
+            params=params,
+            param_keys=param_keys,
+            random_method=random_method,
+            fraction_limit=fraction_limit,
+            round_limit=round_limit,
+            time_limit=time_limit,
+            boolean_limit=boolean_limit,
+            machines=n_splits
+            )
+        
+        split_param_space=param_grid._split_param_space()
+        
+        return split_param_space
+    
+    def find_current_ip(self):
+        import socket
+    
+        st = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:       
+            st.connect(('10.255.255.255', 1))
+            IP = st.getsockname()[0]
+        except Exception:
+            IP = '127.0.0.1'
+        finally:
+            st.close()
+        return IP
+    
+    def return_current_machine_id(self):# return machine id after checking the ip from config
+        # current_ip=self.find_current_ip()
+        current_machine_id=0
+        # for machine in self.config_data["machines"]:
+        #     if str(machine["TALOS_IP_ADDRESS"])==str(current_ip):
+        #         current_machine_id=int(machine["machine_id"])
+        #         break
+        if "current_machine_id" in self.config_data.keys():
+            current_machine_id=int(self.config_data["current_machine_id"])
+        
+        print("Current machine ID is "+str(current_machine_id))
+        return current_machine_id
+    
+    def return_central_machine_id(self):
+        central_id=0
+        config_data=self.config_data
+        if "database" in config_data.keys():
+            central_id=int(config_data["database"]["DB_HOST_MACHINE_ID"])
+        return central_id   
+        
 
     def ssh_connect(self):
         """
@@ -118,7 +211,7 @@ class DistributeScan(Scan):
 
         """
         configs = self.config_data["machines"]
-        clients = []
+        clients = {}
         for config in configs:
             client = paramiko.SSHClient()
             client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -133,10 +226,16 @@ class DistributeScan(Scan):
                     host, port, username, key_filename=config["TALOS_KEY_FILENAME"]
                 )
 
-            clients.append(client)
+            clients[config["machine_id"]]=client
         return clients
+    
+    def ssh_file_transfer(self,client,machine_id):
+        sftp = client.open_sftp()
+        sftp.put(self.file_path, self.destination_path)
+        sftp.put("./new_config.json",self.dest_dir+"/config.json")
+        sftp.close()
 
-    def ssh_run(self, client, params, machine_id):
+    def ssh_run(self, client,machine_id):
         """
 
 
@@ -154,12 +253,14 @@ class DistributeScan(Scan):
         None.
 
         """
-        sftp = client.open_sftp()
-        sftp.put(self.file_path, "{}".format(self.destination_path))
-        # Run the transmitted script remotely without args and show its output.
-        # SSHClient.exec_command() returns the tuple (stdin,stdout,stderr)
+        # current_machine_id=int(self.return_current_machine_id())
+        # central_machine_id=int(self.return_central_machine_id())
+
+            # Run the transmitted script remotely without args and show its output.
+            # SSHClient.exec_command() returns the tuple (stdin,stdout,stderr)
+        
         stdin, stdout, stderr = client.exec_command(
-            'python3 {} "{}" {}'.format(self.destination_path, params, self.dest_dir)
+            'python3 {}'.format(self.destination_path)
         )
         if stderr:
             for line in stderr:
@@ -175,27 +276,8 @@ class DistributeScan(Scan):
                 print(line)
             except:
                 print("Can't Output error")
+     
 
-        # fetch the latest csv
-        localpath = self.experiment_name
-
-        remotepath = self.dest_dir
-
-        sftp.chdir(remotepath)
-        for f in sorted(sftp.listdir_attr(), key=lambda k: k.st_mtime, reverse=True):
-            sftp.get(
-                f.filename,
-                localpath
-                + "/"
-                + str(self.save_timestamp)
-                + "_machine_"
-                + str(machine_id)
-                + ".csv",
-            )
-            break
-
-        sftp.close()
-        client.close()
 
     def run_local(self, params):
         """
@@ -213,180 +295,47 @@ class DistributeScan(Scan):
         """
         os.system('python3 {} "{}" {} '.format(self.file_path, params, self.dest_dir))
 
-    def execute_distribute_in_remote(self, config):
+    def run_distributed_scan(self,machines=2,machine_id=None):
+        machine_id=machine_id-1 
+        split_params=self.create_param_space(n_splits=machines)
+        current_params=split_params[machine_id]
+        p = {'first_neuron': [12, 24, 48],
+             'activation': ['relu', 'elu'], 
+             'batch_size': [10, 20, 40]}
+        Scan(
+            x = self.x,
+            y = self.y,
+            params = p, #the split params used for Scan
+            model = self.model,
+            experiment_name = self.experiment_name,
+            x_val = self.x_val,
+            y_val = self.y_val,
+            val_split = self.val_split,
+            random_method = self.random_method,
+            seed = self.seed,
 
-        db_machine_id = int(config["database"]["DB_HOST_MACHINE_ID"]) - 1
-        cental_config = config["machines"][db_machine_id]
+            performance_target = self.performance_target,
+            fraction_limit = self.fraction_limit,
+            round_limit = self.round_limit,
+            time_limit = self.time_limit,
+            boolean_limit = self.boolean_limit,
 
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        host = cental_config["TALOS_IP_ADDRESS"]
-        port = cental_config["TALOS_PORT"]
-        username = cental_config["TALOS_USER"]
-        if "TALOS_PASSWORD" in cental_config.keys():
-            password = cental_config["TALOS_PASSWORD"]
-            client.connect(host, port, username, password)
-        elif "TALOS_KEY_FILENAME" in cental_config.keys():
-            client.connect(
-                host, port, username, key_filename=cental_config["TALOS_KEY_FILENAME"]
+
+            reduction_method = self.reduction_method,
+            reduction_interval = self.reduction_interval,
+            reduction_window = self.reduction_window,
+            reduction_threshold = self.reduction_threshold,
+            reduction_metric = self.reduction_metric,
+            minimize_loss = self.minimize_loss,
+            disable_progress_bar = self.disable_progress_bar,
+            print_params = self.print_params,
+
+            clear_session = self.clear_session,
+            save_weights = self.save_weights,
             )
+        
 
-        sftp = client.open_sftp()
-        sftp.put(
-            self.local_distribute_path, "{}".format(self.remote_distribute_filepath)
-        )
-        sftp.put(self.file_path, "{}".format(self.destination_path))
-
-        # config changes when running distribute in remote machine
-        new_config = {}
-        new_config["machines"] = config["machines"]
-        new_config["machines"] = (
-            new_config["machines"][:db_machine_id]
-            + new_config["machines"][db_machine_id + 1 :]
-        )  # all machine ids except the current
-        new_config["run_central_node"] = True
-        new_config["remote_database"] = True
-        new_config["remote_db_credentials"] = config["database"]
-        with open("new_config.json", "w") as outfile:
-            json.dump(new_config, outfile)
-
-        sftp.put("new_config.json", "./config.json")
-
-        # Run the transmitted script remotely without args and show its output.
-        # SSHClient.exec_command() returns the tuple (stdin,stdout,stderr)
-        stdin, stdout, stderr = client.exec_command(
-            "python3 {}".format(self.remote_distribute_filepath)
-        )
-        if stderr:
-            for line in stderr:
-                # Process each error  line in the remote output
-                print(line)
-
-        for line in stdout:
-            # Process each error  line in the remote output
-            print(line)
-
-        sftp.close()
-        client.close()
-
-    def merge_csvs(self):
-        """
-
-
-        Returns
-        -------
-        results : TYPE: `DataFrame`
-            DESCRIPTION. Returns a pandas dataframe
-            after merging results from multiple machines.
-
-        """
-        os.mkdir(os.path.join(self.experiment_name, self.save_timestamp))
-        localpath = os.path.join(self.experiment_name, self.save_timestamp)
-
-        source = self.experiment_name
-        destination = localpath
-        allfiles = os.listdir(source)
-
-        for f in allfiles:
-            if f.endswith(".csv"):
-                os.rename(
-                    os.path.join(source, f), os.path.join(destination, f)
-                )  # move files
-
-        filepaths = [
-            os.path.join(localpath, i)
-            for i in os.listdir(localpath)
-            if i.endswith(".csv")
-        ]
-        dfs = [pd.read_csv(f) for f in filepaths]
-        results = pd.concat(dfs)
-        results.to_csv(
-            os.path.join(localpath, str(self.save_timestamp) + "_results.csv")
-        )
-        return results
-
-    def update_db(self, data_frame, config=None):
-        """
-
-
-        Parameters
-        ----------
-        data_frame : TYPE: `DataFrame`
-            DESCRIPTION. The experiment results as a dataframe object
-        config : TYPE:dict, optional
-            DESCRIPTION. The default is None. The config is for the
-                          database credentials  in case of
-                          usage of a postgres or mysql engine.
-
-        Returns
-        -------
-        db : TYPE: `Object`
-            DESCRIPTION. A database object
-
-        """
-        from ..database.database import Database
-
-        if "remote_db_credentials" in config.keys():
-
-            username = config["remote_db_credentials"]["DB_USERNAME"]
-            password = config["remote_db_credentials"]["DB_PASSWORD"]
-            host = "localhost"
-            port = config["remote_db_credentials"]["DB_PORT"]
-            database_name = config["remote_db_credentials"]["DATABASE_NAME"]
-            db_type = config["remote_db_credentials"]["DB_TYPE"]
-            table_name = config["remote_db_credentials"]["DB_TABLE_NAME"]
-            encoding = config["remote_db_credentials"]["DB_ENCODING"]
-
-            db = Database(
-                username,
-                password,
-                host,
-                port,
-                database_name=database_name,
-                db_type=db_type,
-                table_name=table_name,
-                encoding=encoding,
-            )
-
-        elif "database" in config.keys():
-
-            machine_config = config["machines"]
-            db_config = config["database"]
-            username = db_config["DB_USERNAME"]
-            password = db_config["DB_PASSWORD"]
-
-            host_machine_id = (
-                int(db_config["DB_HOST_MACHINE_ID"]) - 1
-            )  # Subtract 1 to handle machines list
-            host = machine_config[host_machine_id]["TALOS_IP_ADDRESS"]
-
-            port = db_config["DB_PORT"]
-            database_name = db_config["DATABASE_NAME"]
-            db_type = db_config["DB_TYPE"]
-            table_name = db_config["DB_TABLE_NAME"]
-            encoding = db_config["DB_ENCODING"]
-
-            db = Database(
-                username,
-                password,
-                host,
-                port,
-                database_name=database_name,
-                db_type=db_type,
-                table_name=table_name,
-                encoding=encoding,
-            )
-
-        else:
-            db = Database()
-
-        timestamp_col = [self.save_timestamp for i in range(len(data_frame))]
-        data_frame["timestamp"] = timestamp_col
-        db.write_to_db(data_frame)
-
-        return db
-
-    def distributed_run(self, db_machine_id=0, show_results=False):
+    def distributed_run(self,run_local=False, show_results=False):
         """
 
 
@@ -407,40 +356,45 @@ class DistributeScan(Scan):
         """
 
         config = self.config_data
-        if "database" in self.config_data.keys():
-            self.execute_distribute_in_remote(config)
-            exit()
+        machine_id=self.return_current_machine_id()
+        n_splits = len(config["machines"]) 
+        
+        if machine_id==0:
+            
+            clients = self.ssh_connect()
+            for machine_id, client in clients.items():
+                new_config=config
+                new_config["current_machine_id"]=machine_id
+                with open("new_config.json", "w") as outfile:
+                    json.dump(new_config, outfile)
+                self.ssh_file_transfer(client, machine_id)
+            threads = []
+            
+            if run_local:
+                n_splits += 1
+                params_dict = self.create_param_space(n_splits=n_splits)
+                params = params_dict[0]
+                t = threading.Thread(target=self.run_local, args=(params,))
+                t.start()
+                threads.append(t)
+                params_dict = params_dict[1:]
+    
+            else:
+                params_dict = self.create_param_space(n_splits=n_splits)
+    
+            for machine_id, client in clients.items():
+                t = threading.Thread(
+                    target=self.ssh_run,
+                    args=(client,machine_id),
+                )
+                t.start()
+                threads.append(t)
+                
+            for t in threads:
+                t.join()
+          
+        self.run_distributed_scan(machines=n_splits,machine_id=machine_id)
 
-        clients = self.ssh_connect()
-        n_splits = len(clients)
-        threads = []
-        run_central_node = self.config_data["run_central_node"]
+        
 
-        if run_central_node:
-            n_splits += 1
-            params_dict = self.create_param_space(n_splits=n_splits)
-            params = params_dict[0]
-            t = threading.Thread(target=self.run_local, args=(params,))
-            t.start()
-            threads.append(t)
-            params_dict = params_dict[1:]
 
-        else:
-            params_dict = self.create_param_space(n_splits=n_splits)
-
-        for machine_id, client in enumerate(clients):
-            t = threading.Thread(
-                target=self.ssh_run,
-                args=(client, params_dict[machine_id], machine_id + 1),
-            )
-            t.start()
-            threads.append(t)
-
-        for t in threads:
-            t.join()
-
-        results = self.merge_csvs()
-        print(config, "----------------------------")
-        db = self.update_db(results, config)
-        if show_results:
-            print(db.show_table_content())
