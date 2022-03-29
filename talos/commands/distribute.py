@@ -279,7 +279,7 @@ class DistributeScan(Scan):
      
 
 
-    def run_local(self, params):
+    def run_local(self, n_splits):
         """
 
 
@@ -293,19 +293,20 @@ class DistributeScan(Scan):
         None.
 
         """
-        os.system('python3 {} "{}" {} '.format(self.file_path, params, self.dest_dir))
+        self.run_distributed_scan(machines=n_splits,machine_id=0)
 
     def run_distributed_scan(self,machines=2,machine_id=None):
-        machine_id=machine_id-1 
+        if machine_id!=0: #machine id for non central nodes since param split starts from 0
+            machine_id=machine_id-1 
+        
         split_params=self.create_param_space(n_splits=machines)
         current_params=split_params[machine_id]
-        p = {'first_neuron': [12, 24, 48],
-             'activation': ['relu', 'elu'], 
-             'batch_size': [10, 20, 40]}
+        
+       
         Scan(
             x = self.x,
             y = self.y,
-            params = p, #the split params used for Scan
+            params = current_params, #the split params used for Scan
             model = self.model,
             experiment_name = self.experiment_name,
             x_val = self.x_val,
@@ -335,7 +336,7 @@ class DistributeScan(Scan):
             )
         
 
-    def distributed_run(self,run_local=False, show_results=False):
+    def distributed_run(self,run_central_node=False, show_results=False):
         """
 
 
@@ -370,17 +371,12 @@ class DistributeScan(Scan):
                 self.ssh_file_transfer(client, machine_id)
             threads = []
             
-            if run_local:
+            if run_central_node:
+                print("Running Scan in Central Node....")
                 n_splits += 1
-                params_dict = self.create_param_space(n_splits=n_splits)
-                params = params_dict[0]
-                t = threading.Thread(target=self.run_local, args=(params,))
+                t = threading.Thread(target=self.run_local, args=(n_splits,))
                 t.start()
                 threads.append(t)
-                params_dict = params_dict[1:]
-    
-            else:
-                params_dict = self.create_param_space(n_splits=n_splits)
     
             for machine_id, client in clients.items():
                 t = threading.Thread(
@@ -392,8 +388,9 @@ class DistributeScan(Scan):
                 
             for t in threads:
                 t.join()
-          
-        self.run_distributed_scan(machines=n_splits,machine_id=machine_id)
+                
+        else:
+            self.run_distributed_scan(machines=n_splits,machine_id=machine_id)
 
         
 
