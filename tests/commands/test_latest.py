@@ -24,7 +24,9 @@ def test_latest():
 
     from talos.parameters.DistributeParamSpace import DistributeParamSpace
 
-    param_spaces = DistributeParamSpace(params=p, param_keys=p.keys(), machines=100)
+    param_spaces = DistributeParamSpace(params=p,
+                                        param_keys=p.keys(),
+                                        machines=100)
 
     def iris_model(x_train, y_train, x_val, y_val, params):
 
@@ -51,13 +53,14 @@ def test_latest():
 
     print(type(param_spaces.param_spaces[0]))
 
-    scan_object = talos.Scan(x, y,
-                            model=iris_model,
-                            params=param_spaces.param_spaces[0],
-                            experiment_name='test_latest',
-                            round_limit=5,
-                            reduction_method='gamify',
-                            save_weights=False)
+    scan_object = talos.Scan(x, 
+                             y,
+                             model=iris_model,
+                             params=param_spaces.param_spaces[0],
+                             experiment_name='test_latest',
+                             round_limit=5,
+                             reduction_method='gamify',
+                             save_weights=False)
 
     scan_object = talos.Scan(x, y,
                              model=iris_model,
