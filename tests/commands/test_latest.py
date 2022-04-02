@@ -53,7 +53,7 @@ def test_latest():
 
     print(type(param_spaces.param_spaces[0]))
 
-    scan_object = talos.Scan(x, 
+    scan_object = talos.Scan(x,
                              y,
                              model=iris_model,
                              params=param_spaces.param_spaces[0],
