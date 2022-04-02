@@ -143,7 +143,7 @@ class DistributeScan(Scan):
         from ..parameters.DistributeParamSpace import DistributeParamSpace
 
         params = self.params
-        param_keys = params.keys()
+        param_keys = self.params.keys()
         
         random_method=self.random_method
         fraction_limit=self.fraction_limit
@@ -162,9 +162,7 @@ class DistributeScan(Scan):
             machines=n_splits
             )
         
-        split_param_space=param_grid._split_param_space()
-        
-        return split_param_space
+        return param_grid
     
     def find_current_ip(self):
         import socket
@@ -298,15 +296,13 @@ class DistributeScan(Scan):
     def run_distributed_scan(self,machines=2,machine_id=None):
         if machine_id!=0: #machine id for non central nodes since param split starts from 0
             machine_id=machine_id-1 
-        
-        split_params=self.create_param_space(n_splits=machines)
-        current_params=split_params[machine_id]
-        
-       
+            
+        split_params=self.create_param_space(n_splits=machines).param_spaces[machine_id]
+
         Scan(
             x = self.x,
             y = self.y,
-            params = current_params, #the split params used for Scan
+            params = split_params, #the split params used for Scan
             model = self.model,
             experiment_name = self.experiment_name,
             x_val = self.x_val,
