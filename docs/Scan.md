@@ -17,7 +17,7 @@ Argument | Input | Description
 --------- | ------- | -----------
 `x` | array or list of arrays | prediction features
 `y` | array or list of arrays | prediction outcome variable
-`params` | dict | the parameter dictionary
+`params` | dict or ParamSpace object | the parameter dictionary or the ParamSpace object after splitting
 `model` | function | the Keras model as a function
 `experiment_name` | str | Used for creating the experiment logging folder
 `x_val` | array or list of arrays | validation data for x
