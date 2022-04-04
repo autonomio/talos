@@ -292,14 +292,16 @@ class DistributeScan(Scan):
 
         """
         self.run_distributed_scan(machines=n_splits,machine_id=0)
+    
+        
 
-    def run_distributed_scan(self,machines=2,machine_id=None):
+    def run_distributed_scan(self,machines=2,machine_id=None,update_db=True):
         if machine_id!=0: #machine id for non central nodes since param split starts from 0
             machine_id=machine_id-1 
             
         split_params=self.create_param_space(n_splits=machines).param_spaces[machine_id]
 
-        Scan(
+        scan_object=Scan(
             x = self.x,
             y = self.y,
             params = split_params, #the split params used for Scan
@@ -330,6 +332,53 @@ class DistributeScan(Scan):
             clear_session = self.clear_session,
             save_weights = self.save_weights,
             )
+        
+        if update_db:
+            
+            if "database" in self.config_data.keys():
+                
+                
+                from ..database.database import Database
+                
+                config=self.config_data
+                machine_config = config["machines"]
+                db_config = config["database"]
+                username = db_config["DB_USERNAME"]
+                password = db_config["DB_PASSWORD"]
+    
+                host_machine_id = (
+                    int(db_config["DB_HOST_MACHINE_ID"]) 
+                ) 
+                
+                for machine in machine_config:
+                    if int(machine["machine_id"])==host_machine_id:
+                        host = machine["TALOS_IP_ADDRESS"]
+                        break
+    
+                port = db_config["DB_PORT"]
+                database_name = db_config["DATABASE_NAME"]
+                db_type = db_config["DB_TYPE"]
+                table_name = db_config["DB_TABLE_NAME"]
+                encoding = db_config["DB_ENCODING"]
+                
+                db = Database(
+                   username,
+                   password,
+                   host,
+                   port,
+                   database_name=database_name,
+                   db_type=db_type,
+                   table_name=table_name,
+                   encoding=encoding,
+                                     )
+                
+                db.write_to_db(scan_object.data)
+                
+                self.database_object=db
+            
+            else:
+                print("Database credentials not given.")
+        
         
 
     def distributed_run(self,run_central_node=False, show_results=False):
@@ -387,6 +436,13 @@ class DistributeScan(Scan):
                 
         else:
             self.run_distributed_scan(machines=n_splits,machine_id=machine_id)
+        
+        if show_results:
+            if hasattr(self,'database_object'):
+                
+                db=self.database_object
+                print(db.show_table_content())
+        
 
         
 
