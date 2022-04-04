@@ -83,40 +83,27 @@ class Database:
         """
         Create database if it doesn't exists.
         """
-        try:
+        engine = create_engine(
+            self.DB_URL, echo=False, isolation_level="AUTOCOMMIT"
+        )
 
-            engine = create_engine(
-                self.DB_URL, echo=False, isolation_level="AUTOCOMMIT"
+        if not database_exists(engine.url):
+
+            new_engine = create_engine(
+                self.DB_URL.replace(self.database_name, ""),
+                echo=False,
+                isolation_level="AUTOCOMMIT",
+            )
+            conn = new_engine.connect()
+            conn.execute(
+                """
+                CREATE DATABASE {} ENCODING '{}'
+                """.format(
+                    self.database_name, self.encoding
+                )
             )
 
-            if not database_exists(engine.url):
-
-                new_engine = create_engine(
-                    self.DB_URL.replace(self.database_name, ""),
-                    echo=False,
-                    isolation_level="AUTOCOMMIT",
-                )
-                conn = new_engine.connect()
-                conn.execute(
-                    """
-                    CREATE DATABASE {} ENCODING '{}'
-                    """.format(
-                        self.database_name, self.encoding
-                    )
-                )
-
-        except DatabaseError as e:
-            import traceback
-
-            traceback.print_exc()
-            raise Exception(
-                "Check whether the server is running and the connection parameters are correct."
-            )
-        except Exception as e:
-            import traceback
-
-            traceback.print_exc()
-            raise Exception("Some error occured while connecting to the database.")
+   
         return engine
 
     def drop_db(self):
