@@ -1,5 +1,6 @@
 from ..scan.Scan import Scan
 
+import time
 import json
 import paramiko
 import os
@@ -109,7 +110,7 @@ class DistributeScan(Scan):
         self.dest_dir = (
             os.path.dirname(self.destination_path)
         )
-        self.save_timestamp = str(int(datetime.datetime.now().timestamp()))
+        self.save_timestamp =  time.strftime('%D%H%M%S').replace('/', '')
 
         if type(config) == str:
             with open(config, "r") as f:
@@ -164,26 +165,9 @@ class DistributeScan(Scan):
         
         return param_grid
     
-    def find_current_ip(self):
-        import socket
-    
-        st = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        try:       
-            st.connect(('10.255.255.255', 1))
-            IP = st.getsockname()[0]
-        except Exception:
-            IP = '127.0.0.1'
-        finally:
-            st.close()
-        return IP
-    
     def return_current_machine_id(self):# return machine id after checking the ip from config
-        # current_ip=self.find_current_ip()
+
         current_machine_id=0
-        # for machine in self.config_data["machines"]:
-        #     if str(machine["TALOS_IP_ADDRESS"])==str(current_ip):
-        #         current_machine_id=int(machine["machine_id"])
-        #         break
         if "current_machine_id" in self.config_data.keys():
             current_machine_id=int(self.config_data["current_machine_id"])
         
@@ -293,6 +277,72 @@ class DistributeScan(Scan):
         """
         self.run_distributed_scan(machines=n_splits,machine_id=0)
     
+    def fetch_latest_file(self):
+        import os
+        import time
+        
+        experiment_name=self.experiment_name
+        save_timestamp=self.save_timestamp
+        
+        print("----------------------------")
+        print(int(save_timestamp),[os.path.join(experiment_name,i) for i in os.listdir(experiment_name) if i.endswith(".csv")])
+        
+        filelist=[os.path.join(experiment_name,i) for i in os.listdir(experiment_name) if i.endswith(".csv") and int(i.replace(".csv",""))>=int(save_timestamp)]
+        
+        latest_filepath=max(filelist, key=os.path.getmtime)
+        results_data=pd.read_csv(latest_filepath)
+        
+        return results_data
+    
+    def update_db(self):
+    
+        
+        results_data=self.fetch_latest_file()
+            
+        if "database" in self.config_data.keys():
+            
+            
+            from ..database.database import Database
+            
+            config=self.config_data
+            machine_config = config["machines"]
+            db_config = config["database"]
+            username = db_config["DB_USERNAME"]
+            password = db_config["DB_PASSWORD"]
+
+            host_machine_id = (
+                int(db_config["DB_HOST_MACHINE_ID"]) 
+            ) 
+            
+            for machine in machine_config:
+                if int(machine["machine_id"])==host_machine_id:
+                    host = machine["TALOS_IP_ADDRESS"]
+                    break
+
+            port = db_config["DB_PORT"]
+            database_name = db_config["DATABASE_NAME"]
+            db_type = db_config["DB_TYPE"]
+            table_name = db_config["DB_TABLE_NAME"]
+            encoding = db_config["DB_ENCODING"]
+            
+            db = Database(
+               username,
+               password,
+               host,
+               port,
+               database_name=database_name,
+               db_type=db_type,
+               table_name=table_name,
+               encoding=encoding,
+                                 )
+            
+            db.write_to_db(results_data)
+            
+            self.database_object=db
+        
+        else:
+            print("Database credentials not given.")
+    
         
 
     def run_distributed_scan(self,machines=2,machine_id=None,update_db=True):
@@ -332,53 +382,6 @@ class DistributeScan(Scan):
             clear_session = self.clear_session,
             save_weights = self.save_weights,
             )
-        
-        if update_db:
-            
-            if "database" in self.config_data.keys():
-                
-                
-                from ..database.database import Database
-                
-                config=self.config_data
-                machine_config = config["machines"]
-                db_config = config["database"]
-                username = db_config["DB_USERNAME"]
-                password = db_config["DB_PASSWORD"]
-    
-                host_machine_id = (
-                    int(db_config["DB_HOST_MACHINE_ID"]) 
-                ) 
-                
-                for machine in machine_config:
-                    if int(machine["machine_id"])==host_machine_id:
-                        host = machine["TALOS_IP_ADDRESS"]
-                        break
-    
-                port = db_config["DB_PORT"]
-                database_name = db_config["DATABASE_NAME"]
-                db_type = db_config["DB_TYPE"]
-                table_name = db_config["DB_TABLE_NAME"]
-                encoding = db_config["DB_ENCODING"]
-                
-                db = Database(
-                   username,
-                   password,
-                   host,
-                   port,
-                   database_name=database_name,
-                   db_type=db_type,
-                   table_name=table_name,
-                   encoding=encoding,
-                                     )
-                
-                db.write_to_db(scan_object.data)
-                
-                self.database_object=db
-            
-            else:
-                print("Database credentials not given.")
-        
         
 
     def distributed_run(self,run_central_node=False, show_results=False):
@@ -436,6 +439,7 @@ class DistributeScan(Scan):
                 
         else:
             self.run_distributed_scan(machines=n_splits,machine_id=machine_id)
+            self.update_db()
         
         if show_results:
             if hasattr(self,'database_object'):
