@@ -181,7 +181,11 @@ class DistributeScan(Scan):
             central_id=int(config_data["database"]["DB_HOST_MACHINE_ID"])
         return central_id   
         
-
+    def read_config(self):
+        with open("config.json", "r") as f:
+            config_data = json.load(f)
+        return config_data
+        
     def ssh_connect(self):
         """
 
@@ -278,74 +282,108 @@ class DistributeScan(Scan):
         self.run_distributed_scan(machines=n_splits,machine_id=0)
     
     def fetch_latest_file(self):
-        import os
-        import time
-        
+   
         experiment_name=self.experiment_name
         save_timestamp=self.save_timestamp
         
-        print("----------------------------")
-        print(int(save_timestamp),[os.path.join(experiment_name,i) for i in os.listdir(experiment_name) if i.endswith(".csv")])
-        
+
         filelist=[os.path.join(experiment_name,i) for i in os.listdir(experiment_name) if i.endswith(".csv") and int(i.replace(".csv",""))>=int(save_timestamp)]
-        
-        latest_filepath=max(filelist, key=os.path.getmtime)
-        results_data=pd.read_csv(latest_filepath)
-        
-        return results_data
-    
-    def update_db(self):
-    
-        
-        results_data=self.fetch_latest_file()
-            
-        if "database" in self.config_data.keys():
-            
-            
-            from ..database.database import Database
-            
-            config=self.config_data
-            machine_config = config["machines"]
-            db_config = config["database"]
-            username = db_config["DB_USERNAME"]
-            password = db_config["DB_PASSWORD"]
 
-            host_machine_id = (
-                int(db_config["DB_HOST_MACHINE_ID"]) 
-            ) 
+        if filelist:
+                
+            latest_filepath=max(filelist, key=os.path.getmtime)
             
-            for machine in machine_config:
-                if int(machine["machine_id"])==host_machine_id:
-                    host = machine["TALOS_IP_ADDRESS"]
-                    break
-
-            port = db_config["DB_PORT"]
-            database_name = db_config["DATABASE_NAME"]
-            db_type = db_config["DB_TYPE"]
-            table_name = db_config["DB_TABLE_NAME"]
-            encoding = db_config["DB_ENCODING"]
             
-            db = Database(
-               username,
-               password,
-               host,
-               port,
-               database_name=database_name,
-               db_type=db_type,
-               table_name=table_name,
-               encoding=encoding,
-                                 )
+            try:
+                results_data=pd.read_csv(latest_filepath)
+            except Exception as e:
+                print("File empty..waiting...")
+                return []
             
-            db.write_to_db(results_data)
-            
-            self.database_object=db
+            return results_data
         
         else:
-            print("Database credentials not given.")
+            return []
+            
     
+    def update_db(self,update_db_n_seconds=5):
+        
+        start_time=int(self.save_timestamp)
+        
+        
+        while True:
+            
+            new_time=int(time.strftime('%D%H%M%S').replace('/', ''))
+            
+            
+            
+            if new_time-start_time>=update_db_n_seconds:
+
+                
+                if "database" in self.config_data.keys():
+                    
+                    results_data=self.fetch_latest_file()
+                    
+                    if  len(results_data)==0:
+                        print("Waiting for experiment to finish.......")
+                        start_time=new_time
+                        time.sleep(update_db_n_seconds)
+                        continue
+                    
+                    print("Starting database upload.....")
+                    from ..database.database import Database
+                    
+                    config=self.config_data
+                    machine_config = config["machines"]
+                    db_config = config["database"]
+                    username = db_config["DB_USERNAME"]
+                    password = db_config["DB_PASSWORD"]
+        
+                    host_machine_id = (
+                        int(db_config["DB_HOST_MACHINE_ID"]) 
+                    ) 
+                    
+                    for machine in machine_config:
+                        if int(machine["machine_id"])==host_machine_id:
+                            host = machine["TALOS_IP_ADDRESS"]
+                            break
+        
+                    port = db_config["DB_PORT"]
+                    database_name = db_config["DATABASE_NAME"]
+                    db_type = db_config["DB_TYPE"]
+                    table_name = db_config["DB_TABLE_NAME"]
+                    encoding = db_config["DB_ENCODING"]
+                    
+                    db = Database(
+                       username,
+                       password,
+                       host,
+                       port,
+                       database_name=database_name,
+                       db_type=db_type,
+                       table_name=table_name,
+                       encoding=encoding,
+                                         )
+                    
+                    db.write_to_db(results_data)
+                    
+                    self.database_object=db
+                    
+                    if "finished_scan_run" in self.read_config().keys():
+                        print("Scan Run Finished")
+                        break
+                    
+                    else:
+                        print("Updating to db every "+str(update_db_n_seconds)+" seconds")
+                        start_time=new_time
+                        time.sleep(update_db_n_seconds)
+            
+                else:
+                    print("Database credentials not given.")
+        
         
 
-    def run_distributed_scan(self,machines=2,machine_id=None,update_db=True):
+    def run_distributed_scan(self,machines=2,machine_id=None,show_results=False):
         if machine_id!=0: #machine id for non central nodes since param split starts from 0
             machine_id=machine_id-1 
             
@@ -383,8 +421,22 @@ class DistributeScan(Scan):
             save_weights = self.save_weights,
             )
         
+        new_config={}
+        new_config["finished_scan_run"]=True
+        with open("config.json", "w") as outfile:
+            json.dump(new_config, outfile)
+            
+        if show_results:
+            if hasattr(self,'database_object'):
+                db=self.database_object
+                table_content=db.show_table_content()
+                
+                print(table_content)
+                print(len(table_content))
+     
+        
 
-    def distributed_run(self,run_central_node=False, show_results=False):
+    def distributed_run(self,run_central_node=False, show_results=False,update_db_n_seconds=5):
         """
 
 
@@ -407,7 +459,9 @@ class DistributeScan(Scan):
         config = self.config_data
         machine_id=self.return_current_machine_id()
         n_splits = len(config["machines"]) 
-        
+        if run_central_node:
+            n_splits += 1
+            
         if machine_id==0:
             
             clients = self.ssh_connect()
@@ -421,32 +475,52 @@ class DistributeScan(Scan):
             
             if run_central_node:
                 print("Running Scan in Central Node....")
-                n_splits += 1
                 t = threading.Thread(target=self.run_local, args=(n_splits,))
+                t.start()
+                threads.append(t)
+                
+                t = threading.Thread(
+                    target=self.update_db,
+                    args=([update_db_n_seconds]),
+                )
                 t.start()
                 threads.append(t)
     
             for machine_id, client in clients.items():
                 t = threading.Thread(
                     target=self.ssh_run,
-                    args=(client,machine_id),
+                    args=(client,machine_id,),
                 )
                 t.start()
                 threads.append(t)
+            
                 
             for t in threads:
                 t.join()
                 
         else:
-            self.run_distributed_scan(machines=n_splits,machine_id=machine_id)
-            self.update_db()
+            threads=[]
+            
+            t = threading.Thread(
+                target=self.update_db,
+                args=([update_db_n_seconds]),
+            )
+            t.start()
+            threads.append(t)
+            
+            t = threading.Thread(
+                target=self.run_distributed_scan,
+                args=(n_splits,machine_id,show_results),
+            )
+            t.start()
+            threads.append(t)
+            
+            for t in threads:
+                t.join()
+            # self.run_distributed_scan(machines=n_splits,machine_id=machine_id,show_results=show_results)
+            
         
-        if show_results:
-            if hasattr(self,'database_object'):
-                
-                db=self.database_object
-                print(db.show_table_content())
-        
+       
 
         
 
