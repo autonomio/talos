@@ -119,11 +119,14 @@ class DistributeScan(Scan):
         elif type(config) == dict:
             self.config_data = config
             with open("config.json", "w") as outfile:
-                json.dump(self.config_data, outfile)
+                json.dump(self.config_data, outfile,indent=2)
                     
 
         else:
             TypeError("""Enter config path or config dict""")
+        
+        if "finished_scan_run" in self.config_data.keys():
+            del self.config_data["finished_scan_run"]
 
     def create_param_space(self, n_splits=2):
         """
@@ -185,6 +188,11 @@ class DistributeScan(Scan):
         with open("config.json", "r") as f:
             config_data = json.load(f)
         return config_data
+    
+    def write_config(self,new_config):
+        with open("config.json", "w") as outfile:
+            json.dump(new_config, outfile,indent=2)
+        
         
     def ssh_connect(self):
         """
@@ -279,7 +287,7 @@ class DistributeScan(Scan):
         None.
 
         """
-        self.run_distributed_scan(machines=n_splits,machine_id=0)
+        self.run_distributed_scan(machines=n_splits)
     
     def fetch_latest_file(self):
    
@@ -309,7 +317,7 @@ class DistributeScan(Scan):
     def update_db(self,update_db_n_seconds=5):
         
         start_time=int(self.save_timestamp)
-        
+        new_data=pd.DataFrame({})
         
         while True:
             
@@ -324,53 +332,64 @@ class DistributeScan(Scan):
                     
                     results_data=self.fetch_latest_file()
                     
-                    if  len(results_data)==0:
-                        print("Waiting for experiment to finish.......")
+                    if  len(results_data)==0 or len(results_data)==len(new_data):
+                        print("Waiting for rounds to finish......")
                         start_time=new_time
                         time.sleep(update_db_n_seconds)
                         continue
                     
-                    print("Starting database upload.....")
-                    from ..database.database import Database
+                    temp=results_data
+                    results_data=results_data[~results_data.isin(new_data)].dropna()
+                    new_data=temp
                     
-                    config=self.config_data
-                    machine_config = config["machines"]
-                    db_config = config["database"]
-                    username = db_config["DB_USERNAME"]
-                    password = db_config["DB_PASSWORD"]
-        
-                    host_machine_id = (
-                        int(db_config["DB_HOST_MACHINE_ID"]) 
-                    ) 
+                    if len(results_data)>0:
+                        print("Starting database upload.....")
+                        from ..database.database import Database
+                        
+                        config=self.config_data
+                        machine_config = config["machines"]
+                        db_config = config["database"]
+                        username = db_config["DB_USERNAME"]
+                        password = db_config["DB_PASSWORD"]
+            
+                        host_machine_id = (
+                            int(db_config["DB_HOST_MACHINE_ID"]) 
+                        ) 
+                        
+                        for machine in machine_config:
+                            if int(machine["machine_id"])==host_machine_id:
+                                host = machine["TALOS_IP_ADDRESS"]
+                                break
+            
+                        port = db_config["DB_PORT"]
+                        database_name = db_config["DATABASE_NAME"]
+                        db_type = db_config["DB_TYPE"]
+                        table_name = db_config["DB_TABLE_NAME"]
+                        encoding = db_config["DB_ENCODING"]
+                        
+                        db = Database(
+                           username,
+                           password,
+                           host,
+                           port,
+                           database_name=database_name,
+                           db_type=db_type,
+                           table_name=table_name,
+                           encoding=encoding,
+                                             )
+                        
+                        db.write_to_db(results_data)
+                        print(results_data)
+                        self.database_object=db
                     
-                    for machine in machine_config:
-                        if int(machine["machine_id"])==host_machine_id:
-                            host = machine["TALOS_IP_ADDRESS"]
-                            break
-        
-                    port = db_config["DB_PORT"]
-                    database_name = db_config["DATABASE_NAME"]
-                    db_type = db_config["DB_TYPE"]
-                    table_name = db_config["DB_TABLE_NAME"]
-                    encoding = db_config["DB_ENCODING"]
+                    new_config=self.read_config()
                     
-                    db = Database(
-                       username,
-                       password,
-                       host,
-                       port,
-                       database_name=database_name,
-                       db_type=db_type,
-                       table_name=table_name,
-                       encoding=encoding,
-                                         )
-                    
-                    db.write_to_db(results_data)
-                    
-                    self.database_object=db
-                    
-                    if "finished_scan_run" in self.read_config().keys():
+                    if "finished_scan_run" in new_config.keys():
+                        
+                        del new_config["finished_scan_run"]
+                        self.write_config(new_config)
                         print("Scan Run Finished")
+                        
                         break
                     
                     else:
@@ -380,12 +399,13 @@ class DistributeScan(Scan):
             
                 else:
                     print("Database credentials not given.")
-        
+                    
+
         
 
-    def run_distributed_scan(self,machines=2,machine_id=None,show_results=False):
-        if machine_id!=0: #machine id for non central nodes since param split starts from 0
-            machine_id=machine_id-1 
+    def run_distributed_scan(self,machines=2,show_results=False):
+        
+        machine_id=self.return_current_machine_id()
             
         split_params=self.create_param_space(n_splits=machines).param_spaces[machine_id]
 
@@ -421,18 +441,17 @@ class DistributeScan(Scan):
             save_weights = self.save_weights,
             )
         
-        new_config={}
+        new_config=self.read_config()
         new_config["finished_scan_run"]=True
-        with open("config.json", "w") as outfile:
-            json.dump(new_config, outfile)
+        if machine_id==0:
+            new_config["current_machine_id"]=0
+        self.write_config(new_config)
             
         if show_results:
             if hasattr(self,'database_object'):
                 db=self.database_object
                 table_content=db.show_table_content()
-                
                 print(table_content)
-                print(len(table_content))
      
         
 
@@ -457,14 +476,15 @@ class DistributeScan(Scan):
         """
 
         config = self.config_data
-        machine_id=self.return_current_machine_id()
+        current_machine_id=self.return_current_machine_id()
         n_splits = len(config["machines"]) 
         if run_central_node:
             n_splits += 1
             
-        if machine_id==0:
+        if current_machine_id==0:
             
             clients = self.ssh_connect()
+            
             for machine_id, client in clients.items():
                 new_config=config
                 new_config["current_machine_id"]=machine_id
@@ -510,18 +530,17 @@ class DistributeScan(Scan):
             
             t = threading.Thread(
                 target=self.run_distributed_scan,
-                args=(n_splits,machine_id,show_results),
+                args=(n_splits,show_results),
             )
             t.start()
             threads.append(t)
             
             for t in threads:
                 t.join()
-            # self.run_distributed_scan(machines=n_splits,machine_id=machine_id,show_results=show_results)
+        
             
         
        
 
         
-
 
