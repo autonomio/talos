@@ -95,15 +95,19 @@ class Database:
                 isolation_level="AUTOCOMMIT",
             )
             conn = new_engine.connect()
-            conn.execute(
-                """
-                CREATE DATABASE {} ENCODING '{}'
-                """.format(
-                    self.database_name, self.encoding
+            
+            try:
+                conn.execute(
+                    """
+                    CREATE DATABASE {} ENCODING '{}'
+                    """.format(
+                        self.database_name, self.encoding
+                    )
                 )
-            )
-
-   
+    
+            except Exception as e:
+                pass
+            
         return engine
 
     def drop_db(self):

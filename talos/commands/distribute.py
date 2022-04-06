@@ -273,7 +273,7 @@ class DistributeScan(Scan):
      
 
 
-    def run_local(self, n_splits):
+    def run_local(self, n_splits,run_central_node,show_results):
         """
 
 
@@ -287,7 +287,7 @@ class DistributeScan(Scan):
         None.
 
         """
-        self.run_distributed_scan(machines=n_splits)
+        self.run_distributed_scan(n_splits,run_central_node,show_results)
     
     def fetch_latest_file(self):
    
@@ -316,8 +316,52 @@ class DistributeScan(Scan):
     
     def update_db(self,update_db_n_seconds=5):
         
+       
+        
+        def __start_upload(config,results_data):
+                 from ..database.database import Database
+                 
+                 print("Starting database upload.....")
+                 
+                
+                 machine_config = config["machines"]
+                 db_config = config["database"]
+                 username = db_config["DB_USERNAME"]
+                 password = db_config["DB_PASSWORD"]
+     
+                 host_machine_id = (
+                     int(db_config["DB_HOST_MACHINE_ID"]) 
+                 ) 
+                 
+                 for machine in machine_config:
+                     if int(machine["machine_id"])==host_machine_id:
+                         host = machine["TALOS_IP_ADDRESS"]
+                         break
+     
+                 port = db_config["DB_PORT"]
+                 database_name = db_config["DATABASE_NAME"]
+                 db_type = db_config["DB_TYPE"]
+                 table_name = db_config["DB_TABLE_NAME"]
+                 encoding = db_config["DB_ENCODING"]
+                 
+                 db = Database(
+                    username,
+                    password,
+                    host,
+                    port,
+                    database_name=database_name,
+                    db_type=db_type,
+                    table_name=table_name,
+                    encoding=encoding,
+                                      )
+                 
+                 db.write_to_db(results_data)
+                 print(results_data)
+                 return db
+        
         start_time=int(self.save_timestamp)
         new_data=pd.DataFrame({})
+        config=self.config_data
         
         while True:
             
@@ -328,7 +372,7 @@ class DistributeScan(Scan):
             if new_time-start_time>=update_db_n_seconds:
 
                 
-                if "database" in self.config_data.keys():
+                if "database" in config.keys():
                     
                     results_data=self.fetch_latest_file()
                     
@@ -343,51 +387,20 @@ class DistributeScan(Scan):
                     new_data=temp
                     
                     if len(results_data)>0:
-                        print("Starting database upload.....")
-                        from ..database.database import Database
                         
-                        config=self.config_data
-                        machine_config = config["machines"]
-                        db_config = config["database"]
-                        username = db_config["DB_USERNAME"]
-                        password = db_config["DB_PASSWORD"]
-            
-                        host_machine_id = (
-                            int(db_config["DB_HOST_MACHINE_ID"]) 
-                        ) 
+                        self.database_object=__start_upload(config,results_data)
                         
-                        for machine in machine_config:
-                            if int(machine["machine_id"])==host_machine_id:
-                                host = machine["TALOS_IP_ADDRESS"]
-                                break
-            
-                        port = db_config["DB_PORT"]
-                        database_name = db_config["DATABASE_NAME"]
-                        db_type = db_config["DB_TYPE"]
-                        table_name = db_config["DB_TABLE_NAME"]
-                        encoding = db_config["DB_ENCODING"]
-                        
-                        db = Database(
-                           username,
-                           password,
-                           host,
-                           port,
-                           database_name=database_name,
-                           db_type=db_type,
-                           table_name=table_name,
-                           encoding=encoding,
-                                             )
-                        
-                        db.write_to_db(results_data)
-                        print(results_data)
-                        self.database_object=db
+       
                     
                     new_config=self.read_config()
                     
                     if "finished_scan_run" in new_config.keys():
                         
-                        del new_config["finished_scan_run"]
+                        results_data=self.fetch_latest_file()
+                        results_data=results_data[~results_data.isin(new_data)].dropna()
+                        self.database_object=__start_upload(config, results_data)
                         self.write_config(new_config)
+                        
                         print("Scan Run Finished")
                         
                         break
@@ -400,12 +413,20 @@ class DistributeScan(Scan):
                 else:
                     print("Database credentials not given.")
                     
+        
+        del new_config["finished_scan_run"]
+        self.write_config(new_config)
+                    
 
         
 
-    def run_distributed_scan(self,machines=2,show_results=False):
+    def run_distributed_scan(self,machines=2,run_central_node=False,show_results=False):
         
         machine_id=self.return_current_machine_id()
+        
+        if not run_central_node:
+            if machine_id!=0:
+                machine_id=machine_id-1
             
         split_params=self.create_param_space(n_splits=machines).param_spaces[machine_id]
 
@@ -495,7 +516,8 @@ class DistributeScan(Scan):
             
             if run_central_node:
                 print("Running Scan in Central Node....")
-                t = threading.Thread(target=self.run_local, args=(n_splits,))
+                t = threading.Thread(target=self.run_local,
+                                     args=(n_splits,run_central_node,show_results))
                 t.start()
                 threads.append(t)
                 
@@ -530,7 +552,7 @@ class DistributeScan(Scan):
             
             t = threading.Thread(
                 target=self.run_distributed_scan,
-                args=(n_splits,show_results),
+                args=(n_splits,run_central_node,show_results),
             )
             t.start()
             threads.append(t)
