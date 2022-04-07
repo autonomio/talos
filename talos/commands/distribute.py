@@ -314,9 +314,7 @@ class DistributeScan(Scan):
             return []
             
     
-    def update_db(self,update_db_n_seconds=5):
-        
-       
+    def update_db(self,update_db_n_seconds):
         
         def __start_upload(config,results_data):
                  from ..database.database import Database
@@ -326,9 +324,12 @@ class DistributeScan(Scan):
                 
                  machine_config = config["machines"]
                  db_config = config["database"]
+                 
+                 
+                     
                  username = db_config["DB_USERNAME"]
                  password = db_config["DB_PASSWORD"]
-     
+                 
                  host_machine_id = (
                      int(db_config["DB_HOST_MACHINE_ID"]) 
                  ) 
@@ -374,6 +375,8 @@ class DistributeScan(Scan):
                 
                 if "database" in config.keys():
                     
+                    print("Updating to db every "+str(update_db_n_seconds)+" seconds")
+                    
                     results_data=self.fetch_latest_file()
                     
                     if  len(results_data)==0 or len(results_data)==len(new_data):
@@ -406,7 +409,7 @@ class DistributeScan(Scan):
                         break
                     
                     else:
-                        print("Updating to db every "+str(update_db_n_seconds)+" seconds")
+                        
                         start_time=new_time
                         time.sleep(update_db_n_seconds)
             
@@ -497,8 +500,12 @@ class DistributeScan(Scan):
         """
 
         config = self.config_data
+        if "DB_UPDATE_INTERVAL" in config["database"].keys():
+            update_db_n_seconds=int(config["database"]["DB_UPDATE_INTERVAL"])
+            
         current_machine_id=self.return_current_machine_id()
         n_splits = len(config["machines"]) 
+        
         if run_central_node:
             n_splits += 1
             
