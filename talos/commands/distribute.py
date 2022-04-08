@@ -271,6 +271,9 @@ class DistributeScan(Scan):
         experiment_name = self.experiment_name
         save_timestamp = self.save_timestamp
 
+        if not os.path.exists(experiment_name):
+            return []
+
         filelist = [
             os.path.join(experiment_name, i)
             for i in os.listdir(experiment_name)
