@@ -83,9 +83,7 @@ class Database:
         """
         Create database if it doesn't exists.
         """
-        engine = create_engine(
-            self.DB_URL, echo=False, isolation_level="AUTOCOMMIT"
-        )
+        engine = create_engine(self.DB_URL, echo=False, isolation_level="AUTOCOMMIT")
 
         if not database_exists(engine.url):
 
@@ -95,7 +93,7 @@ class Database:
                 isolation_level="AUTOCOMMIT",
             )
             conn = new_engine.connect()
-            
+
             try:
                 conn.execute(
                     """
@@ -104,10 +102,10 @@ class Database:
                         self.database_name, self.encoding
                     )
                 )
-    
+
             except Exception as e:
                 pass
-            
+
         return engine
 
     def drop_db(self):
@@ -170,3 +168,14 @@ class Database:
         """
         res = self.query_table("SELECT * FROM {}".format(self.table_name))
         return res
+
+    def return_table_df(self):
+        import pandas as pd
+
+        table = self.show_table_content()
+        data = pd.DataFrame(table)
+        return data
+
+    def return_existing_experiment_ids(self):
+        table = self.return_table_df()
+        return table.iloc[:, -1]
