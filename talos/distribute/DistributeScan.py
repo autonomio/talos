@@ -1,13 +1,12 @@
-from ...scan.Scan import Scan
+from ..scan.Scan import Scan
 
 import time
 import json
-import paramiko
 import os
-import pandas as pd
 import inspect
 
-class RemoteScan(Scan):
+
+class DistributeScan(Scan):
     def __init__(
         self,
         x,
@@ -35,7 +34,7 @@ class RemoteScan(Scan):
         print_params=False,
         clear_session=True,
         save_weights=True,
-        config='./remote_config.json',
+        config='./config.json',
     ):
         '''
 
@@ -44,7 +43,7 @@ class RemoteScan(Scan):
         ----------
         params | `dict` | Hyperparameters for distribution.
         config | str or dict | The default is 'config.json'.
-        
+
         Returns
         -------
         None.
@@ -88,20 +87,18 @@ class RemoteScan(Scan):
 
         # distributed configurations
         self.config = config
-        self.file_path=inspect.getsourcefile(model)
-        
-        
-        
-        self.save_timestamp = time.strftime('%D%H%M%S').replace('/', '')
-        
-        file_lines=inspect.findsource(model)[0]
-        file_lines=[i.replace("DistributeScan","RemoteScan") for i in file_lines]
+        self.file_path = inspect.getsourcefile(model)
 
-        with open(self.file_path+"_temp.py", "w") as file:
+        self.save_timestamp = time.strftime('%D%H%M%S').replace('/', '')
+
+        file_lines = inspect.findsource(model)[0]
+        file_lines = [i.replace("DistributeScan", "RemoteScan") for i in file_lines]
+
+        self.file_path = self.file_path.replace(".py", "")+"_temp.py"
+        with open(self.file_path, "w") as file:
             file.writelines(file_lines)
-        
-        self.file_path=self.file_path+"_temp.py"
-        self.destination_path='./'+os.path.basename(self.file_path)
+
+        self.destination_path = './'+os.path.basename(self.file_path)
         self.dest_dir = os.path.dirname(self.destination_path)
 
         if type(config) == str:
@@ -110,7 +107,7 @@ class RemoteScan(Scan):
 
         elif type(config) == dict:
             self.config_data = config
-            with open('remote_config.json', 'w') as outfile:
+            with open('config.json', 'w') as outfile:
                 json.dump(self.config_data, outfile, indent=2)
 
         else:
@@ -118,49 +115,6 @@ class RemoteScan(Scan):
 
         if 'finished_scan_run' in self.config_data.keys():
             del self.config_data['finished_scan_run']
-        
-        config=self.config_data
-        
-        if 'run_central_node' in config.keys():
-            run_central_node=config['run_central_node']
-        else:
-            run_central_node=False
-            
-        from .distribute_params import run_scan_with_split_params
-        from .distribute_database import update_db
-        from .distribute_utils import return_current_machine_id
-        
-        import threading
-        
-        n_splits = len(config['machines'])
-        if run_central_node:
-            n_splits += 1
 
-        update_db_n_seconds=5
-        if 'DB_UPDATE_INTERVAL' in config['database'].keys():
-            update_db_n_seconds = int(config['database']['DB_UPDATE_INTERVAL'])
-            
-        current_machine_id=str(return_current_machine_id(self))
-        
-        threads = []
-        
-        t = threading.Thread(
-            target=update_db,
-            args=([self,update_db_n_seconds,current_machine_id]),
-        )
-        t.start()
-        threads.append(t)
-    
-        t = threading.Thread(
-            target=run_scan_with_split_params,
-            args=(self,n_splits, run_central_node,current_machine_id),
-        )
-        t.start()
-        threads.append(t)
-    
-        for t in threads:
-            t.join()
- 
-        
-        
-
+        from .distribute_run import distribute_run
+        distribute_run(self)

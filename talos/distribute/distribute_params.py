@@ -1,5 +1,6 @@
-from ...scan.Scan import Scan
-from .distribute_utils import read_config,write_config
+from ..scan.Scan import Scan
+from .distribute_utils import read_config, write_config
+
 
 def create_param_space(self, n_splits):
     '''
@@ -13,7 +14,7 @@ def create_param_space(self, n_splits):
 
     '''
 
-    from ...parameters.DistributeParamSpace import DistributeParamSpace
+    from ..parameters.DistributeParamSpace import DistributeParamSpace
 
     params = self.params
     param_keys = self.params.keys()
@@ -52,15 +53,15 @@ def run_scan_with_split_params(self, machines, run_central_node, machine_id):
     None.
 
     '''
-    #runs Scan in a machine after param split
-    machine_id=int(machine_id)
-    
+    # runs Scan in a machine after param split
+    machine_id = int(machine_id)
+
     if not run_central_node:
         if machine_id != 0:
             machine_id = machine_id - 1
     print("machine id")
     print(machine_id)
-    split_params = create_param_space(self,n_splits=machines).param_spaces[
+    split_params = create_param_space(self, n_splits=machines).param_spaces[
         machine_id
     ]
 
@@ -96,5 +97,5 @@ def run_scan_with_split_params(self, machines, run_central_node, machine_id):
     new_config['finished_scan_run'] = True
     if machine_id == 0:
         new_config['current_machine_id'] = 0
-       
-    write_config(self,new_config)
+
+    write_config(self, new_config)

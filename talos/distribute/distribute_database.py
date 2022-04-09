@@ -1,8 +1,9 @@
 import time
 import pandas as pd
-from .distribute_utils import read_config,write_config,add_experiment_id,fetch_latest_file
+from .distribute_utils import read_config, write_config, add_experiment_id, fetch_latest_file
 
-def update_db(self, update_db_n_seconds,current_machine_id,remove_duplicates=True):
+
+def update_db(self, update_db_n_seconds, current_machine_id, remove_duplicates=True):
     '''
 
     Parameters
@@ -16,10 +17,10 @@ def update_db(self, update_db_n_seconds,current_machine_id,remove_duplicates=Tru
 
     '''
 
-    '''update the database every n seconds'''
+    # update the database every n seconds
 
     def __start_upload(config, results_data):
-        from ...database.database import Database
+        from ..database.database import Database
 
         print('Starting database upload.....')
 
@@ -94,7 +95,7 @@ def update_db(self, update_db_n_seconds,current_machine_id,remove_duplicates=Tru
 
                 if len(results_data) > 0:
                     results_data = add_experiment_id(
-                       self,results_data, current_machine_id
+                        self, results_data, current_machine_id
                     )
                     __start_upload(config, results_data)
 
@@ -107,10 +108,10 @@ def update_db(self, update_db_n_seconds,current_machine_id,remove_duplicates=Tru
                         ~results_data.isin(new_data)
                     ].dropna()
                     results_data = add_experiment_id(
-                       self,results_data, current_machine_id
+                        self, results_data, current_machine_id
                     )
                     __start_upload(config, results_data)
-                    write_config(self,new_config)
+                    write_config(self, new_config)
 
                     print('Scan Run Finished in machine id ' + current_machine_id)
 
@@ -125,4 +126,4 @@ def update_db(self, update_db_n_seconds,current_machine_id,remove_duplicates=Tru
                 print('Database credentials not given.')
 
     del new_config['finished_scan_run']
-    write_config(self,new_config)
+    write_config(self, new_config)

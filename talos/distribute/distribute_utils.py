@@ -3,7 +3,8 @@ import paramiko
 import os
 import pandas as pd
 
-def return_current_machine_id( self,):
+
+def return_current_machine_id(self,):
     ''' return machine id after checking the ip from config'''
 
     current_machine_id = 0
@@ -11,6 +12,7 @@ def return_current_machine_id( self,):
         current_machine_id = int(self.config_data['current_machine_id'])
 
     return current_machine_id
+
 
 def return_central_machine_id(self):
     ''' return central machine id as mentioned in config'''
@@ -20,16 +22,19 @@ def return_central_machine_id(self):
         central_id = int(config_data['database']['DB_HOST_MACHINE_ID'])
     return central_id
 
+
 def read_config(self):
     '''read config from file'''
     with open('config.json', 'r') as f:
         config_data = json.load(f)
     return config_data
 
+
 def write_config(self, new_config):
     ''' write config to file'''
     with open('config.json', 'w') as outfile:
         json.dump(new_config, outfile, indent=2)
+
 
 def ssh_connect(self):
     '''
@@ -57,13 +62,15 @@ def ssh_connect(self):
         clients[config['machine_id']] = client
     return clients
 
+
 def ssh_file_transfer(self, client, machine_id):
     '''transfer the current talos script to the remote machines'''
-    
+
     sftp = client.open_sftp()
     sftp.put(self.file_path, self.destination_path)
     sftp.put('./remote_config.json', self.dest_dir + '/remote_config.json')
     sftp.close()
+
 
 def ssh_run(self, client, machine_id):
     '''
@@ -80,8 +87,8 @@ def ssh_run(self, client, machine_id):
 
     '''
 
-    ''' Run the transmitted script remotely without args and show its output.
-     SSHClient.exec_command() returns the tuple (stdin,stdout,stderr)'''
+    # Run the transmitted script remotely without args and show its output.
+    # SSHClient.exec_command() returns the tuple (stdin,stdout,stderr)'''
 
     stdin, stdout, stderr = client.exec_command(
         'python3 {}'.format(self.destination_path)
@@ -100,8 +107,12 @@ def ssh_run(self, client, machine_id):
             print(line)
         except:
             print('Cannot Output error')
+
+
 def fetch_latest_file(self):
-    '''fetch the latest csv for an experiment'''
+
+    # fetch the latest csv for an experiment'''
+
     experiment_name = self.experiment_name
     save_timestamp = self.save_timestamp
 
@@ -129,8 +140,11 @@ def fetch_latest_file(self):
     else:
         return []
 
+
 def add_experiment_id(self, results_data, machine_id):
-    ''' create hashmap for a dataframe and use it for experiment id'''
+
+    # create hashmap for a dataframe and use it for experiment id'''
+
     results_data = results_data.drop(['experiment_id'], axis=1, errors='ignore')
     results_data['experiment_id'] = pd.util.hash_pandas_object(results_data)
     results_data['experiment_id'] = [
