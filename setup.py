@@ -66,6 +66,7 @@ if __name__ == "__main__":
             "talos.scan",
             "talos.templates",
             "talos.database",
+            "talos.distribute",
             "talos.utils",
             "talos.model",
             "talos.parameters",

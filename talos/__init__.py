@@ -9,9 +9,9 @@ from .commands.predict import Predict
 from .commands.deploy import Deploy
 from .commands.evaluate import Evaluate
 from .commands.restore import Restore
-from .commands.distribute import DistributeScan
 
-
+from .distribute.RemoteScan import RemoteScan
+from .distribute.DistributeScan import DistributeScan
 # import extras
 from . import utils
 from . import templates
