@@ -336,13 +336,14 @@ def run_scan_with_split_params(self, machines, run_central_node, machine_id):
 
     '''
     '''runs Scan a machine after param split'''
-
+    machine_id=int(machine_id)
+    
     if not run_central_node:
         if machine_id != 0:
             machine_id = machine_id - 1
             
     split_params = create_param_space(self,n_splits=machines).param_spaces[
-        int(machine_id)
+        machine_id
     ]
 
     scan_object = Scan(
