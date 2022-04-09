@@ -35,7 +35,7 @@ class RemoteScan(Scan):
         print_params=False,
         clear_session=True,
         save_weights=True,
-        config='./config.json',
+        config='./remote_config.json',
     ):
         '''
 
@@ -110,7 +110,7 @@ class RemoteScan(Scan):
 
         elif type(config) == dict:
             self.config_data = config
-            with open('config.json', 'w') as outfile:
+            with open('remote_config.json', 'w') as outfile:
                 json.dump(self.config_data, outfile, indent=2)
 
         else:
@@ -126,29 +126,31 @@ class RemoteScan(Scan):
         else:
             run_central_node=False
             
-        from .distributed_run import run_scan_with_split_params,update_db
+        from .distributed_run import run_scan_with_split_params,update_db,return_current_machine_id
         import threading
         
         n_splits = len(config['machines'])
         if run_central_node:
             n_splits += 1
-            
+
         update_db_n_seconds=5
         if 'DB_UPDATE_INTERVAL' in config['database'].keys():
             update_db_n_seconds = int(config['database']['DB_UPDATE_INTERVAL'])
             
+        current_machine_id=str(return_current_machine_id(self))
+        
         threads = []
         
         t = threading.Thread(
             target=update_db,
-            args=([self,update_db_n_seconds]),
+            args=([self,update_db_n_seconds,current_machine_id]),
         )
         t.start()
         threads.append(t)
     
         t = threading.Thread(
             target=run_scan_with_split_params,
-            args=(self,n_splits, run_central_node),
+            args=(self,n_splits, run_central_node,current_machine_id),
         )
         t.start()
         threads.append(t)

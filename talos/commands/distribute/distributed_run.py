@@ -6,7 +6,7 @@ import pandas as pd
 import inspect
 from ...scan.Scan import Scan
 
-def create_param_space(self, n_splits=2):
+def create_param_space(self, n_splits):
     '''
     Parameters
     ----------
@@ -49,7 +49,6 @@ def return_current_machine_id( self,):
     if 'current_machine_id' in self.config_data.keys():
         current_machine_id = int(self.config_data['current_machine_id'])
 
-    print('Current machine ID is ' + str(current_machine_id))
     return current_machine_id
 
 def return_central_machine_id(self):
@@ -102,7 +101,7 @@ def ssh_file_transfer(self, client, machine_id):
     
     sftp = client.open_sftp()
     sftp.put(self.file_path, self.destination_path)
-    sftp.put('./new_config.json', self.dest_dir + '/config.json')
+    sftp.put('./remote_config.json', self.dest_dir + '/remote_config.json')
     sftp.close()
 
 def ssh_run(self, client, machine_id):
@@ -155,7 +154,8 @@ def run_central_machine(self, n_splits, run_central_node):
     '''
 
     '''runs the experiment in central machine'''
-    run_scan_with_split_params(self,n_splits, run_central_node)
+    machine_id=0
+    run_scan_with_split_params(self,n_splits, run_central_node,machine_id)
 
 def fetch_latest_file(self):
     '''fetch the latest csv for an experiment'''
@@ -196,7 +196,7 @@ def add_experiment_id(self, results_data, machine_id):
     ]
     return results_data
 
-def update_db(self, update_db_n_seconds, remove_duplicates=True):
+def update_db(self, update_db_n_seconds,current_machine_id,remove_duplicates=True):
     '''
 
     Parameters
@@ -287,7 +287,6 @@ def update_db(self, update_db_n_seconds, remove_duplicates=True):
                 new_data = temp
 
                 if len(results_data) > 0:
-                    current_machine_id = str(return_current_machine_id(self))
                     results_data = add_experiment_id(
                        self,results_data, current_machine_id
                     )
@@ -301,7 +300,6 @@ def update_db(self, update_db_n_seconds, remove_duplicates=True):
                     results_data = results_data[
                         ~results_data.isin(new_data)
                     ].dropna()
-                    current_machine_id = str(return_current_machine_id(self))
                     results_data = add_experiment_id(
                        self,results_data, current_machine_id
                     )
@@ -323,14 +321,14 @@ def update_db(self, update_db_n_seconds, remove_duplicates=True):
     del new_config['finished_scan_run']
     write_config(self,new_config)
 
-def run_scan_with_split_params(self, machines=2, run_central_node=False):
+def run_scan_with_split_params(self, machines, run_central_node, machine_id):
     '''
 
 
     Parameters
     ----------
-    machines | int |The default is 2.
-    run_central_node | bool | The default is False.
+    machines | int |
+    run_central_node | bool | 
 
     Returns
     -------
@@ -338,14 +336,13 @@ def run_scan_with_split_params(self, machines=2, run_central_node=False):
 
     '''
     '''runs Scan a machine after param split'''
-    machine_id = return_current_machine_id(self)
 
     if not run_central_node:
         if machine_id != 0:
             machine_id = machine_id - 1
-
+            
     split_params = create_param_space(self,n_splits=machines).param_spaces[
-        machine_id
+        int(machine_id)
     ]
 
     scan_object = Scan(
@@ -380,6 +377,7 @@ def run_scan_with_split_params(self, machines=2, run_central_node=False):
     new_config['finished_scan_run'] = True
     if machine_id == 0:
         new_config['current_machine_id'] = 0
+       
     write_config(self,new_config)
 
 
@@ -418,26 +416,29 @@ def distributed_run(self):
     if 'DB_UPDATE_INTERVAL' in config['database'].keys():
         update_db_n_seconds = int(config['database']['DB_UPDATE_INTERVAL'])
     
-    current_machine_id = return_current_machine_id(self)
+    
+
     n_splits = len(config['machines'])
     
     if run_central_node:
         n_splits += 1
     
-    if current_machine_id == 0:
+    current_machine_id = str(return_current_machine_id(self))
+    
+    if current_machine_id == str(0):
     
         clients = ssh_connect(self)
     
         for machine_id, client in clients.items():
             new_config = config
             new_config['current_machine_id'] = machine_id
-            with open('new_config.json', 'w') as outfile:
+            with open('remote_config.json', 'w') as outfile:
                 json.dump(new_config, outfile)
             ssh_file_transfer(self,client, machine_id)
         threads = []
     
         if run_central_node:
-            print('Running Scan in Central Node....')
+            
             t = threading.Thread(
                 target=run_central_machine,
                 args=(self,n_splits, run_central_node),
@@ -447,7 +448,7 @@ def distributed_run(self):
     
             t = threading.Thread(
                 target=update_db,
-                args=([self,update_db_n_seconds]),
+                args=([self,update_db_n_seconds,current_machine_id]),
             )
             t.start()
             threads.append(t)
@@ -466,22 +467,4 @@ def distributed_run(self):
         for t in threads:
             t.join()
     
-    # else:
-    #     threads = []
-    
-    #     t = threading.Thread(
-    #         target=update_db,
-    #         args=([self,update_db_n_seconds]),
-    #     )
-    #     t.start()
-    #     threads.append(t)
-    
-    #     t = threading.Thread(
-    #         target=run_scan_with_split_params,
-    #         args=(self,n_splits, run_central_node),
-    #     )
-    #     t.start()
-    #     threads.append(t)
-    
-    #     for t in threads:
-    #         t.join()
+
