@@ -126,7 +126,10 @@ class RemoteScan(Scan):
         else:
             run_central_node=False
             
-        from .distributed_run import run_scan_with_split_params,update_db,return_current_machine_id
+        from .distribute_params import run_scan_with_split_params
+        from .distribute_database import update_db
+        from .distribute_utils import return_current_machine_id
+        
         import threading
         
         n_splits = len(config['machines'])

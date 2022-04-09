@@ -2,9 +2,7 @@ from ...scan.Scan import Scan
 
 import time
 import json
-import paramiko
 import os
-import pandas as pd
 import inspect
 
 class DistributeScan(Scan):
@@ -119,8 +117,8 @@ class DistributeScan(Scan):
         if 'finished_scan_run' in self.config_data.keys():
             del self.config_data['finished_scan_run']
         
-        from .distributed_run import distributed_run
-        distributed_run(self)
+        from .distribute_run import distribute_run
+        distribute_run(self)
         
         
 
