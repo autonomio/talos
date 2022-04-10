@@ -126,10 +126,8 @@ class DistributeScan(Scan):
         np.save("tmp/x_data_remote.npy", x)
         np.save("tmp/y_data_remote.npy", y)
 
-        from .distribute_utils import create_function_block
         # get model function as a string
-        model_func = inspect.getsourcelines(model)[0]
-        model_func = create_function_block(self, model_func)
+        model_func = inspect.getsource(model).lstrip()
 
         self.model_func = model_func
         self.model_name = model.__name__
