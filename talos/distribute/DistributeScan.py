@@ -4,6 +4,8 @@ import time
 import json
 import os
 import inspect
+import numpy as np
+import pickle
 
 
 class DistributeScan(Scan):
@@ -87,19 +89,14 @@ class DistributeScan(Scan):
 
         # distributed configurations
         self.config = config
-        self.file_path = inspect.getsourcefile(model)
+
+        arguments_dict = self.__dict__
+        remove_parameters = ["x", "y", "model"]
+        arguments_dict = {k: v for k, v in arguments_dict.items() if k not in remove_parameters}
+
+        self.file_path = 'tmp/scanfile_remote.py'
 
         self.save_timestamp = time.strftime('%D%H%M%S').replace('/', '')
-
-        file_lines = inspect.findsource(model)[0]
-        file_lines = [i.replace("DistributeScan", "RemoteScan") for i in file_lines]
-
-        self.file_path = self.file_path.replace(".py", "")+"_temp.py"
-        with open(self.file_path, "w") as file:
-            file.writelines(file_lines)
-
-        self.destination_path = './'+os.path.basename(self.file_path)
-        self.dest_dir = os.path.dirname(self.destination_path)
 
         if type(config) == str:
             with open(config, 'r') as f:
@@ -115,6 +112,25 @@ class DistributeScan(Scan):
 
         if 'finished_scan_run' in self.config_data.keys():
             del self.config_data['finished_scan_run']
+
+        # handles location for params,data and model
+        if not os.path.exists("tmp/"):
+            os.mkdir("tmp")
+
+        with open('tmp/arguments_remote.json', 'w') as outfile:
+            json.dump(arguments_dict, outfile, indent=2)
+
+        self.dest_dir = "./tmp"
+
+        # save data in numpy format
+        np.save("tmp/x_data_remote.npy", x)
+        np.save("tmp/y_data_remote.npy", y)
+
+        # get model function as a string
+        model_func = inspect.getsource(model)
+
+        self.model_func = model_func
+        self.model_name = model.__name__
 
         from .distribute_run import distribute_run
         distribute_run(self)

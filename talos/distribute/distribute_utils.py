@@ -4,6 +4,54 @@ import os
 import pandas as pd
 
 
+def create_temp_file(self):
+    filestr = '''
+from talos import RemoteScan
+import numpy as np
+import json
+import pickle
+
+x=np.load('tmp/x_data_remote.npy')
+y=np.load('tmp/y_data_remote.npy')
+    
+{}
+
+with open('tmp/arguments_remote.json','r') as f:
+    arguments_dict=json.load(f)
+    
+t=RemoteScan(x=x,
+             y=y,
+             params=arguments_dict['params'],
+             model={},
+             experiment_name=arguments_dict['experiment_name'],
+             x_val=arguments_dict['x_val'],
+             y_val=arguments_dict['y_val'],
+             val_split=arguments_dict['val_split'],
+             random_method=arguments_dict['random_method'],
+             seed=arguments_dict['seed'],
+             performance_target=arguments_dict['performance_target'],
+             fraction_limit=arguments_dict['fraction_limit'],
+             round_limit=arguments_dict['round_limit'],
+             time_limit=arguments_dict['time_limit'],
+             boolean_limit=arguments_dict['boolean_limit'],
+             reduction_method=arguments_dict['reduction_method'],
+             reduction_interval=arguments_dict['reduction_interval'],
+             reduction_window=arguments_dict['reduction_window'],
+             reduction_threshold=arguments_dict['reduction_threshold'],
+             reduction_metric=arguments_dict['reduction_metric'],
+             minimize_loss=arguments_dict['minimize_loss'],
+             disable_progress_bar=arguments_dict['disable_progress_bar'],
+             print_params=arguments_dict['print_params'],
+             clear_session=arguments_dict['clear_session'],
+             save_weights=arguments_dict['save_weights'],
+             config='tmp/remote_config.json'
+             )
+    '''.format(self.model_func, self.model_name)
+
+    with open("tmp/scanfile_remote.py", "w") as f:
+        f.write(filestr)
+
+
 def return_current_machine_id(self,):
     ''' return machine id after checking the ip from config'''
 
@@ -65,10 +113,20 @@ def ssh_connect(self):
 
 def ssh_file_transfer(self, client, machine_id):
     '''transfer the current talos script to the remote machines'''
+    create_temp_file(self)
 
     sftp = client.open_sftp()
-    sftp.put(self.file_path, self.destination_path)
-    sftp.put('./remote_config.json', self.dest_dir + '/remote_config.json')
+
+    try:
+        sftp.chdir(self.dest_dir)  # Test if dest dir exists
+    except IOError:
+        sftp.mkdir(self.dest_dir)  # Create dest dir
+        sftp.chdir(self.dest_dir)
+
+    for file in os.listdir("tmp"):
+        sftp.put("tmp/"+file, file)
+
+    sftp.put('tmp/remote_config.json', 'remote_config.json')
     sftp.close()
 
 
@@ -86,13 +144,11 @@ def ssh_run(self, client, machine_id):
     None.
 
     '''
-
     # Run the transmitted script remotely without args and show its output.
     # SSHClient.exec_command() returns the tuple (stdin,stdout,stderr)'''
 
     stdin, stdout, stderr = client.exec_command(
-        'python3 {}'.format(self.destination_path)
-    )
+        'python3 tmp/scanfile_remote.py')
     if stderr:
         for line in stderr:
             try:

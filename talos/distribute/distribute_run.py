@@ -67,7 +67,7 @@ def distribute_run(self):
         for machine_id, client in clients.items():
             new_config = config
             new_config['current_machine_id'] = machine_id
-            with open('remote_config.json', 'w') as outfile:
+            with open('tmp/remote_config.json', 'w') as outfile:
                 json.dump(new_config, outfile)
             ssh_file_transfer(self, client, machine_id)
         threads = []
