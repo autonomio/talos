@@ -32,7 +32,7 @@ class RemoteScan(Scan):
         print_params=False,
         clear_session=True,
         save_weights=True,
-        config='./remote_config.json',
+        config='tmp/remote_config.json',
     ):
         '''
 
@@ -40,7 +40,7 @@ class RemoteScan(Scan):
         Parameters
         ----------
         params | `dict` | Hyperparameters for distribution.
-        config | str or dict | The default is 'config.json'.
+        config | str or dict | The default is 'tmp/remote_config.json'.
 
         Returns
         -------
@@ -94,7 +94,7 @@ class RemoteScan(Scan):
 
         elif type(config) == dict:
             self.config_data = config
-            with open('remote_config.json', 'w') as outfile:
+            with open('tmp/remote_config.json', 'w') as outfile:
                 json.dump(self.config_data, outfile, indent=2)
 
         else:

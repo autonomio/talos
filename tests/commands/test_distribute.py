@@ -11,7 +11,6 @@ def test_distribute():
     x = dataset[:, 0:8]
     y = dataset[:, 8]
 
-
     def diabetes(x_train, y_train, x_val, y_val, params):
         from tensorflow.keras.models import Sequential
         from tensorflow.keras.layers import Dense
@@ -36,7 +35,6 @@ def test_distribute():
         # modify the output model
         return out, model
 
-
     p = {
         "first_neuron": [12, 24, 48],
         "activation": ["relu", "elu"],
@@ -45,7 +43,6 @@ def test_distribute():
 
     exp_name = "diabetes_exp"
 
-
     t = DistributeScan(
         x=x,
         y=y,
@@ -53,6 +50,3 @@ def test_distribute():
         model=diabetes,
         experiment_name=exp_name
     )
-
-
-test_distribute()

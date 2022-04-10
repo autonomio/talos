@@ -8,3 +8,6 @@ sklearn
 chances
 kerasplotlib
 requests
+paramiko
+sqlalchemy
+sqlalchemy_utils
