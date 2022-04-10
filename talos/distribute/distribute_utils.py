@@ -4,12 +4,6 @@ import os
 import pandas as pd
 
 
-def create_function_block(self, funclines):
-    output_func = [line.lstrip() for line in funclines]
-    output_func = ''.join(["\t"+val if i > 0 else val for i, val in enumerate(output_func)])
-    return output_func
-
-
 def create_temp_file(self):
     filestr = '''
 from talos import RemoteScan
