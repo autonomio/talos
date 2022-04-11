@@ -1,7 +1,7 @@
 def test_distribute():
     from numpy import loadtxt
 
-    from talos import DistributeScan
+    from talos import DistributedScan
 
     dataset = loadtxt(
         "https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv",
@@ -43,7 +43,7 @@ def test_distribute():
 
     exp_name = "diabetes_exp"
 
-    t = DistributeScan(
+    t = DistributedScan(
         x=x,
         y=y,
         params=p,

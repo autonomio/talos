@@ -5,10 +5,9 @@ import json
 import os
 import inspect
 import numpy as np
-import pickle
 
 
-class DistributeScan(Scan):
+class DistributedScan(Scan):
     def __init__(
         self,
         x,
