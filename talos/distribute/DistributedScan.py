@@ -116,9 +116,7 @@ class DistributedScan(Scan):
         if not os.path.exists("tmp/"):
             os.mkdir("tmp")
 
-        with open('tmp/arguments_remote.json', 'w') as outfile:
-            json.dump(arguments_dict, outfile, indent=2)
-
+ 
         self.dest_dir = "./tmp"
 
         # save data in numpy format
@@ -130,6 +128,21 @@ class DistributedScan(Scan):
 
         self.model_func = model_func
         self.model_name = model.__name__
+        
+        from .distribute_database import get_db_object
+        from .distribute_utils import get_experiment_stage
+        
+        db=get_db_object(self)
+        self.stage=get_experiment_stage(self, db)
+        
+        if not self.stage:
+        
+            self.stage=0
+
+        arguments_dict["stage"]=self.stage
+        
+        with open('tmp/arguments_remote.json', 'w') as outfile:
+            json.dump(arguments_dict, outfile, indent=2)
 
         from .distribute_run import distribute_run
         distribute_run(self)

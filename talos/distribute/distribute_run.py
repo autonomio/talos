@@ -83,7 +83,7 @@ def distribute_run(self):
 
             t = threading.Thread(
                 target=update_db,
-                args=([self, update_db_n_seconds, current_machine_id]),
+                args=([self, update_db_n_seconds, current_machine_id,self.stage]),
             )
             t.start()
             threads.append(t)

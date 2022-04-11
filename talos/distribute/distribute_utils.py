@@ -71,16 +71,32 @@ def return_central_machine_id(self):
     return central_id
 
 
-def read_config(self):
+def read_config(self,remote=False):
     '''read config from file'''
-    with open('config.json', 'r') as f:
+    if remote:
+        
+        config_path="tmp/remote_config.json"
+    else: 
+        
+        config_path="config.json"
+        
+    with open(config_path, 'r') as f:
         config_data = json.load(f)
     return config_data
 
 
-def write_config(self, new_config):
+def write_config(self, new_config,remote=False):
     ''' write config to file'''
-    with open('config.json', 'w') as outfile:
+    
+    if remote:
+        
+        config_path="tmp/remote_config.json"
+        
+    else: 
+        
+        config_path="config.json"
+        
+    with open(config_path, 'w') as outfile:
         json.dump(new_config, outfile, indent=2)
 
 
@@ -184,27 +200,45 @@ def fetch_latest_file(self):
     if filelist:
 
         latest_filepath = max(filelist, key=os.path.getmtime)
-
         try:
             results_data = pd.read_csv(latest_filepath)
+            return results_data
         except Exception as e:
-            print('File empty..waiting...')
             return []
-
-        return results_data
-
     else:
         return []
+    
+def get_experiment_stage(self,db):
+    
+    try:
+        ids = db.return_existing_experiment_ids()
+        stage=int(list(ids)[-1].split("-")[0])+1
+        
+    except Exception as e:
+        stage=0
+        
+    return stage
+    
 
+def add_experiment_id(self, results_data, machine_id,start_row,end_row,db,stage):
 
-def add_experiment_id(self, results_data, machine_id):
+    # generate experiment id from model id and row number'''
+    # results_data = results_data.drop(['experiment_id'], axis=1, errors='ignore')
 
-    # create hashmap for a dataframe and use it for experiment id'''
+    try:
+        ids = db.return_existing_experiment_ids()
+        if "experiment_id" in results_data.columns:
+            results_data = results_data[
+                ~results_data['experiment_id'].isin(ids)
+            ]
+        
+    except Exception as e:
+        pass
 
-    results_data = results_data.drop(['experiment_id'], axis=1, errors='ignore')
-    results_data['experiment_id'] = pd.util.hash_pandas_object(results_data)
+    results_data=results_data.iloc[start_row:end_row] 
     results_data['experiment_id'] = [
-        str(i) + '_machine_id_' + str(machine_id)
-        for i in results_data['experiment_id']
+       str(stage)+"-"+ str(machine_id)+"-"+str(i)
+        for i in range(start_row,end_row)
     ]
+    
     return results_data

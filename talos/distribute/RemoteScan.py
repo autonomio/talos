@@ -104,7 +104,12 @@ class RemoteScan(Scan):
             del self.config_data['finished_scan_run']
 
         config = self.config_data
-
+        
+        with open("tmp/arguments_remote.json" ,"r") as f:
+            arguments_dict=json.load(f)
+            
+        self.stage=arguments_dict["stage"]
+        
         if 'run_central_node' in config.keys():
             run_central_node = config['run_central_node']
         else:
@@ -130,7 +135,7 @@ class RemoteScan(Scan):
 
         t = threading.Thread(
             target=update_db,
-            args=([self, update_db_n_seconds, current_machine_id]),
+            args=([self, update_db_n_seconds, current_machine_id,self.stage]),
         )
         t.start()
         threads.append(t)
