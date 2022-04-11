@@ -11,7 +11,7 @@ from .commands.evaluate import Evaluate
 from .commands.restore import Restore
 
 from .distribute.RemoteScan import RemoteScan
-from .distribute.DistributeScan import DistributeScan
+from .distribute.DistributedScan import DistributedScan
 # import extras
 from . import utils
 from . import templates
