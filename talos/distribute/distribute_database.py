@@ -22,8 +22,6 @@ def update_db(self, update_db_n_seconds, current_machine_id, remove_duplicates=T
     def __start_upload(config, results_data):
         from ..database.database import Database
 
-        print('Starting database upload.....')
-
         machine_config = config['machines']
         db_config = config['database']
         username = db_config['DB_USERNAME']
@@ -77,14 +75,10 @@ def update_db(self, update_db_n_seconds, current_machine_id, remove_duplicates=T
 
             if 'database' in config.keys():
 
-                print(
-                    'Updating to db every ' + str(update_db_n_seconds) + ' seconds'
-                )
-
                 results_data = fetch_latest_file(self)
 
                 if len(results_data) == 0 or len(results_data) == len(new_data):
-                    print('Waiting for rounds to finish......')
+
                     start_time = new_time
                     time.sleep(update_db_n_seconds)
                     continue

@@ -59,8 +59,7 @@ def run_scan_with_split_params(self, machines, run_central_node, machine_id):
     if not run_central_node:
         if machine_id != 0:
             machine_id = machine_id - 1
-    print("machine id")
-    print(machine_id)
+
     split_params = create_param_space(self, n_splits=machines).param_spaces[
         machine_id
     ]
