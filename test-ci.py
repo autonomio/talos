@@ -20,6 +20,5 @@ if __name__ == '__main__':
     test_predict()
     test_reducers()
     test_rest(scan_object)
-    test_distribute()
-
+    
     print("\n All tests successfully completed :) Good work. \n ")

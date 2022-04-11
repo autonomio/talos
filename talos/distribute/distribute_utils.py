@@ -71,31 +71,31 @@ def return_central_machine_id(self):
     return central_id
 
 
-def read_config(self,remote=False):
+def read_config(self, remote=False):
     '''read config from file'''
     if remote:
-        
-        config_path="tmp/remote_config.json"
-    else: 
-        
-        config_path="config.json"
-        
+
+        config_path = "tmp/remote_config.json"
+    else:
+
+        config_path = "config.json"
+
     with open(config_path, 'r') as f:
         config_data = json.load(f)
     return config_data
 
 
-def write_config(self, new_config,remote=False):
+def write_config(self, new_config, remote=False):
     ''' write config to file'''
-    
+
     if remote:
-        
-        config_path="tmp/remote_config.json"
-        
-    else: 
-        
-        config_path="config.json"
-        
+
+        config_path = "tmp/remote_config.json"
+
+    else:
+
+        config_path = "config.json"
+
     with open(config_path, 'w') as outfile:
         json.dump(new_config, outfile, indent=2)
 
@@ -207,20 +207,21 @@ def fetch_latest_file(self):
             return []
     else:
         return []
-    
-def get_experiment_stage(self,db):
-    
+
+
+def get_experiment_stage(self, db):
+
     try:
         ids = db.return_existing_experiment_ids()
-        stage=int(list(ids)[-1].split("-")[0])+1
-        
-    except Exception as e:
-        stage=0
-        
-    return stage
-    
+        stage = int(list(ids)[-1].split("-")[0])+1
 
-def add_experiment_id(self, results_data, machine_id,start_row,end_row,db,stage):
+    except Exception as e:
+        stage = 0
+
+    return stage
+
+
+def add_experiment_id(self, results_data, machine_id, start_row, end_row, db, stage):
 
     # generate experiment id from model id and row number'''
     # results_data = results_data.drop(['experiment_id'], axis=1, errors='ignore')
@@ -231,14 +232,14 @@ def add_experiment_id(self, results_data, machine_id,start_row,end_row,db,stage)
             results_data = results_data[
                 ~results_data['experiment_id'].isin(ids)
             ]
-        
+
     except Exception as e:
         pass
 
-    results_data=results_data.iloc[start_row:end_row] 
+    results_data = results_data.iloc[start_row:end_row]
     results_data['experiment_id'] = [
-       str(stage)+"-"+ str(machine_id)+"-"+str(i)
-        for i in range(start_row,end_row)
+        str(stage)+"-" + str(machine_id)+"-"+str(i)
+        for i in range(start_row, end_row)
     ]
-    
+
     return results_data
