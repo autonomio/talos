@@ -113,6 +113,8 @@ Argument | Description
 `shuffle` | If the data is to be shuffled or not. Set always to False for timeseries but keep in mind that you might get periodical/seasonal bias.
 `average` |One of the supported averaging methods: 'binary', 'micro', or 'macro'
 `asc` |Set to True if the metric is to be minimized.
+`saved` | bool | if a model saved on local machine should be used
+`custom_objects` | dict | if the model has a custom object, pass it here
 
 <hr>
 

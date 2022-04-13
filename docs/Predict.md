@@ -26,6 +26,13 @@ scan_object.data
 
 ### Predict Arguments
 
-Parameter | Description
---------- | -----------
-`scan_object` | The resulting class object from `Scan()`
+### Predict.predict Arguments
+
+Parameter | Default | Description
+--------- | ------- | -----------
+`x` | NA | the predictor data x
+`model_id` | None | the model_id to be used
+`metric` | None | the metric against which the validation is performed
+`asc` | None | should be True if metric is a loss
+`saved` | bool | if a model saved on local machine should be used
+`custom_objects` | dict | if the model has a custom object, pass it here
