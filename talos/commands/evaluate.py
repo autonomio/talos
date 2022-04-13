@@ -30,11 +30,11 @@ class Evaluate:
 
         x | array | The input data for making predictions
         y | array | The ground truth for x
-        model_id | int | It's possible to evaluate a specific model based 
+        model_id | int | It's possible to evaluate a specific model based
                          on ID.
         folds | int | Number of folds to use for cross-validation
         sort_metric | string | A column name referring to the metric that
-                               was used in the scan_object as a performance 
+                               was used in the scan_object as a performance
                                metric. This is used for sorting the results
                                to pick for evaluation.
         shuffle | bool | Data is shuffled before evaluation.

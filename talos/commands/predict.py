@@ -27,7 +27,7 @@ class Predict:
         metric | str | the metric to be used for picking best model
         asc | bool | True if `metric` is something to be minimized
         saved | bool | if a model saved on local machine should be used
-        custom_objects | dict | if the model has a custom object, 
+        custom_objects | dict | if the model has a custom object,
                                 pass it here
 
         '''
@@ -44,7 +44,13 @@ class Predict:
 
         return model.predict(x)
 
-    def predict_classes(self, x, metric, asc, model_id=None, saved=False, custom_objects=None):
+    def predict_classes(self,
+                        x,
+                        metric,
+                        asc,
+                        model_id=None,
+                        saved=False,
+                        custom_objects=None):
 
         '''Makes a class prediction from input x. If model_id
         is not given, then best_model will be used.
@@ -64,7 +70,10 @@ class Predict:
             model_id = best_model(self.scan_object, metric, asc)
 
         from ..utils.best_model import activate_model
-        model = activate_model(self.scan_object, model_id, saved, custom_objects)
+        model = activate_model(self.scan_object,
+                               model_id,
+                               saved,
+                               custom_objects)
 
         # make (class) predictions with the model
         preds = model.predict(x)   
