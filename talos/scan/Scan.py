@@ -125,6 +125,10 @@ class Scan:
         If set to False, then model weights will not be saved and best_model
         and some other features will not work. Will reduce memory pressure
         on very large models and high number of rounds/permutations.
+    save_models : bool
+        If set to True, models will be saved on the local disk in the experiment
+        folder. When `save_models` is set to True, you should consider setting
+        `save_weights` to False.
     """
 
     def __init__(self,
@@ -152,7 +156,8 @@ class Scan:
                  disable_progress_bar=False,
                  print_params=False,
                  clear_session=True,
-                 save_weights=True):
+                 save_weights=True,
+                 save_models=False):
 
         self.x = x
         self.y = y
@@ -189,6 +194,7 @@ class Scan:
         # performance
         self.clear_session = clear_session
         self.save_weights = save_weights
+        self.save_models = save_models
         # input parameters section ends
 
         # start runtime
