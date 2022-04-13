@@ -10,10 +10,11 @@ def func_best_model(scan_object,
     scan_object | object | The object that is returned from Scan()
                            upon completion.
     metric | str | The metric to be used for picking the best model.
-    asc | bool | Make this True for metrics that are to be minimized (e.g. loss),
-                    and False when the metric is to be maximized (e.g. acc)
-    saved | bool | if a model saved on local machine should be used
-    custom_objects | dict | if the model has a custom object, pass it here
+    asc | bool | Make this True for metrics that are to be minimized
+                 (e.g. loss), and False when the metric is to be 
+                 maximized (e.g. acc).
+    saved | bool | if a model saved on local machine should be used.
+    custom_objects | dict | if the model has a custom object, pass it here.
 
     NOTE: for loss 'asc' should be True'''
 
@@ -49,15 +50,17 @@ def func_evaluate(scan_object,
                                  completion of the experiment.
     x_val | array or list of arrays | Input data (features) in the same format
                                       as used in Scan(), but should not be the
-                                      same data (or it will not be much of validation).
-    y_val | array or list of arrays | Input data (labels) in the same format as used in
-                                      Scan(), but should not be the same data (or it will
-                                      not be much of validation).
+                                      same data (or it will not be much of
+                                      validation).
+    y_val | array or list of arrays | Input data (labels) in the same format
+                                      as used in.
+                                      Scan(), but should not be the same data
+                                      (or it will not be much of validation).
     task | string | 'binary', 'multi_class', 'multi_label', or 'continuous'.
     n_models | int | The number of models to be evaluated. If set to 10,
                      then 10 models with the highest metric value are
                      evaluated. See below.
-    metric | str | The metric to be used for picking the models to be 
+    metric | str | The metric to be used for picking the models to be
                    evaluated.
     folds | int | The number of folds to be used in the evaluation.
     shuffle | bool | If the data is to be shuffled or not. Set always
