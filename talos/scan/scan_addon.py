@@ -11,7 +11,7 @@ def func_best_model(scan_object,
                            upon completion.
     metric | str | The metric to be used for picking the best model.
     asc | bool | Make this True for metrics that are to be minimized
-                 (e.g. loss), and False when the metric is to be 
+                 (e.g. loss), and False when the metric is to be
                  maximized (e.g. acc).
     saved | bool | if a model saved on local machine should be used.
     custom_objects | dict | if the model has a custom object, pass it here.

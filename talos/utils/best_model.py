@@ -14,11 +14,11 @@ def activate_model(self, model_id, saved=False, custom_objects=None):
 
     '''Loads the model from the json that is stored in the Scan object
     or from local
-    
+
     model_id | int | the sequential id of the model
     saved | bool | if a model saved on local machine should be used
     custom_object | dict | if the model has a custom object, pass it here
-    
+
     '''
 
     import tensorflow as tf
@@ -26,7 +26,8 @@ def activate_model(self, model_id, saved=False, custom_objects=None):
 
     if saved:
         file_path = self.details['experiment_name'] + '/' + str(model_id)
-        model = tf.keras.models.load_model(file_path, custom_objects=custom_objects)
+        model = tf.keras.models.load_model(file_path,
+                                           custom_objects=custom_objects)
 
     else:
         model = model_from_json(self.saved_models[model_id])

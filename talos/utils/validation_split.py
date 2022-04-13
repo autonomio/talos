@@ -1,13 +1,13 @@
 def validation_split(self):
-    
+
     '''Defines the attributes `x_train`, `y_train`, `x_val` and `y_val`.
-    The validation sets are determined by the attribute val_split, 
-    which is a number in (0, 1) which determines the proportion of 
+    The validation sets are determined by the attribute val_split,
+    which is a number in (0, 1) which determines the proportion of
     the input data to be allocated for cross-validation.'''
 
     # If split is done in `Scan()` do nothing
     if self.custom_val_split:
-        
+
         self.x_train = self.x
         self.y_train = self.y
 
@@ -92,14 +92,15 @@ def kfold(x, y, folds=10, shuffled=True):
 
     return out_x, out_y
 
+
 def shuffle(data):
-    
+
     import numpy as np
 
     if isinstance(data, list) is False:
         data = [data]
         is_array = True
-    
+
     rng = np.random.default_rng()
     state = rng.bit_generator.state
 
@@ -108,9 +109,8 @@ def shuffle(data):
     for ar in data:
         rng.bit_generator.state = state
         rng.shuffle(ar)
-        
+
     if is_array:
         data = data[0]
-        
+
     return data
-    
