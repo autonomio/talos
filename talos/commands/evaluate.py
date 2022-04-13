@@ -30,13 +30,16 @@ class Evaluate:
 
         x | array | The input data for making predictions
         y | array | The ground truth for x
-        model_id | int | It's possible to evaluate a specific model based on ID.
+        model_id | int | It's possible to evaluate a specific model based 
+                         on ID.
         folds | int | Number of folds to use for cross-validation
-        sort_metric | string | A column name referring to the metric that was used in the
-                               scan_object as a performance metric. This is used for sorting
-                               the results to pick for evaluation.
+        sort_metric | string | A column name referring to the metric that
+                               was used in the scan_object as a performance 
+                               metric. This is used for sorting the results
+                               to pick for evaluation.
         shuffle | bool | Data is shuffled before evaluation.
-        task | string | 'binary', 'multi_class', 'multi_label', or 'continuous'.
+        task | string | 'binary', 'multi_class', 'multi_label', or
+                        'continuous'.
         asc | bool | False if the metric is to be optimized upwards
                      (e.g. accuracy or f1_score)
         saved | bool | if a model saved on local machine should be used
@@ -57,8 +60,8 @@ class Evaluate:
 
         from ..utils.best_model import activate_model
         model = activate_model(self.scan_object,
-                               model_id, 
-                               saved=saved, 
+                               model_id,
+                               saved=saved,
                                custom_objects=custom_objects)
 
         from ..utils.validation_split import kfold

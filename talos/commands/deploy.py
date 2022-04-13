@@ -18,11 +18,13 @@ class Deploy:
         Deploy() takes in the object from Scan() and creates a package locally
         that can be later activated with Restore().
 
-        scan_object | object | The object that is returned from Scan() upon completion.
+        scan_object | object | The object that is returned from Scan() upon 
+                               completion.
         model_name | str | Name for the .zip file to be created.
         metric | str | The metric to be used for picking the best model.
-        asc | bool | Make this True for metrics that are to be minimized (e.g. loss) ,
-                     and False when the metric is to be maximized (e.g. acc)
+        asc | bool | Make this True for metrics that are to be minimized 
+                     (e.g. loss), and False when the metric is to be 
+                     maximized (e.g. acc).
         saved | bool | if a model saved on local machine should be used
         custom_objects | dict | if the model has a custom object, pass it here
 
@@ -40,7 +42,10 @@ class Deploy:
 
         from ..utils.best_model import best_model, activate_model
         self.best_model = best_model(scan_object, metric, asc)
-        self.model = activate_model(scan_object, self.best_model, saved, custom_objects)
+        self.model = activate_model(scan_object,
+                                    self.best_model,
+                                    saved,
+                                    custom_objects)
 
         # runtime
         self.save_model_as()

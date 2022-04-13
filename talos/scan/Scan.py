@@ -126,7 +126,7 @@ class Scan:
         and some other features will not work. Will reduce memory pressure
         on very large models and high number of rounds/permutations.
     save_models : bool
-        If set to True, models will be saved on the local disk in the experiment
+        If True, models will be saved on the local disk in theexperiment
         folder. When `save_models` is set to True, you should consider setting
         `save_weights` to False.
     """
