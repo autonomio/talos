@@ -39,7 +39,8 @@ Argument | Input | Description
 `disable_progress_bar` | bool | Disable live updating progress bar
 `print_params` | bool | Print each permutation hyperparameters
 `clear_session` | bool | Clear backend session between permutations
-`save_weights` | bool | Save model weights (increases memory pressure for large models)
+`save_weights` | bool | Keep model weights (increases memory pressure for large models)
+`save_models` | bool | Save models in the experiment folder in local machine
 
 NOTE: `boolean_limit` will only work if its the last argument in `Scan()` and the following bracket is on a newline:
 
