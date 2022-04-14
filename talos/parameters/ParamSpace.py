@@ -48,9 +48,6 @@ class ParamSpace:
             index = self._convert_lambda(self.boolean_limit)(self.param_space)
             self.param_space = self.param_space[index]
 
-        # reset index
-        self.param_index = list(range(len(self.param_index)))
-
     def _param_input_conversion(self):
 
         '''Parameters may be input as lists of single or
