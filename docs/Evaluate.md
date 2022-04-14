@@ -31,5 +31,7 @@ Parameter | Default | Description
 `average` | 'binary' | 'binary', 'micro', 'macro', 'samples', or 'weighted'
 `metric` | None | the metric against which the validation is performed
 `asc` | None | should be True if metric is a loss
+`saved` | bool | if a model saved on local machine should be used
+`custom_objects` | dict | if the model has a custom object, pass it here
 
 The above arguments are for the <code>evaluate</code> attribute of the <code>Evaluate</code> object.

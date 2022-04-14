@@ -11,7 +11,13 @@ class Predict:
         self.scan_object = scan_object
         self.data = scan_object.data
 
-    def predict(self, x, metric, asc, model_id=None):
+    def predict(self,
+                x,
+                metric,
+                asc,
+                model_id=None,
+                saved=False,
+                custom_objects=None):
 
         '''Makes a probability prediction from input x. If model_id
         is not given, then best_model will be used.
@@ -20,6 +26,9 @@ class Predict:
         model_id | int | the id of the model from the Scan() object
         metric | str | the metric to be used for picking best model
         asc | bool | True if `metric` is something to be minimized
+        saved | bool | if a model saved on local machine should be used
+        custom_objects | dict | if the model has a custom object,
+                                pass it here
 
         '''
 
@@ -28,11 +37,20 @@ class Predict:
             model_id = best_model(self.scan_object, metric, asc)
 
         from ..utils.best_model import activate_model
-        model = activate_model(self.scan_object, model_id)
+        model = activate_model(self.scan_object,
+                               model_id,
+                               saved,
+                               custom_objects)
 
         return model.predict(x)
 
-    def predict_classes(self, x, metric, asc, model_id=None):
+    def predict_classes(self,
+                        x,
+                        metric,
+                        asc,
+                        model_id=None,
+                        saved=False,
+                        custom_objects=None):
 
         '''Makes a class prediction from input x. If model_id
         is not given, then best_model will be used.
@@ -41,7 +59,8 @@ class Predict:
         model_id | int | the id of the model from the Scan() object
         metric | str | the metric to be used for picking best model
         asc | bool | True if `metric` is something to be minimized
-
+        saved | bool | if a model saved on local machine should be used
+        custom_objects | dict | if the model has a custom object, pass it here
         '''
 
         import numpy as np
@@ -51,9 +70,12 @@ class Predict:
             model_id = best_model(self.scan_object, metric, asc)
 
         from ..utils.best_model import activate_model
-        model = activate_model(self.scan_object, model_id)
+        model = activate_model(self.scan_object,
+                               model_id,
+                               saved,
+                               custom_objects)
 
-        # make (class) predictiosn with the model
+        # make (class) predictions with the model
         preds = model.predict(x)   
         preds_classes = np.argmax(preds, axis=1)
 

@@ -21,6 +21,8 @@ Parameter | type | Description
 `model_name` | str | Name for the .zip file to be created.
 `metric` | str | The metric to be used for picking the best model.
 `asc` | bool | Make this True for metrics that are to be minimized (e.g. loss)
+`saved` | bool | if a model saved on local machine should be used
+`custom_objects` | dict | if the model has a custom object, pass it here
 
 ## Deploy Package Contents
 

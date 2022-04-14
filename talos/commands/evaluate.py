@@ -20,34 +20,31 @@ class Evaluate:
                  folds=5,
                  shuffle=True,
                  asc=False,
+                 saved=False,
+                 custom_objects=None,
                  print_out=False):
 
         '''Evaluate a model based on f1_score (all except regression)
         or mae (for regression). Supports 'binary', 'multi_class',
         'multi_label', and 'regression' evaluation.
 
-        x : array
-            The input data for making predictions
-        y : array
-            The ground truth for x
-        model_id : int
-            It's possible to evaluate a specific model based on ID.
-            Can be None.
-        folds : int
-            Number of folds to use for cross-validation
-        sort_metric : string
-            A column name referring to the metric that was used in the
-            scan_object as a performance metric. This is used for sorting
-            the results to pick for evaluation.
-        shuffle : bool
-            Data is shuffled before evaluation.
-        task : string
-            'binary', 'multi_class', 'multi_label', or 'continuous'.
-        asc : bool
-            False if the metric is to be optimized upwards
-            (e.g. accuracy or f1_score)
-        print_out : bool
-            Print out the results.
+        x | array | The input data for making predictions
+        y | array | The ground truth for x
+        model_id | int | It's possible to evaluate a specific model based
+                         on ID.
+        folds | int | Number of folds to use for cross-validation
+        sort_metric | string | A column name referring to the metric that
+                               was used in the scan_object as a performance
+                               metric. This is used for sorting the results
+                               to pick for evaluation.
+        shuffle | bool | Data is shuffled before evaluation.
+        task | string | 'binary', 'multi_class', 'multi_label', or
+                        'continuous'.
+        asc | bool | False if the metric is to be optimized upwards
+                     (e.g. accuracy or f1_score)
+        saved | bool | if a model saved on local machine should be used
+        custom_objects | dict | if the model has a custom object, pass it here
+        print_out | bool | Print out the results.
 
         TODO: add possibility to input custom metrics.
 
@@ -62,7 +59,10 @@ class Evaluate:
             model_id = best_model(self.scan_object, metric, asc)
 
         from ..utils.best_model import activate_model
-        model = activate_model(self.scan_object, model_id)
+        model = activate_model(self.scan_object,
+                               model_id,
+                               saved=saved,
+                               custom_objects=custom_objects)
 
         from ..utils.validation_split import kfold
         kx, ky = kfold(x, y, folds, shuffle)

@@ -1,16 +1,19 @@
 def validation_split(self):
-    """Defines the attributes `x_train`, `y_train`, `x_val` and `y_val`.
-    The validation (cross-validation, aka development) sets are determined
-    by the attribute val_split, which is a number in (0, 1) which determines
-    the proportion of the input data to be allocated for cross-validation."""
 
+    '''Defines the attributes `x_train`, `y_train`, `x_val` and `y_val`.
+    The validation sets are determined by the attribute val_split,
+    which is a number in (0, 1) which determines the proportion of
+    the input data to be allocated for cross-validation.'''
+
+    # If split is done in `Scan()` do nothing
     if self.custom_val_split:
+
         self.x_train = self.x
         self.y_train = self.y
-        # self.x/y_val are already set
 
+    # Otherwise handle splitting
     else:
-        # shuffle the data before splitting
+
         random_shuffle(self)
 
         # deduce the midway point for input data

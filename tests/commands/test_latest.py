@@ -60,7 +60,11 @@ def test_latest():
                              experiment_name='test_latest',
                              round_limit=5,
                              reduction_method='gamify',
-                             save_weights=False)
+                             save_models=True)
+
+    scan_object.best_model(saved=True)
+    predict = talos.Predict(scan_object)
+    predict.predict(x, 'val_acc', False, saved=True)
 
     scan_object = talos.Scan(x, y,
                              model=iris_model,

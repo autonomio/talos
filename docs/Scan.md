@@ -39,7 +39,8 @@ Argument | Input | Description
 `disable_progress_bar` | bool | Disable live updating progress bar
 `print_params` | bool | Print each permutation hyperparameters
 `clear_session` | bool | Clear backend session between permutations
-`save_weights` | bool | Save model weights (increases memory pressure for large models)
+`save_weights` | bool | Keep model weights (increases memory pressure for large models)
+`save_models` | bool | Save models in the experiment folder in local machine
 
 NOTE: `boolean_limit` will only work if its the last argument in `Scan()` and the following bracket is on a newline:
 
@@ -112,6 +113,8 @@ Argument | Description
 `shuffle` | If the data is to be shuffled or not. Set always to False for timeseries but keep in mind that you might get periodical/seasonal bias.
 `average` |One of the supported averaging methods: 'binary', 'micro', or 'macro'
 `asc` |Set to True if the metric is to be minimized.
+`saved` | bool | if a model saved on local machine should be used
+`custom_objects` | dict | if the model has a custom object, pass it here
 
 <hr>
 

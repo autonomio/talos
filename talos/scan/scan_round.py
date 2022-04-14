@@ -27,22 +27,31 @@ def scan_round(self):
     from ..reducers.reduce_run import reduce_run
     self = reduce_run(self)
 
-    try:
-        # save model and weights
-        self.saved_models.append(self.round_model.to_json())
+    # handle the case where the actual model is to be saved
+    if self.save_models:
 
-        if self.save_weights:
-            self.saved_weights.append(self.round_model.get_weights())
-        else:
-            self.saved_weights.append(None)
+        dir_name = str(len(self.round_history) - 1)
+        file_path = self._saved_models_path + '/' + dir_name
+        self.round_model.save(file_path)
 
-    except AttributeError as e:
-        # make sure that the error message is from torch
-        if str(e) == "'Model' object has no attribute 'to_json'":
+    # handle other cases
+    else:
+        try:
+            # save model and weights
+            self.saved_models.append(self.round_model.to_json())
+
             if self.save_weights:
-                self.saved_models.append(self.round_model.state_dict())
+                self.saved_weights.append(self.round_model.get_weights())
             else:
                 self.saved_weights.append(None)
+
+        except AttributeError as e:
+            # make sure that the error message is from torch
+            if str(e) == "'Model' object has no attribute 'to_json'":
+                if self.save_weights:
+                    self.saved_models.append(self.round_model.state_dict())
+                else:
+                    self.saved_weights.append(None)
 
     # clear tensorflow sessions
     if self.clear_session is True:
