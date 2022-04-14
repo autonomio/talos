@@ -10,7 +10,15 @@ def initialize_log(self):
     except FileExistsError:
         pass
 
+    # create unique experiment_id
     self._experiment_id = time.strftime('%D%H%M%S').replace('/', '')
+
+    # place saved models on a sub-folder
+    if self.save_models:
+        self._saved_models_path = self.experiment_name + '/' + self._experiment_id
+        file_path = path + '/' + self._saved_models_path
+        os.mkdir(file_path)
+
     _file_name = self._experiment_id + '.csv'
     _experiment_log = './' + self.experiment_name + '/' + _file_name
 

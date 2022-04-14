@@ -29,8 +29,9 @@ def scan_round(self):
 
     # handle the case where the actual model is to be saved
     if self.save_models:
+
         dir_name = str(len(self.round_history) - 1)
-        file_path = self.experiment_name + '/' + dir_name
+        file_path = self._saved_models_path + '/' + dir_name
         self.round_model.save(file_path)
 
     # handle other cases

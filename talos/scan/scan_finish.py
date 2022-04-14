@@ -23,6 +23,9 @@ def scan_finish(self):
     # clean the results into a dataframe
     self.data = self.result
 
+    # keep experiment_id temporarily
+    _experiment_id = self._experiment_id
+
     # remove redundant columns
     keys = list(self.__dict__.keys())
     for key in keys:
@@ -36,10 +39,11 @@ def scan_finish(self):
         if key not in attrs_final:
             out[key] = self.__dict__[key]
 
+    out['experiment_id'] = _experiment_id
     out['complete_time'] = time.strftime('%D/%H:%M')
+    
     try:
         out['x_shape'] = self.x.shape
-    # for the case when x is list
     except AttributeError:
         out['x_shape'] = 'list'
 
@@ -58,7 +62,6 @@ def scan_finish(self):
     self.details = pd.Series(out)
 
     # add best_model
-
     from ..scan.scan_addon import func_best_model, func_evaluate
 
     self.best_model = func_best_model.__get__(self)
