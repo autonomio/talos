@@ -41,7 +41,7 @@ def scan_finish(self):
 
     out['experiment_id'] = _experiment_id
     out['complete_time'] = time.strftime('%D/%H:%M')
-    
+
     try:
         out['x_shape'] = self.x.shape
     except AttributeError:

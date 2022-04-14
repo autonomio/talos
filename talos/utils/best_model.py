@@ -25,8 +25,8 @@ def activate_model(self, model_id, saved=False, custom_objects=None):
     from tensorflow.keras.models import model_from_json
 
     if saved:
-        
-        file_path = self.details['experiment_name'] 
+
+        file_path = self.details['experiment_name']
         file_path += '/' + self.details['experiment_id']
         file_path += '/' + str(model_id)
 
