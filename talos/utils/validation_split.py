@@ -91,26 +91,3 @@ def kfold(x, y, folds=10, shuffled=True):
         hi += step
 
     return out_x, out_y
-
-
-def shuffle(data):
-
-    import numpy as np
-
-    if isinstance(data, list) is False:
-        data = [data]
-        is_array = True
-
-    rng = np.random.default_rng()
-    state = rng.bit_generator.state
-
-    out = []
-
-    for ar in data:
-        rng.bit_generator.state = state
-        rng.shuffle(ar)
-
-    if is_array:
-        data = data[0]
-
-    return data
