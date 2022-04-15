@@ -48,6 +48,9 @@ class ParamSpace:
             index = self._convert_lambda(self.boolean_limit)(self.param_space)
             self.param_space = self.param_space[index]
 
+        # reset index
+        self.param_index = list(range(len(self.param_index)))
+
     def _param_input_conversion(self):
 
         '''Parameters may be input as lists of single or
@@ -126,21 +129,15 @@ class ParamSpace:
         actual parameter permutations for the experiment.
         '''
 
-        if len(self.param_index) < 100000:
+        final_grid = []
+        for i in self.param_index:
+            p = []
+            for l in reversed(self._params_temp):
+                i, s = divmod(int(i), len(l))
+                p.insert(0, l[s])
+            final_grid.append(tuple(p))
 
-            final_grid = list(it.product(*self._params_temp))
-            return np.array(final_grid, dtype='object')
-
-        else:
-            final_grid = []
-            for i in self.param_index:
-                p = []
-                for l in reversed(self._params_temp):
-                    i, s = divmod(int(i), len(l))
-                    p.insert(0, l[s])
-                final_grid.append(tuple(p))
-
-            return np.array(final_grid, dtype='object')
+        return np.array(final_grid, dtype='object')
 
     def _check_time_limit(self):
 
