@@ -7,15 +7,17 @@ A callback for recording GPU power draw (watts) on epoch begin and end. The call
 
 ### how-to-use
 
-Use it as you would use any other Callback in Tensorflow or Keras.
+Before `model.fit()` in the input model:
 
-`
-power_draw = PowerDrawCallback()
+`power_draw = PowerDrawCallback()`
 
-model.fit(...callbacks=[power_draw]...)
-`
+Then use `power_draw` as you would callbacks in general:
 
-It's possible to read the energy draw data:
+`model.fit(...callbacks=[power_draw]...)`
 
-`print(power_draw.logs)`
+To get the energy draw data into the experiment log:
+
+`history = talos.utils.power_draw_append(history, power_draw)`
+
+NOTE: this line has to be after `model.fit()`.
 
