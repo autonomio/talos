@@ -17,7 +17,6 @@ the below items:
 #### Docs
 
 - [ ] [Docs](https://autonomio.github.io/talos) are updated
-- [ ] [Docs](https://autonomio.github.io/talos) version is correct on (index.html and _coverpage.md)
 
 #### Tests
 
