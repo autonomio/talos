@@ -1,0 +1,25 @@
+# File : .pep8speaks.yml
+
+scanner:
+    diff_only: False
+    linter: flake8
+
+flake8:  # Same as scanner.linter value. Other option is flake8
+    max-line-length: 88  # Default is 79 in PEP 8
+    ignore:  # Errors and warnings to ignore
+        - W504  # line break after binary operator
+        - E402  # module level import not at top of file
+        - E731  # do not assign a lambda expression, use a def
+        - C406  # Unnecessary list literal - rewrite as a dict literal.
+
+no_blank_comment: True  # If True, no comment is made on PR without any errors.
+descending_issues_order: False  # If True, PEP 8 issues in message will be displayed in descending order of line numbers in the file
+
+message:
+    opened:
+        header: "Hello @{name}! Thanks for opening this PR."
+        footer: "Do see the [Hitchhiker's guide to code style](https://goo.gl/hqbW4r)"
+    updated:
+        header: "Hello @{name}! Thanks for updating this PR."
+        footer: ""
+    no_errors: "There are currently no PEP 8 issues detected in this PR. Great work! :heart:"
