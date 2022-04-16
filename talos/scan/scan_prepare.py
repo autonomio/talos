@@ -20,7 +20,7 @@ def scan_prepare(self):
     if isinstance(self.params, dict):
 
         # create reference for parameter keys
-        self._param_dict_keys = sorted(list(self.params.keys()))
+        self._param_dict_keys = list(self.params.keys())
 
         # create the parameter object and move to self
         from ..parameters.ParamSpace import ParamSpace
@@ -35,7 +35,7 @@ def scan_prepare(self):
     # handle the case when self.params already is ParamSpace object
     elif 'talos.parameters.ParamSpace.ParamSpace' in str(type(self.params)):
 
-        self._param_dict_keys = sorted(list(self.params.param_keys))
+        self._param_dict_keys = list(self.params.param_keys)
         self.param_object = self.params
 
     else:
