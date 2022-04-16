@@ -25,7 +25,7 @@ class AutoModel:
             of Keras or Talos metrics.
         '''
 
-        from talos.utils.experiment_log_callback import ExperimentLogCallback
+        from talos.callbacks.experiment_log import ExperimentLog
 
         self.task = task
         self.experiment_name = experiment_name
@@ -40,7 +40,7 @@ class AutoModel:
 
         # create the model
         self.model = self._create_input_model
-        self.callback = ExperimentLogCallback
+        self.callback = ExperimentLog
 
     def _set_metric(self):
 

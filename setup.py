@@ -18,7 +18,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://autonom.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/autonomio/talos/'
-VERSION = '1.2.4'
+VERSION = '1.2.5'
 
 
 try:
@@ -64,7 +64,8 @@ if __name__ == "__main__":
                     'talos.metrics',
                     'talos.commands',
                     'talos.logging',
-                    'talos.autom8'],
+                    'talos.autom8',
+                    'talos.callbacks'],
 
           classifiers=['Intended Audience :: Science/Research',
                        'Programming Language :: Python :: 2.7',

@@ -1,23 +1,23 @@
 from tensorflow.keras.callbacks import Callback
 
 
-class PowerDrawCallback(Callback):
+class PowerDraw(Callback):
 
     '''A callback for recording GPU power draw (watts) on epoch begin and end.
 
     Example use:
 
-    power_draw = PowerDrawCallback()
+    power_draw = PowerDraw()
 
     model.fit(...callbacks=[power_draw]...)
 
-    print(power_draw.logs)
+    history = talos.utils.power_draw_append(history, power_draw)
 
     '''
 
     def __init__(self):
 
-        super(PowerDrawCallback, self).__init__()
+        super(PowerDraw, self).__init__()
 
         import os
         import time

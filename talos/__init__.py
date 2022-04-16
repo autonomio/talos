@@ -14,6 +14,7 @@ from .commands.restore import Restore
 from . import utils
 from . import templates
 from . import autom8
+from . import callbacks
 
 # the purpose of everything below is to keep the namespace completely clean
 
@@ -34,4 +35,4 @@ for sub in template_sub:
 del commands, scan, model, metrics, key
 del sub, keep_from_templates, template_sub, warnings
 
-__version__ = "1.2.4"
+__version__ = "1.2.5"
