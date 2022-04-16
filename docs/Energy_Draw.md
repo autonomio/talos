@@ -9,7 +9,7 @@ A callback for recording GPU power draw (watts) on epoch begin and end. The call
 
 Before `model.fit()` in the input model:
 
-`power_draw = PowerDrawCallback()`
+`power_draw = PowerDraw()`
 
 Then use `power_draw` as you would callbacks in general:
 

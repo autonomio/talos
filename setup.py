@@ -64,7 +64,8 @@ if __name__ == "__main__":
                     'talos.metrics',
                     'talos.commands',
                     'talos.logging',
-                    'talos.autom8'],
+                    'talos.autom8',
+                    'talos.callbacks'],
 
           classifiers=['Intended Audience :: Science/Research',
                        'Programming Language :: Python :: 2.7',

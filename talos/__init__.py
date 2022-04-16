@@ -14,6 +14,7 @@ from .commands.restore import Restore
 from . import utils
 from . import templates
 from . import autom8
+from . import callbacks
 
 # the purpose of everything below is to keep the namespace completely clean
 

@@ -43,7 +43,7 @@ def test_latest():
 
         out = model.fit(x_train,
                         y_train,
-                        callbacks=[talos.utils.ExperimentLogCallback('test_latest', params)],
+                        callbacks=[talos.callbacks.ExperimentLog('test_latest', params)],
                         batch_size=params['batch_size'],
                         epochs=params['epochs'],
                         validation_data=(x_val, y_val),

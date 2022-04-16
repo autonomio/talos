@@ -1,7 +1,7 @@
 from tensorflow.keras.callbacks import Callback
 
 
-class ExperimentLogCallback(Callback):
+class ExperimentLog(Callback):
 
     def __init__(self,
                  experiment_name,
@@ -15,7 +15,7 @@ class ExperimentLogCallback(Callback):
 
         '''
 
-        super(ExperimentLogCallback, self).__init__()
+        super(ExperimentLog, self).__init__()
 
         import glob
         import os

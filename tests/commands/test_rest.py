@@ -23,7 +23,7 @@ def test_rest(scan_object):
 
     callbacks = [
                  talos.utils.early_stopper(10),
-                 talos.utils.ExperimentLogCallback('test', {})]
+                 talos.callbacks.ExperimentLog('test', {})]
 
     metrics = [talos.utils.metrics.f1score,
                talos.utils.metrics.fbeta,
