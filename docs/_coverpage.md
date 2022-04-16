@@ -1,6 +1,6 @@
 ![logo](_media/talos_logo_bg.png)
 
-## v1.2.4
+## v1.2.5
 
 > Hyperparameter Experiments with Tensorflow, PyTorch and Keras
 

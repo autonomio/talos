@@ -35,4 +35,4 @@ for sub in template_sub:
 del commands, scan, model, metrics, key
 del sub, keep_from_templates, template_sub, warnings
 
-__version__ = "1.2.4"
+__version__ = "1.2.5"
