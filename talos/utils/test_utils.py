@@ -15,6 +15,6 @@ def create_param_space(data, no_of_metrics=2):
     for col in data.iloc[:, no_of_metrics:].columns:
         params[col] = data[col].unique().tolist()
 
-    param_keys = sorted(list(params.keys()))
+    param_keys = list(params.keys())
 
     return ParamSpace(params, param_keys)

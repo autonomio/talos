@@ -27,10 +27,10 @@ class DistributeParamSpace:
         self._params = ParamSpace(params=params,
                                   param_keys=param_keys,
                                   random_method='uniform_mersenne',
-                                  fraction_limit=None,
-                                  round_limit=None,
-                                  time_limit=None,
-                                  boolean_limit=None)
+                                  fraction_limit=fraction_limit,
+                                  round_limit=round_limit,
+                                  time_limit=time_limit,
+                                  boolean_limit=boolean_limit)
 
         self.machines = machines
 
