@@ -48,6 +48,7 @@ class Predict:
                         x,
                         metric,
                         asc,
+                        task,
                         model_id=None,
                         saved=False,
                         custom_objects=None):
@@ -59,6 +60,7 @@ class Predict:
         model_id | int | the id of the model from the Scan() object
         metric | str | the metric to be used for picking best model
         asc | bool | True if `metric` is something to be minimized
+        task | string | 'binary', 'multi_class' or 'multi_label'
         saved | bool | if a model saved on local machine should be used
         custom_objects | dict | if the model has a custom object, pass it here
         '''
@@ -77,6 +79,11 @@ class Predict:
 
         # make (class) predictions with the model
         preds = model.predict(x)   
+        preds = np.array([pred[0] for pred in preds])
+
+        if task == 'binary':
+            return np.where(preds > 0.5, 1,0)
+
         preds_classes = np.argmax(preds, axis=1)
 
         return preds_classes

@@ -1,12 +1,17 @@
 def titanic():
 
+    from tensorflow.keras.optimizers import Adam, Nadam
+
     # here use a standard 2d dictionary for inputting the param boundaries
     p = {'lr': (0.5, 5, 10),
          'first_neuron': [4, 8, 16],
          'batch_size': [20, 30, 40],
          'dropout': (0, 0.5, 5),
-         'optimizer': ['Adam', 'Nadam'],
+         'optimizer': [Adam(), Nadam()],
+         'epochs': [50, 100, 150],
          'losses': ['logcosh', 'binary_crossentropy'],
+         'shapes': ['brick', 'triangle', 0.2],
+         'hidden_layers': [0, 1, 2, 3, 4],
          'activation': ['relu', 'elu'],
          'last_activation': ['sigmoid']}
 
@@ -24,7 +29,7 @@ def iris():
          'first_neuron': [4, 8, 16, 32, 64],
          'hidden_layers': [0, 1, 2, 3, 4],
          'batch_size': (2, 30, 10),
-         'epochs': [2],
+         'epochs': [50, 100, 150],
          'dropout': (0, 0.5, 5),
          'weight_regulizer': [None],
          'emb_output_dims':  [None],
