@@ -24,6 +24,8 @@ x_train, y_train, x_val, y_val = wrangle.array_split(x, y, .5)
 ```
 In the case of multi-input models, the data must be split into training and validation datasets before using it in `Scan()`. `x` is expected to be a list of numpy arrays and `y` a numpy array.
 
+**NOTE:** For full support of Talos features for multi-input models, set `Scan(...multi_input=True...)`.
+
 ### Defining the Model
 ```python
 

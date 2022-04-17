@@ -59,6 +59,8 @@ class Scan:
     val_split : float, optional
         The proportion of the input `x` which is set aside as the
         validation data. (Default is 0.3).
+    multi_input : bool, optional
+        If it is a multi_input model, then set to True.
 
     # RANDOMNESS ARGUMENTS
     ----------------------
@@ -140,6 +142,7 @@ class Scan:
                  x_val=None,
                  y_val=None,
                  val_split=.3,
+                 multi_input=False,
                  random_method='uniform_mersenne',
                  seed=None,
                  performance_target=None,
@@ -167,6 +170,7 @@ class Scan:
         self.x_val = x_val
         self.y_val = y_val
         self.val_split = val_split
+        self.multi_input = multi_input
 
         # randomness
         self.random_method = random_method
@@ -195,7 +199,6 @@ class Scan:
         self.clear_session = clear_session
         self.save_weights = save_weights
         self.save_models = save_models
-        # input parameters section ends
 
         # start runtime
         from .scan_run import scan_run

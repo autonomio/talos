@@ -22,6 +22,7 @@ class Evaluate:
                  asc=False,
                  saved=False,
                  custom_objects=None,
+                 multi_input=False,
                  print_out=False):
 
         '''Evaluate a model based on f1_score (all except regression)
@@ -44,6 +45,7 @@ class Evaluate:
                      (e.g. accuracy or f1_score)
         saved | bool | if a model saved on local machine should be used
         custom_objects | dict | if the model has a custom object, pass it here
+        multi_input | bool | if multi-input model is evaluated, set to True
         print_out | bool | Print out the results.
 
         TODO: add possibility to input custom metrics.
@@ -65,7 +67,7 @@ class Evaluate:
                                custom_objects=custom_objects)
 
         from ..utils.validation_split import kfold
-        kx, ky = kfold(x, y, folds, shuffle)
+        kx, ky = kfold(x, y, folds, shuffle, multi_input)
 
         for i in range(folds):
 

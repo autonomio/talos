@@ -45,12 +45,12 @@ def scan_finish(self):
     try:
         out['x_shape'] = self.x.shape
     except AttributeError:
-        out['x_shape'] = 'list'
+        out['x_shape'] = 'multi-input'
 
     try:
         out['y_shape'] = self.y.shape
     except AttributeError:
-        out['y_shape'] = 'list'
+        out['y_shape'] = 'multi-input'
 
     # final cleanup
     keys = list(self.__dict__.keys())

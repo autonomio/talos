@@ -23,6 +23,7 @@ Argument | Input | Description
 `x_val` | array or list of arrays | validation data for x
 `y_val` | array or list of arrays | validation data for y
 `val_split` | float | validation data split ratio
+`multi_input` | float | set to True if multi-input model
 `random_method` | str | the random method to be used
 `seed` | float | Seed for random states
 `performance_target` | list | A result at which point to end experiment
