@@ -132,7 +132,7 @@ def iris(x_train, y_train, x_val, y_val, params):
     hidden_layers(model, params, x_train.shape[1])
 
     # again, instead of the activation name, we have a dictionary entry
-    model.add(Dense(x_train.shape[1],
+    model.add(Dense(y_train.shape[1],
                     activation=params['last_activation']))
 
     # using a learning rate boundary
