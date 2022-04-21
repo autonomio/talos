@@ -6,7 +6,7 @@ def validation_split(self):
     the input data to be allocated for cross-validation.'''
 
     # data input is list but multi_input is not set to True
-    if isinstance(self.x, list) and self.multi_input == False:
+    if isinstance(self.x, list) and self.multi_input is False:
 
         raise TypeError("For multi-input x, set multi_input to True")
 
@@ -21,7 +21,7 @@ def validation_split(self):
     # Otherwise start by shuffling
     import wrangle
     self.x, self.y = wrangle.array_random_shuffle(x=self.x,
-                                                  y=self.y, 
+                                                  y=self.y,
                                                   multi_input=self.multi_input)
 
     # deduce the midway point for input data
@@ -29,7 +29,7 @@ def validation_split(self):
 
     # handle the case where x is multi-input
     if self.multi_input:
-        
+
         self.x_train = []
         self.x_val = []
 
@@ -39,7 +39,7 @@ def validation_split(self):
 
     # handle the case where x is not multi-input
     else:
-        
+
         self.x_train = self.x[:limit]
         self.x_val = self.x[limit:]
 
@@ -55,7 +55,7 @@ def kfold(x, y, folds=10, shuffled=True, multi_input=False):
     import wrangle
 
     # data input is list but multi_input is not set to True
-    if isinstance(x, list) and multi_input == False:
+    if isinstance(x, list) and multi_input is False:
         raise TypeError("For multi-input x, set multi_input to True")
 
     if shuffled is True:
@@ -73,7 +73,7 @@ def kfold(x, y, folds=10, shuffled=True, multi_input=False):
 
     # create folds one by one
     for _i in range(folds):
-        
+
         # handle the case for multi-input model
         if multi_input:
             fold_x = []

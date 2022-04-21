@@ -52,7 +52,8 @@ def recover_best_model(x_train,
     for i in range(n_models):
 
         # get the params for the model and train it
-        params = df.sort_values(metric, ascending=False).drop(metric, 1).iloc[i].to_dict()
+        params = df.sort_values(metric, ascending=False)
+        params = params.drop(metric, 1).iloc[i].to_dict()
         _history, model = input_model(x_train, y_train, x_val, y_val, params)
 
         # start kfold cross-validation
