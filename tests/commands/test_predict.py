@@ -20,7 +20,7 @@ def test_predict():
     predict = talos.Predict(scan_object)
 
     _preds = predict.predict(x, 'val_acc', False)
-    _preds = predict.predict_classes(x, 'val_acc', False)
+    _preds = predict.predict_classes(x, 'val_acc', False, task='multi_label')
 
     print('finised Predict() \n')
 

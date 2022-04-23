@@ -21,6 +21,6 @@ def test_random_methods():
                       ]
 
     for method in random_methods:
-        talos.templates.pipelines.titanic(random_method=method)
+        talos.templates.pipelines.titanic(random_method=method, debug=True)
 
     print('finish Random Methods \n')
