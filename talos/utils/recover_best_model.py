@@ -5,6 +5,7 @@ def recover_best_model(x_train,
                        experiment_log,
                        input_model,
                        metric,
+                       multi_input=False,
                        x_cross=None,
                        y_cross=None,
                        n_models=5,
@@ -19,6 +20,7 @@ def recover_best_model(x_train,
     experiment_log | str | path to the Talos experiment log
     input_model | function | model used in the experiment
     metric | str | use this metric to pick evaluation candidates
+    multi_input | bool | set to True if multi-input model
     x_cross | array | data for the cross-validation or None for use x_val
     y_cross | array | data for the cross-validation or None for use y_val
     n_models | int | number of models to cross-validate
@@ -50,13 +52,14 @@ def recover_best_model(x_train,
     for i in range(n_models):
 
         # get the params for the model and train it
-        params = df.sort_values(metric, ascending=False).drop(metric, 1).iloc[i].to_dict()
+        params = df.sort_values(metric, ascending=False)
+        params = params.drop(metric, 1).iloc[i].to_dict()
         _history, model = input_model(x_train, y_train, x_val, y_val, params)
 
         # start kfold cross-validation
         out = []
         folds = 5
-        kx, ky = kfold(x_cross, y_cross, folds, True)
+        kx, ky = kfold(x_cross, y_cross, folds, True, multi_input)
 
         for i in range(folds):
 

@@ -103,9 +103,10 @@ def titanic(x_train, y_train, x_val, y_val, params):
                   metrics=['acc'])
 
     # here we are also using the early_stopper function for a callback
-    out = model.fit(x_train, y_train,
+    out = model.fit(x=x_train,
+                    y=y_train,
                     batch_size=params['batch_size'],
-                    epochs=2,
+                    epochs=params['epochs'],
                     verbose=0,
                     validation_data=(x_val, y_val))
 
@@ -128,7 +129,7 @@ def iris(x_train, y_train, x_val, y_val, params):
     model.add(Dropout(params['dropout']))
 
     # with this call we can create any number of hidden layers
-    hidden_layers(model, params, y_train.shape[1])
+    hidden_layers(model, params, x_train.shape[1])
 
     # again, instead of the activation name, we have a dictionary entry
     model.add(Dense(y_train.shape[1],
