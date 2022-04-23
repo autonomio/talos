@@ -34,5 +34,6 @@ Parameter | Default | Description
 `model_id` | None | the model_id to be used
 `metric` | None | the metric against which the validation is performed
 `asc` | None | should be True if metric is a loss
+`task`| NA | One of the following strings: 'binary' or 'multi_class'
 `saved` | bool | if a model saved on local machine should be used
 `custom_objects` | dict | if the model has a custom object, pass it here
