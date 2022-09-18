@@ -5,7 +5,7 @@
 #### to automatically create a params dictionary
 
 ```python
-p = talos.Autom8.AutoParams().params
+p = talos.autom8.AutoParams().params
 
 ```
 NOTE: The above example yields a very large permutation space so configure `Scan()` accordingly with `fraction_limit`.
@@ -13,7 +13,7 @@ NOTE: The above example yields a very large permutation space so configure `Scan
 #### an alternative way where a class object is returned
 
 ```python
-param_object = talos.Autom8.AutoParams()
+param_object = talos.autom8.AutoParams()
 
 ```
 
@@ -30,7 +30,7 @@ Now the modified params dictionary can be accessed through `params_object.params
 #### to append a current parameter dictionary
 
 ```python
-params_dict = talos.Autom8.AutoParams(p, task='multi_label').params
+params_dict = talos.autom8.AutoParams(p, task='multi_label').params
 
 ```
 NOTE: Note, when the dictionary is created for a prediction task other than 'binary', the `task` argument has to be declared accordingly (`binary`, `multi_label`, `multi_class`, or `continuous`).
