@@ -4,7 +4,7 @@ numpy
 keras
 astetik
 tqdm
-sklearn
+scikit-learn
 chances
 kerasplotlib
 requests
