@@ -18,7 +18,7 @@ MAINTAINER_EMAIL = 'mailme@mikkokotila.com'
 URL = 'http://autonom.io'
 LICENSE = 'MIT'
 DOWNLOAD_URL = 'https://github.com/autonomio/talos/'
-VERSION = '1.3.2'
+VERSION = '1.3.3'
 
 
 try:
@@ -33,7 +33,7 @@ install_requires = ['tensorflow>=2.0.0',
                     'numpy',
                     'pandas',
                     'astetik',
-                    'sklearn',
+                    'scikit-learn',
                     'tqdm',
                     'chances',
                     'kerasplotlib',
