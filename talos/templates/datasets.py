@@ -20,7 +20,7 @@ def telco_churn(quantile=.5):
 
     df = pd.read_csv('https://raw.githubusercontent.com/autonomio/examples/master/telco_churn/telco_churn_for_sensitivity.csv')
 
-    df = df.drop(['val_acc', 'loss', 'f1score', 'acc', 'round_epochs'], 1)
+    df = df.drop(['val_acc', 'loss', 'f1score', 'acc', 'round_epochs'], axis=1)
 
     for col in df.iloc[:, 2:].columns:
         df = wrangle.col_to_multilabel(df, col)
@@ -34,7 +34,7 @@ def telco_churn(quantile=.5):
         y1 = df.C0.values
         y2 = df.C1.values
 
-    x = df.drop(['C0', 'C1'], 1).values
+    x = df.drop(['C0', 'C1'], axis=1).values
 
     return x, [y1, y2]
 

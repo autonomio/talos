@@ -1,6 +1,6 @@
 def titanic(debug=False):
 
-    from tensorflow.keras.optimizers import Adam, Nadam
+    from tensorflow.keras.optimizers.legacy import Adam, Nadam
 
     # here use a standard 2d dictionary for inputting the param boundaries
     p = {'lr': (0.5, 5, 10),
@@ -34,7 +34,7 @@ def titanic(debug=False):
 
 def iris():
 
-    from tensorflow.keras.optimizers import Adam, Nadam
+    from tensorflow.keras.optimizers.legacy import Adam, Nadam
     from tensorflow.keras.losses import logcosh, categorical_crossentropy
     from tensorflow.keras.activations import relu, elu, softmax
 
@@ -58,7 +58,7 @@ def iris():
 
 def breast_cancer():
 
-    from tensorflow.keras.optimizers import Adam, Nadam, RMSprop
+    from tensorflow.keras.optimizers.legacy import Adam, Nadam, RMSprop
     from tensorflow.keras.losses import logcosh, binary_crossentropy
     from tensorflow.keras.activations import relu, elu, sigmoid
 
