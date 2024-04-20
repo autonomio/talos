@@ -37,7 +37,7 @@ dependencies = [
     "requests",
     "scikit-learn",
     "statsmodels>=0.11.0",
-    "tensorflow>=2.0.0",
+    "tensorflow==2.14.1",
     "tqdm",
     "wrangle",
 ]
