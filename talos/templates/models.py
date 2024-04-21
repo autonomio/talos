@@ -103,12 +103,13 @@ def titanic(x_train, y_train, x_val, y_val, params):
                   metrics=['acc'])
 
     # here we are also using the early_stopper function for a callback
-    out = model.fit(x=x_train,
-                    y=y_train,
+    out = model.fit(x=x_train.astype('float32'),
+                    y=y_train.astype('float32'),
                     batch_size=params['batch_size'],
                     epochs=params['epochs'],
                     verbose=0,
-                    validation_data=(x_val, y_val))
+                    validation_data=(x_val.astype('float32'),
+                                     y_val.astype('float32')))
 
     return out, model
 

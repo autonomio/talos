@@ -21,8 +21,7 @@ def test_rest(scan_object):
     x_train, y_train, x_val, y_val = talos.utils.val_split(x, y, .2)
     x = talos.utils.rescale_meanzero(x)
 
-    callbacks = [
-                 talos.utils.early_stopper(10),
+    callbacks = [talos.utils.early_stopper(10),
                  talos.callbacks.ExperimentLog('test', {})]
 
     metrics = [talos.utils.metrics.f1score,
@@ -46,7 +45,7 @@ def test_rest(scan_object):
     model1 = Sequential()
     model1.add(Dense(10, input_dim=x.shape[1]))
     model1.add(Dense(1))
-    model1.compile('adam', 'logcosh', metrics=metrics)
+    model1.compile('adam', 'LogCosh', metrics=metrics)
     model1.fit(x, y, callbacks=callbacks)
 
     print('\n ...generator... \n')
@@ -54,7 +53,7 @@ def test_rest(scan_object):
     model2 = Sequential()
     model2.add(Dense(10, input_dim=x.shape[1]))
     model2.add(Dense(1))
-    model2.compile('adam', 'logcosh')
+    model2.compile('adam', 'LogCosh')
     model2.fit_generator(talos.utils.generator(x, y, 10), 5)
 
     print('\n ...SequenceGenerator... \n')
@@ -62,7 +61,7 @@ def test_rest(scan_object):
     model3 = Sequential()
     model3.add(Dense(10, input_dim=x.shape[1]))
     model3.add(Dense(1))
-    model3.compile('adam', 'logcosh')
+    model3.compile('adam', 'LogCosh')
     model3.fit_generator(talos.utils.SequenceGenerator(x, y, 10))
 
     print('\n ...gpu_utils... \n')
@@ -74,7 +73,5 @@ def test_rest(scan_object):
 
     from talos.utils.test_utils import create_param_space
     create_param_space(restored.results, 8)
-
-
 
     print('finished testing the rest \n')

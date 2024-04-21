@@ -1,0 +1,55 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "talos"
+dynamic = ["version"]
+description = "Talos Hyperparameter Tuning for Keras"
+readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "Mikko Kotila", email = "mailme@mikkokotila.com" },
+]
+maintainers = [
+    { name = "Mikko Kotila", email = "mailme@mikkokotila.com" },
+]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Operating System :: POSIX",
+    "Operating System :: Unix",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Human Machine Interfaces",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+dependencies = [
+  "scikit-learn",
+  "statsmodels >= 0.11.0",
+  "tensorflow == 2.14.1",
+  "astetik",
+  "chances",
+  "kerasplotlib",
+  "numpy",
+  "pandas",
+  "requests",
+  "tqdm",
+  "wrangle",
+]
+
+[project.urls]
+Download = "https://github.com/autonomio/talos/"
+Homepage = "http://autonom.io"
+
+[tool.hatch.version]
+path = "talos/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/talos",
+]

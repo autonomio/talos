@@ -6,7 +6,7 @@ from tensorflow.keras.layers import Dense, Dropout, Flatten
 from tensorflow.keras.layers import Conv2D
 
 p = {'activation': ['relu'],
-     'optimizer': ['AdaDelta'],
+     'optimizer': ['Adam'],
      'losses': ['categorical_crossentropy'],
      'dropout': [.2],
      'batch_size': [256],

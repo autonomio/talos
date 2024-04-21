@@ -12,6 +12,7 @@ def test_templates():
     talos.Scan(x, y, p, model, 'test_', round_limit=2)
 
     x, y = talos.templates.datasets.iris()
+
     x = x[:50]
     y = y[:50]
     model = talos.templates.models.iris

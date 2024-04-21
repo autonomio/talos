@@ -55,8 +55,8 @@ return out, model
 ### Parameter Dictionary
 ```python
 p = {'activation':['relu', 'elu'],
-     'optimizer': ['Nadam', 'Adam'],
-     'losses': ['logcosh'],
+     'optimizer': ['Adagrad', 'Adam'],
+     'losses': ['LogCosh'],
      'hidden_layers':[0, 1, 2],
      'batch_size': (20, 50, 5),
      'epochs': [10, 20]}

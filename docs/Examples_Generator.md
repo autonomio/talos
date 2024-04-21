@@ -83,8 +83,8 @@ return out, model
 ### Parameter Dictionary
 ```python
 p = {'activation':['relu', 'elu'],
-     'optimizer': ['AdaDelta'],
-     'losses': ['logcosh'],
+     'optimizer': ['Adam'],
+     'losses': ['LogCosh'],
      'shapes': ['brick'],
      'first_neuron': [32],
      'dropout': [.2, .3],

@@ -13,8 +13,8 @@ def test_latest():
     x, y = talos.templates.datasets.iris()
 
     p = {'activation': ['relu', 'elu'],
-         'optimizer': ['Nadam', 'Adam'],
-         'losses': ['logcosh'],
+         'optimizer': ['Adagrad', 'Adam'],
+         'losses': ['LogCosh'],
          'shapes': ['brick'],
          'first_neuron': [16, 32, 64, 128],
          'hidden_layers': [0, 1, 2, 3],

@@ -4,18 +4,13 @@ if __name__ == '__main__':
 
     from tests.commands import *
 
-    test_latest()
-
     scan_object = test_scan()
+    test_latest()
     recover_best_model()
-
     test_random_methods()
-
     test_autom8()
-    test_templates()
-    
-    # test_analyze(scan_object)
-
+    test_templates() 
+    test_analyze(scan_object)
     test_lr_normalizer()
     test_predict()
     test_reducers()

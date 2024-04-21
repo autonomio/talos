@@ -1,8 +1,8 @@
 import numpy as np
-from tensorflow.keras.optimizers import Adam, Nadam, Adadelta, SGD
+from tensorflow.keras.optimizers.legacy import Adam, Adagrad, SGD
 
 
-loss = {'binary': ['binary_crossentropy', 'logcosh'],
+loss = {'binary': ['binary_crossentropy', 'LogCosh'],
         'multi_class': ['sparse_categorical_crossentropy'],
         'multi_label': ['categorical_crossentropy'],
         'continuous': ['mae']}
@@ -122,7 +122,7 @@ class AutoParams:
         '''
 
         if optimizers == 'auto':
-            self._append_params('optimizer', [Adam, Nadam, Adadelta, SGD])
+            self._append_params('optimizer', [Adam, Adagrad, SGD])
         else:
             self._append_params('optimizer', optimizers)
 
@@ -168,7 +168,7 @@ class AutoParams:
         integer value at the same time.'''
 
         if max_size is None and steps is None:
-            values = [int(np.exp2(i/2)) for i in range(3, 15)]
+            values = [int(np.exp2(i / 2)) for i in range(3, 15)]
         else:
             values = list(range(min_size, max_size, steps))
 
@@ -180,7 +180,7 @@ class AutoParams:
         integer value at the same time.'''
 
         if max_epochs is None and steps is None:
-            values = [int(np.exp2(i/2))+50 for i in range(3, 15)]
+            values = [int(np.exp2(i / 2)) + 50 for i in range(3, 15)]
         else:
             values = list(range(min_epochs, max_epochs, steps))
 

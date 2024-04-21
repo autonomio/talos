@@ -18,9 +18,11 @@ def telco_churn(quantile=.5):
     import wrangle
     import pandas as pd
 
-    df = pd.read_csv('https://raw.githubusercontent.com/autonomio/examples/master/telco_churn/telco_churn_for_sensitivity.csv')
+    base_url = 'https://raw.githubusercontent.com/autonomio/'
+    url = 'examples/master/telco_churn/telco_churn_for_sensitivity.csv'
+    df = pd.read_csv(base_url + url)
 
-    df = df.drop(['val_acc', 'loss', 'f1score', 'acc', 'round_epochs'], 1)
+    df = df.drop(['val_acc', 'loss', 'f1score', 'acc', 'round_epochs'], axis=1)
 
     for col in df.iloc[:, 2:].columns:
         df = wrangle.col_to_multilabel(df, col)
@@ -34,7 +36,7 @@ def telco_churn(quantile=.5):
         y1 = df.C0.values
         y2 = df.C1.values
 
-    x = df.drop(['C0', 'C1'], 1).values
+    x = df.drop(['C0', 'C1'], axis=1).values
 
     return x, [y1, y2]
 
@@ -42,8 +44,10 @@ def telco_churn(quantile=.5):
 def icu_mortality(samples=None):
 
     import pandas as pd
-    base = 'https://raw.githubusercontent.com/autonomio/datasets/master/autonomio-datasets/'
-    df = pd.read_csv(base + 'icu_mortality.csv')
+
+    base_url = 'https://raw.githubusercontent.com/autonomio/'
+    url = 'datasets/master/autonomio-datasets/'
+    df = pd.read_csv(base_url + url + 'icu_mortality.csv')
     df = df.dropna(thresh=3580, axis=1)
     df = df.dropna()
     df = df.sample(frac=1).head(samples)
@@ -56,8 +60,10 @@ def icu_mortality(samples=None):
 def titanic():
 
     import pandas as pd
-    base = 'https://raw.githubusercontent.com/autonomio/datasets/master/autonomio-datasets/'
-    df = pd.read_csv(base + 'titanic.csv')
+
+    base_url = 'https://raw.githubusercontent.com/autonomio/'
+    url = 'datasets/master/autonomio-datasets/'
+    df = pd.read_csv(base_url + url + 'titanic.csv')
 
     y = df.survived.values
 
@@ -81,8 +87,10 @@ def iris():
 
     import pandas as pd
     from tensorflow.keras.utils import to_categorical
-    base = 'https://raw.githubusercontent.com/autonomio/datasets/master/autonomio-datasets/'
-    df = pd.read_csv(base + 'iris.csv')
+
+    base_url = 'https://raw.githubusercontent.com/autonomio/'
+    url = 'datasets/master/autonomio-datasets/'
+    df = pd.read_csv(base_url + url + 'iris.csv')
     df['species'] = df['species'].factorize()[0]
     df = df.sample(len(df))
     y = to_categorical(df['species'])
@@ -98,8 +106,10 @@ def cervical_cancer():
 
     import pandas as pd
     from numpy import nan
-    base = 'https://raw.githubusercontent.com/autonomio/datasets/master/autonomio-datasets/'
-    df = pd.read_csv(base + 'cervical_cancer.csv')
+
+    base_url = 'https://raw.githubusercontent.com/autonomio/'
+    url = 'datasets/master/autonomio-datasets/'
+    df = pd.read_csv(base_url + url + 'cervical_cancer.csv')
     df = df.replace('?', nan)
     df = df.drop(['citology', 'hinselmann', 'biopsy'], axis=1)
     df = df.drop(['since_first_diagnosis',
@@ -116,8 +126,10 @@ def cervical_cancer():
 def breast_cancer():
 
     import pandas as pd
-    base = 'https://raw.githubusercontent.com/autonomio/datasets/master/autonomio-datasets/'
-    df = pd.read_csv(base + 'breast_cancer.csv')
+
+    base_url = 'https://raw.githubusercontent.com/autonomio/'
+    url = 'datasets/master/autonomio-datasets/'
+    df = pd.read_csv(base_url + url + 'breast_cancer.csv')
 
     # then some minimal data cleanup
     df.drop("Unnamed: 32", axis=1, inplace=True)

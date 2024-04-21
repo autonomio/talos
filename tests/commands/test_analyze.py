@@ -5,29 +5,40 @@ def test_analyze(scan_object):
     print('\n >>> Start Analyze()... \n')
 
     import talos
-    import glob
 
     # for now test with old name
     r = talos.Reporting(scan_object)
 
     # read from file
-    list_of_files = glob.glob('./test_latest/' + '/*.csv')
+    #list_of_files = glob.glob('./test_latest/' + '/*.csv')
 
-    r = talos.Reporting(list_of_files[-1])
+    #r = talos.Reporting(list_of_files[-1])
 
     # and then from scan object
     r = talos.Analyze(scan_object)
 
     # test the object properties
     r.best_params('val_loss', ['val_acc'])
-    r.correlate('val_loss', ['val_acc'])
+    r.correlate('val_loss', ['val_acc',
+                             'start',
+                             'end',
+                             'activation',
+                             'optimizer',
+                             'losses',
+                             'shapes'])
     r.data
     r.high('val_acc')
     r.low('val_acc')
 
     # r.plot_bars('first_neuron', 'val_acc', 'dropout', 'hidden_layers')
     r.plot_box('first_neuron', 'val_acc')
-    r.plot_corr('val_loss', ['val_acc'])
+    r.plot_corr('val_loss', ['val_acc',
+                             'start',
+                             'end',
+                             'activation',
+                             'optimizer',
+                             'losses',
+                             'shapes'])
     r.plot_hist('val_acc')
     r.plot_kde('val_acc')
     r.plot_line('val_acc')

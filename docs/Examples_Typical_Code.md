@@ -31,7 +31,7 @@ def iris_model(x_train, y_train, x_val, y_val, params):
 
 # set the parameter space boundaries
 p = {'activation':['relu', 'elu'],
-     'optimizer': ['Nadam', 'Adam'],
+     'optimizer': ['Adagrad', 'Adam'],
      'losses': ['categorical_crossentropy'],
      'epochs': [100, 200],
      'batch_size': [4, 6, 8]}
