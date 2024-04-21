@@ -3,6 +3,7 @@ def test_scan():
     print("\n >>> start Scan()...")
 
     import talos
+    import tensorflow as tf
 
     from tensorflow.keras.losses import binary_crossentropy
     from tensorflow.keras.optimizers.legacy import Adam
@@ -19,6 +20,7 @@ def test_scan():
          'dropout': (.05, .35, .1),
          'epochs': [50]}
 
+    @tf.function
     def iris_model(x_train, y_train, x_val, y_val, params):
 
         model = Sequential()
