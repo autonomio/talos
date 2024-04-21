@@ -27,7 +27,7 @@ class ExperimentLog(Callback):
         try:
             latest_file = max(list_of_files, key=os.path.getmtime)
         except ValueError:
-            print("\n TALOS ERROR: `experiment_name` has to match `Scan(experiment_name)`\n")
+            print("\nERROR: `experiment_name` has to match `Scan(experiment_name)`\n")
 
         self.name = latest_file.replace('.csv', '') + '.log'
 

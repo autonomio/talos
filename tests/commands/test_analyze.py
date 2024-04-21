@@ -5,7 +5,6 @@ def test_analyze(scan_object):
     print('\n >>> Start Analyze()... \n')
 
     import talos
-    import glob
 
     # for now test with old name
     r = talos.Reporting(scan_object)
@@ -30,10 +29,6 @@ def test_analyze(scan_object):
     r.data
     r.high('val_acc')
     r.low('val_acc')
-
-
-
-    
 
     # r.plot_bars('first_neuron', 'val_acc', 'dropout', 'hidden_layers')
     r.plot_box('first_neuron', 'val_acc')

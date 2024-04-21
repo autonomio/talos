@@ -21,12 +21,7 @@ def test_rest(scan_object):
     x_train, y_train, x_val, y_val = talos.utils.val_split(x, y, .2)
     x = talos.utils.rescale_meanzero(x)
 
-    import os
-    os.getcwd()
-    os.listdir()
-
-    callbacks = [
-                 talos.utils.early_stopper(10),
+    callbacks = [talos.utils.early_stopper(10),
                  talos.callbacks.ExperimentLog('test', {})]
 
     metrics = [talos.utils.metrics.f1score,

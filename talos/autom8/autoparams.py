@@ -168,7 +168,7 @@ class AutoParams:
         integer value at the same time.'''
 
         if max_size is None and steps is None:
-            values = [int(np.exp2(i/2)) for i in range(3, 15)]
+            values = [int(np.exp2(i / 2)) for i in range(3, 15)]
         else:
             values = list(range(min_size, max_size, steps))
 
@@ -180,7 +180,7 @@ class AutoParams:
         integer value at the same time.'''
 
         if max_epochs is None and steps is None:
-            values = [int(np.exp2(i/2))+50 for i in range(3, 15)]
+            values = [int(np.exp2(i / 2)) + 50 for i in range(3, 15)]
         else:
             values = list(range(min_epochs, max_epochs, steps))
 

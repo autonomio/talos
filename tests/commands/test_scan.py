@@ -5,7 +5,7 @@ def test_scan():
     import talos
 
     from tensorflow.keras.losses import binary_crossentropy
-    from tensorflow.keras.optimizers.legacy import Adam, Nadam
+    from tensorflow.keras.optimizers.legacy import Adam
     from tensorflow.keras.activations import relu, elu
     from tensorflow.keras.layers import Dense
     from tensorflow.keras.models import Sequential
@@ -49,12 +49,12 @@ def test_scan():
 
     x, y = talos.templates.datasets.iris()
 
-    p_for_q = {'activation':['relu', 'elu'],
+    p_for_q = {'activation': ['relu', 'elu'],
                'optimizer': ['Nadam', 'Adam'],
                'losses': ['logcosh'],
                'shapes': ['brick'],
                'first_neuron': [16, 32, 64, 128],
-               'hidden_layers':[0, 1, 2, 3],
+               'hidden_layers': [0, 1, 2, 3],
                'dropout': [.2, .3, .4],
                'batch_size': [20, 30, 40, 50],
                'epochs': [10]}
@@ -73,7 +73,6 @@ def test_scan():
                              reduction_threshold=0.01,
                              reduction_metric='val_acc',
                              minimize_loss=False)
-
 
     x = x[:50]
     y = y[:50]
@@ -137,8 +136,8 @@ def test_scan():
 
     # the create the test based on it
 
-    _keras_model = scan_object.best_model()
-    _keras_model = scan_object.best_model('loss', True)
+    scan_object.best_model()
+    scan_object.best_model('loss', True)
 
     scan_object.evaluate_models(x_val=scan_object.x,
                                 y_val=scan_object.y,
@@ -154,8 +153,5 @@ def test_scan():
                                 asc=True)
 
     print('finised Scan() object \n')
-
-    # # # # # # # # # # # # # # # # # #
-
 
     return scan_object

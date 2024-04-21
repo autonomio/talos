@@ -18,16 +18,16 @@ def titanic(debug=False):
     if debug:
          
         p = {'lr': [0.1, 0.2],
-            'first_neuron': [4, 8],
-            'batch_size': [20, 30],
-            'dropout': [0.2, 0.3],
-            'optimizer': [Adam(), Nadam()],
-            'epochs': [50, 100],
-            'losses': ['logcosh', 'binary_crossentropy'],
-            'shapes': ['brick', 'triangle', 0.2],
-            'hidden_layers': [0, 1],
-            'activation': ['relu', 'elu'],
-            'last_activation': ['sigmoid']}
+             'first_neuron': [4, 8],
+             'batch_size': [20, 30],
+             'dropout': [0.2, 0.3],
+             'optimizer': [Adam(), Nadam()],
+             'epochs': [50, 100],
+             'losses': ['logcosh', 'binary_crossentropy'],
+             'shapes': ['brick', 'triangle', 0.2],
+             'hidden_layers': [0, 1],
+             'activation': ['relu', 'elu'],
+             'last_activation': ['sigmoid']}
 
     return p
 

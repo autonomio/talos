@@ -44,7 +44,7 @@ def titanic(round_limit=2, random_method='uniform_mersenne', debug=False):
 
     '''Performs a Scan with Iris dataset and simple dense net'''
     import talos as ta
-    
+
     scan_object = ta.Scan(ta.templates.datasets.titanic()[0].astype('float32'),
                           ta.templates.datasets.titanic()[1].astype('float32'),
                           ta.templates.params.titanic(debug),
