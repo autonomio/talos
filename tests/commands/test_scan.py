@@ -20,7 +20,6 @@ def test_scan():
          'dropout': (.05, .35, .1),
          'epochs': [50]}
 
-    @tf.function
     def iris_model(x_train, y_train, x_val, y_val, params):
 
         model = Sequential()
