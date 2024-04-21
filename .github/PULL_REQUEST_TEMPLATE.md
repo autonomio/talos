@@ -9,7 +9,6 @@ the below items:
 - [ ] Code is [PEP8](https://www.python.org/dev/peps/pep-0008/)
 - [ ] I'm making the PR to `master`
 - [ ] I've updated the versions based on [Semantic Versioning](https://semver.org/)
-  - [ ] `setup.py`
   - [ ] `talos/__init__.py`
   - [ ] `docs/index.html`
   - [ ] `docs/_coverpage.md`
