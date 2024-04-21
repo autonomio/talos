@@ -2,7 +2,7 @@ import numpy as np
 from tensorflow.keras.optimizers.legacy import Adam, Adagrad, SGD
 
 
-loss = {'binary': ['binary_crossentropy', 'logcosh'],
+loss = {'binary': ['binary_crossentropy', 'LogCosh'],
         'multi_class': ['sparse_categorical_crossentropy'],
         'multi_label': ['categorical_crossentropy'],
         'continuous': ['mae']}

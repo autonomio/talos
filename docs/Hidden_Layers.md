@@ -19,7 +19,7 @@ When hidden layers are used, `dropout`, `shapes`, `hidden_layers`, and `first_ne
 
     p = {'activation':['relu', 'elu'],
          'optimizer': ['Adagrad', 'Adam'],
-         'losses': ['logcosh'],
+         'losses': ['LogCosh'],
          'shapes': ['brick'],          # <<< required
          'first_neuron': [32, 64],     # <<< required
          'hidden_layers':[0, 1, 2],    # <<< required

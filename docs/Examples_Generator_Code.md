@@ -37,7 +37,7 @@ def mnist_model(x_train, y_train, x_val, y_val, params):
 
 p = {'activation':['relu', 'elu'],
      'optimizer': ['Adam'],
-     'losses': ['logcosh'],
+     'losses': ['LogCosh'],
      'shapes': ['brick'],
      'first_neuron': [32],
      'dropout': [.2, .3],

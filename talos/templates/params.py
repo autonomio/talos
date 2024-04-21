@@ -9,7 +9,7 @@ def titanic(debug=False):
          'dropout': (0, 0.5, 5),
          'optimizer': [Adam(), Adagrad()],
          'epochs': [50, 100, 150],
-         'losses': ['logcosh', 'binary_crossentropy'],
+         'losses': ['LogCosh', 'binary_crossentropy'],
          'shapes': ['brick', 'triangle', 0.2],
          'hidden_layers': [0, 1, 2, 3, 4],
          'activation': ['relu', 'elu'],
@@ -23,7 +23,7 @@ def titanic(debug=False):
              'dropout': [0.2, 0.3],
              'optimizer': [Adam(), Adagrad()],
              'epochs': [50, 100],
-             'losses': ['logcosh', 'binary_crossentropy'],
+             'losses': ['LogCosh', 'binary_crossentropy'],
              'shapes': ['brick', 'triangle', 0.2],
              'hidden_layers': [0, 1],
              'activation': ['relu', 'elu'],
@@ -35,7 +35,7 @@ def titanic(debug=False):
 def iris():
 
     from tensorflow.keras.optimizers.legacy import Adam, Adagrad
-    from tensorflow.keras.losses import logcosh, categorical_crossentropy
+    from tensorflow.keras.losses import LogCosh, categorical_crossentropy
     from tensorflow.keras.activations import relu, elu, softmax
 
     # here use a standard 2d dictionary for inputting the param boundaries
@@ -49,7 +49,7 @@ def iris():
          'emb_output_dims': [None],
          'shapes': ['brick', 'triangle', 0.2],
          'optimizer': [Adam, Adagrad],
-         'losses': [logcosh, categorical_crossentropy],
+         'losses': [LogCosh, categorical_crossentropy],
          'activation': [relu, elu],
          'last_activation': [softmax]}
 
@@ -59,7 +59,7 @@ def iris():
 def breast_cancer():
 
     from tensorflow.keras.optimizers.legacy import Adam, Adagrad, RMSprop
-    from tensorflow.keras.losses import logcosh, binary_crossentropy
+    from tensorflow.keras.losses import LogCosh, binary_crossentropy
     from tensorflow.keras.activations import relu, elu, sigmoid
 
     # then we can go ahead and set the parameter space
@@ -71,7 +71,7 @@ def breast_cancer():
          'dropout': (0, 0.5, 5),
          'shapes': ['brick', 'triangle', 'funnel'],
          'optimizer': [Adam, Adagrad, RMSprop],
-         'losses': [logcosh, binary_crossentropy],
+         'losses': [LogCosh, binary_crossentropy],
          'activation': [relu, elu],
          'last_activation': [sigmoid]}
 

@@ -12,7 +12,7 @@ def test_scan():
 
     p = {'activation': [relu, elu],
          'optimizer': ['Adagrad', Adam],
-         'losses': ['logcosh', binary_crossentropy],
+         'losses': ['LogCosh', binary_crossentropy],
          'shapes': ['brick', 'funnel', 'triangle'],
          'first_neuron': [16],
          'hidden_layers': ([0, 1, 2, 3]),
@@ -51,7 +51,7 @@ def test_scan():
 
     p_for_q = {'activation': ['relu', 'elu'],
                'optimizer': ['Adagrad', 'Adam'],
-               'losses': ['logcosh'],
+               'losses': ['LogCosh'],
                'shapes': ['brick'],
                'first_neuron': [16, 32, 64, 128],
                'hidden_layers': [0, 1, 2, 3],

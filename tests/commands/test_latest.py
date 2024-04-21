@@ -14,7 +14,7 @@ def test_latest():
 
     p = {'activation': ['relu', 'elu'],
          'optimizer': ['Adagrad', 'Adam'],
-         'losses': ['logcosh'],
+         'losses': ['LogCosh'],
          'shapes': ['brick'],
          'first_neuron': [16, 32, 64, 128],
          'hidden_layers': [0, 1, 2, 3],

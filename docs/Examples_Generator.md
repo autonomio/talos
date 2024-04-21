@@ -84,7 +84,7 @@ return out, model
 ```python
 p = {'activation':['relu', 'elu'],
      'optimizer': ['Adam'],
-     'losses': ['logcosh'],
+     'losses': ['LogCosh'],
      'shapes': ['brick'],
      'first_neuron': [32],
      'dropout': [.2, .3],

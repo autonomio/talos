@@ -139,7 +139,7 @@ return net, net.parameters()
 ```python
 p = {'activation':['relu', 'elu'],
        'optimizer': ['Adagrad', 'Adam'],
-       'losses': ['logcosh'],
+       'losses': ['LogCosh'],
        'hidden_layers':[0, 1, 2],
        'batch_size': (20, 50, 5),
        'epochs': [10, 20]}
