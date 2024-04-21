@@ -1,5 +1,5 @@
 import numpy as np
-from tensorflow.keras.optimizers.legacy import Adam, Nadam, Adadelta, SGD
+from tensorflow.keras.optimizers.legacy import Adam, Adagrad, Adadelta, SGD
 
 
 loss = {'binary': ['binary_crossentropy', 'logcosh'],
@@ -122,7 +122,7 @@ class AutoParams:
         '''
 
         if optimizers == 'auto':
-            self._append_params('optimizer', [Adam, Nadam, Adadelta, SGD])
+            self._append_params('optimizer', [Adam, Adagrad, Adadelta, SGD])
         else:
             self._append_params('optimizer', optimizers)
 

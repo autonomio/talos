@@ -12,7 +12,7 @@ def lr_normalizer(lr, optimizer):
     """
 
     from tensorflow.keras.optimizers.legacy import SGD, Adam, Adadelta, Adagrad, Adamax, RMSprop
-    from tensorflow.keras.optimizers.legacy import Nadam
+    from tensorflow.keras.optimizers.legacy import Adagrad
     from talos.utils.exceptions import TalosModelError
 
     if optimizer == Adadelta:
@@ -21,7 +21,7 @@ def lr_normalizer(lr, optimizer):
         lr /= 100.0
     elif optimizer == Adam or optimizer == RMSprop:
         lr /= 1000.0
-    elif optimizer == Adamax or optimizer == Nadam:
+    elif optimizer == Adamax:
         lr /= 500.0
     else:
         raise TalosModelError(str(optimizer) + " is not supported by lr_normalizer")

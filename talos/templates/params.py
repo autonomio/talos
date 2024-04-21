@@ -1,13 +1,13 @@
 def titanic(debug=False):
 
-    from tensorflow.keras.optimizers.legacy import Adam, Nadam
+    from tensorflow.keras.optimizers.legacy import Adam, Adagrad
 
     # here use a standard 2d dictionary for inputting the param boundaries
     p = {'lr': (0.5, 5, 10),
          'first_neuron': [4, 8, 16],
          'batch_size': [20, 30, 40],
          'dropout': (0, 0.5, 5),
-         'optimizer': [Adam(), Nadam()],
+         'optimizer': [Adam(), Adagrad()],
          'epochs': [50, 100, 150],
          'losses': ['logcosh', 'binary_crossentropy'],
          'shapes': ['brick', 'triangle', 0.2],
@@ -21,7 +21,7 @@ def titanic(debug=False):
              'first_neuron': [4, 8],
              'batch_size': [20, 30],
              'dropout': [0.2, 0.3],
-             'optimizer': [Adam(), Nadam()],
+             'optimizer': [Adam(), Adagrad()],
              'epochs': [50, 100],
              'losses': ['logcosh', 'binary_crossentropy'],
              'shapes': ['brick', 'triangle', 0.2],
@@ -34,7 +34,7 @@ def titanic(debug=False):
 
 def iris():
 
-    from tensorflow.keras.optimizers.legacy import Adam, Nadam
+    from tensorflow.keras.optimizers.legacy import Adam, Adagrad
     from tensorflow.keras.losses import logcosh, categorical_crossentropy
     from tensorflow.keras.activations import relu, elu, softmax
 
@@ -48,7 +48,7 @@ def iris():
          'weight_regulizer': [None],
          'emb_output_dims': [None],
          'shapes': ['brick', 'triangle', 0.2],
-         'optimizer': [Adam, Nadam],
+         'optimizer': [Adam, Adagrad],
          'losses': [logcosh, categorical_crossentropy],
          'activation': [relu, elu],
          'last_activation': [softmax]}
@@ -58,7 +58,7 @@ def iris():
 
 def breast_cancer():
 
-    from tensorflow.keras.optimizers.legacy import Adam, Nadam, RMSprop
+    from tensorflow.keras.optimizers.legacy import Adam, Adagrad, RMSprop
     from tensorflow.keras.losses import logcosh, binary_crossentropy
     from tensorflow.keras.activations import relu, elu, sigmoid
 
@@ -70,7 +70,7 @@ def breast_cancer():
          'epochs': [50, 100, 150],
          'dropout': (0, 0.5, 5),
          'shapes': ['brick', 'triangle', 'funnel'],
-         'optimizer': [Adam, Nadam, RMSprop],
+         'optimizer': [Adam, Adagrad, RMSprop],
          'losses': [logcosh, binary_crossentropy],
          'activation': [relu, elu],
          'last_activation': [sigmoid]}

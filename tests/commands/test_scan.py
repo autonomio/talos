@@ -11,7 +11,7 @@ def test_scan():
     from tensorflow.keras.models import Sequential
 
     p = {'activation': [relu, elu],
-         'optimizer': ['Nadam', Adam],
+         'optimizer': ['Adagrad', Adam],
          'losses': ['logcosh', binary_crossentropy],
          'shapes': ['brick', 'funnel', 'triangle'],
          'first_neuron': [16],
@@ -50,7 +50,7 @@ def test_scan():
     x, y = talos.templates.datasets.iris()
 
     p_for_q = {'activation': ['relu', 'elu'],
-               'optimizer': ['Nadam', 'Adam'],
+               'optimizer': ['Adagrad', 'Adam'],
                'losses': ['logcosh'],
                'shapes': ['brick'],
                'first_neuron': [16, 32, 64, 128],
