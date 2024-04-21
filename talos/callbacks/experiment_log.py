@@ -12,6 +12,7 @@ class ExperimentLog(Callback):
         dictionary from the input model in `Scan()`
 
         experiment_name | str | must match the experiment_name in `Scan()`
+        params | dict | the params dictionary from the input model in `Scan()
 
         '''
 
@@ -22,6 +23,7 @@ class ExperimentLog(Callback):
 
         # get the experiment id first
         list_of_files = glob.glob('./' + experiment_name + '/*.csv')
+
         try:
             latest_file = max(list_of_files, key=os.path.getmtime)
         except ValueError:

@@ -21,6 +21,10 @@ def test_rest(scan_object):
     x_train, y_train, x_val, y_val = talos.utils.val_split(x, y, .2)
     x = talos.utils.rescale_meanzero(x)
 
+    import os
+    os.getcwd()
+    os.listdir()
+
     callbacks = [
                  talos.utils.early_stopper(10),
                  talos.callbacks.ExperimentLog('test', {})]
@@ -74,7 +78,5 @@ def test_rest(scan_object):
 
     from talos.utils.test_utils import create_param_space
     create_param_space(restored.results, 8)
-
-
 
     print('finished testing the rest \n')

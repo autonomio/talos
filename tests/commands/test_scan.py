@@ -5,7 +5,7 @@ def test_scan():
     import talos
 
     from tensorflow.keras.losses import binary_crossentropy
-    from tensorflow.keras.optimizers import Adam, Nadam
+    from tensorflow.keras.optimizers.legacy import Adam, Nadam
     from tensorflow.keras.activations import relu, elu
     from tensorflow.keras.layers import Dense
     from tensorflow.keras.models import Sequential

@@ -3,7 +3,7 @@ def test_autom8():
     import talos
     import wrangle
 
-    from tensorflow.keras.optimizers import Adam
+    from tensorflow.keras.optimizers.legacy import Adam
 
     print('\n >>> start AutoParams()... \n')
 
