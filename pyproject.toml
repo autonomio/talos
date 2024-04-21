@@ -29,17 +29,17 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 dependencies = [
-    "scikit-learn",
-    "statsmodels = ">=0.11.0",
-    "tensorflow = "==2.14.1",
-    "astetik",
-    "chances",
-    "kerasplotlib",
-    "numpy",
-    "pandas",
-    "requests",
-    "tqdm",
-    "wrangle",
+  "scikit-learn",
+  "statsmodels >= 0.11.0",
+  "tensorflow == 2.14.1",
+  "astetik",
+  "chances",
+  "kerasplotlib",
+  "numpy",
+  "pandas",
+  "requests",
+  "tqdm",
+  "wrangle",
 ]
 
 [project.urls]
