@@ -34,14 +34,13 @@
 Talos importantly improves ordinary TensorFlow (tf.keras) and Keras workflows  by <strong>fully automating hyperparameter experiments</strong> and <strong>model evaluation</strong>. Talos exposes TensorFlow (tf.keras) and Keras functionality entirely and there is no new syntax or templates to learn.
 </p>
 <p align="center">
-<img src='https://i.ibb.co/3NFH646/keras-model-to-talos.gif' width=550px>
+<img src='https://i.ibb.co/3NFH646/keras-model-to-talos.gif' width=550px><br>
+<em>The above animation illustrates how a minimal Sequntial model is modified for Talos</em>
 </p>
 
 ### Talos
 
-TL;DR
-
-Thousands of researchers have found Talos to importantly improve ordinary TensorFlow (tf.keras) and Keras workflows without taking away or hiding any of their power.
+TL;DR Thousands of researchers have found Talos to importantly improve ordinary TensorFlow (tf.keras) and Keras workflows without taking away or hiding any of their power.
 
   - Works with ANY Keras, TensorFlow (tf.keras) or PyTorch model
   - Takes minutes to implement
