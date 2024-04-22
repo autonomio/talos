@@ -40,7 +40,7 @@ def test_templates():
     x, y = talos.templates.datasets.cervical_cancer()
     x, y = talos.templates.datasets.titanic()
 
-    talos.templates.pipelines.breast_cancer(random_method='quantum')
+    talos.templates.pipelines.breast_cancer(random_method='uniform_mersenne')
     talos.templates.pipelines.cervical_cancer(random_method='sobol')
     talos.templates.pipelines.iris(random_method='uniform_crypto')
     talos.templates.pipelines.titanic(random_method='korobov_matrix')
