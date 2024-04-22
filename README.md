@@ -69,7 +69,7 @@ Get the below code [here](https://gist.github.com/mikkokotila/4c0d6298ff0a22dc56
 
 <img src=https://i.ibb.co/VWd8Bhm/Screen-Shot-2019-01-06-at-11-26-32-PM.png>
 
-The *Simple* example below is more than enough for starting to use Talos with any Keras model. *Field Report* has +2,600 claps on Medium because it's more entertaining.
+The *Simple* example below is more than enough for starting to use Talos with any Keras model. *Field Report* has +4,400 claps on Medium because it's more entertaining.
 
 [Simple](https://nbviewer.jupyter.org/github/autonomio/talos/blob/master/examples/A%20Very%20Short%20Introduction%20to%20Hyperparameter%20Optimization%20of%20Keras%20Models%20with%20Talos.ipynb)  [1-2 mins]
 
