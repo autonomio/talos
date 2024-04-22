@@ -4,7 +4,7 @@
   <br>
 </h1>
 
-<h3 align="center">Hyperparameter Optimization for Keras, TensorFlow (tf.keras) and PyTorch</h3>
+<h3 align="center">Hyperparameter Optimization for TensorFlow and Keras</h3>
 
 <p align="center">
 
@@ -31,7 +31,7 @@
 </p>
 <hr>
 <p align="center">
-Talos radically changes the ordinary Keras, TensorFlow (tf.keras), and PyTorch workflow by <strong>fully automating hyperparameter tuning</strong> and <strong>model evaluation</strong>. Talos exposes Keras and TensorFlow (tf.keras) and PyTorch functionality entirely and there is no new syntax or templates to learn.
+Talos importantly improves ordinary TensorFlow (tf.keras) and Keras workflows  by <strong>fully automating hyperparameter experiments</strong> and <strong>model evaluation</strong>. Talos exposes TensorFlow (tf.keras) and Keras functionality entirely and there is no new syntax or templates to learn.
 </p>
 <p align="center">
 <img src='https://i.ibb.co/3NFH646/keras-model-to-talos.gif' width=550px>
@@ -41,20 +41,24 @@ Talos radically changes the ordinary Keras, TensorFlow (tf.keras), and PyTorch w
 
 TL;DR
 
-Talos radically transforms ordinary Keras, TensorFlow (tf.keras), and PyTorch workflows without taking away.
+Thousands of researchers have found Talos to importantly improve ordinary TensorFlow (tf.keras) and Keras workflows without taking away or hiding any of their power.
 
-  - works with ANY Keras, TensorFlow (tf.keras) or PyTorch model
-  - takes minutes to implement
-  - no new syntax to learn
-  - adds zero new overhead to your workflow
+  - Works with ANY Keras, TensorFlow (tf.keras) or PyTorch model
+  - Takes minutes to implement
+  - No new syntax to learn
+  - Adds zero new overhead to your workflow
+  - Bullet-proof results with no breaking bugs since 2019
+  - Comprehensive, up-to-date documentation
 
-Talos is made for data scientists and data engineers that want to remain in **complete control of their TensorFlow (tf.keras) and PyTorch models**, but are tired of mindless parameter hopping and confusing optimization solutions that add complexity instead of reducing it. Within minutes, without learning any new syntax, Talos allows you to configure, perform, and evaluate hyperparameter optimization experiments that yield state-of-the-art results across a wide range of prediction tasks. Talos provides the **simplest and yet most powerful** available method for hyperparameter optimization with TensorFlow (tf.keras) and PyTorch.
+Talos is made for researchers, data scientists, and data engineers that want to remain in **complete control of their TensorFlow (tf.keras) and Keras models**, but are tired of mindless parameter hopping and confusing optimization solutions that add complexity instead of reducing it. 
+
+**Within minutes, without learning any new syntax,** Talos allows you to configure, perform, and evaluate hyperparameter experiments that yield state-of-the-art results across a wide range of prediction tasks. Talos provides the **simplest and yet most powerful** available method for hyperparameter optimization with TensorFlow (tf.keras) and Keras.
 
 <hr>
 
 ### :wrench: Key Features
 
-Based on what no doubt constitutes a "biased" review (being our own) of more than ~30 hyperparameter tuning and optimization solutions, Talos comes on top in terms of intuitive, easy-to-learn, highly permissive access to critical hyperparameter optimization capabilities. Key features include:
+Based on what no doubt constitutes a "biased" review (being our own) of more than ~30 hyperparameter tuning and optimization solutions, Talos comes on top in terms of intuitive, easy-to-learn, highly permissive access to critical hyperparameter experimentation capabilities. Key features include:
 
   - Single-line optimize-to-predict pipeline `talos.Scan(x, y, model, params).predict(x_test, y_test)`
   - Automated hyperparameter optimization
@@ -123,7 +127,7 @@ Daily development version:
 
 If you use Talos for published work, please cite:
 
-`Autonomio Talos [Computer software]. (2020). Retrieved from http://github.com/autonomio/talos.`
+`Autonomio Talos [Computer software]. (2024). Retrieved from http://github.com/autonomio/talos.`
 
 <hr>
 
