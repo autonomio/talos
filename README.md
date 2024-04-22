@@ -4,19 +4,7 @@
   <br>
 </h1>
 
-<h3 align="center">Hyperparameter Optimization for TensorFlow and Keras</h3>
-
-<p align="center">
-
-  <a href="https://travis-ci.org/autonomio/talos">
-    <img src="https://img.shields.io/travis/autonomio/talos/master.svg?style=for-the-badge&logo=appveyor" alt="Talos Travis">
-  </a>
-
-  <a href="https://coveralls.io/github/autonomio/talos">
-    <img src="https://img.shields.io/coveralls/github/autonomio/talos.svg?style=for-the-badge&logo=appveyor" alt="Talos Coveralls">
-  </a>
-
-</p>
+<h3 align="center">Bullet-Proof Hyperparameter Experiments with TensorFlow and Keras</h3>
 
 <p align="center">
   <a href="#talos">Talos</a> •
@@ -51,13 +39,11 @@ TL;DR Thousands of researchers have found Talos to importantly improve ordinary 
 
 Talos is made for researchers, data scientists, and data engineers that want to remain in **complete control of their TensorFlow (tf.keras) and Keras models**, but are tired of mindless parameter hopping and confusing optimization solutions that add complexity instead of reducing it. 
 
-**Within minutes, without learning any new syntax,** Talos allows you to configure, perform, and evaluate hyperparameter experiments that yield state-of-the-art results across a wide range of prediction tasks. Talos provides the **simplest and yet most powerful** available method for hyperparameter optimization with TensorFlow (tf.keras) and Keras.
-
 <hr>
 
 ### :wrench: Key Features
 
-Based on what no doubt constitutes a "biased" review (being our own) of more than ~30 hyperparameter tuning and optimization solutions, Talos comes on top in terms of intuitive, easy-to-learn, highly permissive access to critical hyperparameter experimentation capabilities. Key features include:
+**Within minutes, without learning any new syntax,** Talos allows you to configure, perform, and evaluate hyperparameter experiments that yield state-of-the-art results across a wide range of prediction tasks. Talos provides the **simplest and yet most powerful** available method for hyperparameter optimization with TensorFlow (tf.keras) and Keras. Key features include:
 
   - Single-line optimize-to-predict pipeline `talos.Scan(x, y, model, params).predict(x_test, y_test)`
   - Automated hyperparameter optimization
@@ -83,7 +69,7 @@ Get the below code [here](https://gist.github.com/mikkokotila/4c0d6298ff0a22dc56
 
 <img src=https://i.ibb.co/VWd8Bhm/Screen-Shot-2019-01-06-at-11-26-32-PM.png>
 
-The *Simple* example below is more than enough for starting to use Talos with any Keras model. *Field Report* has +2,600 claps on Medium because it's more entertaining.
+The *Simple* example below is more than enough for starting to use Talos with any Keras model. *Field Report* has +4,400 claps on Medium because it's more entertaining.
 
 [Simple](https://nbviewer.jupyter.org/github/autonomio/talos/blob/master/examples/A%20Very%20Short%20Introduction%20to%20Hyperparameter%20Optimization%20of%20Keras%20Models%20with%20Talos.ipynb)  [1-2 mins]
 
