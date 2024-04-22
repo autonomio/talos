@@ -4,7 +4,7 @@
   <br>
 </h1>
 
-<h3 align="center">Bullet-Proof Hyperparameter Experiments for TensorFlow and Keras</h3>
+<h3 align="center">Bullet-Proof Hyperparameter Experiments with TensorFlow and Keras</h3>
 
 <p align="center">
   <a href="#talos">Talos</a> •
