@@ -1,5 +1,5 @@
-from kerasplotlib import TrainingLog as TrainingPlot
+from .training_plot import TrainingPlot
 from .experiment_log import ExperimentLog
 from .power_draw import PowerDraw
 
-del experiment_log, power_draw
+__all__ = ['TrainingPlot', 'ExperimentLog', 'PowerDraw']

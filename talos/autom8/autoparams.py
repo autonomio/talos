@@ -1,5 +1,4 @@
 import numpy as np
-from tensorflow.keras.optimizers.legacy import Adam, Adagrad, SGD
 
 
 loss = {'binary': ['binary_crossentropy', 'LogCosh'],
@@ -21,7 +20,9 @@ class AutoParams:
                  replace=True,
                  auto=True,
                  network=True,
-                 resample_params=4):
+                 resample_params=4,
+                 backend='tensorflow'):
+
 
         '''A facility for generating or appending params dictionary.
 
@@ -40,6 +41,7 @@ class AutoParams:
         resample_params | int or False | The number of values per parameter
         '''
 
+        self._backend = backend
         self._task = task
         self._replace = replace
         self._network = network
@@ -122,6 +124,12 @@ class AutoParams:
         '''
 
         if optimizers == 'auto':
+            if self._backend in ('torch', 'pytorch'):
+                from torch.optim import Adam, Adagrad, SGD
+            elif self._backend in ('tensorflow', 'tf', 'tf.keras'):
+                from tensorflow.keras.optimizers import Adam, Adagrad, SGD
+            else:
+                from keras.optimizers import Adam, Adagrad, SGD
             self._append_params('optimizer', [Adam, Adagrad, SGD])
         else:
             self._append_params('optimizer', optimizers)
@@ -256,9 +264,10 @@ class AutoParams:
         '''Resamples params dictionary so that `n` values are present for each
         parameter.'''
 
-        from wrangle import dic_resample_values
-
-        self.params = dic_resample_values(self.params, n)
+        if not isinstance(n, int) or n < 1:
+            raise ValueError('n must be a positive integer.')
+        self.params = {key: [values[i] for i in np.linspace(0, len(values) - 1, min(n, len(values)), dtype=int)]
+                       for key, values in self.params.items()}
 
     def _append_params(self, label, values):
 

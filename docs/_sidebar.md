@@ -1,3 +1,8 @@
+- Talos 2
+
+ - [Migration](Migration.md)
+ - [SFD and CLI](SFD_and_CLI.md)
+
 - Getting Started
 
  - [Quick start](README.md#quick-start)

@@ -1,45 +1,31 @@
-# Install Options
+# Installation
 
-Before installing Talos, it is recommended to first setup and start either a python or conda environment.
+Use a virtual environment with Python 3.10–3.13. Choose a framework whose supported Python versions include yours.
 
-#### Creating a python virtual environment
-```python
-virtualenv -p python3 talos_env
-source talos_env/bin/activate
+```sh
+python -m venv .venv
+. .venv/bin/activate
+pip install 'talos[tensorflow]'
 ```
 
-#### Creating a conda virtual environment
-```python
-conda create --name talos_env
-conda activate talos_env
-```
+Framework choices:
 
-#### Install latest from PyPi
-```python
-pip install talos
-```
+| Extra | Purpose |
+| --- | --- |
+| `tensorflow` | Modern TensorFlow / tf.keras |
+| `torch` | PyTorch |
+| `keras,tensorflow` | Standalone Keras using TensorFlow |
+| `keras,torch` | Standalone Keras using Torch; set `KERAS_BACKEND=torch` |
+| `legacy-tensorflow` | TensorFlow 2.14.1, Keras 2.14 and NumPy 1.26; Python 3.10–3.11 |
+| `plots` | Matplotlib experiment/training plots |
+| `samplers` | Optional Chances quantum samplers |
+| `test` | Acceptance tests, coverage, lint and build tools |
 
-#### Install a specific version from PyPi
-```python
-pip install talos==0.6.1
-```
+`pip install talos` installs the core and CLI without TensorFlow, Keras, Torch or plotting. Do not combine the legacy lane with modern framework extras. Upgrade with `pip install -U 'talos[your-extra]'` so dependencies are resolved together.
 
-#### Upgrade installation from PyPi
-```python
-pip install -U --no-deps talos
-```
+From this checkout:
 
-#### Install from monthly
-```python
-pip install --upgrade --no-deps --force-reinstall git+https://github.com/autonomio/talos
-```
-
-#### Install from weekly
-```python
-pip install --upgrade --no-deps --force-reinstall git+https://github.com/autonomio/talos@dev
-```
-
-#### Install from daily
-```python
-pip install --upgrade --no-deps --force-reinstall git+https://github.com/autonomio/talos@daily-dev
+```sh
+pip install -e '.[test,plots,samplers,tensorflow,torch]'
+python -m pytest -q
 ```

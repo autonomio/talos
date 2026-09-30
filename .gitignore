@@ -16,3 +16,10 @@ test.sh
 .vscode
 test_*/
 test/
+.coverage
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+build/
+*.keras
+*.pt

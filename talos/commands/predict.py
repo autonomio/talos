@@ -1,91 +1,33 @@
+import numpy as np
+from talos.backends import backend_for
+from talos.utils.best_model import best_model, activate_model
+
+
+def classes(predictions, task):
+    values = np.asarray(predictions)
+    if task == 'binary':
+        if values.ndim > 1 and values.shape[-1] == 2:
+            return np.argmax(values, axis=-1)
+        return (values >= .5).astype(int)
+    if task in ('multi_class', 'multiclass', 'multi_label'):
+        return np.argmax(values, axis=-1) if values.ndim > 1 else values.astype(int)
+    if task in ('multilabel', 'multi_label_independent'):
+        return (values >= .5).astype(int)
+    if task in ('continuous', 'regression'):
+        return values
+    raise ValueError('Unknown prediction task: ' + str(task))
+
+
 class Predict:
-
-    '''Class for making predictions on the models that are stored
-    in the Scan() object'''
-
     def __init__(self, scan_object):
-
-        '''Takes in as input a Scan() object and returns and object
-        with properties for `predict` and `predict_classes`'''
-
         self.scan_object = scan_object
         self.data = scan_object.data
 
-    def predict(self,
-                x,
-                metric,
-                asc,
-                model_id=None,
-                saved=False,
-                custom_objects=None):
-
-        '''Makes a probability prediction from input x. If model_id
-        is not given, then best_model will be used.
-
-        x | array | data to be used for the predictions
-        model_id | int | the id of the model from the Scan() object
-        metric | str | the metric to be used for picking best model
-        asc | bool | True if `metric` is something to be minimized
-        saved | bool | if a model saved on local machine should be used
-        custom_objects | dict | if the model has a custom object,
-                                pass it here
-
-        '''
-
+    def predict(self, x, metric, asc, model_id=None, saved=False, custom_objects=None, model_factory=None, **kwargs):
         if model_id is None:
-            from ..utils.best_model import best_model
             model_id = best_model(self.scan_object, metric, asc)
+        model = activate_model(self.scan_object, model_id, saved, custom_objects, model_factory)
+        return backend_for(model).predict(model, x, **kwargs)
 
-        from ..utils.best_model import activate_model
-        model = activate_model(self.scan_object,
-                               model_id,
-                               saved,
-                               custom_objects)
-
-        return model.predict(x)
-
-    def predict_classes(self,
-                        x,
-                        metric,
-                        asc,
-                        task,
-                        model_id=None,
-                        saved=False,
-                        custom_objects=None):
-
-        '''Makes a class prediction from input x. If model_id
-        is not given, then best_model will be used.
-
-        x | array | data to be used for the predictions
-        model_id | int | the id of the model from the Scan() object
-        metric | str | the metric to be used for picking best model
-        asc | bool | True if `metric` is something to be minimized
-        task | string | 'binary' or 'multi_label'
-        saved | bool | if a model saved on local machine should be used
-        custom_objects | dict | if the model has a custom object, pass it here
-        '''
-
-        import numpy as np
-
-        if model_id is None:
-            from ..utils.best_model import best_model
-            model_id = best_model(self.scan_object, metric, asc)
-
-        from ..utils.best_model import activate_model
-        model = activate_model(self.scan_object,
-                               model_id,
-                               saved,
-                               custom_objects)
-
-        # make (class) predictions with the model
-        preds = model.predict(x)
-
-        if task == 'binary':
-            return np.where(preds >= 0.5, 1, 0)
-
-        elif task == 'multi_label':
-            return np.argmax(preds, 1)
-
-        else:
-            msg = 'Only `binary` and `multi_label` are supported'
-            raise AttributeError(msg)
+    def predict_classes(self, x, metric, asc, task, model_id=None, saved=False, custom_objects=None, model_factory=None):
+        return classes(self.predict(x, metric, asc, model_id, saved, custom_objects, model_factory), task)

@@ -1,126 +1,118 @@
-<h1 align="center">
-  <br>
-  <a href="http://autonom.io"><img src="https://raw.githubusercontent.com/autonomio/talos/master/logo.png" alt="Talos" width="350"></a>
-  <br>
-</h1>
+# Talos
 
-<h3 align="center">Bullet-Proof Hyperparameter Experiments with TensorFlow and Keras</h3>
+Parameter sweeps for **Keras, TensorFlow/tf.keras and PyTorch**, with reproducible manifests, a CLI and the existing Talos Python interface.
 
-<p align="center">
-  <a href="#talos">Talos</a> •
-  <a href="#wrench-key-features">Key Features</a> •
-  <a href="#arrow_forward-examples">Examples</a> •
-  <a href="#floppy_disk-install">Install</a> •
-  <a href="#speech_balloon-how-to-get-support">Support</a> •
-  <a href="https://autonomio.github.io/talos/">Docs</a> •
-  <a href="https://github.com/autonomio/talos/issues">Issues</a> •
-  <a href="#page_with_curl-license">License</a> •
-  <a href="https://github.com/autonomio/talos/archive/master.zip">Download</a>
-</p>
-<hr>
-<p align="center">
-Talos importantly improves ordinary TensorFlow (tf.keras) and Keras workflows  by <strong>fully automating hyperparameter experiments</strong> and <strong>model evaluation</strong>. Talos exposes TensorFlow (tf.keras) and Keras functionality entirely and there is no new syntax or templates to learn.
-</p>
-<p align="center">
-<img src='https://i.ibb.co/3NFH646/keras-model-to-talos.gif' width=550px><br>
-<em>The above animation illustrates how a minimal Sequntial model is modified for Talos</em>
-</p>
+Talos 2 adopts the general experiment infrastructure from Vaquum/Limen as an independent fork. One executor serves legacy `Scan`, native `params/prep/model` SFDs and manifest runs. Your code owns data acquisition and training.
 
-### Talos
+## Install
 
-TL;DR Thousands of researchers have found Talos to importantly improve ordinary TensorFlow (tf.keras) and Keras workflows without taking away or hiding any of their power.
+Python 3.10–3.13 is supported by the core; backend support follows the selected framework.
 
-  - Works with ANY Keras, TensorFlow (tf.keras) or PyTorch model
-  - Takes minutes to implement
-  - No new syntax to learn
-  - Adds zero new overhead to your workflow
-  - Bullet-proof results with no breaking bugs since 2019
-  - Comprehensive, up-to-date documentation
+```sh
+pip install 'talos[tensorflow]'       # TensorFlow / tf.keras
+pip install 'talos[torch]'            # PyTorch
+pip install 'talos[keras,tensorflow]' # standalone Keras with TensorFlow
+```
 
-Talos is made for researchers, data scientists, and data engineers that want to remain in **complete control of their TensorFlow (tf.keras) and Keras models**, but are tired of mindless parameter hopping and confusing optimization solutions that add complexity instead of reducing it. 
+Standalone Keras also supports a Torch backend: install `talos[keras,torch]` and set `KERAS_BACKEND=torch` before importing Keras. The base `pip install talos` installs no DL or plotting framework. Use the `plots` extra for plotting and `samplers` for optional quantum samplers.
 
-<hr>
+Existing TensorFlow 2.14 applications can use `talos[legacy-tensorflow]` on Python 3.10–3.11 with NumPy 1.26. Use a separate environment from modern backends.
 
-### :wrench: Key Features
+## Existing Talos code
 
-**Within minutes, without learning any new syntax,** Talos allows you to configure, perform, and evaluate hyperparameter experiments that yield state-of-the-art results across a wide range of prediction tasks. Talos provides the **simplest and yet most powerful** available method for hyperparameter optimization with TensorFlow (tf.keras) and Keras. Key features include:
+Your five-argument callback and `Scan` call are preserved:
 
-  - Single-line optimize-to-predict pipeline `talos.Scan(x, y, model, params).predict(x_test, y_test)`
-  - Automated hyperparameter optimization
-  - Model generalization evaluator
-  - Experiment analytics
-  - Pseudo, Quasi, and Quantum Random search options
-  - Grid search
-  - Probabilistic optimizers
-  - Single file custom optimization strategies
-  - Dynamically change optimization strategy during experiment
-  - Support for man-machine cooperative optimization strategy
-  - Model candidate generality evaluation
-  - Live training monitor
-  - Experiment analytics
+```python
+import talos
 
-Talos works on **Linux, Mac OSX**, and **Windows** systems and can be operated cpu, gpu, and multi-gpu systems.
+# Return your framework history and trained model.
+def model(x_train, y_train, x_val, y_val, params):
+    network = build_your_model(params)
+    history = network.fit(x_train, y_train,
+                          validation_data=(x_val, y_val),
+                          epochs=params['epochs'])
+    return history, network
 
-<hr>
+scan = talos.Scan(x, y, {'epochs': [5, 10]}, model, 'my_experiment')
+predictions = talos.Predict(scan).predict(x_test, metric='val_loss', asc=True)
+trained = scan.best_model('val_loss', asc=True)
+```
 
-### :arrow_forward: Examples
+`Analyze` / `Reporting`, `Evaluate`, `Deploy` / `Restore`, AutoML helpers, mutable/distributed `ParamSpace`, reducers, samplers, local strategy files, Gamify, callbacks and generators remain available. See the [migration guide](docs/Migration.md) for corrected behavior and artifact portability.
 
-Get the below code [here](https://gist.github.com/mikkokotila/4c0d6298ff0a22dc561fb387a1b4b0bb). More examples further below.
+## Native SFDs
 
-<img src=https://i.ibb.co/VWd8Bhm/Screen-Shot-2019-01-06-at-11-26-32-PM.png>
+An SFD is a regular Python module with `params`, `prep` and `model`. `prep` receives caller data or loads it using your own code. `model` receives the prepared data and one parameter combination; no training base class is required.
 
-The *Simple* example below is more than enough for starting to use Talos with any Keras model. *Field Report* has +4,400 claps on Medium because it's more entertaining.
+```python
+# my_sfd.py
 
-[Simple](https://nbviewer.jupyter.org/github/autonomio/talos/blob/master/examples/A%20Very%20Short%20Introduction%20to%20Hyperparameter%20Optimization%20of%20Keras%20Models%20with%20Talos.ipynb)  [1-2 mins]
+def params():
+    return {'epochs': [5, 10]}
 
-[Concise](https://nbviewer.jupyter.org/github/autonomio/talos/blob/master/examples/Hyperparameter%20Optimization%20on%20Keras%20with%20Breast%20Cancer%20Data.ipynb)  [~5 mins]
 
-[Comprehensive](https://nbviewer.jupyter.org/github/autonomio/talos/blob/master/examples/Hyperparameter%20Optimization%20with%20Keras%20for%20the%20Iris%20Prediction.ipynb)  [~10 mins]
+def prep(data, round_params):
+    return data  # or call your own loader and prepare your own splits
 
-[Field Report](https://towardsdatascience.com/hyperparameter-optimization-with-keras-b82e6364ca53)  [~15 mins]
 
-For more information on how Talos can help with your Keras, TensorFlow (tf.keras) and PyTorch workflow, visit the [User Manual](https://autonomio.github.io/talos/).
+def model(prepared, round_params):
+    network = build_your_model(round_params)
+    history = train_your_model(network, prepared, round_params)
+    return history, network
+```
 
-You may also want to check out a visualization of the [Talos Hyperparameter Tuning workflow](https://github.com/autonomio/talos/wiki/Workflow).
+```python
+result = talos.run('my_sfd', data=my_splits, seed=42,
+                   objective={'metric': 'val_loss', 'direction': 'min'})
+predictions = result.predict(x_test)
+```
 
-<hr>
+Runnable real Iris examples are supplied for [Keras](examples/sfd/keras_sfd.py), [tf.keras](examples/sfd/tensorflow_sfd.py) and [Torch](examples/sfd/torch_sfd.py).
 
-### :floppy_disk: Install
+## Manifest and CLI
 
-Stable version:
+```yaml
+schema_version: "1.0"
+metadata:
+  name: iris
+  mode: development
+sfd:
+  module: examples/sfd/tensorflow_sfd.py
+  backend: tensorflow
+  objective:
+    metric: val_loss
+    direction: min
+  params:
+    epochs: [1, 2]
+uel:
+  seed: 42
+  search_strategy:
+    type: grid
+  round_limit: 4
+  checkpoint_interval: 1
+```
 
-#### `pip install talos`
+```sh
+talos validate experiment.yaml
+talos profile experiment.yaml
+talos run --dry-run experiment.yaml
+talos run --no-progress-bar experiment.yaml
+talos run --resume results/dev/<run-directory>
+```
 
-Daily development version:
+`talos new` creates a project; `init` creates editable framework templates. `commit`, `ls`, `fork`, `lineage` and `reindex` manage immutable content-addressed manifests. `backup` snapshots a project to its configured Git remote. See [SFD and CLI usage](docs/SFD_and_CLI.md).
 
-#### `pip install git+https://github.com/autonomio/talos`
+Runs contain metadata, exact trial identities, histories, native trained artifacts, CSV results, queue/control checkpoints and an intervention audit. Callable values use importable references; opaque data supports an explicit fingerprint. Resume validates code, data/splits, configuration and environment. Completed trials are restored from saved artifacts.
 
-<hr>
+## Development
 
-### :speech_balloon: How to get Support
+```sh
+pip install -e '.[test,plots,samplers,tensorflow,torch]'
+python -m pytest -q
+ruff check talos tests/test_*.py
+python -m build
+```
 
-| I want to...                     | Go to...                                                  |
-| -------------------------------- | ---------------------------------------------------------- |
-| **...troubleshoot**           | [Docs] · [Wiki] · [GitHub Issue Tracker]                   |
-| **...report a bug**           | [GitHub Issue Tracker]                                     |
-| **...suggest a new feature**  | [GitHub Issue Tracker]                                     |
-| **...get support**            | [Stack Overflow]                     |
+The maintained suite uses real Iris and breast cancer fixtures, three framework artifact round trips, legacy compatibility, live controls, manifests and interrupted runs. Historical tests under `tests/commands` remain reference examples; the maintained acceptance suite replaces their obsolete dependency assumptions.
 
-<hr>
-
-### :loudspeaker: Citations
-
-If you use Talos for published work, please cite:
-
-`Autonomio Talos [Computer software]. (2024). Retrieved from http://github.com/autonomio/talos.`
-
-<hr>
-
-### :page_with_curl: License
-
-[MIT License](https://github.com/autonomio/talos/blob/master/LICENSE)
-
-[github issue tracker]: https://github.com/autonomio/talos/issues
-[docs]: https://autonomio.github.io/talos/
-[wiki]: https://github.com/autonomio/talos/wiki
-[stack overflow]: https://stackoverflow.com/questions/tagged/talos
+Talos is MIT licensed. [NOTICE](NOTICE) records Limen attribution and the fork baseline. [CONTRIBUTING.md](CONTRIBUTING.md) describes verification and maintenance.

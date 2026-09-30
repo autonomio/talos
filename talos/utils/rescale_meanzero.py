@@ -1,11 +1,9 @@
+import pandas as pd
+
+
 def rescale_meanzero(x):
-
-    '''Rescales an array to mean-zero.
-
-    x | array | the dataset to be rescaled
-    '''
-
-    import wrangle
-    import pandas as pd
-
-    return wrangle.df_rescale_meanzero(pd.DataFrame(x)).values
+    frame = pd.DataFrame(x).copy()
+    for column in frame.select_dtypes(include='number'):
+        scale = frame[column].std()
+        frame[column] = (frame[column] - frame[column].mean()) / (1 if scale == 0 else scale)
+    return frame.to_numpy()

@@ -1,244 +1,126 @@
-import inspect
-
-import numpy as np
-import itertools as it
 from datetime import datetime
+import math
+import numpy as np
+
+from talos.experiment.param_domain import ParamDomain, values_equal
+from talos.experiment.serialization import callable_reference
+from talos.experiment.param_search.legacy_strategy import LegacyStrategy
+
+
+def _expand_range(values):
+    if len(values) != 3:
+        raise ValueError('Tuple ranges require (start, end, steps).')
+    start, end, steps = values
+    if steps <= 0 or start == end:
+        raise ValueError('Tuple ranges require positive steps and distinct endpoints.')
+    out = np.arange(start, end, (end - start) / steps, dtype=float)
+    if isinstance(start, int) and isinstance(end, int):
+        out = np.unique(out.astype(int))
+    return out
+
+
+def normalize_domains(params):
+    """Expand candidate ranges without materializing their Cartesian product."""
+    out = {}
+    for key, value in params.items():
+        if isinstance(value, tuple):
+            out[key] = _expand_range(value).tolist()
+        elif isinstance(value, list):
+            out[key] = list(value)
+        else:
+            raise TypeError(f'Parameter {key!r} must be a list or (start, end, steps) tuple.')
+    return out
 
 
 class ParamSpace:
+    """Legacy parameter facade over the shared search strategy and queue."""
 
-    def __init__(self,
-                 params,
-                 param_keys,
-                 random_method='uniform_mersenne',
-                 fraction_limit=None,
-                 round_limit=None,
-                 time_limit=None,
-                 boolean_limit=None):
-
-        # set all the arguments
+    def __init__(self, params, param_keys=None, random_method='uniform_mersenne',
+                 fraction_limit=None, round_limit=None, time_limit=None,
+                 boolean_limit=None, seed=None):
         self.params = params
-        self.param_keys = param_keys
+        self.param_keys = list(params) if param_keys is None else list(param_keys)
+        self.random_method = random_method
         self.fraction_limit = fraction_limit
         self.round_limit = round_limit
         self.time_limit = time_limit
         self.boolean_limit = boolean_limit
-        self.random_method = random_method
-
-        # set a counter
+        self.seed = seed
         self.round_counter = 0
-
-        # handle tuple conversion to discrete values
+        self.shard_namespace = None
+        self.shard_id = None
         self.p = self._param_input_conversion()
-
-        # create list of list from the params dictionary
         self._params_temp = [list(self.p[key]) for key in self.param_keys]
-
-        # establish max dimensions
-        self.dimensions = np.prod([len(l) for l in self._params_temp])
-
-        # apply all the set limits
-        self.param_index = self._param_apply_limits()
-
-        # create the parameter space
-        self.param_space = self._param_space_creation()
-
-        # handle the boolean limits separately
-        if self.boolean_limit is not None:
-            index = self._convert_lambda(self.boolean_limit)(self.param_space)
-            self.param_space = self.param_space[index]
-
-        # reset index
-        self.param_index = list(range(len(self.param_index)))
+        self.dimensions = math.prod(len(values) for values in self._params_temp)
+        indices = self._param_apply_limits()
+        rows = [self._index_to_values(index) for index in indices]
+        if boolean_limit is not None:
+            rows = [values for values in rows if boolean_limit(self._round_parameters_todict(values))]
+        self.param_space = np.empty((len(rows), len(self.param_keys)), dtype=object)
+        for index, values in enumerate(rows):
+            for column, value in enumerate(values):
+                self.param_space[index, column] = value
+        self.param_index = list(range(len(rows)))
+        domain = ParamDomain({key: list(self.p[key]) for key in self.param_keys})
+        self.strategy = LegacyStrategy(self, domain, seed=seed)
 
     def _param_input_conversion(self):
-
-        '''Parameters may be input as lists of single or
-        multiple values (discrete values) or tuples
-        (range of values). This helper checks the format of
-        each input and handles it accordingly.'''
-
-        out = {}
-
-        # go through each parameter type
-        for param in self.param_keys:
-
-            # deal with range (tuple) values
-            if isinstance(self.params[param], tuple):
-                out[param] = self._param_range_expansion(self.params[param])
-
-            # deal with range (list) values
-            elif isinstance(self.params[param], list):
-                out[param] = self.params[param]
-
-        return out
+        return normalize_domains({key: self.params[key] for key in self.param_keys})
 
     def _param_apply_limits(self):
-
         from talos.reducers.sample_reducer import sample_reducer
-
-        if self.boolean_limit is not None:
-            # NOTE: this is handled in __init__
-            pass
-
-        # a time limit is set
-        if self.time_limit is not None:
-            # NOTE: this is handled in _time_left
-            pass
-
-        # a fractional limit is set
         if self.fraction_limit is not None:
-            return sample_reducer(self.fraction_limit,
-                                  self.dimensions,
-                                  self.random_method)
-
-        # a round limit is set
+            return sample_reducer(self.fraction_limit, self.dimensions, self.random_method, self.seed)
         if self.round_limit is not None:
-            return sample_reducer(self.round_limit,
-                                  self.dimensions,
-                                  self.random_method)
+            return sample_reducer(self.round_limit, self.dimensions, self.random_method, self.seed)
+        return range(self.dimensions)
 
-        # no limits are set
-        return list(range(self.dimensions))
+    def _param_range_expansion(self, values):
+        return _expand_range(values)
 
-    def _param_range_expansion(self, param_values):
-
-        '''Expands a range (tuple) input into discrete
-        values. Helper for _param_input_conversion.
-        Expects to have a input as (start, end, steps).
-        '''
-
-        start = param_values[0]
-        end = param_values[1]
-        steps = param_values[2]
-
-        out = np.arange(start, end, (end - start) / steps, dtype=float)
-
-        # inputs are all ints
-        if isinstance(start, int) and isinstance(end, int):
-            out = out.astype(int)
-            out = np.unique(out)
-
-        return out
+    def _index_to_values(self, index):
+        values = []
+        for candidates in reversed(self._params_temp):
+            index, position = divmod(int(index), len(candidates))
+            values.insert(0, candidates[position])
+        return values
 
     def _param_space_creation(self):
-
-        '''Expand params dictionary to permutations
-
-        Takes the input params dictionary and expands it to
-        actual parameter permutations for the experiment.
-        '''
-
-        final_grid = []
-        for i in self.param_index:
-            p = []
-            for l in reversed(self._params_temp):
-                i, s = divmod(int(i), len(l))
-                p.insert(0, l[s])
-            final_grid.append(tuple(p))
-
-        return np.array(final_grid, dtype='object')
+        return self.param_space
 
     def _check_time_limit(self):
-
-        if self.time_limit is None:
-            return True
-
-        stop = datetime.strptime(self.time_limit, "%Y-%m-%d %H:%M")
-
-        return stop > datetime.now()
+        return self.time_limit is None or datetime.strptime(self.time_limit, '%Y-%m-%d %H:%M') > datetime.now()
 
     def round_parameters(self):
-
-        # permutations remain in index
-        if len(self.param_index) > 0:
-
-            # time limit has not been met yet
-            if self._check_time_limit():
-                self.round_counter += 1
-
-                # get current index
-                index = self.param_index.pop(0)
-
-                # get the values based on the index
-                values = self.param_space[index]
-                round_parameters = self._round_parameters_todict(values)
-
-                # pass the parameters to Scan
-                return round_parameters
-
-        # the experiment is finished
-        return False
+        try:
+            return next(self.strategy)
+        except StopIteration:
+            return False
 
     def _round_parameters_todict(self, values):
+        return dict(zip(self.param_keys, values))
 
-        round_parameters = {}
+    def _convert_lambda(self, function):
+        return function
 
-        for i, key in enumerate(self.param_keys):
-            round_parameters[key] = values[i]
-
-        return round_parameters
-
-    def _convert_lambda(self, fn):
-
-        '''Converts a lambda function into a format
-        where parameter labels are changed to the column
-        indexes in parameter space.'''
-
-        # get the source code for the lambda function
-        fn_string = inspect.getsource(fn)
-        fn_string = fn_string.replace('"', '\'')
-
-        # look for column/label names
-        for i, name in enumerate(self.param_keys):
-            index = ':,' + str(i)
-            fn_string = fn_string.replace(name, index)
-
-        # cleanup the string
-        fn_string = fn_string.split('lambda')[1]
-        fn_string = fn_string.replace('[\':', '[:')
-        fn_string = fn_string.replace('\']', ']')
-        fn_string = 'lambda ' + fn_string
-
-        # pass it back as a function
-        return eval(fn_string)
+    def _remove(self, condition, operation, **details):
+        if hasattr(self, '_msq'):
+            self._msq._log_intervention(operation, source='legacy_reducer', **details)
+        self.param_index = [index for index in self.param_index
+                            if not condition(self._round_parameters_todict(self.param_space[index]))]
 
     def remove_is_not(self, label, value):
-
-        '''Removes baesd on exact match but reversed'''
-
-        col = self.param_keys.index(label)
-        drop = np.where(self.param_space[:, col] != value)[0].tolist()
-        self.param_index = [x for x in self.param_index if x not in drop]
+        self._remove(lambda params: not values_equal(params[label], value), 'keep_is', param=label, value=value)
 
     def remove_is(self, label, value):
-
-        '''Removes based on exact match'''
-
-        col = self.param_keys.index(label)
-        drop = np.where(self.param_space[:, col] == value)[0].tolist()
-        self.param_index = [x for x in self.param_index if x not in drop]
+        self._remove(lambda params: values_equal(params[label], value), 'remove_is', param=label, value=value)
 
     def remove_ge(self, label, value):
-
-        '''Removes based on greater-or-equal'''
-
-        col = self.param_keys.index(label)
-        drop = np.where(self.param_space[:, col] >= value)[0].tolist()
-        self.param_index = [x for x in self.param_index if x not in drop]
+        self._remove(lambda params: params[label] >= value, 'remove_ge', param=label, threshold=value)
 
     def remove_le(self, label, value):
-
-        '''Removes based on lesser-or-equal'''
-
-        col = self.param_keys.index(label)
-        drop = np.where(self.param_space[:, col] <= value)[0].tolist()
-        self.param_index = [x for x in self.param_index if x not in drop]
+        self._remove(lambda params: params[label] <= value, 'remove_le', param=label, threshold=value)
 
     def remove_lambda(self, function):
-
-        '''Removes based on a lambda function'''
-
-        index = self._convert_lambda(function)(self.param_space)
-        self.param_space = self.param_space[index]
-        self.param_index = list(range(len(self.param_space)))
+        # Historical callable returns True to keep; never rebuild consumed rows.
+        self._remove(lambda params: not function(params), 'legacy_keep_predicate', predicate=callable_reference(function))

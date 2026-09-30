@@ -1,54 +1,47 @@
-def parallel_gpu_jobs(allow_growth=True, fraction=.5):
-
-    '''Sets the max used memory as a fraction for tensorflow
-    backend
-
-    allow_growth :: True of False
-
-    fraction :: a float value (e.g. 0.5 means 4gb out of 8gb)
-
-    '''
-
-    import keras.backend as K
+def parallel_gpu_jobs(allow_growth=True, fraction=.5, backend='tensorflow'):
+    if isinstance(allow_growth, (int, float)) and not isinstance(allow_growth, bool):
+        fraction, allow_growth = allow_growth, False
+    if not 0 < fraction <= 1:
+        raise ValueError('fraction must lie between zero and one.')
+    if backend in ('torch', 'pytorch'):
+        import torch
+        if torch.cuda.is_available():
+            torch.cuda.set_per_process_memory_fraction(fraction)
+        return
     import tensorflow as tf
-
-    gpu_options = tf.compat.v1.GPUOptions(allow_growth=allow_growth,
-                                  per_process_gpu_memory_fraction=fraction)
-    config = tf.compat.v1.ConfigProto(gpu_options=gpu_options)
-    session = tf.compat.v1.Session(config=config)
-    tf.compat.v1.keras.backend.set_session(session)
+    devices = tf.config.list_physical_devices('GPU')
+    for device in devices:
+        if fraction < 1:
+            import subprocess
+            index = devices.index(device)
+            result = subprocess.run(['nvidia-smi', '-i', str(index), '--query-gpu=memory.total', '--format=csv,noheader,nounits'],
+                                    check=True, capture_output=True, text=True)
+            limit = float(result.stdout.strip()) * fraction
+            tf.config.set_logical_device_configuration(device, [tf.config.LogicalDeviceConfiguration(memory_limit=limit)])
+        elif allow_growth:
+            tf.config.experimental.set_memory_growth(device, True)
 
 
 def multi_gpu(model, gpus=None, cpu_merge=True, cpu_relocation=False):
-
-    '''Takes as input the model, and returns a model
-    based on the number of GPUs available on the machine
-    or alternatively the 'gpus' user input.
-
-    NOTE: this needs to be used before model.compile() in the
-    model inputted to Scan in the form:
-
-    from talos.utils.gpu_utils import multi_gpu
-    model = multi_gpu(model)
-
-    '''
-
-    from tensorflow.keras.utils import multi_gpu_model
-
-    return multi_gpu_model(model,
-                           gpus=gpus,
-                           cpu_merge=cpu_merge,
-                           cpu_relocation=cpu_relocation)
-
-
-def force_cpu():
-
-    '''Force CPU on a GPU system
-    '''
-
-    import tensorflow.keras.backend as K
+    from talos.backends import backend_for
+    if backend_for(model).name == 'torch':
+        import torch
+        return torch.nn.DataParallel(model, device_ids=gpus if isinstance(gpus, list) else None)
     import tensorflow as tf
+    devices = tf.config.list_logical_devices('GPU')
+    if isinstance(gpus, int):
+        devices = devices[:gpus]
+    if len(devices) < 2:
+        return model
+    strategy = tf.distribute.MirroredStrategy(devices=[device.name for device in devices])
+    with strategy.scope():
+        cloned = tf.keras.models.clone_model(model)
+        cloned.set_weights(model.get_weights())
+    return cloned
 
-    config = tf.compat.v1.ConfigProto(device_count={'GPU': 0})
-    session = tf.compat.v1.Session(config=config)
-    tf.compat.v1.keras.backend.set_session(session)
+
+def force_cpu(backend='tensorflow'):
+    if backend in ('torch', 'pytorch'):
+        return 'cpu'
+    import tensorflow as tf
+    tf.config.set_visible_devices([], 'GPU')

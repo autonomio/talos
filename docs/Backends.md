@@ -1,14 +1,19 @@
-# TensorFlow
+# Backends
 
-Talos versions 1.0 and higher support TensorFlow 2.0 and higher. If you want to use older version of TensorFlow, Talos versions until 0.6.x support TensorFlow 1.4. 
+Talos supports standalone Keras, TensorFlow/tf.keras and PyTorch. The core does not import a framework until model training, prediction, serialization or a framework-specific helper requires it.
 
-# PyTorch
+## TensorFlow
 
-Only Talos versions 1.0 and higher have full support for PyTorch.
+Install `talos[tensorflow]`. Existing five-argument callbacks returning `(history, model)` work unchanged. The separate `legacy-tensorflow` lane preserves TensorFlow 2.14 / Keras 2.14 applications on Python 3.10–3.11.
 
-For instrucions on how to use Talos with PyTorch, see [this example](Examples_PyTorch).
+## Keras
 
+Install `talos[keras,tensorflow]`, or `talos[keras,torch]` with `KERAS_BACKEND=torch`. Set the backend before importing Keras. Native `.keras` artifacts retain trained weights; pass `custom_objects` for custom layers/metrics when required.
 
-# Legacy Keras 
+## PyTorch
 
-Talos versions 0.6.x and lower support the multi-backend Keras. 
+Install `talos[torch]`. Return `(history, model)` or a structured SFD result. The documented historical return of a network carrying `.history` plus its parameter iterator is normalized to the trained network.
+
+For portable restoration, provide an importable factory and constructor configuration, as demonstrated in [the Torch SFD](../examples/sfd/torch_sfd.py). Native artifacts use `state_dict`; nested class instances need an explicit restoration factory. Prediction preserves the network's existing training mode around inference.
+
+See [migration](Migration.md) for archive and resume behavior.

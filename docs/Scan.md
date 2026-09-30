@@ -1,3 +1,5 @@
+> Talos 2 preserves this interface and executes it through the shared SFD/CLI core. See [migration](Migration.md) for artifact layout, resume and corrected behavior.
+
 # Scan
 
 The experiment is configured and started through the `Scan()` command. All of the options effecting the experiment, other than the hyperparameters themselves, are configured through the Scan arguments. The most common use-case is where ~10 arguments are invoked.

@@ -19,4 +19,7 @@ def output_layer(task, last_activation, y_train, y_val):
         activation = None
         last_neuron = 1
 
+    else:
+        raise ValueError('Unknown model task: ' + str(task))
+
     return activation, last_neuron

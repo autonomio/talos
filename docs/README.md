@@ -1,3 +1,7 @@
+# Talos 2
+
+Start with the [current project overview](../README.md), [migration guide](Migration.md) and [SFD/CLI guide](SFD_and_CLI.md). The reference chapters below retain the established Talos workflow; the migration guide records corrected contracts and backend requirements.
+
 # Quick start
 
 ```python
@@ -44,4 +48,4 @@ Talos also supports easy deployment of models and experiment assets from the exp
 - Python 3.5 or higher (Talos versions 0.5.0 and below support 2.7)
 - TensorFlow, Theano, or CNTK
 
-Talos incorporates grid, random, and probabilistic hyperparameter optimization strategies, with focus on maximizing the flexibility, efficiency, and result of random strategy. Talos users benefit from access to pseudo, quasi, true, and quantum random methods.  
+Talos incorporates grid, random, and probabilistic hyperparameter optimization strategies, with focus on maximizing the flexibility, efficiency, and result of random strategy. Talos users benefit from access to pseudo, quasi, true, and quantum random methods.

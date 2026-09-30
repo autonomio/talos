@@ -1,93 +1,54 @@
+"""Aligned, nonmutating legacy data splits."""
+import numpy as np
+
+
+def _take(values, indices, nested=False):
+    if nested or isinstance(values, dict):
+        if isinstance(values, dict):
+            return {key: _take(value, indices) for key, value in values.items()}
+        return [_take(value, indices) for value in values]
+    if hasattr(values, 'iloc'):
+        return values.iloc[indices]
+    return values[indices]
+
+
+def _size(values, nested=False):
+    if isinstance(values, dict):
+        return len(next(iter(values.values())))
+    return len(values[0]) if nested else len(values)
+
+
 def validation_split(self):
-
-    '''Defines the attributes `x_train`, `y_train`, `x_val` and `y_val`.
-    The validation sets are determined by the attribute val_split,
-    which is a number in (0, 1) which determines the proportion of
-    the input data to be allocated for cross-validation.'''
-
-    # data input is list but multi_input is not set to True
-    if isinstance(self.x, list) and self.multi_input is False:
-
-        raise TypeError("For multi-input x, set multi_input to True")
-
-    # If split is done in `Scan()` do nothing
+    if isinstance(self.x, list) and not self.multi_input:
+        raise TypeError('For multi-input x, set multi_input to True')
     if self.custom_val_split:
-
-        self.x_train = self.x
-        self.y_train = self.y
-
+        self.x_train, self.y_train = self.x, self.y
         return self
-
-    # Otherwise start by shuffling
-    import wrangle
-    self.x, self.y = wrangle.array_random_shuffle(x=self.x,
-                                                  y=self.y,
-                                                  multi_input=self.multi_input)
-
-    # deduce the midway point for input data
-    limit = int(len(self.y) * (1 - self.val_split))
-
-    # handle the case where x is multi-input
-    if self.multi_input:
-
-        self.x_train = []
-        self.x_val = []
-
-        for ar in self.x:
-            self.x_train.append(ar[:limit])
-            self.x_val.append(ar[limit:])
-
-    # handle the case where x is not multi-input
-    else:
-
-        self.x_train = self.x[:limit]
-        self.x_val = self.x[limit:]
-
-    # handle y data same for both cases
-    self.y_train = self.y[:limit]
-    self.y_val = self.y[limit:]
-
+    if not 0 < self.val_split < 1:
+        raise ValueError('val_split must lie strictly between zero and one.')
+    nested_y = isinstance(self.y, list)
+    size = _size(self.y, nested_y)
+    indices = np.random.default_rng(getattr(self, 'seed', None)).permutation(size)
+    split = int(size * (1 - self.val_split))
+    if split == 0 or split == size:
+        raise ValueError('The validation split must contain training and validation rows.')
+    self.x_train = _take(self.x, indices[:split], self.multi_input)
+    self.x_val = _take(self.x, indices[split:], self.multi_input)
+    self.y_train = _take(self.y, indices[:split], nested_y)
+    self.y_val = _take(self.y, indices[split:], nested_y)
     return self
 
 
-def kfold(x, y, folds=10, shuffled=True, multi_input=False):
-
-    import wrangle
-
-    # data input is list but multi_input is not set to True
-    if isinstance(x, list) and multi_input is False:
-        raise TypeError("For multi-input x, set multi_input to True")
-
-    if shuffled is True:
-        x, y = wrangle.array_random_shuffle(x, y, multi_input)
-
-    out_x = []
-    out_y = []
-
-    # establish the fold size
-    y_len = len(y)
-    step = int(y_len / folds)
-
-    lo = 0
-    hi = step
-
-    # create folds one by one
-    for _i in range(folds):
-
-        # handle the case for multi-input model
-        if multi_input:
-            fold_x = []
-            for ar in x:
-                fold_x.append(ar[lo:hi])
-            out_x.append(fold_x)
-
-        # handle the case where model is not multi-input
-        else:
-            out_x.append(x[lo:hi])
-
-        out_y.append(y[lo:hi])
-
-        lo += step
-        hi += step
-
-    return out_x, out_y
+def kfold(x, y, folds=10, shuffled=True, multi_input=False, seed=None):
+    if isinstance(x, list) and not multi_input:
+        raise TypeError('For multi-input x, set multi_input to True')
+    nested_y = isinstance(y, list)
+    size = _size(y, nested_y)
+    if not isinstance(folds, int) or folds < 1 or folds > size:
+        raise ValueError('folds must be an integer between one and the number of rows.')
+    indices = np.arange(size)
+    if shuffled:
+        indices = np.random.default_rng(seed).permutation(indices)
+    parts = np.array_split(indices, folds)
+    return ([_take(x, part, multi_input) for part in parts],
+            [_take(y, part, nested_y) for part in parts])

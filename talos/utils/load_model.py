@@ -1,23 +1,14 @@
-from tensorflow.keras.models import model_from_json
+from pathlib import Path
+from talos.backends import backend_for
 
 
-def load_model(saved_model):
-
-    '''Load a Model from local disk
-
-    Takes as input .json and .h5 file with model
-    and weights and returns a model that can be then
-    used for predictions.
-
-    saved_model :: name of the saved model without
-    suffix (e.g. 'iris_model' and not 'iris_model.json')
-
-    '''
-
-    json_file = open(saved_model + ".json", 'r')
-    loaded_model_json = json_file.read()
-    json_file.close()
-    model = model_from_json(loaded_model_json)
-    model.load_weights(saved_model + '.h5')
-
-    return model
+def load_model(saved_model, custom_objects=None, backend='tensorflow', model_factory=None):
+    if isinstance(saved_model, dict):
+        return backend_for(backend=saved_model['backend']).load(saved_model, custom_objects, model_factory)
+    path = Path(saved_model)
+    if path.suffix in ('.keras', '.h5'):
+        descriptor = {'backend': backend, 'format': 'keras', 'path': str(path)}
+    else:
+        descriptor = {'backend': backend, 'format': 'keras_json_weights',
+                      'path': str(path) + '.json', 'weights': str(path) + '.h5'}
+    return backend_for(backend=backend).load(descriptor, custom_objects, model_factory)

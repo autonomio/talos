@@ -1,44 +1,20 @@
-from tensorflow.keras.callbacks import EarlyStopping
-
-
-def early_stopper(epochs=None,
-                  monitor='val_loss',
-                  mode='moderate',
-                  min_delta=None,
-                  patience=None):
-
-    '''EARLY STOP CALLBACK
-
-    Helps prevent wasting time when loss is not becoming
-    better. Offers two pre-determined settings 'moderate'
-    and 'strict' and allows input of list with two values:
-
-    `epochs` | int | The number of epochs for the permutation e.g. params['epochs']
-    `monitor` | int | The metric to monitor for change
-    `mode` | str | One of the presets `lazy`, `moderate`, `strict` or `None`
-    `min_delta` | float | The limit for change at which point flag is raised
-    `patience` | str | the number of epochs before termination from flag
-
-    '''
-    if mode == 'lazy':
-        _es_out = EarlyStopping(monitor=monitor,
-                                min_delta=0,
-                                patience=int(epochs / 3),
-                                verbose=0, mode='auto')
-
-    if mode == 'moderate':
-        _es_out = EarlyStopping(monitor=monitor,
-                                min_delta=0,
-                                patience=int(epochs / 10),
-                                verbose=0, mode='auto')
-    elif mode == 'strict':
-        _es_out = EarlyStopping(monitor=monitor,
-                                min_delta=0,
-                                patience=2,
-                                verbose=0, mode='auto')
+def early_stopper(epochs=None, monitor='val_loss', mode='moderate', min_delta=None,
+                  patience=None, backend='keras'):
+    if mode in ('lazy', 'moderate', 'strict'):
+        if mode != 'strict' and epochs is None:
+            raise ValueError('epochs is required for this early-stopping preset.')
+        defaults = {'lazy': int((epochs or 0) / 3), 'moderate': int((epochs or 0) / 10), 'strict': 2}
+        patience = defaults[mode] if patience is None else patience
+        min_delta = 0 if min_delta is None else min_delta
+    elif isinstance(mode, (list, tuple)) and len(mode) == 2:
+        min_delta, patience = mode
+    elif mode is None:
+        min_delta = 0 if min_delta is None else min_delta
+        patience = 0 if patience is None else patience
     else:
-        _es_out = EarlyStopping(monitor=monitor,
-                                min_delta=mode[0],
-                                patience=mode[1],
-                                verbose=0, mode='auto')
-    return _es_out
+        raise ValueError('mode must be lazy, moderate, strict, None, or [min_delta, patience].')
+    if backend in ('tensorflow', 'tf', 'tf.keras'):
+        from tensorflow.keras.callbacks import EarlyStopping
+    else:
+        from keras.callbacks import EarlyStopping
+    return EarlyStopping(monitor=monitor, min_delta=min_delta, patience=patience, verbose=0, mode='auto')

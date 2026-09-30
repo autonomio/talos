@@ -15,7 +15,6 @@ def telco_churn(quantile=.5):
     labels so that higher value is stronger. If set to 0 then original
     continuous will be returned.'''
 
-    import wrangle
     import pandas as pd
 
     base_url = 'https://raw.githubusercontent.com/autonomio/'
@@ -24,10 +23,10 @@ def telco_churn(quantile=.5):
 
     df = df.drop(['val_acc', 'loss', 'f1score', 'acc', 'round_epochs'], axis=1)
 
-    for col in df.iloc[:, 2:].columns:
-        df = wrangle.col_to_multilabel(df, col)
-
-    df = wrangle.df_rename_cols(df)
+    targets = df.iloc[:, :2]
+    features = [pd.get_dummies(df[col]) for col in df.columns[2:]]
+    df = pd.concat([targets, *features], axis=1)
+    df.columns = [f'C{i}' for i in range(df.shape[1])]
 
     if quantile > 0:
         y1 = (df.C0 < df.C0.quantile(quantile)).astype(int).values
@@ -86,7 +85,9 @@ def titanic():
 def iris():
 
     import pandas as pd
-    from tensorflow.keras.utils import to_categorical
+    import numpy as np
+    def to_categorical(labels):
+        return np.eye(int(np.max(labels)) + 1)[labels]
 
     base_url = 'https://raw.githubusercontent.com/autonomio/'
     url = 'datasets/master/autonomio-datasets/'

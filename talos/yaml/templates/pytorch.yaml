@@ -1,0 +1,17 @@
+schema_version: "1.0"
+metadata:
+  name: "pytorch_experiment"
+  mode: development
+  description: "Caller-owned pytorch params/prep/model example"
+sfd:
+  module: talos.sfd.templates.pytorch
+  backend: torch
+  task: regression
+  objective: loss
+uel:
+  round_limit: 2
+  seed: 42
+  search_strategy:
+    type: grid
+  checkpoint_interval: 1
+  save_models: true
