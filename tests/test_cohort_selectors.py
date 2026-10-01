@@ -30,7 +30,7 @@ def iris_results():
 
 def test_diversity_keeps_distinct_real_iris_score_regions_and_seed(iris_results):
     context = {'results': iris_results}
-    options = {'target_count': 5, 'n_clusters': 3, 'n_components': 2,
+    options = {'target_count': 5, 'n_clusters': 2, 'n_components': 2,
                'metric_cols': ['accuracy', 'loss'], 'random_state': 19}
     selected = select_diverse_metrics(context, **options)
     assert selected == select_diverse_metrics(context, **options)

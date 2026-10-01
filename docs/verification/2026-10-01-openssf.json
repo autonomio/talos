@@ -124,5 +124,38 @@
     "report_sha256": "507e30da0c0856c80052230f6a489160add0c218022929ae32c096a5ea190b3f",
     "junit_sha256": "f8ee251ab6cd0b6c5182a82e352d67adf2af19ba6b486f44e74aec7c9050ebc3",
     "scope": "Core Python3.12 environment without optional training frameworks, maintained+governance suite; time is not the maintained-only runtime gate."
+  },
+  "minimum_cohort_ci_correction": {
+    "failed_commit": "737ee1f631e73b34ea7b1a31db506a0947ae4d20",
+    "run": 36912282865,
+    "job": 110537609801,
+    "before": {
+      "passed": 214,
+      "failed": 1,
+      "seconds": 130.14
+    },
+    "cause": "A two-point PCA/KMeans cluster has equal medoid distances. Metric scaling changes rounding by approximately1e-16 and flips the arbitrary tied ID, violating an overly specific new test assertion.",
+    "change": "Use two six-point real-Iris clusters with minimum nearest-medoid margins0.207575286 and0.217903534. Keep every exact scale, seed, uniqueness, membership, score-region and input-preservation assertion. Production selector remains unchanged.",
+    "test_source_sha256": "b1d48f58f018614ba262e4b347d1e2d2882588d4ca238ad37dd7512634cea44d",
+    "local_current": {
+      "numpy": "2.5.3",
+      "sklearn": "1.9.1",
+      "cohort_tests_passed": 28,
+      "seconds": 1.68
+    },
+    "local_older": {
+      "numpy": "1.26.4",
+      "sklearn": "1.3.0",
+      "cohort_tests_passed": 28,
+      "seconds": 7.85
+    },
+    "minimum_probe": {
+      "numpy": "1.26.4",
+      "sklearn": "1.5.0",
+      "corrected_test_passed": true,
+      "seconds": 1.15,
+      "scope": "Identical SHA256 temporary copy of the corrected real-Iris selector test; independent minimum-lane probe."
+    },
+    "hosted_rerun": "Required for corrected candidate; no all-CI-green claim."
   }
 }
