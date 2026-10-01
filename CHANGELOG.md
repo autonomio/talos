@@ -2,6 +2,7 @@
 
 # v2.0.2
 
+- Bank the core coverage gain at 70% lines and 59% branches under the existing ratchet.
 - Verify complete-package statement coverage across framework acceptance and runnable documentation without narrowing the measured source.
 - Add scientific cohort-selection, causal-scaling and shipped-framework-template regression tests.
 - Attach immutable distribution assets, checksums and verified Sigstore build provenance to authorized GitHub releases while keeping PyPI publication explicitly gated.

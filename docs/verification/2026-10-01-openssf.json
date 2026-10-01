@@ -84,7 +84,8 @@
     "governance/tests/test_release_workflow.py": "dfb634e4ddadccd5cdfedb46ca40e26c3420c77deb4134fe4ba9c425ed8dc308",
     "tests/test_causal_scaler.py": "78f91e7a77ab54689b76b0d6e3d8f2a008581ae3036b87fea5512957c419b7c5",
     "tests/test_cohort_selectors.py": "109890f124ad94512256910b68c2c1693abfaa671d42ef3bcd98be16ec6bf105",
-    "tests/test_packaged_sfd_templates.py": "b6d6176260b7bd287b8ded9d9deba66abfa4c7ee609b86faaadbe4ff2ae78a6d"
+    "tests/test_packaged_sfd_templates.py": "b6d6176260b7bd287b8ded9d9deba66abfa4c7ee609b86faaadbe4ff2ae78a6d",
+    ".github/budgets.json": "b0bcb144d5516c631632a6d51ae0563f66986db40acdc01f963f96061ad64cbc"
   },
   "published_observations": {
     "scorecard": 7.7,
@@ -99,5 +100,29 @@
     "Package coverage does not measure repository governance/tools.",
     "NVIDIA and entropy-service documentation paths use explicitly declared providers; physical hardware and remote services are not verified.",
     "Historical releases remain unsigned."
-  ]
+  ],
+  "hosted_ci": {
+    "candidate_commit": "7545ad11cde6faa0954635509e9898223b515b10",
+    "run": 36908248907,
+    "acceptance": {
+      "passed": 561,
+      "skipped": 34,
+      "seconds": 201.44
+    },
+    "core_coverage": {
+      "line_percent": 70.3,
+      "branch_percent": 59.7
+    },
+    "disposition": "Tests and other lint stages pass; the coverage floor correctly requires banking the gain. Candidate raises floors to70lines/59branches; subsequent hosted rerun remains required."
+  },
+  "core_local_confirmation": {
+    "passed": 561,
+    "skipped": 34,
+    "seconds": 251.837,
+    "line_percent": 70.35931580759959,
+    "branch_percent": 59.778481012658226,
+    "report_sha256": "507e30da0c0856c80052230f6a489160add0c218022929ae32c096a5ea190b3f",
+    "junit_sha256": "f8ee251ab6cd0b6c5182a82e352d67adf2af19ba6b486f44e74aec7c9050ebc3",
+    "scope": "Core Python3.12 environment without optional training frameworks, maintained+governance suite; time is not the maintained-only runtime gate."
+  }
 }
