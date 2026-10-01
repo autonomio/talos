@@ -1,6 +1,14 @@
-[BACK](Examples_Multiple_Inputs.md)
+# Multiple-input Keras sweep: complete code
 
-# Multiple Inputs
+Train a Keras model with two aligned feature arrays. This page is the standalone companion to the [walkthrough](Examples_Multiple_Inputs.md).
+
+## Prerequisites and execution
+
+Use Python 3.11–3.13 with the [TensorFlow extra](Backends.md) (`talos[tensorflow]`). The dataset is an offline scikit-learn fixture. From a writable experiment directory, save the following program as `multiple_inputs.py` and execute `python multiple_inputs.py`.
+
+The walkthrough owns the data split, callback explanation and interpretation of metrics. The program is bounded to two trials; successful execution passes its result-row assertion.
+
+## Program
 
 ```python
 import talos
@@ -39,3 +47,13 @@ scan_object = talos.Scan(x=[x_train[:, :2], x_train[:, 2:]], y=y_train,
                          seed=17, backend='tensorflow')
 assert len(scan_object.data) == 2
 ```
+
+## Result and failure boundaries
+
+`scan_object.data` contains two completed rows. The final prediction block returns one three-class probability vector per validation row. The two input arrays preserve the order of the corresponding target rows. The program writes result and checkpoint artifacts to its experiment run directory.
+
+Keep both arrays aligned and pass them in the same order to training, validation and prediction. Each input layer expects two columns; a single four-column array does not match this model. Keep `multi_input=True` when using the established multi-input facade.
+
+## Read next
+
+Return to the [walkthrough](Examples_Multiple_Inputs.md) for the procedure and failure diagnosis. [Predict](Predict.md) describes candidate selection and input forwarding; [multiple outputs](Examples_Multiple_Outputs.md) covers aligned target lists.

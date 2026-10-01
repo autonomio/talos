@@ -93,9 +93,21 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install '.[tensorflow,keras,torch,plots,samplers,test]'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: docs-site/package-lock.json
+      - run: npm --prefix docs-site ci
+      - run: npm --prefix docs-site exec -- playwright install --with-deps chromium
       - run: python tools/verify_documentation.py --output-dir verification-output
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: documentation-verification
           path: verification-output/
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: documentation-browser-proof
+          path: docs-site/test-results/

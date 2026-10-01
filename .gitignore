@@ -25,3 +25,10 @@ build/
 *.pt
 verification-output/
 !docs/verification/*.json
+
+# Authored documentation profile; generated site artifacts stay ignored.
+!.markdownlint.json
+!docs-site/package.json
+!docs-site/package-lock.json
+!docs-site/product-docs.json
+!docs-site/docs-map.json

@@ -1,0 +1,570 @@
+{
+  "sections": [
+    {
+      "dir": "overview",
+      "label": "Overview",
+      "position": 1,
+      "slug": "/overview",
+      "description": "Talos boundaries, workflow, and documentation routes."
+    },
+    {
+      "dir": "guides",
+      "label": "Guides",
+      "position": 2,
+      "slug": "/guides",
+      "description": "Run, inspect, and control a parameter sweep."
+    },
+    {
+      "dir": "reference",
+      "label": "Reference",
+      "position": 3,
+      "slug": "/reference",
+      "description": "Public interfaces, defaults, results, and failure boundaries."
+    },
+    {
+      "dir": "developer",
+      "label": "Developer",
+      "position": 4,
+      "slug": "/developer",
+      "description": "Contribute, verify documentation, and maintain Talos."
+    },
+    {
+      "dir": "packages",
+      "label": "Packages",
+      "position": 5,
+      "slug": "/packages",
+      "description": "Package ownership, entry points, and optional dependencies."
+    }
+  ],
+  "documents": [
+    {
+      "source": "README.md",
+      "dest": "index.md",
+      "slug": "/",
+      "sidebarPosition": 1,
+      "frozenSha256": "291d3dcb61e91a759aab5e0bb4c5f3b6fbddc66b21d38123acefddfe75c1e1a6",
+      "className": "talos-product-home"
+    },
+    {
+      "source": "CONTRIBUTING.md",
+      "dest": "developer/contributing.md",
+      "slug": "/developer/contributing",
+      "sidebarPosition": 2,
+      "sidebarLabel": "Contributing"
+    },
+    {
+      "source": "CODE_OF_CONDUCT.md",
+      "dest": "developer/code-of-conduct.md",
+      "slug": "/developer/code-of-conduct",
+      "sidebarPosition": 3,
+      "sidebarLabel": "Code of conduct"
+    },
+    {
+      "source": "docs/README.md",
+      "dest": "overview/docs-hub.md",
+      "slug": "/overview/docs-hub",
+      "sidebarPosition": 4,
+      "sidebarLabel": "Talos documentation"
+    },
+    {
+      "source": "docs/Guides/README.md",
+      "dest": "guides/start.md",
+      "slug": "/guides/start",
+      "sidebarPosition": 5,
+      "sidebarLabel": "Guides"
+    },
+    {
+      "source": "docs/Guides/Quickstart.md",
+      "dest": "guides/quickstart.md",
+      "slug": "/guides/quickstart",
+      "sidebarPosition": 6,
+      "sidebarLabel": "First parameter sweep",
+      "legacySlugs": [
+        "/",
+        "/README"
+      ]
+    },
+    {
+      "source": "docs/Reference/README.md",
+      "dest": "reference/index.md",
+      "slug": "/reference/index",
+      "sidebarPosition": 7,
+      "sidebarLabel": "Reference"
+    },
+    {
+      "source": "docs/Developer/README.md",
+      "dest": "developer/index.md",
+      "slug": "/developer/index",
+      "sidebarPosition": 8,
+      "sidebarLabel": "Developer documentation"
+    },
+    {
+      "source": "docs/Developer/Documentation-System.md",
+      "dest": "developer/documentation-system.md",
+      "slug": "/developer/documentation-system",
+      "sidebarPosition": 9,
+      "sidebarLabel": "Documentation system contract"
+    },
+    {
+      "source": "docs/Developer/Documentation-Style.md",
+      "dest": "developer/documentation-style.md",
+      "slug": "/developer/documentation-style",
+      "sidebarPosition": 10,
+      "sidebarLabel": "Documentation style"
+    },
+    {
+      "source": "talos/README.md",
+      "dest": "packages/talos.md",
+      "slug": "/packages/talos",
+      "sidebarPosition": 11,
+      "sidebarLabel": "talos package"
+    },
+    {
+      "source": "docs-site/README.md",
+      "dest": "developer/documentation-scaffold.md",
+      "slug": "/developer/documentation-scaffold",
+      "sidebarPosition": 12,
+      "sidebarLabel": "Documentation scaffold"
+    },
+    {
+      "source": "docs/Analyze.md",
+      "dest": "reference/analyze.md",
+      "slug": "/reference/analyze",
+      "sidebarPosition": 13,
+      "sidebarLabel": "Analyze",
+      "legacySlugs": [
+        "/Analyze"
+      ]
+    },
+    {
+      "source": "docs/Asking_Help.md",
+      "dest": "guides/asking-help.md",
+      "slug": "/guides/asking-help",
+      "sidebarPosition": 14,
+      "sidebarLabel": "Get help and report issues",
+      "legacySlugs": [
+        "/Asking_Help"
+      ]
+    },
+    {
+      "source": "docs/AutoModel.md",
+      "dest": "reference/automodel.md",
+      "slug": "/reference/automodel",
+      "sidebarPosition": 15,
+      "sidebarLabel": "AutoModel",
+      "legacySlugs": [
+        "/AutoModel"
+      ]
+    },
+    {
+      "source": "docs/AutoParams.md",
+      "dest": "reference/autoparams.md",
+      "slug": "/reference/autoparams",
+      "sidebarPosition": 16,
+      "sidebarLabel": "AutoParams",
+      "legacySlugs": [
+        "/AutoParams"
+      ]
+    },
+    {
+      "source": "docs/AutoPredict.md",
+      "dest": "reference/autopredict.md",
+      "slug": "/reference/autopredict",
+      "sidebarPosition": 17,
+      "sidebarLabel": "AutoPredict",
+      "legacySlugs": [
+        "/AutoPredict"
+      ]
+    },
+    {
+      "source": "docs/AutoScan.md",
+      "dest": "reference/autoscan.md",
+      "slug": "/reference/autoscan",
+      "sidebarPosition": 18,
+      "sidebarLabel": "AutoScan",
+      "legacySlugs": [
+        "/AutoScan"
+      ]
+    },
+    {
+      "source": "docs/Backends.md",
+      "dest": "reference/backends.md",
+      "slug": "/reference/backends",
+      "sidebarPosition": 19,
+      "sidebarLabel": "Backends",
+      "legacySlugs": [
+        "/Backends"
+      ]
+    },
+    {
+      "source": "docs/Custom_Reducers.md",
+      "dest": "guides/custom-reducers.md",
+      "slug": "/guides/custom-reducers",
+      "sidebarPosition": 20,
+      "sidebarLabel": "Custom reducers",
+      "legacySlugs": [
+        "/Custom_Reducers"
+      ]
+    },
+    {
+      "source": "docs/Deploy.md",
+      "dest": "reference/deploy.md",
+      "slug": "/reference/deploy",
+      "sidebarPosition": 21,
+      "sidebarLabel": "Deploy",
+      "legacySlugs": [
+        "/Deploy"
+      ]
+    },
+    {
+      "source": "docs/Energy_Draw.md",
+      "dest": "reference/energy-draw.md",
+      "slug": "/reference/energy-draw",
+      "sidebarPosition": 22,
+      "sidebarLabel": "Energy draw callback",
+      "legacySlugs": [
+        "/Energy_Draw"
+      ]
+    },
+    {
+      "source": "docs/Evaluate.md",
+      "dest": "reference/evaluate.md",
+      "slug": "/reference/evaluate",
+      "sidebarPosition": 23,
+      "sidebarLabel": "Evaluate",
+      "legacySlugs": [
+        "/Evaluate"
+      ]
+    },
+    {
+      "source": "docs/Examples_AutoML.md",
+      "dest": "guides/examples-automl.md",
+      "slug": "/guides/examples-automl",
+      "sidebarPosition": 24,
+      "sidebarLabel": "Bounded AutoML sweep",
+      "legacySlugs": [
+        "/Examples_AutoML"
+      ]
+    },
+    {
+      "source": "docs/Examples_AutoML_Code.md",
+      "dest": "guides/examples-automl-code.md",
+      "slug": "/guides/examples-automl-code",
+      "sidebarPosition": 25,
+      "sidebarLabel": "AutoML: complete code",
+      "legacySlugs": [
+        "/Examples_AutoML_Code"
+      ]
+    },
+    {
+      "source": "docs/Examples_Generator.md",
+      "dest": "guides/examples-generator.md",
+      "slug": "/guides/examples-generator",
+      "sidebarPosition": 26,
+      "sidebarLabel": "Keras sequence-generator sweep",
+      "legacySlugs": [
+        "/Examples_Generator"
+      ]
+    },
+    {
+      "source": "docs/Examples_Generator_Code.md",
+      "dest": "guides/examples-generator-code.md",
+      "slug": "/guides/examples-generator-code",
+      "sidebarPosition": 27,
+      "sidebarLabel": "Generator: complete code",
+      "legacySlugs": [
+        "/Examples_Generator_Code"
+      ]
+    },
+    {
+      "source": "docs/Examples_Multiple_Inputs.md",
+      "dest": "guides/examples-multiple-inputs.md",
+      "slug": "/guides/examples-multiple-inputs",
+      "sidebarPosition": 28,
+      "sidebarLabel": "Multiple-input Keras sweep",
+      "legacySlugs": [
+        "/Examples_Multiple_Inputs"
+      ]
+    },
+    {
+      "source": "docs/Examples_Multiple_Inputs_Code.md",
+      "dest": "guides/examples-multiple-inputs-code.md",
+      "slug": "/guides/examples-multiple-inputs-code",
+      "sidebarPosition": 29,
+      "sidebarLabel": "Multiple inputs: complete code",
+      "legacySlugs": [
+        "/Examples_Multiple_Inputs_Code"
+      ]
+    },
+    {
+      "source": "docs/Examples_Multiple_Outputs.md",
+      "dest": "guides/examples-multiple-outputs.md",
+      "slug": "/guides/examples-multiple-outputs",
+      "sidebarPosition": 30,
+      "sidebarLabel": "Multiple-output Keras sweep",
+      "legacySlugs": [
+        "/Examples_Multiple_Outputs"
+      ]
+    },
+    {
+      "source": "docs/Examples_Multiple_Outputs_Code.md",
+      "dest": "guides/examples-multiple-outputs-code.md",
+      "slug": "/guides/examples-multiple-outputs-code",
+      "sidebarPosition": 31,
+      "sidebarLabel": "Multiple outputs: complete code",
+      "legacySlugs": [
+        "/Examples_Multiple_Outputs_Code"
+      ]
+    },
+    {
+      "source": "docs/Examples_PyTorch.md",
+      "dest": "guides/examples-pytorch.md",
+      "slug": "/guides/examples-pytorch",
+      "sidebarPosition": 32,
+      "sidebarLabel": "Native PyTorch sweep",
+      "legacySlugs": [
+        "/Examples_PyTorch"
+      ]
+    },
+    {
+      "source": "docs/Examples_PyTorch_Code.md",
+      "dest": "guides/examples-pytorch-code.md",
+      "slug": "/guides/examples-pytorch-code",
+      "sidebarPosition": 33,
+      "sidebarLabel": "PyTorch: complete code",
+      "legacySlugs": [
+        "/Examples_PyTorch_Code"
+      ]
+    },
+    {
+      "source": "docs/Examples_Typical.md",
+      "dest": "guides/examples-typical.md",
+      "slug": "/guides/examples-typical",
+      "sidebarPosition": 34,
+      "sidebarLabel": "Typical Keras sweep",
+      "legacySlugs": [
+        "/Examples_Typical"
+      ]
+    },
+    {
+      "source": "docs/Examples_Typical_Code.md",
+      "dest": "guides/examples-typical-code.md",
+      "slug": "/guides/examples-typical-code",
+      "sidebarPosition": 35,
+      "sidebarLabel": "Typical model: complete code",
+      "legacySlugs": [
+        "/Examples_Typical_Code"
+      ]
+    },
+    {
+      "source": "docs/Gamify.md",
+      "dest": "guides/gamify.md",
+      "slug": "/guides/gamify",
+      "sidebarPosition": 36,
+      "sidebarLabel": "Gamify",
+      "legacySlugs": [
+        "/Gamify"
+      ]
+    },
+    {
+      "source": "docs/Generator.md",
+      "dest": "reference/generator.md",
+      "slug": "/reference/generator",
+      "sidebarPosition": 37,
+      "sidebarLabel": "Generator",
+      "legacySlugs": [
+        "/Generator"
+      ]
+    },
+    {
+      "source": "docs/Hidden_Layers.md",
+      "dest": "reference/hidden-layers.md",
+      "slug": "/reference/hidden-layers",
+      "sidebarPosition": 38,
+      "sidebarLabel": "Hidden layers and shapes",
+      "legacySlugs": [
+        "/Hidden_Layers"
+      ]
+    },
+    {
+      "source": "docs/Install_Options.md",
+      "dest": "reference/install-options.md",
+      "slug": "/reference/install-options",
+      "sidebarPosition": 39,
+      "sidebarLabel": "Installation",
+      "legacySlugs": [
+        "/Install_Options"
+      ]
+    },
+    {
+      "source": "docs/Learning_Rate_Normalizer.md",
+      "dest": "reference/learning-rate-normalizer.md",
+      "slug": "/reference/learning-rate-normalizer",
+      "sidebarPosition": 40,
+      "sidebarLabel": "Learning-rate normalizer",
+      "legacySlugs": [
+        "/Learning_Rate_Normalizer"
+      ]
+    },
+    {
+      "source": "docs/Local_Strategy.md",
+      "dest": "guides/local-strategy.md",
+      "slug": "/guides/local-strategy",
+      "sidebarPosition": 41,
+      "sidebarLabel": "Local strategy",
+      "legacySlugs": [
+        "/Local_Strategy"
+      ]
+    },
+    {
+      "source": "docs/Maintenance.md",
+      "dest": "developer/maintenance.md",
+      "slug": "/developer/maintenance",
+      "sidebarPosition": 42,
+      "sidebarLabel": "Maintenance and executable documentation",
+      "legacySlugs": [
+        "/Maintenance"
+      ]
+    },
+    {
+      "source": "docs/Metrics.md",
+      "dest": "reference/metrics.md",
+      "slug": "/reference/metrics",
+      "sidebarPosition": 43,
+      "sidebarLabel": "Metrics",
+      "legacySlugs": [
+        "/Metrics"
+      ]
+    },
+    {
+      "source": "docs/Migration.md",
+      "dest": "guides/migration.md",
+      "slug": "/guides/migration",
+      "sidebarPosition": 44,
+      "sidebarLabel": "Talos 2 migration",
+      "legacySlugs": [
+        "/Migration"
+      ]
+    },
+    {
+      "source": "docs/Monitoring.md",
+      "dest": "reference/monitoring.md",
+      "slug": "/reference/monitoring",
+      "sidebarPosition": 45,
+      "sidebarLabel": "Monitoring",
+      "legacySlugs": [
+        "/Monitoring"
+      ]
+    },
+    {
+      "source": "docs/Optimization_Strategies.md",
+      "dest": "guides/optimization-strategies.md",
+      "slug": "/guides/optimization-strategies",
+      "sidebarPosition": 46,
+      "sidebarLabel": "Optimization strategies",
+      "legacySlugs": [
+        "/Optimization_Strategies"
+      ]
+    },
+    {
+      "source": "docs/Overview.md",
+      "dest": "overview/overview.md",
+      "slug": "/overview/overview",
+      "sidebarPosition": 47,
+      "sidebarLabel": "Talos capabilities",
+      "legacySlugs": [
+        "/Overview"
+      ]
+    },
+    {
+      "source": "docs/Parallelism.md",
+      "dest": "guides/parallelism.md",
+      "slug": "/guides/parallelism",
+      "sidebarPosition": 48,
+      "sidebarLabel": "Devices and parallel workers",
+      "legacySlugs": [
+        "/Parallelism"
+      ]
+    },
+    {
+      "source": "docs/Predict.md",
+      "dest": "reference/predict.md",
+      "slug": "/reference/predict",
+      "sidebarPosition": 49,
+      "sidebarLabel": "Predict",
+      "legacySlugs": [
+        "/Predict"
+      ]
+    },
+    {
+      "source": "docs/Probabilistic_Reduction.md",
+      "dest": "guides/probabilistic-reduction.md",
+      "slug": "/guides/probabilistic-reduction",
+      "sidebarPosition": 50,
+      "sidebarLabel": "Probabilistic reduction",
+      "legacySlugs": [
+        "/Probabilistic_Reduction"
+      ]
+    },
+    {
+      "source": "docs/Restore.md",
+      "dest": "reference/restore.md",
+      "slug": "/reference/restore",
+      "sidebarPosition": 51,
+      "sidebarLabel": "Restore",
+      "legacySlugs": [
+        "/Restore"
+      ]
+    },
+    {
+      "source": "docs/Roadmap.md",
+      "dest": "overview/roadmap.md",
+      "slug": "/overview/roadmap",
+      "sidebarPosition": 52,
+      "sidebarLabel": "Development priorities",
+      "legacySlugs": [
+        "/Roadmap"
+      ]
+    },
+    {
+      "source": "docs/SFD_and_CLI.md",
+      "dest": "guides/sfd-and-cli.md",
+      "slug": "/guides/sfd-and-cli",
+      "sidebarPosition": 53,
+      "sidebarLabel": "SFD and manifest CLI",
+      "legacySlugs": [
+        "/SFD_and_CLI"
+      ]
+    },
+    {
+      "source": "docs/Scan.md",
+      "dest": "reference/scan.md",
+      "slug": "/reference/scan",
+      "sidebarPosition": 54,
+      "sidebarLabel": "Scan",
+      "legacySlugs": [
+        "/Scan"
+      ]
+    },
+    {
+      "source": "docs/Templates.md",
+      "dest": "reference/templates.md",
+      "slug": "/reference/templates",
+      "sidebarPosition": 55,
+      "sidebarLabel": "Templates",
+      "legacySlugs": [
+        "/Templates"
+      ]
+    },
+    {
+      "source": "docs/Workflow.md",
+      "dest": "guides/workflow.md",
+      "slug": "/guides/workflow",
+      "sidebarPosition": 56,
+      "sidebarLabel": "Model-search workflow",
+      "legacySlugs": [
+        "/Workflow"
+      ]
+    }
+  ]
+}

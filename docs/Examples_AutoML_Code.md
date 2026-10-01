@@ -1,6 +1,14 @@
-[BACK](Examples_AutoML.md)
+# Bounded AutoML sweep: complete code
 
-# AutoML
+Run a two-trial binary Iris search using built-in Talos models. This page is the standalone companion to the [walkthrough](Examples_AutoML.md).
+
+## Prerequisites and execution
+
+Use Python 3.11–3.13 with the [TensorFlow extra](Backends.md) (`talos[tensorflow]`). The dataset is an offline scikit-learn fixture. From a writable experiment directory, save the following program as `automl_example.py` and execute `python automl_example.py`.
+
+The walkthrough owns the data split, callback explanation and interpretation of metrics. The program is bounded to two trials; successful execution passes its result-row assertion.
+
+## Program
 
 ```python
 import talos
@@ -26,3 +34,13 @@ scan_object = autom8.start(x=x_train, y=y_train, x_val=x_val, y_val=y_val,
                            params=p, round_limit=2, seed=17, backend='tensorflow')
 assert len(scan_object.data) == 2
 ```
+
+## Result and failure boundaries
+
+`autom8.start()` returns `scan_object` with two completed rows. `AutoParams` supplies the required model keys; the explicit updates keep the recipe to two epochs and small networks. The held-out `x_test` and `y_test` are prepared but are not used during this scan. The program writes result and checkpoint artifacts to its experiment run directory.
+
+The filtered dataset has two classes, matching `task="binary"` and binary cross-entropy. `AutoParams(network=False, …)` avoids external parameter-service calls. Changing a generated dictionary without retaining required model keys can break the callback; see [AutoParams](AutoParams.md). Two short trials demonstrate wiring rather than an optimized architecture.
+
+## Read next
+
+Return to the [walkthrough](Examples_AutoML.md) for the procedure and failure diagnosis. [AutoScan](AutoScan.md) and [AutoModel](AutoModel.md) explain the generated model boundary; [Evaluate](Evaluate.md) covers the untouched test split.

@@ -24,7 +24,7 @@ import types
 
 from control_docs import blocks
 
-PAGES = ['README.md', 'docs/README.md', 'docs/SFD_and_CLI.md',
+PAGES = ['README.md', 'docs/Guides/Quickstart.md', 'docs/SFD_and_CLI.md',
          'docs/Migration.md', 'docs/Backends.md', 'docs/Install_Options.md',
          'CONTRIBUTING.md']
 
@@ -105,7 +105,8 @@ def shell_prelude():
 def copy_checkout(root, destination):
     shutil.copytree(root, destination, ignore=shutil.ignore_patterns(
         '.git', '__pycache__', '.pytest_cache', '.ruff_cache', '.venv',
-        '.coverage', 'dist', 'build', 'results', 'verification-output'))
+        '.coverage', 'dist', 'build', 'results', 'verification-output',
+        'node_modules', '.generated', '.docusaurus', 'test-results'))
 
 
 def main():
@@ -241,7 +242,7 @@ def main():
                                 if 'predictions = result.predict' in source:
                                     assert context['predictions'].shape == (30, 3)
                                     assert np.isfinite(context['result'].data.val_loss).all()
-                                if page == 'docs/README.md' and 'scan = talos.Scan' in source:
+                                if page == 'docs/Guides/Quickstart.md' and 'scan = talos.Scan' in source:
                                     assert len(context['scan'].data) == 2
                                     assert np.isfinite(context['scan'].data.val_loss).all()
                                 if page == 'docs/Migration.md':

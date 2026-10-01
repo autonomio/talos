@@ -2,6 +2,14 @@
 
 Talos 2 owns an independent fork of Limen's general experiment core. There is one search queue, executor and artifact format for `Scan`, native SFDs and the CLI. Finance, feature/indicator catalogs, backtests and automatic experiment readers are absent.
 
+## Prerequisites and scope
+
+Use an existing Talos callback in a supported framework environment; see
+[Installation](Install_Options.md) for extras and dependency floors. Keep a copy
+of existing run artifacts before changing environments. This guide covers the
+established Python interface, an incremental SFD port and recovery boundaries.
+It does not convert a model architecture or its training loop.
+
 ## Existing applications
 
 Keep `model(x_train, y_train, x_val, y_val, params)` returning `(history, trained_model)` and the current `talos.Scan(x, y, params, model, experiment_name, ...)` call. Positional order and established keywords remain supported. Framework-specific history objects or dictionaries are accepted. The documented Torch `(network_with_history, network.parameters())` return also works.
@@ -52,6 +60,24 @@ Torch persistence uses `state_dict` plus an importable factory and plain constru
 
 New Deploy archives are versioned native packages. Historical Keras JSON/H5 archives remain readable, including the compatibility bridge for modern Keras. Loading archives and model factories requires trusting the source code and serialized model.
 
+## Port procedure and expected result
+
+1. Run the existing callback through `Scan` with its original data and parameters.
+2. Preserve that callback and import it from the SFD wrapper above.
+3. Pass the same explicit splits to `talos.run` and declare the same objective
+   and direction. Begin with a bounded parameter set.
+4. Inspect the result's `.data`, select a trained artifact and compare predictions
+   on the same held-out observations. A successful port produces completed-trial
+   records and a restorable artifact; scores need not be bit-identical across
+   framework versions or devices.
+5. Exercise [Deploy](Deploy.md) and [Restore](Restore.md) in a fresh process before
+   retiring the old environment. Check source dependencies and custom objects.
+
+A source, configuration or data verification failure must be resolved before
+resume. Do not edit a checkpoint to force acceptance. An opaque stream requires
+a reconstructible caller path and a stable identity; a missing importable Torch
+factory or Keras custom object prevents portable restoration.
+
 ## Corrected behavior
 
 Talos 2 corrects confirmed defects: stateful F1 is invariant to batch partitioning; binary outputs shaped `(n, 1)` are thresholded correctly; multiclass probabilities use class selection; objective direction is respected; evaluation folds include remainder rows and reject empty folds; shuffled features and labels stay aligned; reducer windows/cadence, live-file reload and Gamify annotations behave consistently; later-added metrics are retained in CSVs. Fold evaluation scores an already-trained model on held-out partitions; it does not retrain models as cross-validation would.
@@ -72,3 +98,8 @@ Core imports no DL or plotting backend. Python 3.10–3.13, modern optional fram
 The unchanged legacy training callback also passed real Iris training, prediction and Deploy/Restore on TensorFlow 2.14.1. Checks cover signal interruption, completed-trial recovery, live model/data/control edits, callable parameters, native framework artifacts in fresh processes, deleted caller sources, scientific metric references and CLI manifest lifecycle. Wheels were exercised outside the checkout; all 179 packaged source/resource files match the working sources. Lint, distribution builds and dependency consistency pass. The follow-up maintenance pass executes the documentation and all example files, raises patched dependency floors and adds cold-import and paused-Gamify regression checks; see [maintenance evidence](Maintenance.md).
 
 This is a CPU acceptance baseline. Accelerator behavior, physical power providers and remote quantum entropy services require their own hardware/service verification. Quantum sampler adapter behavior is tested with controlled provider responses. Repeat the maintained CI matrix and archive/resume checks when updating supported dependencies.
+
+## Read next
+
+Use [SFD and manifest CLI](SFD_and_CLI.md) for the new entry point or
+[Scan](Scan.md) to retain the existing Python workflow.

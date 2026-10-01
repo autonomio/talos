@@ -2,9 +2,23 @@
 
 Maintain framework compatibility, reproducible records and archive/recovery behavior together. Update supported dependency floors when upstream fixes require it; keep the TensorFlow 2.14 compatibility lane explicit.
 
+## Prerequisites and ownership
+
+Use the supported Python/framework environments from
+[Installation](Install_Options.md), a clean checkout and enough disk space for
+trained artifacts and retained verification reports. The verifier creates
+isolated local study projects, trains bounded real examples and builds an
+unpublished wheel; its backup check pushes only to a local bare Git fixture.
+Physical accelerator checks require separate available hardware.
+
+Node.js 20.18.1 or later and locked npm dependencies are additionally required for
+[site verification](Developer/Documentation-System.md). Python compatibility and
+archive contracts belong to this page; rendering, routing and visual treatment
+belong to the documentation system.
+
 ## Repeatable checks
 
-Install the checkout with `test,plots,samplers,tensorflow,torch` extras, then run `python tools/verify_documentation.py --output-dir verification-output`. The command executes every fenced block in README, CONTRIBUTING and the documentation, all notebook code cells, both standalone scripts and all three native SFD examples. It rejects missing executions and changed source hashes. `--verify-only` rechecks retained receipts against the current sources.
+Install the checkout with `test,plots,samplers,tensorflow,torch` extras, then run `python tools/verify_documentation.py --output-dir verification-output`. The command executes every product/example fenced block in README, CONTRIBUTING and the mapped documentation, all notebook code cells, both standalone scripts and all three native SFD examples. It rejects missing executions and changed source hashes. `--verify-only` rechecks retained receipts against the current sources.
 
 Examples train on real bundled Iris, breast cancer and digits observations. Documentation fragments use the declared page context or the complete held-out Iris setup from Scan. Native SFD examples train every declared combination and restore their archives in a fresh process after deleting the caller module. The guarded full Torch documentation example also restores after source deletion, with experiment execution, optimizer steps and data acquisition forbidden during restoration. There are no substitute training implementations. CLI checks use an isolated project, an unpublished local wheel and a local bare Git repository for backup.
 
@@ -33,8 +47,38 @@ The dependency audit gates core, current and minimum environments. TensorFlow 2.
 
 Modern and supported minimum framework suites each pass 159 tests. The legacy source suite passes 149 with 10 optional Torch skips; installed core wheels pass 137 with 22 DL skips on both Python 3.10 and 3.13. Current and minimum dependency audits each cover 79 installed packages with no findings or skipped dependencies.
 
-The source receipt is saved in [verification/2026-10-01.json](verification/2026-10-01.json). It records execution scope, dependency audit results, framework versions and hashes of every documented block/example. CI repeats executable documentation and uploads its complete reports; the security workflow retains audit reports.
+The pre-adoption source receipt at commit `c0db9eb` is saved in [verification/2026-10-01.json](verification/2026-10-01.json). It records execution scope, dependency audit results, framework versions and hashes of every documented block/example. CI repeats executable documentation and uploads its complete reports; the security workflow retains audit reports.
+
+The [documentation adoption receipt](verification/2026-10-01-docs-adoption.json)
+records content preservation and the later site/example acceptance against the
+new route map. Its source hashes distinguish that candidate from the earlier
+framework baseline.
 
 Maintenance exposed and fixed two core defects: importing `talos.model` in a cold process caused a circular import, and paused Gamify edits were read after the next trial had already trained. Both have regression coverage. Historical template training defaults remain unchanged; educational examples declare smaller budgets.
 
 Documentation updates retain the human-authored workflows while correcting obsolete framework APIs, disconnected model inputs, incomplete callback examples, classification encodings and machine-specific or remote notebook paths. Backend upgrades must preserve working callbacks, native artifact portability and historical archive readers together.
+
+## Annual review and failure boundaries
+
+1. Reassess upstream Python lifecycle and the supported framework matrix. Record
+   a date, resolved versions and decisions about minimum and legacy lanes.
+2. Audit resolved dependencies, update necessary floors and rerun the affected
+   compatibility suites. Report unresolved legacy advisories separately.
+3. Exercise completed-trial resume, source/data mismatch rejection and
+   fresh-process archive restoration, including caller-source deletion.
+4. Execute the documented models, notebooks and CLI workflows; retain receipts
+   tied to their exact source hashes. A missing or stale receipt fails acceptance.
+5. Build and inspect the documentation with its locked dependencies, local search,
+   source edit links, mobile layout and accessibility checks.
+6. Build the distribution and install the wheel outside the checkout before
+   recording a release baseline.
+
+A CPU result cannot establish accelerator determinism or a physical power
+reading. An old archive loading successfully cannot establish compatibility
+with a future framework version. Keep those limits explicit in review evidence.
+
+## Read next
+
+[Contributing](../CONTRIBUTING.md) supplies development commands.
+[Documentation system](Developer/Documentation-System.md) and
+[Documentation style](Developer/Documentation-Style.md) cover site maintenance.

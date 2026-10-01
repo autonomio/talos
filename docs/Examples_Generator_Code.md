@@ -1,6 +1,14 @@
-[BACK](Examples_Generator.md)
+# Keras sequence-generator sweep: complete code
 
-# Generator
+Train two digit classifiers using a Talos sequence generator. This page is the standalone companion to the [walkthrough](Examples_Generator.md).
+
+## Prerequisites and execution
+
+Use Python 3.11–3.13 with the [TensorFlow extra](Backends.md) (`talos[tensorflow]`). The dataset is an offline scikit-learn fixture. From a writable experiment directory, save the following program as `generator_example.py` and execute `python generator_example.py`.
+
+The walkthrough owns the data split, callback explanation and interpretation of metrics. The program is bounded to two trials; successful execution passes its result-row assertion.
+
+## Program
 
 ```python
 import talos
@@ -38,3 +46,13 @@ scan_object = talos.Scan(x=x_train, y=y_train, x_val=x_val, y_val=y_val,
                          round_limit=2, seed=17, backend='tensorflow')
 assert len(scan_object.data) == 2
 ```
+
+## Result and failure boundaries
+
+`scan_object.data` contains two completed rows. Each callback trains from `SequenceGenerator` batches and validates on the separate 36-row array split. The network produces ten class probabilities per image. The program writes result and checkpoint artifacts to its experiment run directory.
+
+The arrays must match `(8, 8, 1)` image inputs and integer digit labels. Use sparse categorical cross-entropy for those labels. Modern Keras does not accept `workers` in `fit()`; configure a supported sequence/PyDataset instead. See [Generator](Generator.md) for replayability limits when using external streams.
+
+## Read next
+
+Return to the [walkthrough](Examples_Generator.md) for the procedure and failure diagnosis. [Generator](Generator.md) covers the input contract; [Analyze](Analyze.md) covers the completed sweep.

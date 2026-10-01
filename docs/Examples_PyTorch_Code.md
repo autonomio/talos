@@ -1,6 +1,14 @@
-[BACK](Examples_PyTorch.md)
+# Native PyTorch sweep: complete code
 
-# PyTorch Example
+Train two native PyTorch networks and retain their metrics and model factories. This page is the standalone companion to the [walkthrough](Examples_PyTorch.md).
+
+## Prerequisites and execution
+
+Use Python 3.10–3.13 with the [Torch extra](Backends.md) (`talos[torch]`). The dataset is an offline scikit-learn fixture. From a writable experiment directory, save the following program as `torch_example.py` and execute `python torch_example.py`.
+
+The walkthrough owns the data split, callback explanation and interpretation of metrics. The program is bounded to two trials; successful execution passes its result-row assertion.
+
+## Program
 
 ```python
 import talos
@@ -82,3 +90,13 @@ if __name__ == "__main__":
 ```
 
 Save this code as an importable Python module. Importing it defines the model and factory without starting training. Call `run_example()` to train; the `__main__` guard also trains when you execute the file directly. The importable `build_network` factory makes archives portable. When a factory is defined only in `__main__`, supply it explicitly to `Restore(model_factory=build_network)`.
+
+## Result and failure boundaries
+
+`scan_object.data` contains two completed rows; the final block produces a class index for each validation row. `TorchHistory` holds two validation-loss observations per trial. Its metric helper uses the names `metric` and `val_metric`; in this recipe those values are the explicitly computed F1 scores, not classification accuracy. The program writes result and checkpoint artifacts to its experiment run directory.
+
+This callback owns the optimizer, gradient updates and train/evaluation modes. Keep integer class labels and two output logits consistent with cross-entropy. Histories must contain numeric scalar metrics; use finite values for meaningful candidate ranking. A factory defined only in `__main__` needs an explicit `Restore(model_factory=build_network)`; use the guarded importable complete program for portable source-based restoration.
+
+## Read next
+
+Return to the [walkthrough](Examples_PyTorch.md) for the procedure and failure diagnosis. [Backends](Backends.md) describes both supported callback returns. [Deploy](Deploy.md) and [Restore](Restore.md) describe the native Torch archive and factory contract.

@@ -1,0 +1,60 @@
+{
+  "name": "repository-docs-site",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=20.18.1"
+  },
+  "scripts": {
+    "prepare-docs": "node ./scripts/assemble-docs.mjs",
+    "lint": "node ./scripts/lint-markdown.mjs",
+    "check:external-links": "node ./scripts/check-external-links.mjs",
+    "security:audit": "node ./scripts/audit-security.mjs",
+    "build": "npm run prepare-docs && docusaurus build",
+    "verify:build": "node ./scripts/verify-build.mjs",
+    "test:unit": "node --test ./tests/*.test.mjs",
+    "test:browser": "playwright test",
+    "check": "npm run lint && npm run test:unit && npm run check:external-links && npm run prepare-docs && docusaurus build --no-minify && npm run verify:build && npm run test:browser",
+    "start": "npm run prepare-docs && docusaurus start --host 0.0.0.0",
+    "serve": "docusaurus serve --dir build --host 127.0.0.1 --port 3100 --no-open",
+    "clear": "docusaurus clear"
+  },
+  "dependencies": {
+    "@docusaurus/core": "3.10.2",
+    "@docusaurus/preset-classic": "3.10.2",
+    "@easyops-cn/docusaurus-search-local": "0.55.2",
+    "prism-react-renderer": "2.4.1",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "@fontsource/finlandica": "5.3.0",
+    "@docusaurus/plugin-content-docs": "3.10.2",
+    "@docusaurus/theme-common": "3.10.2"
+  },
+  "overrides": {
+    "brace-expansion": "5.0.12",
+    "fast-uri": "3.1.8",
+    "js-yaml@^4": "4.3.2",
+    "markdown-it": "14.3.1",
+    "serialize-javascript": "7.0.5",
+    "uuid": "11.1.1",
+    "websocket-driver": "0.7.5",
+    "js-yaml@^3": "3.15.2",
+    "baseline-browser-mapping": "2.11.26",
+    "browserslist": "4.29.3",
+    "colord": "2.10.0",
+    "joi": "17.13.8",
+    "nanoid": "3.3.19",
+    "postcss": "8.5.28",
+    "qs": "6.16.0",
+    "svgo": "3.3.5",
+    "undici": "7.30.0",
+    "image-size": "2.0.4"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.12.1",
+    "@playwright/test": "1.61.1",
+    "markdownlint-cli2": "0.18.1",
+    "markdown-it": "14.3.1"
+  },
+  "license": "MIT"
+}

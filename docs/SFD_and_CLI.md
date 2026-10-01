@@ -2,6 +2,17 @@
 
 An SFD defines `params()`, `prep(data, round_params)` and `model(prepared, round_params)` in ordinary Python. Training remains your code. Model returns accept `(history, model)` or a dictionary containing numeric metrics plus `model`, `history`, optional `predictions`, `backend` and `factory`.
 
+## Prerequisites and scope
+
+Install the backend extra used by the SFD; the examples below use
+`talos[tensorflow]`. Python examples run from the repository checkout where
+`examples/sfd/` exists. The CLI project example uses your working directory and
+creates a local Git-backed study; backup later writes to its configured remote.
+See [Installation](Install_Options.md) for supported Python and framework versions.
+
+This guide follows preparation, validation, execution, recovery and manifest
+storage. [Scan](Scan.md) remains the established callback interface.
+
 ## Run from Python
 
 Run the next block from the repository root; the SFD loads the bundled Iris fixture in its own `prep`.
@@ -23,7 +34,7 @@ predictions = result.predict(x_test)
 
 An SFD may alternatively expose `params()` and a `manifest()` factory (or a manifest object) with `prepare_data` and `run_model`. The compiler and Python executor use the same contract.
 
-Use `talos.experiment.UniversalExperimentLoop` for the Limen-style Python facade. Generic `talos.experiment.manifest_core.MLManifest` supplies optional fluent preparation, train-only fitted transforms/scaling/PCA, explicit targets/splits and calibration. It receives caller data and defines no readers or financial targets.
+Use `talos.experiment.UniversalExperimentLoop` for the native Python facade. Generic `talos.experiment.manifest_core.MLManifest` supplies optional fluent preparation, train-only fitted transforms/scaling/PCA, explicit targets/splits and calibration. It receives caller data and defines no readers or financial targets.
 
 ## Create and validate
 
@@ -73,7 +84,6 @@ def model(data, round_params):
                           batch_size=round_params['batch_size'], verbose=0)
     return history, network
 ```
-
 
 ## Manifest structure
 
@@ -144,3 +154,24 @@ Committed manifests are immutable and content-addressed; full or unambiguous sho
 `profile` reports domain complexity and samples caller model runs to estimate runtime. It executes your code and reports sample errors. Profiles do not acquire data independently.
 
 Inspect saved results with `RunResult.load`, `talos.log.Log`, `talos.inference.Sensor` and `talos.cohort.Cohort`. Sensor restores trained artifacts. Explicit `Trainer` operations retrain selected parameters when requested; restoration never silently retrains.
+
+## Expected outputs and failure boundaries
+
+The Python example returns a `RunResult` with four completed combinations and
+predictions for its held-out Iris split. The CLI example creates a study, an
+editable SFD and manifest, then writes completed-trial records and trained
+artifacts under the printed run directory. `validate` and `--dry-run` report
+configuration or resolution errors before execution; they do not prove training
+will succeed.
+
+Training failures, missing backend dependencies and user preparation errors
+belong to the caller model or environment. Resume rejects changed identities,
+source or verified data; restore the recorded inputs before retrying. A pause
+commits completed trials and does not checkpoint an unfinished training epoch.
+`commit` requires production mode; backup requires a usable configured Git remote.
+The local bare remote above provides a bounded test of that write.
+
+## Read next
+
+[Migration](Migration.md) wraps existing callbacks. [Restore](Restore.md) covers
+trained-artifact use; [Maintenance](Maintenance.md) defines portability checks.

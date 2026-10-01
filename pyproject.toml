@@ -52,7 +52,8 @@ path = "talos/__init__.py"
 packages = ["talos"]
 
 [tool.hatch.build.targets.sdist]
-include = ["/talos", "/tests", "/examples", "/docs", "/README.md", "/CONTRIBUTING.md", "/NOTICE", "/LICENSE", "/pyproject.toml", "/tools"]
+include = ["/talos", "/tests", "/examples", "/docs", "/README.md", "/CONTRIBUTING.md", "/CODE_OF_CONDUCT.md", "/NOTICE", "/LICENSE", "/pyproject.toml", "/tools", "/docs-site", "/.markdownlint.json"]
+exclude = ["/docs-site/node_modules", "/docs-site/build", "/docs-site/.generated", "/docs-site/.docusaurus", "/docs-site/test-results"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

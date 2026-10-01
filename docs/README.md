@@ -1,74 +1,47 @@
-# Talos 2
+# Talos documentation
 
-Start with the [current project overview](../README.md), [migration guide](Migration.md) and [SFD/CLI guide](SFD_and_CLI.md). The reference chapters below retain the established Talos workflow; the migration guide records corrected contracts and backend requirements.
+Talos runs parameter sweeps for Keras, TensorFlow and PyTorch models. Keep the established Python `Scan` interface or describe an experiment in a single-file definition (SFD) and run it through Python or the CLI. Both paths use the same experiment core and recorded run artifacts.
 
-# Quick start
+## Start with your task
 
-```sh
-pip install 'talos[tensorflow]'
-```
-See [here](Install_Options.md) for more options.
+| I want to… | Start here |
+|---|---|
+| Run my first sweep | [First parameter sweep](Guides/Quickstart.md), then the [typical example](Examples_Typical.md) |
+| Keep an existing Talos model working | [Migration](Migration.md), [Scan](Scan.md), and [backend contracts](Backends.md) |
+| Define a reproducible experiment for Python or the CLI | [SFD and CLI](SFD_and_CLI.md) |
+| Use PyTorch, multiple inputs, multiple outputs or a generator | [Model recipes](Guides/README.md#model-recipes) |
+| Reduce or control a running search | [Optimization strategies](Optimization_Strategies.md), [local strategy](Local_Strategy.md), and [Gamify](Gamify.md) |
+| Compare, evaluate or reuse model candidates | [Workflow](Workflow.md), [Analyze](Analyze.md), [Evaluate](Evaluate.md), and [Predict](Predict.md) |
+| Package or restore a trained model | [Deploy](Deploy.md) and [Restore](Restore.md) |
+| Maintain Talos or its documentation | [Developer home](Developer/README.md) and [maintenance verification](Maintenance.md) |
 
+## From model to recorded result
 
-# Minimal Example
+1. Choose a supported [backend environment](Backends.md). The core owns sweep execution; your framework owns model construction, training and device behavior.
+2. Supply data and a working training callback to [Scan](Scan.md), or place the parameter, preparation and model functions in an [SFD](SFD_and_CLI.md). Data loading and scientific preprocessing remain experiment code.
+3. Declare the candidate values and [search policy](Optimization_Strategies.md). The parameter domain selects pending combinations; configured reducers or live controls may remove later candidates.
+4. The experiment runner prepares and trains each selected candidate. Backend adapters normalize its history and retain the trained model according to the [backend contract](Backends.md).
+5. Inspect the first observable result in `scan.data` or the native run result, then open the run directory’s `results.csv`. [SFD and CLI](SFD_and_CLI.md) describes manifests, source snapshots, round records, checkpoints and resume validation.
+6. [Analyze](Analyze.md) tuning results, [evaluate](Evaluate.md) selected candidates on held-out data, and [predict](Predict.md) or [archive](Deploy.md) a chosen model. Talos ends at recorded experiments and reusable model assets; application serving and scientific conclusions remain yours.
 
-Your Keras model **WITHOUT** Talos:
+The [workflow guide](Workflow.md) connects these steps and explains when to repeat the search.
 
-```python
-from tensorflow import keras
-from sklearn.datasets import load_breast_cancer
-from sklearn.model_selection import train_test_split
+## Documentation map
 
-x, y = load_breast_cancer(return_X_y=True)
-x_train, x_val, y_train, y_val = train_test_split(
-    x[:, :8], y, test_size=.2, stratify=y, random_state=17)
-normalizer = keras.layers.Normalization()
-normalizer.adapt(x_train)
-model = keras.Sequential([keras.layers.Input((8,)), normalizer,
-                          keras.layers.Dense(12, activation='relu'),
-                          keras.layers.Dense(1, activation='sigmoid')])
-model.compile(loss='binary_crossentropy', optimizer='adam')
-history = model.fit(x_train, y_train, validation_data=(x_val, y_val),
-                    epochs=1, batch_size=32, verbose=0)
-```
-Your Keras model **WITH** Talos:
+| Section | Canonical responsibility | Entry point |
+|---|---|---|
+| Overview | Product boundary, capabilities, workflow and direction | [Capabilities](Overview.md) and [development priorities](Roadmap.md) |
+| Guides | Complete reader jobs, model recipes and operating a sweep | [Guides](Guides/README.md) |
+| Reference | Public interfaces, defaults, return values and error boundaries | [Reference](Reference/README.md) |
+| Developer | Contributions, verification, documentation and maintenance | [Developer](Developer/README.md) |
+| Packages | Source ownership, public entry points and optional dependencies | [Talos package](../talos/README.md) |
 
+## Scope and responsibility
 
-```python
-import talos
+Talos owns parameter selection, experiment execution, result recording, reducer and intervention controls, checkpoint validation and supported model archive contracts. It accepts caller-provided arrays and preparation functions; it does not supply a finance data pipeline, decide whether a metric is scientifically suitable, establish causal validity or deploy an application server.
 
+A seed controls supported sampling and recorded RNG state. Hardware, framework kernels, external services and opaque data streams can impose further reproducibility limits. Review [backend compatibility](Backends.md), [recovery contracts](SFD_and_CLI.md) and [maintenance evidence](Maintenance.md) for the claims proven in each environment.
 
-def breast_cancer_model(x_train, y_train, x_val, y_val, params):
-    normalizer = keras.layers.Normalization()
-    normalizer.adapt(x_train)
-    model = keras.Sequential([keras.layers.Input((8,)), normalizer,
-                              keras.layers.Dense(12, activation=params['activation']),
-                              keras.layers.Dense(1, activation='sigmoid')])
-    model.compile(loss='binary_crossentropy', optimizer=params['optimizer'])
-    history = model.fit(x_train, y_train, validation_data=(x_val, y_val),
-                        epochs=1, batch_size=32, verbose=0)
-    return history, model
+## Read next
 
-
-scan = talos.Scan(x_train, y_train,
-                 {'activation': ['relu', 'elu'], 'optimizer': ['adam']},
-                 breast_cancer_model, 'minimal', x_val=x_val, y_val=y_val,
-                 seed=42, disable_progress_bar=True)
-```
-The second block uses the imports and data split from the first. See the complete [typical example](Examples_Typical_Code.md).
-
-# Typical Use-cases
-
-The most common use-case of Talos is a hyperparameter scan based on an already created Keras or TensorFlow model. In addition to the [input model](Scan.md#input-model), a hyperparameter scan with Talos involves `talos.Scan()` command and a [parameter dictionary](Scan.md#params).
-
-After completing an experiment, results can be analyzed and visualized. Once a decision have been made if a) the experiment should be reconfigured and continue or b) sufficient level of performance have already been found, model candidates can be automatically evaluated and used for prediction.
-
-Talos also supports easy deployment of models and experiment assets from the experiment environment to production or other systems.
-
-# System Requirements
-
-- Linux, Mac OSX or Windows system
-- Python 3.10–3.13 for the core
-- Optional Keras, TensorFlow/tf.keras or PyTorch; see [backend compatibility](Backends.md)
-
-Talos incorporates grid, random, and probabilistic hyperparameter optimization strategies, with focus on maximizing the flexibility, efficiency, and result of random strategy. Talos users benefit from access to pseudo, quasi, true, and quantum random methods.
+Start with the [first sweep](Guides/Quickstart.md) for the Python interface, [SFD and CLI](SFD_and_CLI.md) for a file-based experiment, or [migration](Migration.md) for an existing Talos project.

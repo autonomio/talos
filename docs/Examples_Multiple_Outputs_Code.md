@@ -1,6 +1,14 @@
-[BACK](Examples_Multiple_Outputs.md)
+# Multiple-output Keras sweep: complete code
 
-# Multiple Outputs
+Train one Keras model with diagnosis and radius outputs. This page is the standalone companion to the [walkthrough](Examples_Multiple_Outputs.md).
+
+## Prerequisites and execution
+
+Use Python 3.11–3.13 with the [TensorFlow extra](Backends.md) (`talos[tensorflow]`). The dataset is an offline scikit-learn fixture. From a writable experiment directory, save the following program as `multiple_outputs.py` and execute `python multiple_outputs.py`.
+
+The walkthrough owns the data split, callback explanation and interpretation of metrics. The program is bounded to two trials; successful execution passes its result-row assertion.
+
+## Program
 
 ```python
 import talos
@@ -46,3 +54,13 @@ scan_object = talos.Scan(x=x_train, y=y_train, x_val=x_val, y_val=y_val,
                          seed=17, backend='tensorflow')
 assert len(scan_object.data) == 2
 ```
+
+## Result and failure boundaries
+
+`scan_object.data` contains two completed rows with aggregate and output-specific metrics from the training history. Prediction returns a list of two arrays: diagnosis probabilities and normalized radius estimates. Both arrays have one row per validation example. The program writes result and checkpoint artifacts to its experiment run directory.
+
+Keep both target arrays aligned with the features and in the model’s output order. The radius target is the separately measured first feature, removed from the input to avoid direct leakage. Diagnosis and radius have different losses and units; aggregate validation loss alone does not establish either output’s scientific usefulness.
+
+## Read next
+
+Return to the [walkthrough](Examples_Multiple_Outputs.md) for the procedure and failure diagnosis. [Evaluate](Evaluate.md) explains held-out evaluation; [Predict](Predict.md) describes model selection and returned predictions.

@@ -14,7 +14,11 @@ import time
 
 def inventory(root):
     fences, examples = [], []
-    pages = [root/'README.md', root/'CONTRIBUTING.md', *sorted((root/'docs').glob('*.md'))]
+    docs_map = root/'docs-site/docs-map.json'
+    if docs_map.exists():
+        pages = [root/entry['source'] for entry in json.loads(docs_map.read_text())['documents']]
+    else:
+        pages = [root/'README.md', root/'CONTRIBUTING.md', *sorted((root/'docs').rglob('*.md'))]
     for path in pages:
         lines = path.read_text().splitlines()
         index = 0
@@ -47,7 +51,7 @@ def verify(root, output, selected, execution):
     expected = inventory(root)
     actual, example_records, providers = {}, {}, []
     errors = []
-    for name in ('api', 'control', 'root', 'examples'):
+    for name in ('api', 'control', 'root', 'examples', 'site'):
         receipt = output/f'{name}.json'
         if not receipt.exists():
             continue
@@ -113,15 +117,15 @@ def verify(root, output, selected, execution):
               'hardware_scope': 'CPU training. NVIDIA power/command paths use an explicitly declared provider; physical hardware and remote entropy services are not verified.'}
     (output/'manifest.json').write_text(json.dumps(result, indent=2)+'\n')
     print(json.dumps({key: result[key] for key in ('complete', 'counts', 'errors')}, indent=2), flush=True)
-    return int(bool(errors or (missing and len(selected) == 4)))
+    return int(bool(errors or (missing and len(selected) == 5)))
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument('--output-dir', type=Path, default=Path('verification-output'))
-    parser.add_argument('--components', nargs='+', choices=['api', 'control', 'root', 'examples'],
-                        default=['api', 'control', 'root', 'examples'])
+    parser.add_argument('--components', nargs='+', choices=['api', 'control', 'root', 'examples', 'site'],
+                        default=['api', 'control', 'root', 'examples', 'site'])
     parser.add_argument('--verify-only', action='store_true', help='Verify current hashes against previously generated receipts.')
     args = parser.parse_args()
     root, output = args.root.resolve(), args.output_dir.resolve()
@@ -139,6 +143,7 @@ def main():
         'control': [sys.executable, str(helpers/'control_docs.py'), '--root', str(root), '--output', str(output/'control.json')],
         'root': [sys.executable, str(helpers/'root_docs.py'), '--root', str(root), '--output', str(output/'root.json')],
         'examples': [sys.executable, str(helpers/'examples.py'), '--root', str(root), '--output', str(output/'examples.json')],
+        'site': [sys.executable, str(helpers/'site_docs.py'), '--root', str(root), '--output', str(output/'site.json')],
     }
     prior = output/'manifest.json'
     execution = json.loads(prior.read_text()).get('executors', {}) if prior.exists() else {}

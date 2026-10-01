@@ -206,7 +206,8 @@ def main():
             for item in inline:
                 source = item['source']
                 material = (source == 'PowerDraw(device=0)' or
-                            bool(re.match(r'^(?:pip|pip3|python|python3|export|watch|nvidia-smi|git|talos)(?:\s|$)', source)))
+                            bool(re.match(r'^(?:pip|pip3|python|python3|export|watch|nvidia-smi|git|talos)(?:\s|$)', source))
+                            and source != 'talos')
                 if not material:
                     continue
                 record = {**item, 'path': str(page_path.relative_to(root)), 'kind': 'inline_command'}

@@ -1,6 +1,14 @@
-[BACK](Examples_Typical.md)
+# Typical Keras sweep: complete code
 
-# Typical Case Example
+Train two small Iris classifiers with different activations. This page is the standalone companion to the [walkthrough](Examples_Typical.md).
+
+## Prerequisites and execution
+
+Use Python 3.11–3.13 with the [TensorFlow extra](Backends.md) (`talos[tensorflow]`). The dataset is an offline scikit-learn fixture. From a writable experiment directory, save the following program as `iris_example.py` and execute `python iris_example.py`.
+
+The walkthrough owns the data split, callback explanation and interpretation of metrics. The program is bounded to two trials; successful execution passes its result-row assertion.
+
+## Program
 
 ```python
 import talos
@@ -36,4 +44,14 @@ scan_object = talos.Scan(x=x_train, y=y_train, x_val=x_val, y_val=y_val,
 assert len(scan_object.data) == 2
 ```
 
-`Scan()` always needs to have `x`, `y`, `model`, and `params` arguments declared. Find the description for all `Scan()` arguments [here](Scan.md#scan-arguments).
+`Scan()` always needs to have `x`, `y`, `model`, and `params` arguments declared. Find the description for all `Scan()` arguments [Scan arguments](Scan.md#arguments).
+
+## Result and failure boundaries
+
+`scan_object.data` contains two completed rows. Each row records the selected activation and final training/validation metrics. The model returns a probability vector for each of the three Iris classes. The program writes result and checkpoint artifacts to its experiment run directory.
+
+The Iris labels are one-hot vectors, so the output has three units and uses categorical cross-entropy. Keep this encoding, the output shape and the loss consistent when replacing the dataset.
+
+## Read next
+
+Return to the [walkthrough](Examples_Typical.md) for the procedure and failure diagnosis. [Analyze results](Analyze.md), then [evaluate candidates](Evaluate.md) on data held out from tuning.

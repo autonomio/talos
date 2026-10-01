@@ -1,6 +1,18 @@
-# PyTorch
+# Native PyTorch sweep
 
-This example highlights how Talos can be used with PyTorch models. The single-file example can be found [here](Examples_PyTorch_Code.md).
+Train two PyTorch networks while retaining the established Talos callback interface. The recipe records epoch metrics explicitly and provides a reconstruction factory for native Torch archives. The [complete program](Examples_PyTorch_Code.md) guards training so archive restoration can import the model without starting another sweep.
+
+## Prerequisites
+
+Use Python 3.10–3.13 with the [Torch extra](Backends.md) (`talos[torch]`) installed in the active interpreter. The scikit-learn dataset is available offline through the core dependencies. Run the Python blocks in order, in one session, from a writable experiment directory. These bounded training runs demonstrate the interface; they do not establish clinical or generalization performance.
+
+## Procedure
+
+1. Import the libraries for this recipe.
+2. Prepare aligned training and validation data.
+3. Define the callback, or select the built-in AutoML model.
+4. Declare the parameter candidates.
+5. Run the bounded Scan configuration and inspect its completed rows.
 
 ### Imports
 
@@ -15,7 +27,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import f1_score
 ```
 
-### Loading Data
+### Loading data
+
 ```python
 x, y = load_breast_cancer(return_X_y=True)
 x_train, x_val, y_train, y_val = train_test_split(
@@ -26,9 +39,11 @@ x_val = torch.as_tensor(scaler.transform(x_val), dtype=torch.float32)
 y_train = torch.as_tensor(y_train, dtype=torch.long)
 y_val = torch.as_tensor(y_val, dtype=torch.long)
 ```
+
 Unlike Keras, PyTorch expects the input data to be converted into tensors.
 
-### Defining the Model
+### Defining the model
+
 ```python
 class BreastCancerNet(nn.Module, talos.utils.TorchHistory):
     def __init__(self, n_feature, first_neuron=8, second_neuron=4, dropout=.1):
@@ -72,6 +87,7 @@ def breast_cancer(x_train, y_train, x_val, y_val, params):
     # The historical Torch return is supported; (net.history, net) also works.
     return net, net.parameters()
 ```
+
 In order to unify `Scan()` API for Keras and PyTorch, a Keras-like history with epoch-by-epoch metrics is required. This is achieved with `talos.utils.TorchHistory` helper:
 
 ```python
@@ -102,14 +118,14 @@ modern_result = (preview_net.history, preview_net)
 print(talos.backends.normalise_result(modern_result, backend='torch')['metrics'])
 ```
 
-### Parameter Dictionary
+### Parameter dictionary
 
 ```python
 p = {'first_neuron': [8, 16], 'second_neuron': [4], 'dropout': [.1],
      'optimizer': ['Adam'], 'lr': [.01], 'batch_size': [16], 'epochs': [2]}
 ```
-Note that the parameter dictionary allows either list of values, or tuples with range in the form `(min, max, number_of_values)`
 
+The parameter dictionary accepts candidate lists or range tuples in the form `(min, max, number_of_values)`.
 
 ### Scan()
 
@@ -123,6 +139,20 @@ predicted = talos.Predict(scan_object).predict_classes(
 assert predicted.shape == (len(x_val),)
 ```
 
-`Scan()` always needs to have `x`, `y`, `model`, and `params` arguments declared. Find the description for all `Scan()` arguments [here](Scan.md#scan-arguments).
+`Scan()` always needs to have `x`, `y`, `model`, and `params` arguments declared. Find the description for all `Scan()` arguments [Scan arguments](Scan.md#arguments).
 
 The module-level `build_network` factory and `talos_config` describe reconstruction for native Torch archives. The [complete example](Examples_PyTorch_Code.md) guards training in `run_example()` so importing its factory during restore cannot retrain. Save it as an importable Python module for portable restore; a factory defined only in `__main__` must be supplied explicitly to `Restore(model_factory=build_network)`. Validation runs in evaluation mode under `torch.no_grad()`.
+
+## Expected result
+
+`scan_object.data` contains two completed rows; the final block produces a class index for each validation row. `TorchHistory` holds two validation-loss observations per trial. Its metric helper uses the names `metric` and `val_metric`; in this recipe those values are the explicitly computed F1 scores, not classification accuracy. The run directory contains `results.csv` and checkpoint artifacts; inspect `scan_object.run_dir` for its location.
+
+## Failure boundaries
+
+This callback owns the optimizer, gradient updates and train/evaluation modes. Keep integer class labels and two output logits consistent with cross-entropy. Histories must contain numeric scalar metrics; use finite values for meaningful candidate ranking. A factory defined only in `__main__` needs an explicit `Restore(model_factory=build_network)`; use the guarded importable complete program for portable source-based restoration.
+
+If an import fails, check the active interpreter and [installation options](Install_Options.md). If a scan fails before its first trial, compare the data shapes, parameter keys and callback return with the [Scan contract](Scan.md).
+
+## Read next
+
+[Backends](Backends.md) describes both supported callback returns. [Deploy](Deploy.md) and [Restore](Restore.md) describe the native Torch archive and factory contract.

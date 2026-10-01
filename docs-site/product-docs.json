@@ -1,0 +1,11 @@
+{
+  "productId": "talos",
+  "productName": "Talos",
+  "organizationName": "Autonomio",
+  "wordmark": "AUTONOMIO",
+  "tagline": "Parameter sweeps for Keras, TensorFlow, and PyTorch with reproducible experiment manifests.",
+  "siteUrl": "https://autonomio.github.io",
+  "basePath": "/talos/",
+  "sourceRepoUrl": "https://github.com/autonomio/talos",
+  "sourceBranch": "master"
+}
