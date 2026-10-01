@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-10-01T17:51:37.355032+00:00",
+  "recorded_at_utc": "2026-10-01T18:31:37.105627+00:00",
   "base_commit": "9783406eafd0c9d72d00010aeffb379a534a5349",
   "candidate_version": "2.0.2",
   "scope": "Local source candidate; hosted CI and release execution are separate evidence.",
@@ -66,17 +66,18 @@
     "passed": 380,
     "failures": 0,
     "skipped": 0,
-    "junit_sha256": "ffb03128e7f6df63e419a507abacdc66d63d021db6206e2f7e3afb0cec82a65f"
+    "junit_sha256": "92433cce730f68081feea215508a3cddb57f6d77ae012d9f9511354517aac454"
   },
   "source_contracts": {
     "nested_coverage_report": "Prior combine loses a phase (3/4); append preserves both (4/4).",
     "signed_release": "Verified immutable upload contract tested; actual signing/publishing has not run.",
     "workflow_lint": "actionlint and ShellCheck pass for all five changed workflows.",
-    "quality_debt": "1899 inherited findings unchanged; no debt budget or required gate weakened."
+    "quality_debt": "1899 inherited findings unchanged; no debt budget or required gate weakened.",
+    "branch_execution": "Pull-request validation and protected-master pushes; no duplicate feature-branch push builds."
   },
   "file_sha256": {
     ".github/coverage-full.toml": "26a11296b50f440253005742f194ddf928b2f177bb11560e635e2d7391e8b711",
-    ".github/workflows/ci.yml": "a2da955bb189da56ab68f9abc39de6da0acec930ee09d0a79dbac72b98a0e083",
+    ".github/workflows/ci.yml": "90b9926a9796b8fe9ccc2a91eb23ab6258a72b85e40dcb1a9002fe0b8d7f422c",
     ".github/workflows/deploy.yml": "a563d8563ac2359ede37093de08540f49296516b21ea2218f4fec4a17ac8cf29",
     "tools/check_statement_coverage.py": "6380862c055da84a05eedbe189aeb70fbab859ac515358ea4a9b09b5da2c87bb",
     "governance/tests/test_statement_coverage.py": "40ed5a6e5f0b73cb3ed06420f6bc5613715648a28f1c40e679540c152c4126c8",
