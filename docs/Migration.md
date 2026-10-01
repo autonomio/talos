@@ -62,12 +62,13 @@ Core imports no DL or plotting backend. Python 3.10–3.13, modern optional fram
 
 | Environment | Result |
 | --- | --- |
-| Python 3.12; TensorFlow 2.21, Keras 3.15, Torch 2.14 | 158 passed |
-| Python 3.11; TensorFlow 2.14.1, Keras 2.14, NumPy 1.26 | 148 passed; 10 optional-framework skips |
-| Installed wheel, Python 3.10; no DL frameworks | 136 passed; 22 optional-framework skips |
-| Installed wheel, Python 3.13; no DL frameworks | 136 passed; 22 optional-framework skips |
-| Standalone Keras using Torch, backend acceptance subset | 26 passed |
+| Python 3.12; TensorFlow 2.21, Keras 3.15, Torch 2.14 | 159 passed |
+| Python 3.11; TensorFlow 2.14.1, Keras 2.14, NumPy 1.26 | 149 passed; 10 optional-framework skips |
+| Installed wheel, Python 3.10; no DL frameworks | 137 passed; 22 optional-framework skips |
+| Installed wheel, Python 3.13; no DL frameworks | 137 passed; 22 optional-framework skips |
+| Python 3.11; TensorFlow 2.20, Keras 3.15, Torch 2.13, Protobuf 6.33.5 | 159 passed |
+| Standalone Keras using Torch, executable control documentation | 59 blocks and three provider commands passed |
 
-The unchanged legacy training callback also passed real Iris training, prediction and Deploy/Restore on TensorFlow 2.14.1. Checks cover signal interruption, completed-trial recovery, live model/data/control edits, callable parameters, native framework artifacts in fresh processes, deleted caller sources, scientific metric references and CLI manifest lifecycle. Wheels were exercised outside the checkout; all 179 packaged source/resource files match the working sources. Lint, distribution builds and dependency consistency pass.
+The unchanged legacy training callback also passed real Iris training, prediction and Deploy/Restore on TensorFlow 2.14.1. Checks cover signal interruption, completed-trial recovery, live model/data/control edits, callable parameters, native framework artifacts in fresh processes, deleted caller sources, scientific metric references and CLI manifest lifecycle. Wheels were exercised outside the checkout; all 179 packaged source/resource files match the working sources. Lint, distribution builds and dependency consistency pass. The follow-up maintenance pass executes the documentation and all example files, raises patched dependency floors and adds cold-import and paused-Gamify regression checks; see [maintenance evidence](Maintenance.md).
 
 This is a CPU acceptance baseline. Accelerator behavior, physical power providers and remote quantum entropy services require their own hardware/service verification. Quantum sampler adapter behavior is tested with controlled provider responses. Repeat the maintained CI matrix and archive/resume checks when updating supported dependencies.

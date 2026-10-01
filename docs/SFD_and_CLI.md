@@ -4,13 +4,17 @@ An SFD defines `params()`, `prep(data, round_params)` and `model(prepared, round
 
 ## Run from Python
 
+Run the next block from the repository root; the SFD loads the bundled Iris fixture in its own `prep`.
+
 ```python
 from talos import run
 
-result = run('examples/sfd/tensorflow_sfd.py', data=my_splits,
+result = run('examples/sfd/tensorflow_sfd.py',
              experiment_name='iris', seed=42,
              objective={'metric': 'val_loss', 'direction': 'min'})
-result.predict(x_test)
+from examples.sfd.tensorflow_sfd import prep
+x_test = prep(None, {})['x_val']
+predictions = result.predict(x_test)
 ```
 
 `performance_target=['val_loss', 0.2, True]` stops once a metric reaches its threshold (`True` minimizes, `False` maximizes); it works from Python or `uel.performance_target`. Resuming an achieved target does not train additional trials.
@@ -27,12 +31,49 @@ Use `talos.experiment.UniversalExperimentLoop` for the Limen-style Python facade
 talos new my-study
 cd my-study
 talos init first --template tf_keras
-# Edit manifests/first_sfd.py: implement prep using your own data.
+# Edit manifests/tf_keras_sfd.py: implement prep using your own data.
 talos validate manifests/first.yaml
 talos run --dry-run manifests/first.yaml
 ```
 
 Templates are `keras`, `tf_keras` and `pytorch`. The generated YAML points at the copied editable Python file. Validation checks schema; dry-run also resolves Python and parameter/pruner references without training. Import-time behavior in your module remains your responsibility.
+
+For a complete runnable Iris study, save the following caller-owned module as `manifests/first_sfd.py` and replace `manifests/first.yaml` with the YAML shown below. The fixture loader is explicitly inside your `prep` function.
+
+```python
+# Save as manifests/first_sfd.py inside my-study.
+backend = 'tensorflow'
+
+
+def params():
+    return {'neurons': [8, 16], 'learning_rate': [.001, .01],
+            'epochs': [1], 'batch_size': [16]}
+
+
+def prep(data, round_params):
+    if data is not None:
+        return data
+    from sklearn.datasets import load_iris
+    from sklearn.model_selection import train_test_split
+    x, y = load_iris(return_X_y=True)
+    xt, xv, yt, yv = train_test_split(x, y, test_size=.2, stratify=y, random_state=17)
+    return {'x_train': xt, 'x_val': xv, 'y_train': yt, 'y_val': yv}
+
+
+def model(data, round_params):
+    from tensorflow import keras
+    network = keras.Sequential([keras.layers.Input((4,)),
+                                keras.layers.Dense(round_params['neurons'], activation='relu'),
+                                keras.layers.Dense(3, activation='softmax')])
+    network.compile(optimizer=keras.optimizers.Adam(round_params['learning_rate']),
+                    loss='sparse_categorical_crossentropy')
+    history = network.fit(data['x_train'], data['y_train'],
+                          validation_data=(data['x_val'], data['y_val']),
+                          epochs=round_params['epochs'],
+                          batch_size=round_params['batch_size'], verbose=0)
+    return history, network
+```
+
 
 ## Manifest structure
 
@@ -48,7 +89,7 @@ sfd:
     metric: val_loss
     direction: min
   params:
-    epochs: [5, 10]
+    epochs: [1, 2]
 uel:
   seed: 42
   round_limit: 4
@@ -67,7 +108,8 @@ Grid search is lazy; random search has a finite legal domain and reproducible qu
 
 ```sh
 talos run --no-progress-bar manifests/first.yaml
-talos run --resume results/dev/first_<timestamp>
+run_dir=$(python -c "from pathlib import Path; print(max(Path('results/dev').glob('first_*'), key=lambda p: p.stat().st_mtime))")
+talos run --resume "$run_dir"
 ```
 
 Development writes `results/dev/`; production writes `results/`. `uel.output_path` accepts `{name}` and `{datetime}`. `output_format: parquet` additionally writes Parquet with Polars, without requiring Arrow. Python runs provide `experiment_dir` directly and support `output_format='parquet'`. Mixed typed parameter categories use canonical encodings in the Parquet/pruning view; `.data` and callbacks retain their live Python values.
@@ -84,12 +126,15 @@ Other operations include `remove_is`, `remove_ge`, `remove_le`, `keep_is`, `inje
 
 ## Store and provenance
 
+Before committing, change `metadata.mode` in `manifests/first.yaml` to `production`. Commit accepts production manifests. Replace `MANIFEST_ID` below with the full hash printed by `commit`. The `MANIFEST_ID=...` assignment is a placeholder for that printed value. For the backup example, configure a local test remote with `git init --bare ../study-backup.git` and `git remote add origin ../study-backup.git`. In the existing `[store]` section of `talos.toml`, set `backup_remote = "../study-backup.git"`; backup reads this setting.
+
 ```sh
 talos commit manifests/first.yaml -m 'initial study'
+MANIFEST_ID=sha256:<manifest-hash>
 talos ls
-talos run manifest://sha256:<manifest-hash>
-talos fork sha256:<manifest-hash> second
-talos lineage sha256:<manifest-hash>
+talos run "manifest://${MANIFEST_ID}"
+talos fork "$MANIFEST_ID" second
+talos lineage "$MANIFEST_ID"
 talos reindex
 talos backup
 ```

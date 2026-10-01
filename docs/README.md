@@ -4,8 +4,8 @@ Start with the [current project overview](../README.md), [migration guide](Migra
 
 # Quick start
 
-```python
-pip install talos
+```sh
+pip install 'talos[tensorflow]'
 ```
 See [here](Install_Options.md) for more options.
 
@@ -15,28 +15,51 @@ See [here](Install_Options.md) for more options.
 Your Keras model **WITHOUT** Talos:
 
 ```python
-model = Sequential()
-model.add(Dense(12, input_dim=8, activation='relu'))
-model.add(Dense(1, activation='sigmoid'))
+from tensorflow import keras
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+
+x, y = load_breast_cancer(return_X_y=True)
+x_train, x_val, y_train, y_val = train_test_split(
+    x[:, :8], y, test_size=.2, stratify=y, random_state=17)
+normalizer = keras.layers.Normalization()
+normalizer.adapt(x_train)
+model = keras.Sequential([keras.layers.Input((8,)), normalizer,
+                          keras.layers.Dense(12, activation='relu'),
+                          keras.layers.Dense(1, activation='sigmoid')])
 model.compile(loss='binary_crossentropy', optimizer='adam')
-model.fit(x, y)
+history = model.fit(x_train, y_train, validation_data=(x_val, y_val),
+                    epochs=1, batch_size=32, verbose=0)
 ```
 Your Keras model **WITH** Talos:
 
 
 ```python
-model = Sequential()
-model.add(Dense(12, input_dim=8, activation=params['activation']))
-model.add(Dense(1, activation='sigmoid'))
-model.compile(loss='binary_crossentropy', params['optimizer'])
-model.fit(x, y)
+import talos
 
+
+def breast_cancer_model(x_train, y_train, x_val, y_val, params):
+    normalizer = keras.layers.Normalization()
+    normalizer.adapt(x_train)
+    model = keras.Sequential([keras.layers.Input((8,)), normalizer,
+                              keras.layers.Dense(12, activation=params['activation']),
+                              keras.layers.Dense(1, activation='sigmoid')])
+    model.compile(loss='binary_crossentropy', optimizer=params['optimizer'])
+    history = model.fit(x_train, y_train, validation_data=(x_val, y_val),
+                        epochs=1, batch_size=32, verbose=0)
+    return history, model
+
+
+scan = talos.Scan(x_train, y_train,
+                 {'activation': ['relu', 'elu'], 'optimizer': ['adam']},
+                 breast_cancer_model, 'minimal', x_val=x_val, y_val=y_val,
+                 seed=42, disable_progress_bar=True)
 ```
-See the code complete example [here](http).
+The second block uses the imports and data split from the first. See the complete [typical example](Examples_Typical_Code.md).
 
 # Typical Use-cases
 
-The most common use-case of Talos is a hyperparameter scan based on an already created Keras or TensorFlow model. In addition to the [input model](), a hyperparameter scan with Talos involves `talos.Scan()` command and a [parameter dictionary]().
+The most common use-case of Talos is a hyperparameter scan based on an already created Keras or TensorFlow model. In addition to the [input model](Scan.md#input-model), a hyperparameter scan with Talos involves `talos.Scan()` command and a [parameter dictionary](Scan.md#params).
 
 After completing an experiment, results can be analyzed and visualized. Once a decision have been made if a) the experiment should be reconfigured and continue or b) sufficient level of performance have already been found, model candidates can be automatically evaluated and used for prediction.
 
@@ -45,7 +68,7 @@ Talos also supports easy deployment of models and experiment assets from the exp
 # System Requirements
 
 - Linux, Mac OSX or Windows system
-- Python 3.5 or higher (Talos versions 0.5.0 and below support 2.7)
-- TensorFlow, Theano, or CNTK
+- Python 3.10–3.13 for the core
+- Optional Keras, TensorFlow/tf.keras or PyTorch; see [backend compatibility](Backends.md)
 
 Talos incorporates grid, random, and probabilistic hyperparameter optimization strategies, with focus on maximizing the flexibility, efficiency, and result of random strategy. Talos users benefit from access to pseudo, quasi, true, and quantum random methods.

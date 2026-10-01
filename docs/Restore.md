@@ -2,10 +2,13 @@
 
 The `Deploy()` .zip package can be read back into a copy of the original experiment assets with `Restore()`.
 
+Examples below use the held-out Iris setup in [Scan → Minimal Example](Scan.md#minimal-example). Run that setup first; it defines `scan_object`, `p`, `input_model`, `x`, `y`, `x_val`, `y_val`, `x_test`, and `y_test`.
+
 ```python
 from talos import Restore
 
-restore = Restore('experiment_name.zip')
+deployment = talos.Deploy(scan_object, 'experiment_name', metric='val_loss', asc=True)
+restore = Restore(deployment.path)
 ```
 NOTE: In the `Deploy()` phase, '.zip' is automatically added to the deploy package file name and must be added here manually.
 
@@ -13,7 +16,9 @@ NOTE: In the `Deploy()` phase, '.zip' is automatically added to the deploy packa
 
 Parameter | Default | Description
 --------- | ------- | -----------
-`path_to_zip` | None | full path to the `Deploy` asset zip file
+`path_to_zip` | required | full path to the `Deploy` asset zip file
+`custom_objects` | dict or None | Keras custom layers, losses or metrics needed by the model.
+`model_factory` | callable or None | Reconstructs a saved Torch model when its architecture cannot be recovered from the archive.
 
 
 ## Restore Properties
@@ -26,14 +31,14 @@ The `Deploy()` .zip package can be read back into a copy of the original experim
 - sample of x data
 - sample of y data
 
-**`details`** returns a pandas DataFrame with various meta-information about the experiment.
+**`details`** returns a pandas Series with various meta-information (historical archives may return a DataFrame) about the experiment.
 
 ```python
 restore.details
 ```
 <hr>
 
-**`model`** returns a Keras model ready to rock.
+**`model`** returns the restored trained backend model, ready for prediction without retraining.
 
 ```python
 restore.model
@@ -72,9 +77,11 @@ restore.y
 <hr>
 
 
-`details` | The class object returned by Scan() upon completion of the experiment.
-`model` | Input data (features) in the same format as used in Scan(), but should not be the same data (or it will not be much of validation).
-`params` | Input data (labels) in the same format as used in Scan(), but should not be the same data (or it will not be much of validation).
-`results` | The number of models to be evaluated. If set to 10, then 10 models with the highest metric value are evaluated. See below.
-`x` |
-`y` | A
+Property | Description
+-------- | -----------
+`details` | Experiment metadata.
+`model` | The selected trained model.
+`params` | Original parameter candidates.
+`results` | Trial results and parameter values.
+`x` | Sample of training features.
+`y` | Sample of training labels.

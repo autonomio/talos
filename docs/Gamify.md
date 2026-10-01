@@ -5,28 +5,35 @@ When `Scan(...reduction_method='gamify'...)` between each permutation, a json fi
 Gamify allows visualization and two way interaction through two components:
 
 - A browser-based live dashboard
-- a round-by-round updating log of each parater value
+- a round-by-round updating log of each parameter value
 
-### Gamify Dasbhoard
+### Gamify Dashboard
 
-First install the add-on package:
-
-`pip install gamify`
-
-Then add `gamify` to your `PATH`:
-
-`export PATH=$PATH:/Users/mikko/miniconda3/envs/wip_conda/lib/python3.6/site-packages/gamify.py`
-
-Note that your path will be unique to your machine, you can see it on the terminal output once you install the package.
-
-Now you can start the dashboard by referencing an experiment folder.
-
-`python gamify /path/to/talos/experiment`
-
-See more information [here](https://github.com/autonomio/gamify)
+The historical browser dashboard is an optional external project. Its installation and startup commands depend on the supported dashboard release and your environment; Talos does not require it. See [the dashboard project](https://github.com/autonomio/gamify) for current instructions. The local JSON control below runs without that service.
 
 ### Gamify JSON
 
 The JSON file stores the current activity status of each parameter value, and if the status is `active` then nothing will be changed. If the status is `disabled`, then all permutations with that parameter value will be removed from the parameter space.
 
 There is also a numeric value for each parameter value, which is a placeholder for storing an arbitrary value associated with the performance of the parameter value.
+
+Examples below use the held-out Iris setup in [Scan → Minimal Example](Scan.md#minimal-example). Run that setup first; it defines `scan_object`, `p`, `input_model`, `x`, `y`, `x_val`, `y_val`, `x_test`, and `y_test`.
+
+The JSON remains beside the legacy experiment run under the `experiment_name` folder. Status changes remove pending candidates; numeric annotations alone do not prune.
+
+```python
+from pathlib import Path
+import json
+
+gamify_scan = talos.Scan(x, y, p, input_model, 'gamify_demo', x_val=x_val, y_val=y_val,
+                        reduction_method='gamify', stop_after=1, seed=17,
+                        disable_progress_bar=True)
+control_path = Path(gamify_scan.experiment_name) / (gamify_scan.run_dir.name + '.json')
+control = json.loads(control_path.read_text())
+control['0']['1'][0] = 'disabled'
+control['0']['1'][1] = .75
+control_path.write_text(json.dumps(control))
+gamify_resumed = talos.Scan(x, y, p, input_model, 'gamify_demo', x_val=x_val, y_val=y_val,
+                           reduction_method='gamify', experiment_dir=gamify_scan.run_dir,
+                           resume=True, seed=17, disable_progress_bar=True)
+```

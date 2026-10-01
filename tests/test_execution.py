@@ -449,3 +449,27 @@ def test_dynamic_legacy_callback_without_module_metadata(tmp_path, iris):
     np.testing.assert_allclose(loaded.data.val_loss, scan.data.val_loss)
     np.testing.assert_array_equal(loaded.predict(iris['x_val'], metric='val_loss', asc=True),
                                   scan.predict(iris['x_val'], metric='val_loss', asc=True))
+
+
+def test_gamify_paused_edit_is_applied_before_resumed_pending_trial(tmp_path, monkeypatch, iris):
+    monkeypatch.chdir(tmp_path)
+    called = []
+    def model(x_train, y_train, x_val, y_val, params):
+        called.append(params['c'])
+        return train(x_train, y_train, x_val, y_val, params)
+    def execute(**options):
+        return talos.Scan(iris['x_train'], iris['y_train'], {'c': [.1, 1.]}, model, 'gamify',
+                          x_val=iris['x_val'], y_val=iris['y_val'], reduction_method='gamify',
+                          disable_progress_bar=True, seed=17, experiment_dir=tmp_path / 'game', **options)
+    paused = execute(stop_after=1)
+    assert paused.status == 'paused' and called == [.1]
+    first_record = (paused.run_dir / 'round_data.jsonl').read_bytes()
+    control = tmp_path / 'gamify' / (paused.run_dir.name + '.json')
+    document = json.loads(control.read_text())
+    document['0']['1'][0] = 'disabled'
+    control.write_text(json.dumps(document))
+    resumed = execute(resume=True)
+    assert resumed.status == 'complete' and called == [.1]
+    assert resumed.data.c.tolist() == [.1]
+    assert (resumed.run_dir / 'round_data.jsonl').read_bytes() == first_record
+    assert 'legacy_pending_selection' in (resumed.run_dir / 'audit.jsonl').read_text()

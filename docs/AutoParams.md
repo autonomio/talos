@@ -5,8 +5,9 @@
 #### to automatically create a params dictionary
 
 ```python
+import talos
 p = talos.autom8.AutoParams().params
-
+assert 'optimizer' in p and 'network' in p
 ```
 NOTE: The above example yields a very large permutation space so configure `Scan()` accordingly with `fraction_limit`.
 
@@ -14,7 +15,7 @@ NOTE: The above example yields a very large permutation space so configure `Scan
 
 ```python
 param_object = talos.autom8.AutoParams()
-
+assert isinstance(param_object.params, dict)
 ```
 
 Now various properties can be accessed through `param_object`, these are detailed below. For example:
@@ -22,16 +23,17 @@ Now various properties can be accessed through `param_object`, these are detaile
 #### modifying a single parameter in the params dictionary
 
 ```python
-param_object.batch_size(bottom_value=20, max_value=100, steps=10)
+param_object.batch_size(min_size=20, max_size=100, steps=10)
+assert param_object.params['batch_size'] == list(range(20, 100, 10))
 ```
 
-Now the modified params dictionary can be accessed through `params_object.params`
+Now the modified params dictionary can be accessed through `param_object.params`
 
 #### to append a current parameter dictionary
 
 ```python
-params_dict = talos.autom8.AutoParams(p, task='multi_label').params
-
+params_dict = talos.autom8.AutoParams(p.copy(), task='multi_label').params
+assert params_dict['losses'] == ['categorical_crossentropy']
 ```
 NOTE: Note, when the dictionary is created for a prediction task other than 'binary', the `task` argument has to be declared accordingly (`binary`, `multi_label`, `multi_class`, or `continuous`).
 
@@ -43,7 +45,7 @@ Argument | Input | Description
 `task` | str | 'binary', 'multi_class', 'multi_label', or 'continuous'
 `replace` | bool | Replace current dictionary entries with new ones.
 `auto` | bool | automatically generate or append params dictionary with all available parameters.
-`network` | network | If `True` several model architectures will be added
+`network` | bool | If `True` several model architectures will be added
 `resample_params` | int or False | The number of values per parameter
 
 ## AutoParams Properties
@@ -62,9 +64,9 @@ All other properties relate with manipulating individual parameters in the param
 
 **`epochs`** For controlling the corresponding parameter in the parameters dictionary.
 
-**`kernel_initializer`** For controlling the corresponding parameter in the parameters dictionary.
+**`kernel_initializers`** For controlling the corresponding parameter in the parameters dictionary.
 
-**`last_activation`** For controlling the corresponding parameter in the parameters dictionary.
+**`last_activations`** For controlling the corresponding parameter in the parameters dictionary.
 
 **`layers`** For controlling the corresponding parameter (i.e. `hidden_layers`) in the parameters dictionary.
 

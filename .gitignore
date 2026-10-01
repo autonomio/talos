@@ -23,3 +23,5 @@ htmlcov/
 build/
 *.keras
 *.pt
+verification-output/
+!docs/verification/*.json

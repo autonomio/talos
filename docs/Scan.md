@@ -6,34 +6,67 @@ The experiment is configured and started through the `Scan()` command. All of th
 
 ## Minimal Example
 
-```python
-talos.Scan(x='x', y='y', params=p, model=input_model)
+This CPU-sized example uses standalone Keras and real Iris data. Install the optional Keras backend described in [Backends](Backends.md). Training, validation and final test data remain separate, and the scaler is fitted only on training data. Run this setup before the later fragments on this page.
 
+```python
+import keras
+import numpy as np
+import talos
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+x_all, y_all = load_iris(return_X_y=True)
+x_dev, x_test, y_dev, y_test = train_test_split(
+    x_all, y_all, test_size=.2, stratify=y_all, random_state=17)
+x, x_val, y, y_val = train_test_split(
+    x_dev, y_dev, test_size=.25, stratify=y_dev, random_state=17)
+scaler = StandardScaler().fit(x)
+x, x_val, x_test = [scaler.transform(a).astype('float32')
+                     for a in (x, x_val, x_test)]
+
+def input_model(x_train, y_train, x_val, y_val, params):
+    model = keras.Sequential([
+        keras.Input(shape=(x_train.shape[1],)),
+        keras.layers.Dense(params['first_neuron'], activation=params['activation']),
+        keras.layers.Dense(3, activation='softmax')])
+    model.compile(optimizer=params['optimizer'],
+                  loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+    history = model.fit(x_train, y_train, validation_data=(x_val, y_val),
+                        epochs=params['epochs'], batch_size=params['batch_size'], verbose=0)
+    return history, model
+
+iris_model = input_model
+p = {'first_neuron': [4, 8], 'activation': ['relu'], 'optimizer': ['adam'],
+     'batch_size': [16], 'epochs': [2], 'hidden_layers': [1]}
+scan_object = talos.Scan(x, y, p, input_model, 'iris', x_val=x_val, y_val=y_val,
+                         seed=17, disable_progress_bar=True,
+                         reduction_metric='val_loss', minimize_loss=True)
 ```
 
 ## Scan Arguments
 
-`x`, `y`, `params`, and `model` are the only required arguments to start the experiment, all other are optional.</aside>
+`x`, `y`, `params`, `model`, and `experiment_name` are required to start the experiment; all other arguments are optional.
 
 Argument | Input | Description
 --------- | ------- | -----------
 `x` | array or list of arrays | prediction features
 `y` | array or list of arrays | prediction outcome variable
 `params` | dict or ParamSpace object | the parameter dictionary or the ParamSpace object after splitting
-`model` | function | the Keras model as a function
+`model` | function | the Keras, tf.keras or Torch training model as a function
 `experiment_name` | str | Used for creating the experiment logging folder
 `x_val` | array or list of arrays | validation data for x
 `y_val` | array or list of arrays | validation data for y
 `val_split` | float | validation data split ratio
-`multi_input` | float | set to True if multi-input model
+`multi_input` | bool | set to True if multi-input model
 `random_method` | str | the random method to be used
-`seed` | float | Seed for random states
+`seed` | int or None | Seed for random states
 `performance_target` | list | A result at which point to end experiment
 `fraction_limit` | float | The fraction of permutations to be processed
 `round_limit` | int | Maximum number of permutations in the experiment
-`time_limit` | datetime | Time limit for experiment in format `%Y-%m-%d %H:%M`
+`time_limit` | str | Time limit for experiment in format `%Y-%m-%d %H:%M`
 `boolean_limit` | function | Limit permutations based on a lambda function
-`reduction_method` | str | Type of reduction optimizer to be used used
+`reduction_method` | str or callable | Type of reduction optimizer to be used used
 `reduction_interval` | int | Number of permutations after which reduction is applied
 `reduction_window` | int | the lookback window for reduction process
 `reduction_threshold` | float | The threshold at which reduction is applied
@@ -45,13 +78,13 @@ Argument | Input | Description
 `save_weights` | bool | Keep model weights (increases memory pressure for large models)
 `save_models` | bool | Save models in the experiment folder in local machine
 
-NOTE: `boolean_limit` will only work if its the last argument in `Scan()` and the following bracket is on a newline:
+`boolean_limit` is an ordinary keyword argument. A predicate returning `True` keeps a permutation; its position and line breaks do not matter:
 
 ```python
 
-talos.Scan(...
-           boolean_limit=lambda p: p['first_neuron'] * p['hidden_layers'] < 220
-          )
+limited = talos.Scan(x, y, {**p, 'hidden_layers': [1, 2]}, input_model, 'limited',
+                     x_val=x_val, y_val=y_val, disable_progress_bar=True, seed=17,
+                     boolean_limit=lambda params: params['first_neuron'] * params['hidden_layers'] < 12)
 ```
 
 
@@ -63,14 +96,16 @@ Once the `Scan()` procedures are completed, an object with several useful proper
 In the case conducted the following experiment, we can access the properties in `scan_object` which is a python class object.
 
 ```python
-scan_object = talos.Scan(x, y, model=iris_model, params=p, fraction_limit=0.1)
+scan_object = talos.Scan(x, y, model=iris_model, params=p, experiment_name='sampled',
+                         x_val=x_val, y_val=y_val, fraction_limit=.5, seed=17,
+                         disable_progress_bar=True)
 ```
 <hr>
 
-**`best_model`** picks the best model based on a given metric and returns the index number for the model.
+**`best_model`** picks the best model based on a given metric and returns the fitted model.
 
 ```python
-scan_object.best_model(metric='f1score', asc=False)
+scan_object.best_model(metric='val_loss', asc=True)
 ```
 NOTE: `metric` has to be one of the metrics used in the experiment, and `asc` has to be True for the case where the metric is something to be minimized.
 
@@ -97,12 +132,13 @@ scan_object.details
 ```python
 scan_object.evaluate_models(x_val=x_val,
                             y_val=y_val,
-                            n_models=10,
-                            metric='f1score',
+                            task='multi_class',
+                            n_models=2,
+                            metric='val_loss',
                             folds=5,
                             shuffle=True,
-                            average='binary',
-                            asc=False)
+                            average='macro',
+                            asc=True)
 ```
 
 Argument | Description
@@ -147,7 +183,7 @@ scan_object.round_times
 
 <hr>
 
-**`round_history`** returns epoch-by-epoch data for each model in a dictionary.
+**`round_history`** returns a list of dictionaries containing epoch-by-epoch data for each model.
 
 ```python
 scan_object.round_history
@@ -155,7 +191,7 @@ scan_object.round_history
 
 <hr>
 
-**`saved_models`** returns the JSON (dictionary) for each model.
+**`saved_models`** returns backend-specific in-memory model descriptions when retained: Keras JSON or Torch state dictionaries. Persisted native artifacts are available through `scan_object.artifacts`.
 
 ```python
 scan_object.saved_models
@@ -187,19 +223,19 @@ scan_object.y
 
 ## Input Model
 
-The input model is any Keras or tf.keras model. It's the model that Talos will use as the basis for the hyperparameter experiment.
+The input model is a callable that trains a Keras, tf.keras or Torch model. It's the model that Talos will use as the basis for the hyperparameter experiment.
 
 #### A minimal example
 
 ```python
 def input_model(x_train, y_train, x_val, y_val, params):
 
-    model.add(Dense(12, input_dim=8, activation=params['activation']))
-    model.add(Dense(1, activation='sigmoid'))
-    model.compile(loss='binary_crossentropy', params['optimizer'])
-    out = model.fit(x=x_train,
-                    y=y_train,
-                    validation_data=[x_val, y_val])
+    model = keras.Sequential([keras.Input(shape=(4,)),
+                              keras.layers.Dense(params['first_neuron'], activation=params['activation']),
+                              keras.layers.Dense(3, activation='softmax')])
+    model.compile(loss='sparse_categorical_crossentropy', optimizer=params['optimizer'])
+    out = model.fit(x=x_train, y=y_train, validation_data=(x_val, y_val),
+                    epochs=params['epochs'], batch_size=params['batch_size'], verbose=0)
 
     return out, model
 ```
@@ -207,29 +243,48 @@ See specific details about defining the model [here](Examples_Typical?id=definin
 
 #### Models with multiple inputs or outputs (list of arrays)
 
-For both cases, `Scan(... x_val, y_val ...)` must be explicitly set i.e. you split the data yourself before passing it into Talos. Using the above minimal example as a reference.
+For both cases, pass matching nested validation data through `x_val` and `y_val`; explicit splits make alignment clear. The following fixture builds a matching model for each fragment using the Iris arrays from the minimal example:
+
+```python
+x_train, y_train = x, y
+x_train_a, x_train_b = x[:, :2], x[:, 2:]
+x_val_a, x_val_b = x_val[:, :2], x_val[:, 2:]
+y_train_a = y_train_b = y
+y_val_a = y_val_b = y_val
+
+def make_multi_model(input_count, output_count):
+    inputs = [keras.Input(shape=(2 if input_count == 2 else 4,))
+              for _ in range(input_count)]
+    features = keras.layers.Concatenate()(inputs) if input_count == 2 else inputs[0]
+    outputs = [keras.layers.Dense(3, activation="softmax")(features)
+               for _ in range(output_count)]
+    model = keras.Model(inputs if input_count == 2 else inputs[0],
+                        outputs if output_count == 2 else outputs[0])
+    model.compile(optimizer="adam", loss="sparse_categorical_crossentropy")
+    return model
+```
 
 For **multi-input** change `model.fit()` as highlighted below:
 
 ```python
-out = model.fit(x=[x_train_a, x_train_b],
-                y=y_train,
-                validation_data=[[x_val_a, x_val_b], y_val])
+model = make_multi_model(2, 1)
+out = model.fit(x=[x_train_a, x_train_b], y=y_train,
+                validation_data=([x_val_a, x_val_b], y_val), epochs=1, verbose=0)
 ```
 
 For **multi-output** the same structure is expected but instead of changing the `x` argument values, now change `y`:
 
 ```python
-    out = model.fit(x=x_train,
-                    y=[y_train_a, y_train_b],
-                    validation_data=[x_val, [y_val_a, y_val_b]])
+model = make_multi_model(1, 2)
+out = model.fit(x=x_train, y=[y_train_a, y_train_b],
+                validation_data=(x_val, [y_val_a, y_val_b]), epochs=1, verbose=0)
 ```
 For the case where its both **multi-input** and **multi-output** now both `x` and `y` argument values follow the same structure:
 
 ```python
-    out = model.fit(x=[x_train_a, x_train_b],
-                    y=[y_train_a, y_train_b],
-                    validation_data=[[x_val_a, x_val_b], [y_val_a, y_val_b]])
+model = make_multi_model(2, 2)
+out = model.fit(x=[x_train_a, x_train_b], y=[y_train_a, y_train_b],
+                validation_data=([x_val_a, x_val_b], [y_val_a, y_val_b]), epochs=1, verbose=0)
 ```
 
 
@@ -252,12 +307,12 @@ In addition to standard Keras hyperparameters, Talos allows several extra conven
 
 Parameters may be inputted either in a list or tuple.
 
-As a set of discreet values in a list:
+As a set of discrete values in a list:
 
 ```python
 p = {'first_neuron': [12, 24, 48]}
 ```
-As a range of values `(min, max, steps)`:
+As a range of values `(min, max, steps)`; `max` is excluded (this example gives 12 and 30):
 
 ```python
 p = {'first_neuron': (12, 48, 2)}

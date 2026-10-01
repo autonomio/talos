@@ -54,6 +54,12 @@ def test_nondivisible_folds_preserve_real_rows():
 def test_legacy_helpers_are_lazy_in_fresh_process():
     code = 'import sys,talos; import talos.utils,talos.autom8,talos.callbacks; assert not any(n in sys.modules for n in ("tensorflow","torch","keras"))'
     subprocess.run([sys.executable, '-c', code], check=True)
+    for entrypoint in ('talos.model', 'talos.model.normalizers', 'talos.utils'):
+        code = ('import sys; from ' + entrypoint + ' import lr_normalizer; '
+                'import talos.model,talos.utils; '
+                'assert lr_normalizer is talos.model.lr_normalizer is talos.utils.lr_normalizer; '
+                'assert not any(n in sys.modules for n in ("tensorflow","torch","keras"))')
+        subprocess.run([sys.executable, '-c', code], check=True)
 
 
 def test_real_classification_score_encodings():

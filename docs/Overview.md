@@ -17,15 +17,18 @@ If you have an idea for a new feature, don't hesitate to [suggest it](https://gi
 
 Talos provides single-line commands for conducting and analyzing experiments, for evaluating models from the experiment, and making predictions with models. In addition, Talos provides s streamlined way to deploy and restore models across systems.
 
-All primary commands except `Restore()` and `Deploy()` return a class object specific to the command, with various properties. These are outlined in the corresponding sections of the documentation.
+The primary commands return a class object specific to the command, with various properties. These are outlined in the corresponding sections of the documentation.
 
-All primary commands except `Restore()` accept the class object resulting from `Scan()` as input.
+`Analyze()`, `Evaluate()`, `Predict()`, and `Deploy()` accept the class object resulting from `Scan()` as input; `Restore()` accepts an archive path.
 
 
 #### conduct an experiment
 
+Examples below use the held-out Iris setup in [Scan → Minimal Example](Scan.md#minimal-example). Run that setup first; it defines `scan_object`, `p`, `input_model`, `x`, `y`, `x_val`, `y_val`, `x_test`, and `y_test`.
+
 ```python
-scan_object = talos.Scan(x, y, model, params)
+scan_object = talos.Scan(x, y, p, input_model, 'overview',
+                         x_val=x_val, y_val=y_val, seed=17, disable_progress_bar=True)
 ```
 
 #### analyze the results of an experiment
@@ -49,7 +52,7 @@ talos.Predict(scan_object)
 #### create a deploy package
 
 ```python
-talos.Deploy(scan_object, model_name='deployed_package.zip', metric='f1score')
+talos.Deploy(scan_object, model_name='deployed_package', metric='val_loss', asc=True)
 ```
 
 #### deploy a model
@@ -66,7 +69,7 @@ In addition to the primary commands, various utilities can be accessed through `
 To get started with your first experiment is easy. You need to have three things:
 
 a hyperparameter dictionary
-a working Keras model
+a working Keras, tf.keras or Torch training callback
 a Talos experiment
 
 ### STEP 1 : Prepare the input model

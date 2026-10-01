@@ -544,6 +544,19 @@ def run(sfd, data=None, *, params=None, experiment_name='experiment', experiment
                 feedback._apply_intervention(msq, intervention)
             if changes:
                 feedback._write_audit_entry(completed, changes, [], msq)
+            if legacy is not None and legacy.reduction_method == 'gamify':
+                from talos.reducers.gamify import gamify
+                audit_start = len(msq.intervention_log)
+                pending_before = list(legacy.param_object.param_index)
+                gamify(legacy)
+                if pending_before != list(legacy.param_object.param_index):
+                    msq._log_intervention('legacy_pending_selection', source='legacy_reducer',
+                                          reducer='gamify', remaining_indexes=list(legacy.param_object.param_index),
+                                          source_hash=None)
+                    bar.update(max(0, len(pending_before) - len(legacy.param_object.param_index)))
+                changes = msq.intervention_log[audit_start:]
+                if changes:
+                    feedback._write_audit_entry(completed, changes, [], msq)
             queue_state = msq.get_state()
             trial_index = completed
             column_state = dict(result.parameter_columns)

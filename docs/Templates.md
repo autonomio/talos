@@ -15,11 +15,14 @@ In addition, some categories (e.g. datasets) include additional templates. These
 
 # Datasets
 
-Datasets are preprocessed so that they can be used directly as inputs for deep learning models. Datasets are accessed through `talos.templates.datasets`. For example:
+Dataset conveniences are explicitly requested outside the experiment core. Iris is bundled with scikit-learn; the other acquisition helpers may download source data. Inputs are preprocessed for the corresponding templates. Datasets are accessed through `talos.templates.datasets`. For example:
 
 ```python
-talos.templates.datasets.breast_cancer()
-
+import talos
+from sklearn.model_selection import train_test_split
+x, y = talos.templates.datasets.iris()
+x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=.2, random_state=17)
+assert x.shape == (150, 4) and y.shape == (150, 3)
 ```
 
 #### Available Datasets
@@ -39,7 +42,10 @@ talos.templates.datasets.breast_cancer()
 Params consist of an indicative and somewhat meaningful parameter space boundaries that can be used as the parameter dictionary for `Scan()` experiments. Parameter dictionaries are accessed through `talos.templates.params`. For example:
 
 ```python
-talos.templates.params.breast_cancer()
+p = talos.templates.params.iris()
+p.update({'epochs': [2], 'first_neuron': [8], 'hidden_layers': [0],
+          'batch_size': [16], 'losses': ['categorical_crossentropy']})
+assert 'optimizer' in p
 ```
 
 #### Available Params
@@ -56,7 +62,9 @@ talos.templates.params.breast_cancer()
 Models consist of Keras models that can be used as an input model for `Scan()` experiments. Models are accessed through `talos.templates.models`. For example:
 
 ```python
-talos.templates.models.breast_cancer()
+values = {name: choices[0] for name, choices in p.items()}
+history, model = talos.templates.models.iris(x_train, y_train, x_val, y_val, values)
+assert len(history.history['loss']) == 2
 ```
 
 #### Available Models
@@ -73,7 +81,8 @@ talos.templates.models.breast_cancer()
 Pipelines are self-contained `Scan()` experiments where you simply execute the command and an experiment is performed. Pipelines are accessed through `talos.templates.pipelines`. For example:
 
 ```python
-scan_object = talos.templates.pipelines.breast_cancer()
+scan_object = talos.templates.pipelines.iris(round_limit=1)
+assert len(scan_object.data) == 1
 ```
 
 #### Available Pipelines

@@ -6,10 +6,10 @@ Talos supports several common optimization strategies:
 - Random search
 - Probabilistic reduction
 - Custom Strategies (arbitrary single python file optimizer)
-- Local Stragies (can change anytime during experiment)
+- Local Strategies (can change anytime during experiment)
 - Gamify (man-machine cooperation)
 
-The object of abstraction is the keras model configuration, of which n number of permutations is tried in a Talos experiment.
+The object of abstraction is the model configuration, of which n number of permutations is tried in a Talos experiment.
 
 As opposed to adding more complex optimization strategies, which are widely available in various solutions, Talos focus is on:
 
@@ -26,10 +26,14 @@ A key focus in Talos develoment is to provide gold standard random search capabi
 - Pseudo randomness
 - Quasi randomness
 
-Random methods are selected in `Scan(...random_method...)`. For example, to use `quantum` randomness:
+Random methods are selected through `random_method` when a sampling limit is supplied. The following example uses an offline seeded method:
+
+Examples below use the held-out Iris setup in [Scan → Minimal Example](Scan.md#minimal-example). Run that setup first; it defines `scan_object`, `p`, `input_model`, `x`, `y`, `x_val`, `y_val`, `x_test`, and `y_test`.
 
 ```python
-talos.Scan(x=x, y=y, model=model, params=p, random_method='quantum')
+random_scan = talos.Scan(x, y, p, input_model, 'random', x_val=x_val, y_val=y_val,
+                         random_method='uniform_mersenne', fraction_limit=.5,
+                         seed=17, disable_progress_bar=True)
 ```
 
 ## Random Options
@@ -47,7 +51,7 @@ PARAMETER | DESCRIPTION
 `uniform_crypto` | Cryptographically sound uniform
 `uniform_mersenne` | Uniform Mersenne twister
 
-Each method differs in discrepancy and other observable aspects. Scientific evidence suggest that low discrepancy methods outperform plain pseudo-random methods.
+Each method differs in discrepancy and other observable aspects. `seed` makes supported offline methods repeatable; `uniform_crypto`, `quantum`, and `ambience` draw fresh entropy. Checkpoints retain the realized pending rows so a resumed sweep does not resample them. Performance depends on the search space; compare methods on your own experiment. `quantum` and `ambience` require the optional `chances` package and external entropy services; availability, cost, and physical entropy claims are service-specific. They are not required for the examples or the default workflow.
 
 # Grid Search
 
@@ -61,8 +65,10 @@ Use of early stopper, when set appropriate, can help reduce experiment time by p
 
 ```python
 
-out = model.fit(x_train,
-                y_train,
+_, model = input_model(x, y, x_val, y_val, {key: values[0] for key, values in p.items()})
+params = {key: values[0] for key, values in p.items()}
+out = model.fit(x,
+                y,
                 batch_size=params['batch_size'],
                 epochs=params['epochs'],
                 validation_data=[x_val, y_val],
@@ -76,7 +82,7 @@ The minimum input to Talos `early_stopper` is the `epochs` hyperparameter. This 
 Argument | Input | Description
 -------- | ----- | -----------
 `epochs` | int | The number of epochs for the permutation e.g. params['epochs']
-`monitor` | int | The metric to monitor for change
+`monitor` | str | The metric to monitor for change
 `mode` | str | One of the presets `lazy`, `moderate`, `strict` or `None`
 `min_delta` | float | The limit for change at which point flag is raised
-`patience` | str | the number of epochs before termination from flag
+`patience` | int | the number of epochs before termination from flag

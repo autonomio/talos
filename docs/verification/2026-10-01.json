@@ -1,0 +1,2700 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-01",
+  "status": "passed",
+  "git_base_commit": "593480643901b6fd9c51f22677c3bbb182bca4e7",
+  "scope": "Final working sources, identified by hashes; CPU execution; no remote publishing.",
+  "counts": {
+    "fences": 138,
+    "examples": 10,
+    "notebook_code_cells": 42,
+    "inline_commands": 3
+  },
+  "acceptance": {
+    "modern": {
+      "python": "3.12.12",
+      "passed": 159,
+      "skipped": 0,
+      "versions": {
+        "tensorflow": "2.21.0",
+        "keras": "3.15.1",
+        "torch": "2.14.1",
+        "numpy": "2.5.3",
+        "pandas": "2.3.3",
+        "polars": "1.44.2",
+        "scikit-learn": "1.9.1",
+        "scipy": "1.18.1",
+        "requests": "2.34.2",
+        "click": "8.5.0",
+        "tqdm": "4.70.1",
+        "pytest": "9.1.1",
+        "hatchling": "1.32.4",
+        "editables": "0.6"
+      }
+    },
+    "legacy_source": {
+      "python": "3.11.6",
+      "passed": 149,
+      "skipped": 10,
+      "seconds": 76.74,
+      "log": "/tmp/talos-maintenance-legacy-suite.log",
+      "tensorflow": "2.14.1",
+      "keras": "2.14.0",
+      "numpy": "1.26.4",
+      "scope": "Current Talos source; legacy environment installed distribution metadata remains old Talos1.4. Native Torch absent."
+    },
+    "supported_minimum": {
+      "frameworks": {
+        "tensorflow": "2.20.0",
+        "keras": "3.15.0",
+        "torch": "2.13.0",
+        "protobuf": "6.33.5"
+      },
+      "passed": 159,
+      "skipped": 0
+    },
+    "installed_core_wheels": [
+      {
+        "python": "3.10.16",
+        "passed": 137,
+        "skipped": 22,
+        "environment": {
+          "python": "3.10.16",
+          "talos_module": "/private/tmp/talos-core-310/lib/python3.10/site-packages/talos/__init__.py",
+          "versions": {
+            "click": "8.5.0",
+            "numpy": "2.2.6",
+            "pandas": "2.3.3",
+            "polars": "1.44.2",
+            "requests": "2.34.2",
+            "ruamel-yaml": "0.18.17",
+            "scikit-learn": "1.7.2",
+            "scipy": "1.15.3",
+            "tomli": "2.4.1",
+            "tqdm": "4.70.1",
+            "typing-extensions": "4.16.0",
+            "build": "1.6.1",
+            "coverage": "7.16.2",
+            "editables": "0.6",
+            "hatchling": "1.32.4",
+            "pytest": "9.1.1",
+            "ruff": "0.16.9",
+            "matplotlib": "3.10.9",
+            "chances": "0.1.9"
+          },
+          "base_and_test_plot_sampler_requirements_satisfied": true
+        }
+      },
+      {
+        "python": "3.13.2",
+        "passed": 137,
+        "skipped": 22,
+        "environment": {
+          "python": "3.13.2",
+          "talos_module": "/private/tmp/talos-core-313/lib/python3.13/site-packages/talos/__init__.py",
+          "versions": {
+            "click": "8.5.0",
+            "numpy": "2.5.3",
+            "pandas": "2.3.3",
+            "polars": "1.44.2",
+            "requests": "2.34.2",
+            "ruamel-yaml": "0.18.17",
+            "scikit-learn": "1.9.1",
+            "scipy": "1.18.1",
+            "tqdm": "4.70.1",
+            "typing-extensions": "4.16.0",
+            "build": "1.6.1",
+            "coverage": "7.16.2",
+            "editables": "0.6",
+            "hatchling": "1.32.4",
+            "pytest": "9.1.1",
+            "ruff": "0.16.9",
+            "matplotlib": "3.11.2",
+            "chances": "0.1.9"
+          },
+          "base_and_test_plot_sampler_requirements_satisfied": true
+        }
+      }
+    ],
+    "runtime_wheel_sources_verified": 179
+  },
+  "dependency_audits": {
+    "modern": {
+      "status": "clean",
+      "packages": 79,
+      "sha256": "98b8051803ef663865b8e5a73387c219be598699ebeecf94d0f131b3277c0efa"
+    },
+    "patched-minimum": {
+      "status": "clean",
+      "packages": 79,
+      "sha256": "6367cdd7f1a69138a1465cb338057b23389affce9b96a45bc85cd3078b667bc5"
+    },
+    "core-minimum": {
+      "status": "clean",
+      "packages": 37,
+      "sha256": "7e84f7fd575fb42c0feb928ecdaee4b83441294f608b8fdad1b02211eadecd4e"
+    },
+    "legacy": {
+      "status": "known-advisories",
+      "packages": 107,
+      "sha256": "4b35b5b9d433ec1cb00c1f3f1e05c2690b71d2a0c0a6ca1b507930cf48e2e262",
+      "findings": [
+        {
+          "name": "keras",
+          "version": "2.14.0",
+          "advisories": [
+            {
+              "id": "PYSEC-2025-121",
+              "fix_versions": []
+            },
+            {
+              "id": "PYSEC-2025-76",
+              "fix_versions": [
+                "3.11.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-1487",
+              "fix_versions": [
+                "3.12.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-2547",
+              "fix_versions": [
+                "3.13.2"
+              ]
+            },
+            {
+              "id": "PYSEC-2025-121",
+              "fix_versions": []
+            },
+            {
+              "id": "PYSEC-2026-1487",
+              "fix_versions": [
+                "3.12.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-2324",
+              "fix_versions": [
+                "3.14.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-2547",
+              "fix_versions": [
+                "3.13.2"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-2324",
+              "fix_versions": [
+                "3.14.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-3632",
+              "fix_versions": [
+                "3.12.3",
+                "3.15.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-3634",
+              "fix_versions": [
+                "3.12.3",
+                "3.15.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-3631",
+              "fix_versions": [
+                "3.12.3",
+                "3.15.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-3633",
+              "fix_versions": [
+                "3.12.3",
+                "3.15.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-3629",
+              "fix_versions": [
+                "3.12.3",
+                "3.15.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-3630",
+              "fix_versions": [
+                "3.12.3",
+                "3.15.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-3633",
+              "fix_versions": [
+                "3.12.3",
+                "3.15.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-3634",
+              "fix_versions": [
+                "3.12.3",
+                "3.15.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-3631",
+              "fix_versions": [
+                "3.12.3",
+                "3.15.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-3632",
+              "fix_versions": [
+                "3.12.3",
+                "3.15.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-3630",
+              "fix_versions": [
+                "3.12.3",
+                "3.15.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-3629",
+              "fix_versions": [
+                "3.12.3",
+                "3.15.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-3856",
+              "fix_versions": [
+                "3.15.0"
+              ]
+            },
+            {
+              "id": "CVE-2025-12060",
+              "fix_versions": [
+                "3.12.0"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "protobuf",
+          "version": "4.25.9",
+          "advisories": [
+            {
+              "id": "PYSEC-2026-1805",
+              "fix_versions": [
+                "5.29.6",
+                "6.33.5"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-1805",
+              "fix_versions": [
+                "5.29.6",
+                "6.33.5"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "setuptools",
+          "version": "80.10.2",
+          "advisories": [
+            {
+              "id": "PYSEC-2026-3447",
+              "fix_versions": [
+                "83.0.0"
+              ]
+            },
+            {
+              "id": "PYSEC-2026-3447",
+              "fix_versions": [
+                "83.0.0"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "patched-core-floors": {
+      "status": "clean",
+      "packages": 11,
+      "sha256": "ed4637d399f8610c7e05bb029313551eea432525c8064f15451330e87d9c2415"
+    }
+  },
+  "framework_environment_versions": {
+    "current": {
+      "python": "3.12.12 (main, Nov 19 2025, 22:30:44) [Clang 21.1.4 ]",
+      "packages": {
+        "numpy": "2.5.3",
+        "termcolor": "3.3.0",
+        "scikit-learn": "1.9.1",
+        "cloudpickle": "3.1.2",
+        "filelock": "4.0.7",
+        "kiwisolver": "1.5.1",
+        "optree": "0.20.0",
+        "click": "8.5.0",
+        "torch": "2.14.1",
+        "fonttools": "4.66.1",
+        "packaging": "26.3",
+        "networkx": "3.7",
+        "joblib": "1.6.0",
+        "protobuf": "7.36.2",
+        "iniconfig": "2.3.0",
+        "Pygments": "2.21.0",
+        "trove-classifiers": "2026.9.21.13",
+        "wrapt": "2.5.0",
+        "astunparse": "1.6.3",
+        "tzdata": "2026.4",
+        "h5py": "3.14.0",
+        "requests": "2.34.2",
+        "opt_einsum": "3.4.0",
+        "statsmodels": "0.14.6",
+        "google-pasta": "0.2.0",
+        "rich": "15.0.0",
+        "build": "1.6.1",
+        "wheel": "0.48.0",
+        "pytz": "2026.4",
+        "contourpy": "1.4.0",
+        "sympy": "1.14.0",
+        "grpcio": "1.84.0",
+        "ruff": "0.16.9",
+        "editables": "0.6",
+        "absl-py": "2.5.0",
+        "tqdm": "4.70.1",
+        "pytest": "9.1.1",
+        "setuptools": "84.0.0",
+        "urllib3": "2.8.0",
+        "namex": "0.1.0",
+        "mdurl": "0.1.2",
+        "chances": "0.1.9",
+        "pyproject_hooks": "1.3.3",
+        "python-dateutil": "2.9.0.post0",
+        "polars": "1.44.2",
+        "mpmath": "1.3.0",
+        "fsspec": "2026.9.0",
+        "matplotlib": "3.11.2",
+        "polars-runtime-32": "1.44.2",
+        "ruamel.yaml.clib": "0.2.15",
+        "certifi": "2026.7.22",
+        "libclang": "18.1.1",
+        "cycler": "0.12.1",
+        "Jinja2": "3.1.6",
+        "pandas": "2.3.3",
+        "markdown-it-py": "4.2.0",
+        "tomlkit": "0.15.1",
+        "MarkupSafe": "3.0.3",
+        "threadpoolctl": "3.7.0",
+        "flatbuffers": "25.12.19",
+        "pluggy": "1.6.0",
+        "pathspec": "1.1.1",
+        "patsy": "1.0.3",
+        "keras": "3.15.1",
+        "typing_extensions": "4.16.0",
+        "tensorflow": "2.21.0",
+        "hatchling": "1.32.4",
+        "coverage": "7.16.2",
+        "ml_dtypes": "0.6.0",
+        "ruamel.yaml": "0.18.17",
+        "gast": "0.7.0",
+        "charset-normalizer": "3.5.2",
+        "pillow": "12.3.0",
+        "pyparsing": "3.3.3",
+        "six": "1.17.0",
+        "scipy": "1.18.1",
+        "wrangle": "0.7.6",
+        "narwhals": "2.26.0",
+        "idna": "3.20"
+      }
+    },
+    "original_minimum": {
+      "python": "3.10.16 (main, Dec  3 2024, 17:27:57) [Clang 16.0.0 (clang-1600.0.26.4)]",
+      "packages": {
+        "protobuf": "4.25.9",
+        "contourpy": "1.3.2",
+        "termcolor": "3.3.0",
+        "cloudpickle": "3.1.2",
+        "kiwisolver": "1.5.1",
+        "exceptiongroup": "1.3.1",
+        "optree": "0.20.0",
+        "tensorflow-io-gcs-filesystem": "0.37.1",
+        "click": "8.5.0",
+        "packaging": "26.3",
+        "joblib": "1.6.0",
+        "matplotlib": "3.10.9",
+        "iniconfig": "2.3.0",
+        "fonttools": "4.65.0",
+        "Pygments": "2.21.0",
+        "torch": "2.2.0",
+        "scikit-learn": "1.3.0",
+        "wrapt": "2.5.0",
+        "astunparse": "1.6.3",
+        "tzdata": "2026.4",
+        "requests": "2.34.2",
+        "opt_einsum": "3.4.0",
+        "google-pasta": "0.2.0",
+        "rich": "15.0.0",
+        "tomli": "2.4.1",
+        "networkx": "3.4.2",
+        "tensorflow": "2.16.2",
+        "ml-dtypes": "0.3.2",
+        "numpy": "1.26.4",
+        "keras": "3.3.0",
+        "wheel": "0.48.0",
+        "pytz": "2026.4",
+        "sympy": "1.14.0",
+        "grpcio": "1.84.0",
+        "absl-py": "2.5.0",
+        "tqdm": "4.70.1",
+        "pytest": "9.1.1",
+        "setuptools": "84.0.0",
+        "urllib3": "2.8.0",
+        "namex": "0.1.0",
+        "polars": "1.30.0",
+        "mdurl": "0.1.2",
+        "python-dateutil": "2.9.0.post0",
+        "mpmath": "1.3.0",
+        "filelock": "4.0.8",
+        "fsspec": "2026.9.0",
+        "tensorboard": "2.16.2",
+        "ruamel.yaml.clib": "0.2.15",
+        "certifi": "2026.7.22",
+        "libclang": "18.1.1",
+        "cycler": "0.12.1",
+        "Jinja2": "3.1.6",
+        "Markdown": "3.10.3",
+        "markdown-it-py": "4.2.0",
+        "MarkupSafe": "3.0.3",
+        "threadpoolctl": "3.7.0",
+        "pandas": "2.2.0",
+        "flatbuffers": "25.12.19",
+        "pluggy": "1.6.0",
+        "typing_extensions": "4.16.0",
+        "tensorboard-data-server": "0.7.2",
+        "ruamel.yaml": "0.18.17",
+        "gast": "0.7.0",
+        "scipy": "1.11.1",
+        "charset-normalizer": "3.5.2",
+        "pillow": "12.3.0",
+        "pyparsing": "3.3.3",
+        "six": "1.17.0",
+        "h5py": "3.16.0",
+        "idna": "3.20",
+        "Werkzeug": "3.1.9"
+      }
+    },
+    "patched_minimum": {
+      "python": "3.11.6 (main, Nov  2 2023, 04:39:43) [Clang 14.0.3 (clang-1403.0.22.14.1)]",
+      "packages": {
+        "ml_dtypes": "0.5.4",
+        "termcolor": "3.3.0",
+        "cloudpickle": "3.1.2",
+        "kiwisolver": "1.5.1",
+        "optree": "0.20.0",
+        "click": "8.5.0",
+        "fonttools": "4.66.1",
+        "packaging": "26.3",
+        "joblib": "1.6.0",
+        "iniconfig": "2.3.0",
+        "Pygments": "2.21.0",
+        "trove-classifiers": "2026.9.21.13",
+        "wrapt": "2.5.0",
+        "astunparse": "1.6.3",
+        "tzdata": "2026.4",
+        "requests": "2.34.2",
+        "opt_einsum": "3.4.0",
+        "google-pasta": "0.2.0",
+        "rich": "15.0.0",
+        "networkx": "3.6.1",
+        "protobuf": "6.33.5",
+        "contourpy": "1.3.3",
+        "numpy": "1.26.4",
+        "scikit-learn": "1.5.0",
+        "build": "1.6.1",
+        "tensorflow": "2.20.0",
+        "wheel": "0.48.0",
+        "pytz": "2026.4",
+        "sympy": "1.14.0",
+        "grpcio": "1.84.0",
+        "ruff": "0.16.9",
+        "editables": "0.6",
+        "absl-py": "2.5.0",
+        "Markdown": "3.11",
+        "tqdm": "4.70.1",
+        "pytest": "9.1.1",
+        "setuptools": "84.0.0",
+        "urllib3": "2.8.0",
+        "namex": "0.1.0",
+        "mdurl": "0.1.2",
+        "chances": "0.1.9",
+        "pyproject_hooks": "1.3.3",
+        "python-dateutil": "2.9.0.post0",
+        "polars": "1.44.2",
+        "mpmath": "1.3.0",
+        "filelock": "4.0.8",
+        "keras": "3.15.0",
+        "fsspec": "2026.9.0",
+        "matplotlib": "3.11.2",
+        "polars-runtime-32": "1.44.2",
+        "tensorboard": "2.20.0",
+        "ruamel.yaml.clib": "0.2.15",
+        "certifi": "2026.7.22",
+        "libclang": "18.1.1",
+        "scipy": "1.17.1",
+        "torch": "2.13.0",
+        "cycler": "0.12.1",
+        "Jinja2": "3.1.6",
+        "pandas": "2.3.3",
+        "markdown-it-py": "4.2.0",
+        "tomlkit": "0.15.1",
+        "MarkupSafe": "3.0.3",
+        "threadpoolctl": "3.7.0",
+        "flatbuffers": "25.12.19",
+        "pluggy": "1.6.0",
+        "pathspec": "1.1.1",
+        "typing_extensions": "4.16.0",
+        "hatchling": "1.32.4",
+        "coverage": "7.16.2",
+        "tensorboard-data-server": "0.7.2",
+        "ruamel.yaml": "0.18.17",
+        "gast": "0.7.0",
+        "charset-normalizer": "3.5.2",
+        "pillow": "12.3.0",
+        "pyparsing": "3.3.3",
+        "six": "1.17.0",
+        "h5py": "3.16.0",
+        "idna": "3.20",
+        "Werkzeug": "3.1.9"
+      }
+    },
+    "core_minimum": {
+      "python": "3.10.16 (main, Dec  3 2024, 17:27:57) [Clang 16.0.0 (clang-1600.0.26.4)]",
+      "packages": {
+        "contourpy": "1.3.2",
+        "cloudpickle": "3.1.2",
+        "kiwisolver": "1.5.1",
+        "exceptiongroup": "1.3.1",
+        "packaging": "26.3",
+        "joblib": "1.6.0",
+        "iniconfig": "2.3.0",
+        "fonttools": "4.65.0",
+        "Pygments": "2.21.0",
+        "tzdata": "2026.4",
+        "matplotlib": "3.8.0",
+        "ruamel.yaml": "0.18.0",
+        "requests": "2.33.0",
+        "typing_extensions": "4.12.0",
+        "numpy": "1.26.4",
+        "scikit-learn": "1.5.0",
+        "tqdm": "4.66.3",
+        "pytz": "2026.4",
+        "pytest": "9.1.1",
+        "urllib3": "2.8.0",
+        "tomli": "2.0.0",
+        "polars": "1.30.0",
+        "chances": "0.1.9",
+        "python-dateutil": "2.9.0.post0",
+        "click": "8.3.3",
+        "ruamel.yaml.clib": "0.2.15",
+        "certifi": "2026.7.22",
+        "cycler": "0.12.1",
+        "threadpoolctl": "3.7.0",
+        "pandas": "2.2.0",
+        "pluggy": "1.6.0",
+        "scipy": "1.11.1",
+        "charset-normalizer": "3.5.2",
+        "pillow": "12.3.0",
+        "pyparsing": "3.3.3",
+        "six": "1.17.0",
+        "idna": "3.20"
+      }
+    },
+    "legacy": {
+      "python": "3.11.6 (main, Nov  2 2023, 04:39:43) [Clang 14.0.3 (clang-1403.0.22.14.1)]",
+      "packages": {
+        "click": "8.5.0",
+        "pyarrow": "23.0.1",
+        "polars": "1.44.2",
+        "polars-runtime-32": "1.44.2",
+        "ruamel.yaml.clib": "0.2.15",
+        "ruamel.yaml": "0.18.17",
+        "protobuf": "4.25.9",
+        "flake8": "7.4.1",
+        "pyflakes": "4.0.0",
+        "termcolor": "3.3.0",
+        "scikit-learn": "1.9.1",
+        "oauthlib": "4.0.0",
+        "pexpect": "4.9.0",
+        "cloudpickle": "3.1.2",
+        "kiwisolver": "1.5.1",
+        "talos": "1.4",
+        "tensorflow-io-gcs-filesystem": "0.37.1",
+        "keras": "2.14.0",
+        "jedi": "0.20.0",
+        "ptyprocess": "0.7.0",
+        "fonttools": "4.66.1",
+        "packaging": "26.3",
+        "joblib": "1.6.0",
+        "iniconfig": "2.3.0",
+        "Pygments": "2.21.0",
+        "trove-classifiers": "2026.9.21.13",
+        "google-auth-oauthlib": "1.0.0",
+        "prompt_toolkit": "3.0.53",
+        "astetik": "1.16",
+        "executing": "2.2.1",
+        "astunparse": "1.6.3",
+        "tzdata": "2026.4",
+        "requests": "2.34.2",
+        "opt_einsum": "3.4.0",
+        "google-pasta": "0.2.0",
+        "kerasplotlib": "1.0",
+        "contourpy": "1.3.3",
+        "seaborn": "0.13.2",
+        "matplotlib-inline": "0.2.2",
+        "ml-dtypes": "0.2.0",
+        "traitlets": "5.16.1",
+        "ipython_pygments_lexers": "1.1.1",
+        "numpy": "1.26.4",
+        "tensorflow": "2.14.1",
+        "google-auth": "2.59.1",
+        "wheel": "0.48.0",
+        "cryptography": "50.0.2",
+        "formulaic": "1.2.2",
+        "pytz": "2026.4",
+        "stack-data": "0.6.3",
+        "matplotlib": "3.7.5",
+        "grpcio": "1.84.0",
+        "geonamescache": "3.0.2",
+        "ipython": "8.39.0",
+        "absl-py": "2.5.0",
+        "Markdown": "3.11",
+        "tqdm": "4.70.1",
+        "pytest": "9.1.1",
+        "urllib3": "2.8.0",
+        "pycparser": "3.0",
+        "pyasn1": "0.6.4",
+        "setuptools": "80.10.2",
+        "chances": "0.1.9",
+        "python-dateutil": "2.9.0.post0",
+        "mccabe": "0.7.0",
+        "tensorflow-estimator": "2.14.0",
+        "tensorboard": "2.14.1",
+        "cffi": "2.1.1",
+        "statsmodels": "0.15.0",
+        "certifi": "2026.7.22",
+        "libclang": "18.1.1",
+        "pure_eval": "0.2.4",
+        "scipy": "1.17.1",
+        "wrapt": "1.14.2",
+        "cycler": "0.12.1",
+        "wcwidth": "0.9.1",
+        "pandas": "2.3.3",
+        "tomlkit": "0.15.1",
+        "pycodestyle": "2.15.0",
+        "MarkupSafe": "3.0.3",
+        "threadpoolctl": "3.7.0",
+        "flatbuffers": "25.12.19",
+        "pluggy": "1.6.0",
+        "interface_meta": "2.0.1",
+        "pathspec": "1.1.1",
+        "patsy": "1.0.3",
+        "typing_extensions": "4.16.0",
+        "asttokens": "3.0.2",
+        "hatchling": "1.32.4",
+        "decorator": "5.3.1",
+        "coverage": "7.16.2",
+        "pyasn1_modules": "0.4.2",
+        "tensorboard-data-server": "0.7.2",
+        "tensorflow-macos": "2.14.1",
+        "psutil": "7.2.2",
+        "gast": "0.7.0",
+        "parso": "0.8.7",
+        "charset-normalizer": "3.5.2",
+        "pillow": "12.3.0",
+        "pyparsing": "3.3.3",
+        "six": "1.17.0",
+        "h5py": "3.16.0",
+        "requests-oauthlib": "2.0.0",
+        "wrangle": "0.7.6",
+        "narwhals": "2.26.0",
+        "idna": "3.20",
+        "Werkzeug": "3.1.9"
+      }
+    }
+  },
+  "documentation_blocks": [
+    {
+      "path": "CONTRIBUTING.md",
+      "start_line": 7,
+      "code_sha256": "11fcd66499c1847636150aecd262161556cffc92db109828b548243fa1af7582",
+      "status": "passed",
+      "context": "actual full development commands in complete temporary checkout"
+    },
+    {
+      "path": "README.md",
+      "start_line": 11,
+      "code_sha256": "26335ffa777871db4f66d90037db0a1ce7062930b0358ae6084922c9244220fe",
+      "status": "passed",
+      "context": "sequential page context; documented file saves"
+    },
+    {
+      "path": "README.md",
+      "start_line": 25,
+      "code_sha256": "d35971fe50f30db96c638bd662c2c2c2e39c6deb44e6f446062db82a91596b87",
+      "status": "passed",
+      "context": "sequential page context; documented file saves"
+    },
+    {
+      "path": "README.md",
+      "start_line": 59,
+      "code_sha256": "1c7cbb43dd4dfe6cbb44b29588ebe5f5a4877aa787efe12e1782665e64ce74fb",
+      "status": "passed",
+      "context": "sequential page context; documented file saves"
+    },
+    {
+      "path": "README.md",
+      "start_line": 92,
+      "code_sha256": "1fc1029fb4516d350cafd40a2452b0c34ab3c4bd49977713c4d52fec8e10e314",
+      "status": "passed",
+      "context": "sequential page context; documented file saves"
+    },
+    {
+      "path": "README.md",
+      "start_line": 104,
+      "code_sha256": "9df322dbaac29148f36146a1c0332043de38d3c70052c104f779b9b45103ed38",
+      "status": "passed",
+      "context": "sequential page context; documented file saves"
+    },
+    {
+      "path": "README.md",
+      "start_line": 125,
+      "code_sha256": "5065d4ac7ff119881cae75968a14a78966c6cba54b80d499595d0ebe7313f2a7",
+      "status": "passed",
+      "context": "sequential page context; documented file saves"
+    },
+    {
+      "path": "README.md",
+      "start_line": 140,
+      "code_sha256": "9b8141981034b81b98f4b611d3c0b71bde0632abab1f48f2040e95d3173214bd",
+      "status": "passed",
+      "context": "actual full development commands in complete temporary checkout"
+    },
+    {
+      "path": "docs/Analyze.md",
+      "start_line": 9,
+      "code_sha256": "ed751a14808828d935106440acb0d2934ce9339fc2757020e8c2b7fd5c46ba8f",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/AutoModel.md",
+      "start_line": 13,
+      "code_sha256": "3362212a240cbd597985b5d170b7d188f0c3567d18aa62b45bb17ee2e6641bb9",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_automodel",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/AutoModel",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/AutoParams.md",
+      "start_line": 7,
+      "code_sha256": "054bafa89e5b3cd373b67620e3e907a984d41b1131ca80c6309b97ef922c7fb4",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_autoparams",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/AutoParams",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/AutoParams.md",
+      "start_line": 16,
+      "code_sha256": "2a221840bffbedcbf9fcea0d7e345c95d53605bdd00af4b4471f9e3208099d40",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_autoparams",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/AutoParams",
+        "prior_blocks": 1,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/AutoParams.md",
+      "start_line": 25,
+      "code_sha256": "af5d3a0f8edb02f8af3d561d02a9d1f5e0de637a373f42b7414c4784b06407d1",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_autoparams",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/AutoParams",
+        "prior_blocks": 2,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/AutoParams.md",
+      "start_line": 34,
+      "code_sha256": "68da99a9bfbf6716626c4e61ad4a979b2bd70ef51180f21bcdece297643d6846",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_autoparams",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/AutoParams",
+        "prior_blocks": 3,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/AutoPredict.md",
+      "start_line": 5,
+      "code_sha256": "18b283a1400189ffaf9fc33e4d9fadb38c0b1f42c61eeed574d05e08b7356294",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_autopredict",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/AutoPredict",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/AutoScan.md",
+      "start_line": 7,
+      "code_sha256": "63b47ea34c5df2b65700f7a4c0742187caf09beec30f27213153ed62fecb0c6c",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_autoscan",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/AutoScan",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Custom_Reducers.md",
+      "start_line": 10,
+      "code_sha256": "76157fdddff4a18c1dd5b7d649b76382d61931690a6b259f0a04407f118d44d1",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Custom_Reducers.md",
+      "start_line": 32,
+      "code_sha256": "d56293dd8458c31500b488a81c3517ff555948ad59ff25bdd9a90e9e9c34a85a",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Deploy.md",
+      "start_line": 7,
+      "code_sha256": "35170659286b9ed5c778bdfae5b6ede5d5ea98216846679aacb5abf27bcd490f",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Energy_Draw.md",
+      "start_line": 14,
+      "code_sha256": "1fe21dade24324f1b3b8323019d9e7afaa3cc17340482a499399cb225fc2c70d",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Energy_Draw.md",
+      "start_line": 22,
+      "code_sha256": "ef549d88cc763391250574636145f6908f79ce9d35298cc7e46923e012931d20",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Energy_Draw.md",
+      "start_line": 31,
+      "code_sha256": "17637d8ab1e2797c23fd345446d4d2679905c7c5dc40497568dc2d076881806a",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Evaluate.md",
+      "start_line": 7,
+      "code_sha256": "47c7dea0dd6d9b3d66655766121601915207b116bc6f64f63accf101846477b9",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Examples_AutoML.md",
+      "start_line": 9,
+      "code_sha256": "5c78970a020f2a92f31c92ecaa20cd41b7caadecab5fa3d57b2c4518aa583171",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_automl",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_AutoML",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_AutoML.md",
+      "start_line": 17,
+      "code_sha256": "27e08feea41bcfe69dea0b58c971f17412fa2c08ac0dd1367ac953d7bb4d4e21",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_automl",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_AutoML",
+        "prior_blocks": 1,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_AutoML.md",
+      "start_line": 32,
+      "code_sha256": "891b9f67d8ddb65ba18af4274f7e60dd1cf71a3654e3c3092ee924ba185cf2d2",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_automl",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_AutoML",
+        "prior_blocks": 2,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_AutoML.md",
+      "start_line": 50,
+      "code_sha256": "27779a02450cedd6e2c52045e805a5bf4bd0413811d36d4080c20eda46beaed3",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_automl",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_AutoML",
+        "prior_blocks": 3,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_AutoML_Code.md",
+      "start_line": 5,
+      "code_sha256": "4125df2acd444fed4c9d784fc4cc2fff1920dc6fc9b8f8eca344a436236ff847",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_automl_code",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_AutoML_Code",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Generator.md",
+      "start_line": 9,
+      "code_sha256": "3ff3889e792b8a03eece1c193e2edfa0a14695844c52835f7e4ba7cd479ea0d7",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_generator",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Generator",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Generator.md",
+      "start_line": 21,
+      "code_sha256": "1daa8cb36783b9893efbc35bd80ee369d682b489c47ffda5c4f74545d43bcb1d",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_generator",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Generator",
+        "prior_blocks": 1,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Generator.md",
+      "start_line": 31,
+      "code_sha256": "b32ac98d2d2739d8070a20a7d9694d3196f475327c41344b70a66d13f7545801",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_generator",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Generator",
+        "prior_blocks": 2,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Generator.md",
+      "start_line": 66,
+      "code_sha256": "7f87fd1dd66b5b7982956a1496b1359445de065883900784d79d335bf815ef9a",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_generator",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Generator",
+        "prior_blocks": 3,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Generator.md",
+      "start_line": 76,
+      "code_sha256": "efac614836c09907416dbcea9fbd5629ac0579ae31ed74d8384003c009f297f2",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_generator",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Generator",
+        "prior_blocks": 4,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Generator_Code.md",
+      "start_line": 5,
+      "code_sha256": "bead728947ae7e8798193d38247ecfea77a3e75f86cd775168478b74e3bf8e8e",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_generator_code",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Generator_Code",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Multiple_Inputs.md",
+      "start_line": 9,
+      "code_sha256": "2af972d2940170ef31da982c1560d37dae3e83bb0f102dc8b77004ca76644b52",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_multiple_inputs",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Multiple_Inputs",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Multiple_Inputs.md",
+      "start_line": 19,
+      "code_sha256": "c27b7fdbd90473e7bf900430def3f8dbfdcffb8a960c7d54c17202e6d1576569",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_multiple_inputs",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Multiple_Inputs",
+        "prior_blocks": 1,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Multiple_Inputs.md",
+      "start_line": 30,
+      "code_sha256": "e39b247845fc9cfea38736499ca1022ffab1b08413152616a37d16c3da0d829f",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_multiple_inputs",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Multiple_Inputs",
+        "prior_blocks": 2,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Multiple_Inputs.md",
+      "start_line": 66,
+      "code_sha256": "1d6667686760ca1fe9f90282b2b892b097a6bc494ba4cc5c583559bb98845441",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_multiple_inputs",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Multiple_Inputs",
+        "prior_blocks": 3,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Multiple_Inputs.md",
+      "start_line": 75,
+      "code_sha256": "66458f5be1750d4616d34edb4cdf4499075200953317bef2fb9cb91a6e2d9217",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_multiple_inputs",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Multiple_Inputs",
+        "prior_blocks": 4,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Multiple_Inputs.md",
+      "start_line": 88,
+      "code_sha256": "320edf28498e79787da3e6d1d87af62f2755421eb86ebb73b42d711179874497",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_multiple_inputs",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Multiple_Inputs",
+        "prior_blocks": 5,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Multiple_Inputs_Code.md",
+      "start_line": 5,
+      "code_sha256": "282fea578ce3bca70cf7450529c0fdbb89bff9dcd2d862c77464f6548223fb47",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_multiple_inputs_code",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Multiple_Inputs_Code",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Multiple_Outputs.md",
+      "start_line": 9,
+      "code_sha256": "2af972d2940170ef31da982c1560d37dae3e83bb0f102dc8b77004ca76644b52",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_multiple_outputs",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Multiple_Outputs",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Multiple_Outputs.md",
+      "start_line": 19,
+      "code_sha256": "e5b7b101b624d4765fefb280bc9e425e8a938f60e251959738948c2ac002dafc",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_multiple_outputs",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Multiple_Outputs",
+        "prior_blocks": 1,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Multiple_Outputs.md",
+      "start_line": 37,
+      "code_sha256": "c051bd048a6d3d7a100abcab50ebd4a7f8a83ec59f9aac240dd3378a30c3bfa5",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_multiple_outputs",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Multiple_Outputs",
+        "prior_blocks": 2,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Multiple_Outputs.md",
+      "start_line": 72,
+      "code_sha256": "8c0a0705d5ba77710259ad56731cbcd278ab0f1fafc090dfd7e32f7f6abd05f5",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_multiple_outputs",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Multiple_Outputs",
+        "prior_blocks": 3,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Multiple_Outputs.md",
+      "start_line": 81,
+      "code_sha256": "849d264bd2d9df8f1b2b21828760f6ca0e2251399a091ad236e6a1c67577c4b1",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_multiple_outputs",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Multiple_Outputs",
+        "prior_blocks": 4,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Multiple_Outputs.md",
+      "start_line": 93,
+      "code_sha256": "43a3b1f7f913e5d6d1c7a97f0f5663ad0f74077840da7cf60e3048732c841b63",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_multiple_outputs",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Multiple_Outputs",
+        "prior_blocks": 5,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Multiple_Outputs_Code.md",
+      "start_line": 5,
+      "code_sha256": "18302794adaad6269c9fc3265ff53ea3cf40a0ff63b68686852803cd813914cf",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_multiple_outputs_code",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Multiple_Outputs_Code",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_PyTorch.md",
+      "start_line": 7,
+      "code_sha256": "1d6237a9a29e80d73fd97fbb00c8119a12e960a0e5e2c8a83b6463a89537b921",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_pytorch",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_PyTorch",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_PyTorch.md",
+      "start_line": 19,
+      "code_sha256": "966dc45ab75e19e2caa8ea9205a647d71639aee91d297d1e2a26b6b8dd355171",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_pytorch",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_PyTorch",
+        "prior_blocks": 1,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_PyTorch.md",
+      "start_line": 32,
+      "code_sha256": "8cbc00db24fc42171e34b0fba97617888025d602a977f5001057ee80f2dc39e0",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_pytorch",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_PyTorch",
+        "prior_blocks": 2,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_PyTorch.md",
+      "start_line": 77,
+      "code_sha256": "dbd73ac0bb5aa9520bef0dc92cd38812fa43903543f0a158ed964cb0b6a1b619",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_pytorch",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_PyTorch",
+        "prior_blocks": 3,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_PyTorch.md",
+      "start_line": 85,
+      "code_sha256": "30d047e9b6ca21d38227c80744a174b85920a1e9841737fdaa9dc25d136483e5",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_pytorch",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_PyTorch",
+        "prior_blocks": 4,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_PyTorch.md",
+      "start_line": 94,
+      "code_sha256": "2a911ddb18db13066c1db2479a1a6d8bb74d3ac497ed57a98a682f3bfd5f1848",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_pytorch",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_PyTorch",
+        "prior_blocks": 5,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_PyTorch.md",
+      "start_line": 107,
+      "code_sha256": "dd554f56361d93cb6e7a9f3269b42c48446c418dc2f9c5917e0729c14fbe01a5",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_pytorch",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_PyTorch",
+        "prior_blocks": 6,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_PyTorch.md",
+      "start_line": 116,
+      "code_sha256": "6470a14e1fd07af3e15a59f2099991103f78ca9956a8583e2f7c7a7379550af6",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_pytorch",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_PyTorch",
+        "prior_blocks": 7,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_PyTorch_Code.md",
+      "start_line": 5,
+      "code_sha256": "8a1396094e29b49105dc38bfed16fbdbbd9896b491a0fc1185138cb81a593bfc",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_pytorch_code",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_PyTorch_Code",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page.",
+        "entrypoint": "run_example() after importable definitions",
+        "training": "Actual authored two-trial Torch optimizer training"
+      }
+    },
+    {
+      "path": "docs/Examples_Typical.md",
+      "start_line": 7,
+      "code_sha256": "2af972d2940170ef31da982c1560d37dae3e83bb0f102dc8b77004ca76644b52",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_typical",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Typical",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Typical.md",
+      "start_line": 16,
+      "code_sha256": "c27b7fdbd90473e7bf900430def3f8dbfdcffb8a960c7d54c17202e6d1576569",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_typical",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Typical",
+        "prior_blocks": 1,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Typical.md",
+      "start_line": 25,
+      "code_sha256": "6bfd9401330ff1890c7072c6aa77cb35f3117424e69af8bdac01b2798a7fd447",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_typical",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Typical",
+        "prior_blocks": 2,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Typical.md",
+      "start_line": 51,
+      "code_sha256": "2585f8428fc222fa376e501efc149e3c328b73b1ca724453192afa0bef3cc84c",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_typical",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Typical",
+        "prior_blocks": 3,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Typical.md",
+      "start_line": 62,
+      "code_sha256": "c4e5c12d1128142e7c45c387d124605a49a415ed253f14f83d5752b9d73dec3d",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_typical",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Typical",
+        "prior_blocks": 4,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Examples_Typical_Code.md",
+      "start_line": 5,
+      "code_sha256": "bb8d994dfd981199d2dc8ce863cf494e0cd8e91c65d552a286f231ec953f468b",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_examples_typical_code",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Examples_Typical_Code",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Gamify.md",
+      "start_line": 24,
+      "code_sha256": "1a4bf16383bab9d63d844927f0162eeada5532ed05c91a624abc2893ff3a96b2",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Generator.md",
+      "start_line": 7,
+      "code_sha256": "3b34d865584a17743fde1de1f326e59265f0e4cff696fe680ec72eb41aaac5f5",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_generator",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Generator",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Generator.md",
+      "start_line": 16,
+      "code_sha256": "f1a326e775d136a39377169e21cd3e96225ce13e768d340255cd22951ededc7c",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_generator",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Generator",
+        "prior_blocks": 1,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Hidden_Layers.md",
+      "start_line": 7,
+      "code_sha256": "3a408bfed7ff067c08fd8041f5d124304d60bfec703dedb996d9de70f76b669d",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_hidden_layers",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Hidden_Layers",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Hidden_Layers.md",
+      "start_line": 26,
+      "code_sha256": "62af03d8cedda6bdc15bee3300a952e293b09eb17b440ee427b46fc1dc8b86d4",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_hidden_layers",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Hidden_Layers",
+        "prior_blocks": 1,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Hidden_Layers.md",
+      "start_line": 48,
+      "code_sha256": "e8e168714544755843fd7dabf7cea587df3974baabd54c9d2a77cf1f85eff628",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_hidden_layers",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Hidden_Layers",
+        "prior_blocks": 2,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Install_Options.md",
+      "start_line": 5,
+      "code_sha256": "867d3c97cece731c047e662a557f69c3353a11cdd810545c19d4faecd7764e83",
+      "status": "passed",
+      "context": "sequential page context; documented file saves"
+    },
+    {
+      "path": "docs/Install_Options.md",
+      "start_line": 32,
+      "code_sha256": "7c8f8bb97bd0b8fd4ea571335e2751c9a7bdc0407aa64a0fd94593ba2e6e103e",
+      "status": "passed",
+      "context": "actual full development commands in complete temporary checkout"
+    },
+    {
+      "path": "docs/Learning_Rate_Normalizer.md",
+      "start_line": 5,
+      "code_sha256": "12e60e4b3122f4ebbc9694ff7dddd97b26957c8d0d7c389a2e4dd54fe98e792c",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_learning_rate_normalizer",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Learning_Rate_Normalizer",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Local_Strategy.md",
+      "start_line": 11,
+      "code_sha256": "76a2356393bf2857fefa047b645a5c85e4cf28d661818e4ec7942b26d6d73847",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Metrics.md",
+      "start_line": 20,
+      "code_sha256": "44d95a3a64ded897b046496de60b738b924b9bf87ecb23f27f35236abcac8bac",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_metrics",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Metrics",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Migration.md",
+      "start_line": 23,
+      "code_sha256": "371668473bda26d8c9d5b9fbd7f4f9d3de52d47fb287b80b4b6fb07e7d04fad0",
+      "status": "passed",
+      "context": "README real Iris callback fixture; execute wrapper in two real 5/10-epoch trials"
+    },
+    {
+      "path": "docs/Monitoring.md",
+      "start_line": 7,
+      "code_sha256": "0adc68776208bb2b44beeff9c7ca8c37517df9127d078cdb12accb7e25a21b91",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Monitoring.md",
+      "start_line": 36,
+      "code_sha256": "5b7a59f70586198ca830affcf8508f35c83fa6848d715331a42c2705cf859558",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Optimization_Strategies.md",
+      "start_line": 33,
+      "code_sha256": "34d83e16e3db1f2fd4cda6451d39223a454f49006866499ab0b2e39f8ee3ebba",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Optimization_Strategies.md",
+      "start_line": 66,
+      "code_sha256": "04bd149d92ca4c47c6387c5ad6ea2dd88e04357d3d70d7724083dbf1e1c10ee5",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Overview.md",
+      "start_line": 29,
+      "code_sha256": "790900546df5f527b8a83a79aa65f6dde0ad589ecfe0b5b757ccb070314af0c5",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Overview.md",
+      "start_line": 36,
+      "code_sha256": "db8ac99f594519049d42c7c60d7f2b221633d7dc29c5bdf4b363e58f135f86a6",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Overview.md",
+      "start_line": 42,
+      "code_sha256": "d58859ad50dfab67f925f186ed59d84619f2a3c14a71698beff390398d36bd38",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Overview.md",
+      "start_line": 48,
+      "code_sha256": "726267574abca68325d7ffe401f2b6d3e9eefb0dbc2734e029f8024621829cff",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Overview.md",
+      "start_line": 54,
+      "code_sha256": "0c97418c89148e7746eb04f5b6cc7d5d811f18203cd86fe3dc2ef4456a9f3ad4",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Overview.md",
+      "start_line": 60,
+      "code_sha256": "5ae909dcba8eab0f91629fb9f3518d1df6e90b4060800b5aa25564a26675d6af",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Parallelism.md",
+      "start_line": 19,
+      "code_sha256": "82dc0434c4585a461fce4ce4b99534a57ad50c61efc8a7714e820aeb1680c69d",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Parallelism.md",
+      "start_line": 36,
+      "code_sha256": "08d334225fa620cdcca38b712a7bcf43a796117259c7fea8094d87ba2d73bae0",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Parallelism.md",
+      "start_line": 50,
+      "code_sha256": "d54dbf92c4e2f9722c638d27e7455fc0256eebdde892c7e04ef2ee983ede00c9",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Parallelism.md",
+      "start_line": 64,
+      "code_sha256": "f77484df93ecd8cca4b1f5ac254791a5851d59ee24193ddc1446342d5d439f17",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Predict.md",
+      "start_line": 7,
+      "code_sha256": "729febd12d564b8a6f22dfb1802e02adbf40789f7453f85cbb3c5def01195cd9",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Predict.md",
+      "start_line": 16,
+      "code_sha256": "e3e6c085dec20d89b33914bf44dd419887164ceaa59be7705d50d0bebe035bc8",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Predict.md",
+      "start_line": 24,
+      "code_sha256": "729e40e6bf3e6bceb6badeca3a9fd58db3a63f4faf219e09e59523809d2f10f1",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Probabilistic_Reduction.md",
+      "start_line": 18,
+      "code_sha256": "6859f3d748a4f51e21165b05dd405d5569d3642abe4387a07d6a783d32a76d13",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/README.md",
+      "start_line": 7,
+      "code_sha256": "9281a72672548a85b06c8ad2624047d531289c7fc04b0fc01f908ba65092d55f",
+      "status": "passed",
+      "context": "sequential page context; documented file saves"
+    },
+    {
+      "path": "docs/README.md",
+      "start_line": 17,
+      "code_sha256": "9a5dfede992ea7f5f130c40d41ec8c41f7c8d428f8d3edad167332643ba6bdd3",
+      "status": "passed",
+      "context": "sequential page context; documented file saves"
+    },
+    {
+      "path": "docs/README.md",
+      "start_line": 37,
+      "code_sha256": "2fca85cb6739a74e36b91ea4d6b4e3c847b321929ba4e8a18684c3a322baa132",
+      "status": "passed",
+      "context": "sequential page context; documented file saves"
+    },
+    {
+      "path": "docs/Restore.md",
+      "start_line": 7,
+      "code_sha256": "c649c89e3b7194e78269898cc1fbe7d78098e31e4fa625535aefe40f69b14a8e",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Restore.md",
+      "start_line": 36,
+      "code_sha256": "330c19ef488d1e837361ba07c32339a0c36dade7adf442523aba061451f0c078",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Restore.md",
+      "start_line": 43,
+      "code_sha256": "4d6d86eaaa4a1432aea0e6fc492063b5de274dfb952b60299c822d648f2a434a",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Restore.md",
+      "start_line": 50,
+      "code_sha256": "79647557a4a48302c63ab365542a59360e16619477376fa2c3eb60e1f1875338",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Restore.md",
+      "start_line": 57,
+      "code_sha256": "fd1f24331ffc3fb5744b924f358e677def1b518db8f1d5c2e543e3d4e3d83ec5",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Restore.md",
+      "start_line": 65,
+      "code_sha256": "04ee8e8d70577f8df3c9ad37b97b22c3a44af91110f98fd46de1c522922f0efc",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/Restore.md",
+      "start_line": 73,
+      "code_sha256": "e0284bb91ecd44a7d36a6690f97c93b6d3205a9f8ed96a879db212cad8cc5dc7",
+      "status": "passed",
+      "context": "page order; shared held-out Iris setup"
+    },
+    {
+      "path": "docs/SFD_and_CLI.md",
+      "start_line": 9,
+      "code_sha256": "dcf8e1ede4091408aaed6fef9f3af50a0f32918ea294cfe38e50932110857263",
+      "status": "passed",
+      "context": "sequential page context; documented file saves"
+    },
+    {
+      "path": "docs/SFD_and_CLI.md",
+      "start_line": 30,
+      "code_sha256": "5c0ce3fec8ce94a2c0e7155b208afce3c0dc03fec2bd7050abb3305d13bb5d93",
+      "status": "passed",
+      "context": "sequential page context; documented file saves"
+    },
+    {
+      "path": "docs/SFD_and_CLI.md",
+      "start_line": 43,
+      "code_sha256": "70c16d3af446f198fd55fa4f2baede02d157346801a79c41ea4c3a59e6a3b950",
+      "status": "passed",
+      "context": "sequential page context; documented file saves"
+    },
+    {
+      "path": "docs/SFD_and_CLI.md",
+      "start_line": 80,
+      "code_sha256": "27c516d25a560a4d8db6e82ad49cdaf979c61e1461150079baeca544cec89b97",
+      "status": "passed",
+      "context": "sequential page context; documented file saves"
+    },
+    {
+      "path": "docs/SFD_and_CLI.md",
+      "start_line": 109,
+      "code_sha256": "7ec16786bb9400d34a27f7e5e885e327a25235ba66297f2847f580ae1cc74e11",
+      "status": "passed",
+      "context": "sequential page context; documented file saves"
+    },
+    {
+      "path": "docs/SFD_and_CLI.md",
+      "start_line": 121,
+      "code_sha256": "bc1db40a9883419ef5eab693e1a4e1f9e5e971b6d24f5888b48c43bfb2bcf372",
+      "status": "passed",
+      "context": "actual intervention file poll and MSQ dispatch; reject outside-range pending trials"
+    },
+    {
+      "path": "docs/SFD_and_CLI.md",
+      "start_line": 131,
+      "code_sha256": "4acaa846edc01b1694f4dfaa4fe4aa428d696786f794baa956ee770bf1509e66",
+      "status": "passed",
+      "context": "documented production mode/manual hash replacement; local bare remote and store.backup_remote"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 11,
+      "code_sha256": "6f1b6af68eb0ba7f0c2da4af90f55b1c23d39716d1749643a137339255911acf",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 83,
+      "code_sha256": "ab5a71fb59fe4dc63b3a437b3db2d9e6c85448fcf742b1c29792688cb64ccb35",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 98,
+      "code_sha256": "c2873df7cc6ad57e099c328ffff93f31335a0a60e66d52c23e239c1897d4d561",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 107,
+      "code_sha256": "8fbbb5c5c6a54a136ddfc95f867fba70c257d559a1e41342fdee463f5b3b4cf1",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 116,
+      "code_sha256": "e6f3e629595a6e68651b2653fe18ff84029cd4eed33ffe422346203ee57ed4d5",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 124,
+      "code_sha256": "1a3e1bf53d7fa47cc6bb3cc53450ed5fc8b369a60702f5b60d5c9544d82acd9b",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 132,
+      "code_sha256": "d8471d60c5b3359eb7c286a5bb4bdd9386054ae5a2534df91964cff6c84e221f",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 162,
+      "code_sha256": "b0b1355a0c480dd9eddb469e01a297d259204d18f61935cd01fc2cd0221a3303",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 170,
+      "code_sha256": "0e6ff8400df41c7151988970aa3ea8183b18b2f738128b0711dcead2e952f50b",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 178,
+      "code_sha256": "64607ae52e884e4e869848b70846b93bf968e5f6f7a7a59da16edca9e8098f4d",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 188,
+      "code_sha256": "434c2cbfbb4ba82c370c00b768958fcecdb1298e1aaa249256994984dd7d1332",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 196,
+      "code_sha256": "13ee45b791615127a5c3554e57398f12f3fabd3da78f1abf684b557a98fcbdfe",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 204,
+      "code_sha256": "9771b8577bdcba7e48169f17f4cdd36a03bc0d1b31633c6d1cff1ef28dd30a4b",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 212,
+      "code_sha256": "41e03b7ebe5111fbd7dc67e72401c1e38344f116d80cc8d9330bfe60bb970000",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 220,
+      "code_sha256": "f5c22d66d5300758a337e6b5fce90f6b27ff03b0d970e8add24342cf85cb9838",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 230,
+      "code_sha256": "085a3a544c79cae7e96f06f902407ae25657e5d0e8528e2ed90d0dc3570a3fcc",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 248,
+      "code_sha256": "94025a98588f6cc8229c7a15ee099a4e516ddc88c9abbb940a7d080be5863489",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 269,
+      "code_sha256": "f2d099c6609c05f6ac89f57285b4b8c93ff53fb6ee06c34dec05d59df02eddcf",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 277,
+      "code_sha256": "8747362c3ad653eeede67184f9a513810a87edaad5fee2555b64059d96196019",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 284,
+      "code_sha256": "8a82c736e44d9c1e0cdbc96fe7fa73cade702fc97aa618ba5bfd4e07de3eb07e",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 297,
+      "code_sha256": "843fa76877579b7ec516cd529ad553f022f09e946a56124eb4b517ab76f103be",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 312,
+      "code_sha256": "b9d547c77dc50e6e404f55ab4e95c702ef03ddf9a3ae813cf38f87235060ee45",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 317,
+      "code_sha256": "1facbd615cef82ba7d46ef4fe6931e8164d3ab1324d05c3a5c8fb81f7e3e9d6e",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Scan.md",
+      "start_line": 323,
+      "code_sha256": "8afadefeab3eba2b9156539ea0dc566fe5b52e7b36e5b90633a068ea35fb1c70",
+      "status": "passed",
+      "context": "page order from complete minimal setup"
+    },
+    {
+      "path": "docs/Templates.md",
+      "start_line": 20,
+      "code_sha256": "9abd68f13ad11180e0c156d0e3721caf8eef5df48432740b130c6b8730832460",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_templates",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Templates",
+        "prior_blocks": 0,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Templates.md",
+      "start_line": 44,
+      "code_sha256": "584479f4ecfd87ee229d713297567b1c5eb8c7d3f099f912634c933eedfad208",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_templates",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Templates",
+        "prior_blocks": 1,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Templates.md",
+      "start_line": 64,
+      "code_sha256": "b6aec125427a2f1c5e5c805e04889a4cb1d2329bd340532b4935766412b4a6ea",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_templates",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Templates",
+        "prior_blocks": 2,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    },
+    {
+      "path": "docs/Templates.md",
+      "start_line": 83,
+      "code_sha256": "71d3ad2e8da6fc40379c570a5bee4ff25161bebdcc29137e6544f0cbeb443a67",
+      "status": "passed",
+      "context": {
+        "mode": "sequential_page",
+        "module": "talos_docs_templates",
+        "working_directory": "/private/tmp/talos-documentation-final/api-work/Templates",
+        "prior_blocks": 3,
+        "fixtures": "None; all imports, real data and training are authored on the page."
+      }
+    }
+  ],
+  "examples": [
+    {
+      "path": "examples/A Very Short Introduction to Hyperparameter Optimization of Keras Models with Talos.ipynb",
+      "kind": "notebook",
+      "whole_file_sha256": "34105942f9ac976977dc0459012bf566224597f4065957dab5b84a8fcb840289",
+      "status": "passed",
+      "code_cells": [
+        {
+          "index": 5,
+          "code_sha256": "8937cf656db1394001a8bdc81c874a8e32911b0f29a8f6f9aa9dc3a753ffdc7b",
+          "status": "passed"
+        },
+        {
+          "index": 6,
+          "code_sha256": "ac1c0b0b56780dbb0b6d0d639b3bfbafa6d80f0f5fc06a47e3fd6f7924b85fa2",
+          "status": "passed"
+        },
+        {
+          "index": 9,
+          "code_sha256": "40bb913d0c54d9e337633f3279e10d7453377774f433a020cb71ed23b0cc16ff",
+          "status": "passed"
+        },
+        {
+          "index": 12,
+          "code_sha256": "9d1830c1cd3cccdeacbb887e8b10b6d3d01af34168f24605407f7ce218aaaf7b",
+          "status": "passed"
+        },
+        {
+          "index": 16,
+          "code_sha256": "e98665b0177631c6ad1d03e4df3c9b52406240ed8c752a95f830c029ecb0ad04",
+          "status": "passed"
+        },
+        {
+          "index": 18,
+          "code_sha256": "5440ce6f90bfa7a1b2b579d11335ccc943e4a94b84c429ce0c60c1116aa54a23",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "examples/Functional Model Hyperparameter Optimization.ipynb",
+      "kind": "notebook",
+      "whole_file_sha256": "00cd2142a4cefa50d6de7f793ddfc32e0d0aae40fc5c831e4c9d3b23111d6511",
+      "status": "passed",
+      "code_cells": [
+        {
+          "index": 4,
+          "code_sha256": "dce50cdbfd1921c9910ef696154b97d8a7fa7b72b412e5e05aa1671a2d6223a4",
+          "status": "passed"
+        },
+        {
+          "index": 5,
+          "code_sha256": "b51a378f9e215e1533ccf74bd8bd250ab87e39750eeb2e45fb842e6b193ed1f4",
+          "status": "passed"
+        },
+        {
+          "index": 7,
+          "code_sha256": "305c950f173c3a6909e8da7e29b66a29e6c070d30e63e3bac11993d37e523e7f",
+          "status": "passed"
+        },
+        {
+          "index": 9,
+          "code_sha256": "4f16546be7b43a82af34584e1e3954898400582aee0944fade08c595520c539e",
+          "status": "passed"
+        },
+        {
+          "index": 11,
+          "code_sha256": "6928a8d01248d27605227b49eb77a943ee555e6798f1858e7f5764595db14bc7",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "examples/Hyperparameter Optimization on Keras with Breast Cancer Data.ipynb",
+      "kind": "notebook",
+      "whole_file_sha256": "0ffed460ae0e98eee756d995f5730c86ca01b46f6a9a2fabf26570c7e13013bd",
+      "status": "passed",
+      "code_cells": [
+        {
+          "index": 4,
+          "code_sha256": "dce50cdbfd1921c9910ef696154b97d8a7fa7b72b412e5e05aa1671a2d6223a4",
+          "status": "passed"
+        },
+        {
+          "index": 5,
+          "code_sha256": "b51a378f9e215e1533ccf74bd8bd250ab87e39750eeb2e45fb842e6b193ed1f4",
+          "status": "passed"
+        },
+        {
+          "index": 7,
+          "code_sha256": "6e4af13cb677f704ff867d1c98546df9aa70e1ec0b3b8c6cfa9cc9852b01abbb",
+          "status": "passed"
+        },
+        {
+          "index": 9,
+          "code_sha256": "4f16546be7b43a82af34584e1e3954898400582aee0944fade08c595520c539e",
+          "status": "passed"
+        },
+        {
+          "index": 11,
+          "code_sha256": "6928a8d01248d27605227b49eb77a943ee555e6798f1858e7f5764595db14bc7",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "examples/Hyperparameter Optimization with Keras for the Iris Prediction.ipynb",
+      "kind": "notebook",
+      "whole_file_sha256": "0bff5ec181a6613d74a882e83b828089b240a56f6a264b833fe7fa85643de967",
+      "status": "passed",
+      "code_cells": [
+        {
+          "index": 1,
+          "code_sha256": "0158b563c91d071932aad68f72b30f2e8ce355c1cbc38b6a9d20c28144448014",
+          "status": "passed"
+        },
+        {
+          "index": 6,
+          "code_sha256": "a2a09375cb7833d0135dae59d12b04fe6f409cf5112243924c613bd9ce01e8ee",
+          "status": "passed"
+        },
+        {
+          "index": 8,
+          "code_sha256": "509ad70e4f218bc606b6e15a2727b60fe0f44ed6ec430a43d9a97532139303a9",
+          "status": "passed"
+        },
+        {
+          "index": 10,
+          "code_sha256": "f10b65f32836e78e46f7841b61a4afff640eb2299606e028676af47c2d186027",
+          "status": "passed"
+        },
+        {
+          "index": 12,
+          "code_sha256": "83f7a768b0d120030d6c9471ec71a7ff4ef80943f3586a34e94a7330102fee8e",
+          "status": "passed"
+        },
+        {
+          "index": 14,
+          "code_sha256": "a274608b0935bfddc15c13268227cbaaf5b21b6455cac553431828e69323af66",
+          "status": "passed"
+        },
+        {
+          "index": 16,
+          "code_sha256": "dc78fbbc913b1d5572ec4b459afbe5d5b9318890488d4dfec151802d2d5ab280",
+          "status": "passed"
+        },
+        {
+          "index": 18,
+          "code_sha256": "7eb552ed8856055bae55b47a3740844d28ea99dc69ffe1432218ee5bbefb0bab",
+          "status": "passed"
+        },
+        {
+          "index": 22,
+          "code_sha256": "d5074b6f07bb1df676b3786acc0d8d189771e3dab6d2d05fe6516872301e181d",
+          "status": "passed"
+        },
+        {
+          "index": 23,
+          "code_sha256": "8a70bd46e31775233fcf7dcdef304985aabe22fc10a52cb09a07e3462addfb06",
+          "status": "passed"
+        },
+        {
+          "index": 24,
+          "code_sha256": "a84f1690d9d20780a7d45b30a3ce23cae9e2ebac2f3e6a8db9efe5a9227053e5",
+          "status": "passed"
+        },
+        {
+          "index": 26,
+          "code_sha256": "447fb90e9c3a59b43d709825e56dcf424288c34618b84446450a632a354f2f47",
+          "status": "passed"
+        },
+        {
+          "index": 29,
+          "code_sha256": "e6e60c78e2596e355acd54897390c51d3b8215830a42f92cbeb0606cad1a8a60",
+          "status": "passed"
+        },
+        {
+          "index": 33,
+          "code_sha256": "6264153ce1895511764bd9c16fd0bac08870d1fbc5ea35620c7bac778b1be898",
+          "status": "passed"
+        },
+        {
+          "index": 36,
+          "code_sha256": "b27cd45e95e2c2ec595f5217e0655847fe8a629d4933a35afe2663ccea42cfa3",
+          "status": "passed"
+        },
+        {
+          "index": 38,
+          "code_sha256": "b356689d5c48b4a2ae2b79eccd9f03687b710bcf9a1737f55677de0d62093561",
+          "status": "passed"
+        },
+        {
+          "index": 40,
+          "code_sha256": "759e73eadf1ac71943f8c72b3cc445d7df79064db66cdea8480453c4e1db0bc8",
+          "status": "passed"
+        },
+        {
+          "index": 41,
+          "code_sha256": "5aaa966b20c42924b1c6cbda02c9aa34c82e3b90429050fe2de97ec07162937b",
+          "status": "passed"
+        },
+        {
+          "index": 42,
+          "code_sha256": "48010d14f9e6011b4412a4549b543336ac5af925205e4474cb4168b487729336",
+          "status": "passed"
+        },
+        {
+          "index": 43,
+          "code_sha256": "41a249c332de7fdf18d663bbb70f61392c9db9ccb4b71c7b6c984737b0e5dfb8",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "examples/Recover Best Models from Experiment Log.ipynb",
+      "kind": "notebook",
+      "whole_file_sha256": "78bd52f4a30a626a450f26cfb17525c3299244bb9490401d92a344181cdb31a0",
+      "status": "passed",
+      "code_cells": [
+        {
+          "index": 2,
+          "code_sha256": "d066ad4b017005b4d664b7f5812c8e60d93b346c9a02e08ae8f1d8dce78d7546",
+          "status": "passed"
+        },
+        {
+          "index": 4,
+          "code_sha256": "a8e8f5b79b9834108dbe2a4d13936121c61ee0c63e563aa6e207d139ea3d27ae",
+          "status": "passed"
+        },
+        {
+          "index": 6,
+          "code_sha256": "3f9dabea52e2771e06f2655a4dd80d2c183b7e19df4eecbc370b60c07ffeaf10",
+          "status": "passed"
+        },
+        {
+          "index": 8,
+          "code_sha256": "f35f1d2b2198863bbadffbd403f13477500ed35b773b290b0b851e3912fa9ac7",
+          "status": "passed"
+        },
+        {
+          "index": 10,
+          "code_sha256": "c099142bc3186ded72786ba27e9ea6d2da240fb9fd3fe79b479ecf8e734b2850",
+          "status": "passed"
+        },
+        {
+          "index": 12,
+          "code_sha256": "a9dcb9c6cf94a9a82b9d73914d9e96084da9725aa3e99f33d4eff668d7c27375",
+          "status": "passed"
+        }
+      ]
+    },
+    {
+      "path": "examples/iris.py",
+      "kind": "script",
+      "whole_file_sha256": "0963613a8e604ea11e34c0ba633aee812ad512d50614a4ead381c850b381e6cd",
+      "status": "passed"
+    },
+    {
+      "path": "examples/sfd/keras_sfd.py",
+      "kind": "sfd",
+      "whole_file_sha256": "7e0bd5ee0ad3953f6e340c28a30b0ef34fe90157eb458c188278e1250c715187",
+      "status": "passed",
+      "trials": 4,
+      "prediction_shape": [
+        30,
+        3
+      ],
+      "fresh_process_restore_after_source_deletion": true
+    },
+    {
+      "path": "examples/sfd/tensorflow_sfd.py",
+      "kind": "sfd",
+      "whole_file_sha256": "826cf3dc0544fc148165940fa7c307d47c8f7777da582bb4c88c8ed2c09ef912",
+      "status": "passed",
+      "trials": 4,
+      "prediction_shape": [
+        30,
+        3
+      ],
+      "fresh_process_restore_after_source_deletion": true
+    },
+    {
+      "path": "examples/sfd/torch_sfd.py",
+      "kind": "sfd",
+      "whole_file_sha256": "137f8d033ddbaafedcfd5a76d2c94e234ed8fc75d07685706ef9877631bcbe9e",
+      "status": "passed",
+      "trials": 4,
+      "prediction_shape": [
+        30,
+        3
+      ],
+      "fresh_process_restore_after_source_deletion": true
+    },
+    {
+      "path": "examples/version-check.py",
+      "kind": "script",
+      "whole_file_sha256": "77e5fdf753f9939b9b5e1ec5b5e08ad701757989e957ca670cf9dfe94b20b3b4",
+      "status": "passed"
+    }
+  ],
+  "guarded_torch_archive": {
+    "status": "passed",
+    "fresh_process": true,
+    "caller_source_deleted": true,
+    "prediction_parity": true,
+    "class_parity": true,
+    "scan_and_optimizer_and_loader_forbidden": true,
+    "no_retraining_on_import": true,
+    "prediction_shape": [
+      36,
+      2
+    ],
+    "page": "docs/Examples_PyTorch_Code.md",
+    "source_code_sha256": "8a1396094e29b49105dc38bfed16fbdbbd9896b491a0fc1185138cb81a593bfc",
+    "archive_sha256": "b0cc66f5d78fb9b8a029d6786e3d068bebfb81f1aafcc9cb5adf0d1a0f519d19",
+    "training_trials": 2
+  },
+  "legacy_documentation": {
+    "passed": 49,
+    "unexecuted_native_torch_blocks": [
+      {
+        "path": "docs/Examples_PyTorch.md",
+        "start_line": 7,
+        "code_sha256": "1d6237a9a29e80d73fd97fbb00c8119a12e960a0e5e2c8a83b6463a89537b921",
+        "status": "not_executed",
+        "reason": "Native Torch unavailable in legacy environment; passed modern."
+      },
+      {
+        "path": "docs/Examples_PyTorch.md",
+        "start_line": 19,
+        "code_sha256": "966dc45ab75e19e2caa8ea9205a647d71639aee91d297d1e2a26b6b8dd355171",
+        "status": "not_executed",
+        "reason": "Native Torch unavailable in legacy environment; passed modern."
+      },
+      {
+        "path": "docs/Examples_PyTorch.md",
+        "start_line": 32,
+        "code_sha256": "8cbc00db24fc42171e34b0fba97617888025d602a977f5001057ee80f2dc39e0",
+        "status": "not_executed",
+        "reason": "Native Torch unavailable in legacy environment; passed modern."
+      },
+      {
+        "path": "docs/Examples_PyTorch.md",
+        "start_line": 77,
+        "code_sha256": "dbd73ac0bb5aa9520bef0dc92cd38812fa43903543f0a158ed964cb0b6a1b619",
+        "status": "not_executed",
+        "reason": "Native Torch unavailable in legacy environment; passed modern."
+      },
+      {
+        "path": "docs/Examples_PyTorch.md",
+        "start_line": 85,
+        "code_sha256": "30d047e9b6ca21d38227c80744a174b85920a1e9841737fdaa9dc25d136483e5",
+        "status": "not_executed",
+        "reason": "Native Torch unavailable in legacy environment; passed modern."
+      },
+      {
+        "path": "docs/Examples_PyTorch.md",
+        "start_line": 94,
+        "code_sha256": "2a911ddb18db13066c1db2479a1a6d8bb74d3ac497ed57a98a682f3bfd5f1848",
+        "status": "not_executed",
+        "reason": "Native Torch unavailable in legacy environment; passed modern."
+      },
+      {
+        "path": "docs/Examples_PyTorch.md",
+        "start_line": 107,
+        "code_sha256": "dd554f56361d93cb6e7a9f3269b42c48446c418dc2f9c5917e0729c14fbe01a5",
+        "status": "not_executed",
+        "reason": "Native Torch unavailable in legacy environment; passed modern."
+      },
+      {
+        "path": "docs/Examples_PyTorch.md",
+        "start_line": 116,
+        "code_sha256": "6470a14e1fd07af3e15a59f2099991103f78ca9956a8583e2f7c7a7379550af6",
+        "status": "not_executed",
+        "reason": "Native Torch unavailable in legacy environment; passed modern."
+      },
+      {
+        "path": "docs/Examples_PyTorch_Code.md",
+        "start_line": 5,
+        "code_sha256": "8a1396094e29b49105dc38bfed16fbdbbd9896b491a0fc1185138cb81a593bfc",
+        "status": "not_executed",
+        "reason": "Native Torch unavailable in legacy environment; passed modern."
+      }
+    ],
+    "scope": "49 applicable TF/Keras blocks; all nine omitted Torch blocks passed modern."
+  },
+  "negative_verifier_checks": [
+    {
+      "case": "missing documentation block rejected",
+      "status": "passed",
+      "detected": [
+        {
+          "path": "docs/Examples_AutoML.md",
+          "start_line": 9,
+          "language": "python",
+          "code_sha256": "5c78970a020f2a92f31c92ecaa20cd41b7caadecab5fa3d57b2c4518aa583171"
+        }
+      ]
+    },
+    {
+      "case": "stale documentation code hash rejected",
+      "status": "passed",
+      "detected": [
+        "Failed or stale fence: docs/Examples_AutoML.md:9"
+      ]
+    },
+    {
+      "case": "missing guarded Torch restoration check rejected",
+      "status": "passed",
+      "detected": [
+        "Missing, failed or stale guarded Torch archive check"
+      ]
+    },
+    {
+      "case": "stale notebook cell rejected",
+      "status": "passed",
+      "detected": [
+        "Failed or stale notebook cell: examples/A Very Short Introduction to Hyperparameter Optimization of Keras Models with Talos.ipynb:5"
+      ]
+    },
+    {
+      "case": "unchanged complete evidence accepted",
+      "status": "passed"
+    }
+  ],
+  "hardware_scope": "CPU training. NVIDIA power/command paths use an explicitly declared provider; physical hardware and remote entropy services are not verified.",
+  "material_inline_commands": [
+    {
+      "path": "docs/Parallelism.md",
+      "start_line": 7,
+      "code_sha256": "947a79c4b3db775c710e79d72516a0b87f5e8ba1e3fa4163e647afd97bdaf241",
+      "status": "passed",
+      "context": "explicit local NVIDIA command provider; no physical GPU validation"
+    },
+    {
+      "path": "docs/Energy_Draw.md",
+      "start_line": 3,
+      "code_sha256": "947a79c4b3db775c710e79d72516a0b87f5e8ba1e3fa4163e647afd97bdaf241",
+      "status": "passed",
+      "context": "explicit local NVIDIA command provider; no physical GPU validation"
+    },
+    {
+      "path": "docs/Energy_Draw.md",
+      "start_line": 40,
+      "code_sha256": "7fd604a3c2dc215ee92259fe755a34e6eb6f19e6a7180772789e186e36347380",
+      "status": "passed",
+      "context": "real PowerDraw callback, explicit nvidia-smi provider fixture; no physical energy claim"
+    }
+  ],
+  "source_sha256": {
+    "talos/__init__.py": "aa7e8f941bc488bd9bd625351b3f7a20bed368fde57a78bd6a94f1a9009899b6",
+    "talos/__main__.py": "28d3125ac68e8f9914a52f084ff573ec9e6a0e44c84440c4e17cc60670832cdd",
+    "talos/_optional.py": "550d436f5561c2ab0d10db96c9b36b20743a74986b1f6b45b565b867156d50e1",
+    "talos/autom8/__init__.py": "27ee0c5e64f164b356ef798e27c104e3c91de523ed6714beb3c790d4996b1f10",
+    "talos/autom8/automodel.py": "274dda03cb5a4d138fdf1cd561d2d8700c664d34152cd3d1f0135f1ccb80d923",
+    "talos/autom8/autoparams.py": "69683e6ef5ccb35fb9549668d8e7e3c72164734b54042ae5be79d3b0694868a1",
+    "talos/autom8/autopredict.py": "f8c7606f21cf9788bca545904937e7b349298daca2d814d17f628e156ddfe900",
+    "talos/autom8/autoscan.py": "0ad794149f24ded227ed17054fc0c15d489066023eb4c145acde677753d739d4",
+    "talos/backends/__init__.py": "995c52f05f3e0948458cbc7bd0124143026ea2ba01112c78cf9bd8ecd56f2e51",
+    "talos/backends/adapters.py": "d64215e0b6f8afb24aa792a0c6c91f5329e171c768ad51ff593f694c3469d48d",
+    "talos/calibration/__init__.py": "dc60095454ea32f27ff4f91d34d35c6c4201cbe19bc621e822ede9b06b13b8c9",
+    "talos/calibration/pipeline.py": "be06cc52b19d377253c60dfb2af89e4a3fc4d15d8281b8caeec417e6f1b3f0b0",
+    "talos/calibration/probability.py": "cc198d1b69af66c76e1a88a0a962d9a26dfbb21b00dd5933a855df24b5aad9cd",
+    "talos/calibration/threshold.py": "d4f5e15bb1468065a1c3f430a67ee3c5430b6e401fc3ab0e12fc1c7b63c88ac8",
+    "talos/callbacks/__init__.py": "ae18da808fff46c9cb46000f1757d8d06685223b574532acb854f3368e22c535",
+    "talos/callbacks/experiment_log.py": "db1c8058cd5d7ecc793aa7802a7d70fe40c0764126cbcbcd5c811c5a196b9e48",
+    "talos/callbacks/power_draw.py": "22d3f30510ca46d95624d0ae41a6cce6a88ff4bdfe620ed6c0482cd22528be18",
+    "talos/callbacks/training_plot.py": "14b4510d20359a2c74080a96399f7c117eb3612448c27478e649b282cfee234a",
+    "talos/cli/__init__.py": "0aa5dd50343ab68fbe8a80d0c7016398002aa91a63156fc2c4897bdaccf1903e",
+    "talos/cli/commands/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "talos/cli/commands/_constants.py": "3acd030b8dfa74c303769a33e0e9407aca6f973373dc9b964d0fb724fa902650",
+    "talos/cli/commands/_load_yaml.py": "9a9305157553df39200f6c138881820b13de9397081691da20edf37020aeb7c7",
+    "talos/cli/commands/backup.py": "afdd6416edef0a50302b0e38d498e3c1bffdb9e864eaa8250df1dab6a66b07bd",
+    "talos/cli/commands/commit.py": "7b770eeeabfd73a77ea894703e4ef4cae18f7a337150bdf56240e0caeb26731d",
+    "talos/cli/commands/fork.py": "b3302a1dc0b8baab1190aadc5c5e09321b26618c63708e909e1b3fd7dcf60c72",
+    "talos/cli/commands/init.py": "56c42daa468c0aceb5583e0459371879c2e5a11243a58461857f53894fcb883b",
+    "talos/cli/commands/lineage.py": "436e7afabc7e0189a87d2080664abd68789861f16b5983ca459bbd8ce5bce145",
+    "talos/cli/commands/list_templates.py": "deb80b69638a143293587332b15fdc7d1233fea6aec059ca47d8fc978b4dba56",
+    "talos/cli/commands/ls.py": "de822c4b3c0244027dba7af70f594766502915e514208b063c096ed48af44df4",
+    "talos/cli/commands/new.py": "54e32632042647ae6fdfb4a31b1cd8ccd921093e956fc896e40a8ea45be64509",
+    "talos/cli/commands/profile.py": "675ce9a4e14be17691d81cb4da30714584877a5ba5e47510f86ee4fb67f05c7d",
+    "talos/cli/commands/reindex.py": "279c7f039258ad171e493dfe2447c740b4a45efd611f56d572abf6295530270b",
+    "talos/cli/commands/resume.py": "aca5d3c65981eb41adc298792f3a2845930460efd2ab596b961ee2b0f7fe5ac1",
+    "talos/cli/commands/run.py": "f2c431402e6339d9a223aa83d13fdc6a0bf658b6ebd9d58ee98f8dd8ea0aa40c",
+    "talos/cli/commands/validate.py": "49095d0cdc543c34ec28287a3f821bb096fe56978979a5c46c192047ad4fe72d",
+    "talos/cli/git_utils.py": "f84d2960619548a377bcfaecd2755e9110cb16a0d8ac099032c4dc9375632dfd",
+    "talos/cli/main.py": "e98280b216d7062b35bcb002706bb4836ab11cfe8793515952b07d50caee34a1",
+    "talos/cohort/__init__.py": "c954a99047b0c1b13520fbf80c7489dfe7c815fe89bebc10f9de328a97e55eeb",
+    "talos/cohort/cohort.py": "0a455bc2179c2fc9080938004775f008e68aeadf0159f07e74ce02e5c0327368",
+    "talos/cohort/sfc/__init__.py": "2ff202b8725f461e249dde79e73fe1cbd38d102e9312ad16fac6b86787bc9672",
+    "talos/cohort/sfc/all.py": "f5798a5518d1e9112d29ecae6384c9ec1baad69a5f3c20bdfa04e2859d02742a",
+    "talos/cohort/sfc/diverse_metrics.py": "85fa6ed6b21fdfa04dd892fdb0711488fa1f2fac9826cd9826c7930d6ed6c892",
+    "talos/cohort/sfc/pareto.py": "6d40c762637ba4c5755d71a3a10d2c8f2e5427f885f22d7cbd7d0e95261ef49d",
+    "talos/cohort/sfc/top_n.py": "e6c4a52958188573f55a7bc7d0f8ab41cf6087849aca1dc3e0e07c5281204402",
+    "talos/commands/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "talos/commands/analyze.py": "2215e904ac14fde5e39fdf908412ea8d0ed29ae3f95642ea7a876a1256645efd",
+    "talos/commands/deploy.py": "f35ce6a80653943dfab0489df144ddd1f54d01b01e5ab18f4f522c7cc43f49a9",
+    "talos/commands/evaluate.py": "79d269b998006a696e61ac47fd723d16f47b6f57338b15bdb3a4e2d89b190c51",
+    "talos/commands/predict.py": "4861314b7d65440a1b73f768dd02611f3479d45bd8d3ae8397f60ec4a12d5571",
+    "talos/commands/restore.py": "80ed32ace71b1f0a51316f24ea751eaa0d44a860659d5c913402e34d5c38ac81",
+    "talos/experiment/__init__.py": "00aa7f25db0453c3df6f6be9b56ab1088d61cbc3cab880c28640abbae40106a9",
+    "talos/experiment/artifacts.py": "201e0bbfaee82ea0d56a27c43ca2f597dfc61d11acfc270671dc659b2a92484c",
+    "talos/experiment/checkpoint_manager.py": "da55f81baf62d1dc7d1e2da5d365d2f7817a045af6540e059ebc1f2bf1a8f500",
+    "talos/experiment/context.py": "87da5c38a2efd344e71e8fa06f39d1b06d536913f76186db4aea01bb908f2749",
+    "talos/experiment/errors.py": "ad345ecdd50de98557ded7524b5244d9784d3efd1ed414ef709890337a8c2122",
+    "talos/experiment/experiment_core.py": "cd12914b12392426970c8a6329b2f7639aa30805e84a7cb06db3f2093ab21569",
+    "talos/experiment/feedback_controller.py": "969c9262ad95365b0776ef22c07f1660af054faaf2caa23ede53e03164d50ab9",
+    "talos/experiment/log_projection.py": "db378de5173adf3f549f6c5b7ad6ebbcb8dca8be724880dfb48a257cabe6a977",
+    "talos/experiment/manifest_core.py": "f63ea3cd8e4f63e43c650654244b8519766d997f0d26efb089e9cd29dd5346fb",
+    "talos/experiment/msq.py": "e679030153615302874727a29fe069d6a74636cf0140e5d28752eb0e396e8702",
+    "talos/experiment/param_domain.py": "ad793c27a48880a0dc61eac34f34382c4b1f8c3b35a26f3a7e169c1294d87ba1",
+    "talos/experiment/param_search/__init__.py": "2f42f4b778cc19386b8294286c4c7d9b736167aec20df13088a5780c88f9e47d",
+    "talos/experiment/param_search/grid_strategy.py": "f0aac25dea600e2973b8ac77ff166efeb752d0141ea0e6aee90dc5292a2436d1",
+    "talos/experiment/param_search/legacy_strategy.py": "1d2bc551b4796d51b9ba82351f7ecb1e55ac799e82fb68ca3d1b66853791deb0",
+    "talos/experiment/param_search/random_strategy.py": "316608b76e078745998c2fe23c9f07e2678bb8632d232f5a3c57d03333118e2a",
+    "talos/experiment/param_search/registry.py": "23bcdc72af3215193f74f25edf8e833be54bc14f2f162b777bb3c0706621ea19",
+    "talos/experiment/param_search/search_strategy.py": "d5ba1b07d19a5259bbce5257bc715f1b8fb2d73f28d8e3e4300530acefc26e9b",
+    "talos/experiment/provenance.py": "fa60a31f2edf5b784526e4378647e2ad04543e6c48e535b7235479e19147fb03",
+    "talos/experiment/reducer/__init__.py": "546627af2002ce826f80275f877d12b2ebfc10bed094bb1f043a37d100d2dbd3",
+    "talos/experiment/reducer/budget_reducer.py": "dcf6ac869b5ab3e786efeec364908ad8a26cec5cfaab85c821400d2c44ff3632",
+    "talos/experiment/reducer/correlation_analysis.py": "8a1a59f91bcb3063a6788743977456a4e582e5e823ab8d842b6dc4992b4ff046",
+    "talos/experiment/reducer/correlation_reducer.py": "3a41c649c34d2322d2e61fece853d8e44ce938d5d120afc6b6111365c2c3a730",
+    "talos/experiment/reducer/filter_types.py": "d85fe7f4ef6e5e5af2933d5523adfb8f9bb76de4b3df0654aa558fa3b786c2f5",
+    "talos/experiment/reducer/focus_reducer.py": "d421e68f7071e47b4df01d6c9b5e5baf7978f0bac00b5ecbf326cd5c1459a58b",
+    "talos/experiment/reducer/pruning_strategy.py": "95d65763141cf38706bea94b6a48b99e966e5d5dc73978262a79e22ef95c9fd7",
+    "talos/experiment/reducer/registry.py": "f4295eef6a1bf6952820bb39251de64249df2c03b881d94659535ffa058b1b0c",
+    "talos/experiment/reducer/sanity_reducer.py": "f32723594b8525bc29e493815697db7da053c7b3119d3fdeee1635854244d365",
+    "talos/experiment/reducer/saturation_reducer.py": "4578172360534ec5df895622e8e5916910372b8d825d27ef280a8f8835a09628",
+    "talos/experiment/runner.py": "50f9ff855a87989e7bd9ffede9ba242c418cdfef1b75dc4f86bfd8cc32007592",
+    "talos/experiment/serialization.py": "f767f17a39e951f91e1ea828064419a3dd75aec81d5028806e7156993750686b",
+    "talos/experiment/source_snapshot.py": "ec874bc2e246820bc96dd474afa7e1d8f736ba4ef1ac657b4121a3b025c9e36e",
+    "talos/inference/__init__.py": "aa4dd2483c5e6bc5e753d2a611609e22bfbb723297cdd171eceeac544c910e2c",
+    "talos/inference/errors.py": "232e3aaffab5686a15555883b552c21720dc6ee02f80b816cf8d3018ca89a795",
+    "talos/inference/params.py": "b19cacbc75b746511fe30f3863700608a20c9955dff443104a58d05fe5c8167b",
+    "talos/inference/sensor.py": "213bffb66015c2d4b0a6a75b86f14b560c8e8f7f88063b642b741b029b50ea4a",
+    "talos/inference/trainer.py": "17e30a47b2e42f0e21bfffbdb5e7af595df674f989f2698c70f3a118fa0b9720",
+    "talos/log/__init__.py": "d42d88f8203d241e41e2efc62a95edcd6f8e91ba138a1b673c25114fa57cc1aa",
+    "talos/log/_experiment_parameter_correlation.py": "73310fda64e296fe90988eb5165a3b763f8030c33e6b46ec3117356d5ee507b4",
+    "talos/log/_read_from_file.py": "ad8189255fcf3cb01bfddc70e2442679292e9a2ad5f5be224c6bccba487d2b6c",
+    "talos/log/log.py": "11dee175673a695fd756ee1a1c34ad5a09e81f02efc324b262bbe169049dae0f",
+    "talos/logging/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "talos/logging/logging_finish.py": "3720dc26a855ac4eaeb4eb4b6b5d6e1ea72dc05edee271c86b786f6ee8dae9b3",
+    "talos/logging/logging_run.py": "804171079f5b1531dd0b1e6636666335f20aa40ba6c8230b50d1cc488cd79f08",
+    "talos/logging/results.py": "a23724408f088f07203c9a21e75f294c81e244392f695b42aa643d6fdb44f841",
+    "talos/metrics/__init__.py": "996e2efa5f04baa97eabf9285fe4ef4b1be34c44021d815c16d22a0302e8c974",
+    "talos/metrics/balanced_metric.py": "73d6d5ced6a35d2e55c755c3a8e123256f7445b88beb266d0f16f5c423a03bc7",
+    "talos/metrics/binary_metrics.py": "85946aaa9ea9cfc1fdc5be0b494c89161e2b7f5ac4f657cb71afbff317d2494b",
+    "talos/metrics/continuous_metrics.py": "7f08323dc5b6ad9bca4c48dd6788464ca89d0032e1956dddc16037f573a8815f",
+    "talos/metrics/entropy.py": "cf62f3e8e5fa28328023a9ceaf9dac99dd1277dbba60232158084eeb4d8c840e",
+    "talos/metrics/keras_metrics.py": "4756e795cd34ea235fcfdb79387045e68fabf22f13aa4b7b5567c50d4e725485",
+    "talos/metrics/multiclass_metrics.py": "8e390a5c60d5b7e6a5ddb9d3330d0694ce4a8cd31fe363d28ccf98a75762f308",
+    "talos/metrics/safe_ovr_auc.py": "7e98fd7f1ff85144e14f2d089edb1ad40d4a3ead13144ad686c1ff3a9b66df3f",
+    "talos/model/__init__.py": "6fa34c965a65139c2d9d3acdaef14bfd8dd66fc5120a44e3764be12a9b6cad64",
+    "talos/model/early_stopper.py": "1b0e6300502e616bf8c9df88b1cc53ead0ebe808250e5a65e619b65e7dd252fa",
+    "talos/model/hidden_layers.py": "3d85bdf4961cbc7ea1c1f657fa0e3c4b68feec2353254158c67f8c712c300023",
+    "talos/model/ingest_model.py": "f139d63c5f5632a1ef9b6cffee7ad4d0d20c003e38b720d15a346f17a3a3905c",
+    "talos/model/network_shape.py": "c577aa852d9caf616754c8e74e8ddb7e537900aec0a26a07c5e99d1b108977df",
+    "talos/model/normalizers.py": "236edb45ab7cdd32c04935eab4f1115cdfd8ccb2f5014baa9243321a6bf01751",
+    "talos/model/output_layer.py": "5264966e71dbdbf3e425e6c670dddcb6b1f3e984dc9e913882c865c47dfcf576",
+    "talos/parameters/DistributeParamSpace.py": "fcdf41c5df05e48d804d5f2bb677fb1f8c8ec152222221518f384c834d22fabf",
+    "talos/parameters/ParamSpace.py": "f33baa1bb7530a9faec953f1dca9799931800182834949f375154d04b537b545",
+    "talos/parameters/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "talos/preparation/__init__.py": "06d13b9c4e7565d73cd447fd79a4602cad2f2fbe991f9d4bacb6f8c9cc1e966d",
+    "talos/preparation/random_slice.py": "6c73b13590092abc8cd0e7176d54c415c1c71a46286747906efa8794564d3ea3",
+    "talos/preparation/splits.py": "1d199c1e1b6a023068ecfa238d8be8b8884668e2ea3a47f75950e6ee97c64985",
+    "talos/reducers/GamifyMap.py": "c388bae4f07a4d5dad1f45b3c429008659e848732414f9fc76a0d199fd18376f",
+    "talos/reducers/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "talos/reducers/correlation.py": "67a0df2451e89932f846dc18c16ee3f8e2ffd78b3a3ad5097e99e44b50fde0a6",
+    "talos/reducers/forrest.py": "e45b1a7921b25b17df944f0e25994d990b6484df8abd99cf82414773f40e061f",
+    "talos/reducers/gamify.py": "b5b2d0961ce527924358be6f11818a7dbb6d2682dd2e3d45c31e1b1f3e63b9c8",
+    "talos/reducers/limit_by_metric.py": "3e7e518b939f984f2cc5ea081425f98546b7589060bbddabd84c11f974fdaa36",
+    "talos/reducers/local_strategy.py": "ea72d94c6dda898f3a6fc0afb7186f290bbacb75f7ee625361dbc991882d395a",
+    "talos/reducers/reduce_run.py": "bbf2c93819609928e7410133e9eca0b08dbbf030262f7cc0ee9060ea1851bde1",
+    "talos/reducers/reduce_utils.py": "68bf541557015a5d4d4f2ff7bc949f143b6304d7893be6ca8aeade79cfb28d9d",
+    "talos/reducers/sample_reducer.py": "8ea453f346536af8c04b8d17f12a3927e8d63e46f772af99fa62fb25c51b3952",
+    "talos/reducers/trees.py": "81eee2a45f11a869b9f3e5dff6b23b522bcbd52d100e55911b567a6c2afa8198",
+    "talos/scalers/__init__.py": "df6fb98d91cf3865f1c941f82a0a08b88df226c6e52919e0116939317d834df2",
+    "talos/scalers/causal_rolling_robust_scaler.py": "25979ca885248b246022655c40f985c38811b556dfbe49b12fb8ada4fc4cd6dc",
+    "talos/scalers/linear_scaler.py": "e79ca2f64094dc75345b3def6f7f1f56b1eef1cf852547569d15060366b8a788",
+    "talos/scalers/logreg_scaler.py": "8b0a603665c79588216ac7065b057f052f69ad1402b74a2d38cb8f877ef7f8f8",
+    "talos/scalers/rank_gauss_scaler.py": "97324e89d617fa09f8f051e6c5c5df8aa6472d6a4bbab4202c2073d2d50a52b3",
+    "talos/scalers/registry.py": "7c26e4b62d549f83a2ff3afa1b2e3406acf48d8097d31186a2658b9c119f7003",
+    "talos/scalers/robust_scaler.py": "80e0c94e1973982b37fe783d96997ee26cc2d30bdf9a0778d56831065fcca1ab",
+    "talos/scan/Scan.py": "c6bb1fecf06f0561a303c6ea7f2a383f7c31988cf05c372ce089dd6c21c83055",
+    "talos/scan/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "talos/scan/scan_addon.py": "866f58ee8ec86601a12aa76387a39a9f2aa99e5b414c57ace839d673206426c2",
+    "talos/scan/scan_utils.py": "8dcdae49d69e7976a6a38d8d548ed9e0326a01b9a4042abc95884290c11319b5",
+    "talos/sfd/__init__.py": "5b236da0e60fa62e8add046eee2d337a3f05a3f9af0f3d7fe164fe89d43133a5",
+    "talos/sfd/templates/__init__.py": "b43dce9c810bf437152f6c12112c6927a7b050199a876c9876f9a93b9e050674",
+    "talos/sfd/templates/keras.py": "ac53cc8bb58be93cbe4d0e706cfd0597ee2022ef7ac8ab94b48e978e1f21eab3",
+    "talos/sfd/templates/pytorch.py": "0217daa709b9d8e41d197e59fe32156bd05a11e063cd8835611028760ff8aa88",
+    "talos/sfd/templates/tf_keras.py": "55a338a04712529f140050bef17732e9c671bb7469b29a74a430fb441f5740c3",
+    "talos/templates/__init__.py": "c7149548e10ad7e17fd6e1f972ed77861733954a970cb4ecb4eab3e5d4c531ea",
+    "talos/templates/datasets.py": "480e654fcce312ef7297fc6c34585110621fce921f2f6da983b601dc7580fed9",
+    "talos/templates/models.py": "30ed216d84b135e2b7360172bb7962b800321972d56e51e0c374be629dd2c28e",
+    "talos/templates/params.py": "7d215369afb2be753eb2edc0913273a1c2e84cb2512ab6696bbb77a7d65f58fa",
+    "talos/templates/pipelines.py": "d43e98c64e04de115dd02e1ef582e8523def0453a024debfe0fd34886e858e40",
+    "talos/transforms/__init__.py": "b3fc44c02855635d69eb2bbeddf1be0006a1eb7ab81a3bfd46e9d512d199bf20",
+    "talos/transforms/mad_transform.py": "40639173c892c59597ef2ae316680c6e73330d3d895a0cd810fb0e0938406234",
+    "talos/transforms/quantile_trim_transform.py": "e887ba40abb77f37967c796eb07de9409c9b8833df950849bf091605b0491e09",
+    "talos/transforms/shift_column_transform.py": "a1616418fb1bdbdd944f195aa232d3bc215b9d6de837af28cd1ed500bbf18b13",
+    "talos/transforms/winsorize_transform.py": "e55313ea635671f5536a24d737c1167b84119961665283779945e9269086b7b5",
+    "talos/transforms/zscore_transform.py": "9002aa2271da78217e41ef7cdccfe1a6af2f13369fe1ddf635987d7af692b8d7",
+    "talos/utils/__init__.py": "4c52993c0adb73d5e92ff1efbaaed4663f4e8f7ebe6cc52de4e5c15f9b9bd7b2",
+    "talos/utils/best_model.py": "b719b889bbafbad94c97b8b38365f079ba96bfb26fbeb80e3fdf122ac5741f52",
+    "talos/utils/exceptions.py": "e6ceb3be0db86775a37efd7d843bccb9457c0b80d7d9bc6b2e29945d2606ff44",
+    "talos/utils/generator.py": "c0a6b131b02e038a84e528f24d980dd99c6b4fd98c210e287fdffb1478972eed",
+    "talos/utils/gpu_utils.py": "88180f320d48073e47d52fd5f45037d34fcb546e2146b3795caf5a6fdaeee34d",
+    "talos/utils/load_model.py": "9dd18d933bebe4d5dac4ceee3ccf766ad61b75e58a5768cab593e31fe7ecffd7",
+    "talos/utils/power_draw_append.py": "adf7f672951ad6534d5b22363ebdb97c15c35afc35f41a3328bbed99daf316ab",
+    "talos/utils/recover_best_model.py": "36f612041e9d6915ee0e3600a8d7896c9a27a732671a6bf1e03089038165f9c8",
+    "talos/utils/rescale_meanzero.py": "b8b093fc7eb278fc6ff7d3911fbaa4284bafb35e3ef949945be7de21aeda2f93",
+    "talos/utils/sequence_generator.py": "065d88a0a299c68db81898968b0d7f7ddbc5890da565190bb0b46fc978d754dc",
+    "talos/utils/test_utils.py": "9cf7d19a02e106ed3b74dca26ed06fd3489b8e6b4c722f87944b4c1837caca6b",
+    "talos/utils/torch_history.py": "2a66de941c2dd210567de6548db477ea6663a15a42436939b99f0545dafdd3d6",
+    "talos/utils/validation_split.py": "6d47fef66c940963a31d4ae5c5fdc38fbbda65eaaee9abce0f2f097b1664d3f2",
+    "talos/yaml/__init__.py": "835e822716d92220495ea495fa6087d6ff96089cf4cbf26645f1782202ac0f11",
+    "talos/yaml/compiler.py": "a534d0c0c3b8e931c5018f6c5dfe3635761137a2be74cce1c5b0f474b0c1b7af",
+    "talos/yaml/config.py": "3dcc9447c8e7f72a5988ccf9e6503acb001ffcabcc74d391816b797ae325c016",
+    "talos/yaml/errors.py": "1ecbce89379078cf9abbb42075fcf2a2f06fb2238e5b8d6f9fab45bf3155fbea",
+    "talos/yaml/parser.py": "4a2822852cd5fdc559c5fb92b622d660f97ec9ff1e01be4e0d0ba5ea6fa6c857",
+    "talos/yaml/profiler.py": "89f21082e47b6d93982a9f0d692017d1221999972710e64574e4c518fdb2914f",
+    "talos/yaml/resolver.py": "d439d3a955c0d66c37e515597ca400f70bebc402cab5012309832f00078aba10",
+    "talos/yaml/schema.py": "077cf62c27deb4bef1963190f53271b51bad7c56b266bc2d00aa9a89a1e0357c",
+    "talos/yaml/store.py": "c2f8daa0dc92e521728411248fe7e034efc6a0e6811a8c5eb7ec5775bf89b5fb",
+    "talos/yaml/templates/keras.yaml": "006fa318ea598f30a2062ffcc798851c0a49a5ae0cb20d26d9c9ec574259867f",
+    "talos/yaml/templates/pytorch.yaml": "f31bba90a6e512fa1d7d5a80dfe2423cef28babf2897be02a6dc7030947eb7b4",
+    "talos/yaml/templates/tf_keras.yaml": "183b62965060894bf2592cc48f67844fd3592864e5f54adc5319d75d9979865b",
+    "talos/yaml/validator.py": "79b3a0568c6c808e3280d7478adf6d1b4b4016ed809b44795652bb10c7b84441",
+    "tools/verification/__init__.py": "e005bb2cf5983bef1d0fd8a23611e1b722be795a48c57c45dee46ae9c3060b3b",
+    "tools/verification/api_docs.py": "f104bc852a88114a0cb6e14022ea0f41dd4d7c5774268aa6bb8770d86e049589",
+    "tools/verification/control_docs.py": "cf07cc211949c5e9e17cc5f784fedc8ec882f3ed33f62b4fcc83cef7593376c0",
+    "tools/verification/examples.py": "ec1fe22ea73684923844b9b693d7ecf43ad72f95b75792469c64676eed241312",
+    "tools/verification/notebooks.py": "b5a7383a96f1ef7d655bc682833a7f2f5e2d7e514a93968da3beb744305f8b4a",
+    "tools/verification/root_docs.py": "44c9585f999731bdc7f3a90dfd18d87bd875e83eabf5b220e636f798702e6017",
+    "tools/verification/sfd_examples.py": "751f24d9eb7bbe6a9916271744a8e3a4e84ab60dad905ef9ae2593db05c376a4",
+    "tools/verification/torch_docs_archive.py": "5915cc0313df87c9878e340e33cab3df823d5dd13599fb2d1b1b5eb753a27409",
+    "tools/verify_documentation.py": "8b806c511de69b434e7c563a7c5c55be493aaf5d975d06204ca3c41c3a780c96",
+    "pyproject.toml": "99a6126bd982b512ff6d57febe585468cd0fe3590247ca8704477a2d5d6829ad"
+  },
+  "reproduce": "python tools/verify_documentation.py --output-dir verification-output",
+  "full_reports": "CI documentation-verification artifact; local execution /tmp/talos-documentation-final"
+}

@@ -1,6 +1,6 @@
 # Multiple Outputs
 
-This example highlights a slightly playful example for a multi-output model where the dataset consists of a Talos hyperparameter scan results with roughly 600 hyperparameter permutations to solve the Kaggle Telco Churn challenge. The not so obvious idea here is to use deep learning to optimize the process of optimizing deep learning process i.e. use hyperparameter optimization data to optimize hyperparameter optimization.
+This example predicts two real outcomes from the Wisconsin Breast Cancer dataset: diagnosis and measured mean radius. The same multi-output pattern can model experiment outcomes, as in the original Telco Churn illustration of using hyperparameter optimization data to optimize hyperparameter optimization.
 
 The single-file code example can be found [here](Examples_Multiple_Outputs_Code.md).
 
@@ -8,120 +8,91 @@ The single-file code example can be found [here](Examples_Multiple_Outputs_Code.
 
 ```python
 import talos
-import wrangle
-
-from tensorflow.keras.layers import Input, Dense, Dropout
-from tensorflow.keras.models import Model
-
+import numpy as np
+from sklearn.model_selection import train_test_split
+from tensorflow.keras import Sequential, Model
+from tensorflow.keras.layers import Input, Dense, Dropout, Conv2D, Flatten, concatenate
 ```
-NOTE: In this example we use another Autonomio package 'wrangle' for splitting the data.
+The scikit-learn split uses one set of row indices for all aligned arrays.
 
 ### Loading Data
 ```python
-x, y = talos.templates.datasets.telco_churn()
-
-x_train, y1_train, x_val, y1_val = wrangle.array_split(x, y[0], 0.3)
-x_train, y2_train, x_val, y2_val = wrangle.array_split(x, y[1], 0.3)
+from sklearn.datasets import load_breast_cancer
+from sklearn.preprocessing import StandardScaler
+x, diagnosis = load_breast_cancer(return_X_y=True)
+# Predict diagnosis and the separately measured mean radius, without input leakage.
+radius = x[:, 0:1].astype('float32') / 30
+features = x[:, 1:].astype('float32')
+x_train, x_val, diagnosis_train, diagnosis_val, radius_train, radius_val = train_test_split(
+    features, diagnosis, radius, train_size=144, test_size=36,
+    stratify=diagnosis, random_state=17)
+scaler = StandardScaler().fit(x_train)
+x_train, x_val = scaler.transform(x_train), scaler.transform(x_val)
+y_train = [diagnosis_train, radius_train]
+y_val = [diagnosis_val, radius_val]
 ```
 In the case of multi-output models, the data must be split into training and validation datasets before using it in `Scan()`. `x` is expected to be a numpy array, and `y` a list of numpy arrays.
 
 ### Defining the Model
 ```python
-
-def telco_churn(x_train, y_train, x_val, y_val, params):
-
-    # the second side of the network
-    input_layer = Input(shape=(42,))
-    hidden_layer1 = Dense(params['neurons'], activation=params['activation'])(input_layer)
-    hidden_layer2 = Dense(params['neurons'], activation=params['activation'])(hidden_layer1)
-    hidden_layer3 = Dense(params['neurons'], activation=params['activation'])(hidden_layer2)
-
-    # creating the outputs
-    output1 = Dense(1, activation='sigmoid', name='loss_function')(hidden_layer3)
-    output2 = Dense(1,  activation='sigmoid', name='f1_metric')(hidden_layer3)
-
-    losses = {"loss_function": "binary_crossentropy",
-              "f1_metric": "binary_crossentropy"}
-
-    loss_weights = {"loss_function": 1.0, "f1_metric": 1.0}
-
-    # put the model together, compile and fit
-    model = Model(inputs=input_layer, outputs=[output1, output2])
-
-    model.compile('adam', loss=losses, loss_weights=loss_weights,
-                  metrics=['acc', talos.utils.metrics.f1score])
-
-    out = model.fit(x=x_train,
-                    y=y_train,
-                    validation_data=[x_val, y_val],
-                    epochs=150,
-                    batch_size=params['batch_size'],
-                    verbose=0)
-
+def breast_cancer_multi(x_train, y_train, x_val, y_val, params):
+    input_layer = Input(shape=(x_train.shape[1],))
+    hidden = Dense(params['neurons'], activation=params['activation'])(input_layer)
+    diagnosis = Dense(1, activation='sigmoid', name='diagnosis')(hidden)
+    radius = Dense(1, name='radius')(hidden)
+    model = Model(inputs=input_layer, outputs=[diagnosis, radius])
+    model.compile(optimizer='adam',
+                  loss={'diagnosis': 'binary_crossentropy', 'radius': 'mse'},
+                  metrics={'diagnosis': ['accuracy', talos.utils.metrics.f1score],
+                           'radius': ['mae']})
+    out = model.fit(x=x_train, y=y_train, validation_data=(x_val, y_val),
+                    epochs=params['epochs'], batch_size=params['batch_size'], verbose=0)
     return out, model
 ```
 
 First, the input model must accept arguments exactly as in the example:
 
-```python
-def telco_churn(x_train, y_train, x_val, y_val, params):
-```
+`def breast_cancer_multi(x_train, y_train, x_val, y_val, params):`
 
 Even though it is a multi-output model, data can be inputted to `model.fit()` as you would otherwise do it. The multi-output part will be handled later in `Scan()` as shown below.
 
-```python
-  out = model.fit(x=x_train,
-                  y=y_train,
-                  validation_data=[x_val, y_val]
-                  ...)
-```
+`model.fit(x_train, y_train, validation_data=(x_val, y_val), ...)`
 
-The model must explicitly declare `validation_data` in `model.fit` because it is a multi-output model. Talos data splitting is not available for multi-input or multi-output models, or other cases where either `x` or `y` is more than 2d.
+The model must explicitly declare `validation_data` in `model.fit` because it is a multi-output model. Talos preserves aligned row splits across array inputs and outputs; explicit splits make this recipe easier to inspect.
 
-```python
-out = model.fit(...
-                validation_data=[x_val, y_val]
-                ...)
-```
+`model.fit(x_train, y_train, validation_data=(x_val, y_val), ...)`
 
 Finally, the model must `return` the `model.fit` object as well as the model itself in the order of the of the example:
 
-```python
-return out, model
-```
+`return out, model`
 
 
 ### Parameter Dictionary
 
 ```python
-p = {'activation':['relu', 'elu'],
-     'neurons': [10, 20, 30],
-     'batch_size': [15, 20, 25]}
+p = {'activation': ['relu', 'elu'], 'neurons': [8],
+     'batch_size': [16], 'epochs': [2]}
 ```
 
-Note that the parameter dictionary allows either list of values, or tuples with range in the form `(min, max, step)`
+Note that the parameter dictionary allows either list of values, or tuples with range in the form `(min, max, number_of_values)`
 
 
 ### Scan()
 ```python
-scan_object = talos.Scan(x=x_train,
-                         y=[y1_train, y2_train],
-                         x_val=x_val,
-                         y_val=[y1_val, y2_val],
-                         params=p,
-                         model=telco_churn)
+scan_object = talos.Scan(x=x_train, y=y_train, x_val=x_val, y_val=y_val,
+                         params=p, model=breast_cancer_multi,
+                         experiment_name='breast_cancer_multi_output', round_limit=2,
+                         seed=17, backend='tensorflow')
+assert len(scan_object.data) == 2
 ```
 
-`Scan()` always needs to have `x`, `y`, `model`, and `params` arguments declared. In the case of multi-output model, we also have to explicitly declare `val_x` and `val_y`.
+`Scan()` always needs to have `x`, `y`, `model`, and `params` arguments declared. In the case of multi-output model, we also have to explicitly declare `x_val` and `y_val`.
 
-The important thing to note here is that how `y` and `y_val` are handled:
+Pass `y_train` and `y_val` as aligned lists. The trained model produces one output array per target:
 
 ```python
-scan_object = talos.Scan(...
-                         y=[y1_train, y2_train],
-                         ...
-                         y_val=[y1_val, y2_val],
-                         ...)
+predictions = talos.Predict(scan_object).predict(x_val, metric='val_loss', asc=True)
+print([output.shape for output in predictions])  # Diagnosis and radius arrays.
 ```
 
 Find the description for all `Scan()` arguments [here](Scan.md#scan-arguments).

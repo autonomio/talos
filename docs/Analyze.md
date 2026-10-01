@@ -1,26 +1,28 @@
 # Analyze (previously Reporting)
 
-The experiment results can be analyzed through the [Analyze()](https://github.com/autonomio/talos/blob/master/talos/utils/reporting.py) utility. `Analyze()` may be used after Scan completes, or during an experiment (from a different shell / kernel).
+The experiment results can be analyzed through the [Analyze()](https://github.com/autonomio/talos/blob/master/talos/commands/analyze.py) utility. `Analyze()` may be used after Scan completes, or during an experiment (from a different shell / kernel).
 
 ## Analyze Use
 
+Examples below use the held-out Iris setup in [Scan → Minimal Example](Scan.md#minimal-example). Run that setup first; it defines `scan_object`, `p`, `input_model`, `x`, `y`, `x_val`, `y_val`, `x_test`, and `y_test`.
+
 ```python
-r = Reporting('experiment_log.csv')
+r = talos.Analyze(scan_object.run_dir / 'results.csv')
 
 # returns the results dataframe
 r.data
 
-# returns the highest value for 'val_fmeasure'
-r.high('val_fmeasure')
+# returns the highest value for 'val_accuracy'
+r.high('val_accuracy')
 
 # returns the number of rounds it took to find best model
-r.rounds2high()
+r.rounds2high('val_accuracy')
 
-# draws a histogram for 'val_acc'
-r.plot_hist()
+# draws a histogram for 'val_accuracy'
+r.plot_hist('val_accuracy')
 ```
 
-Reporting works by loading the experiment log .csv file which is saved locally as part of the experiment. The filename can be changed through dataset_name and experiment_no Scan arguments.
+Reporting works by loading the experiment log .csv file which is saved locally as part of the experiment. Use `experiment_name` for the logging folder or `experiment_dir` for an explicit run directory; the results file is `scan_object.run_dir / "results.csv"`.
 
 ## Analyze Arguments
 
@@ -54,8 +56,8 @@ See docstrings for each function for a more detailed description.
 
 **`plot_bars`** A bar chart that allows up to 4 axis of data to be shown at once
 
-**`plot_kde`** Kernel Destiny Estimation type histogram with support for 1 or 2 axis of data
+**`plot_kde`** Kernel Density Estimation type histogram with support for 1 or 2 axis of data
 
 **`table`** A sortable dataframe with a given metric and hyperparameters
 
-**`best_params`** A dictionary of parameters from the best model
+**`best_params`** An array of selected parameter values and their rank; use `n=1` for the best model

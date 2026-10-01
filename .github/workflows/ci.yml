@@ -53,6 +53,10 @@ jobs:
           - python: '3.12'
             extras: 'torch,keras'
             keras_backend: torch
+          - python: '3.11'
+            extras: 'tensorflow,keras,torch'
+            keras_backend: tensorflow
+            minimum: true
     env:
       KERAS_BACKEND: ${{ matrix.keras_backend }}
       MPLBACKEND: Agg
@@ -61,5 +65,37 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
-      - run: python -m pip install '.[test,plots,samplers,${{ matrix.extras }}]'
+      - name: Install current frameworks
+        if: ${{ !matrix.minimum }}
+        run: python -m pip install '.[test,plots,samplers,${{ matrix.extras }}]'
+      - name: Install supported minimum frameworks
+        if: ${{ matrix.minimum }}
+        run: >-
+          python -m pip install '.[test,plots,samplers,${{ matrix.extras }}]'
+          'tensorflow==2.20.0' 'keras==3.15.0' 'torch==2.13.0'
+          'protobuf==6.33.5' 'numpy==1.26.4' 'scikit-learn==1.5.0'
       - run: python -m pytest -q
+
+  documentation:
+    name: Execute documentation and examples
+    runs-on: ubuntu-latest
+    env:
+      KERAS_BACKEND: tensorflow
+      KERAS_TORCH_DEVICE: cpu
+      CUDA_VISIBLE_DEVICES: '-1'
+      TF_NUM_INTRAOP_THREADS: '1'
+      TF_NUM_INTEROP_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install '.[tensorflow,keras,torch,plots,samplers,test]'
+      - run: python tools/verify_documentation.py --output-dir verification-output
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: documentation-verification
+          path: verification-output/

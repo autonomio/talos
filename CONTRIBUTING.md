@@ -6,7 +6,7 @@ Work on a branch and submit a reviewed pull request. Preserve working public Tal
 
 ```sh
 pip install -e '.[test,plots,samplers,tensorflow,torch]'
-ruff check talos tests/test_*.py
+ruff check talos tools tests/test_*.py
 coverage run -m pytest -q
 coverage report
 python -m build
@@ -14,7 +14,9 @@ python -m build
 
 Use real bundled fixtures for training/inference checks. Test saved artifacts in a fresh process, and install the wheel outside the checkout. Core imports must succeed without DL or plotting frameworks. Add regression checks for meaningful behavior, including interruption recovery when changing persistence or queue control.
 
-CI covers core Python 3.10–3.13, TensorFlow 2.14/NumPy 1.26, modern tf.keras and standalone Keras with a Torch backend. Backend dependencies remain optional; dependency changes must resolve in both legacy and modern lanes. Historical tests under `tests/commands` provide reference use patterns; maintained pytest contracts use current APIs and explicit real fixtures.
+Run `python tools/verify_documentation.py --output-dir verification-output` to execute every documentation fence, all notebook cells, standalone scripts and the three SFD examples. The generated manifest rejects missing, failed or stale source hashes. Training uses real bundled data; hardware provider checks are identified explicitly. Retain the reports with the release evidence.
+
+CI covers core Python 3.10–3.13, TensorFlow 2.14/NumPy 1.26, modern tf.keras and standalone Keras with a Torch backend. Backend dependencies remain optional. The supported minimum lane checks TensorFlow 2.20, Keras 3.15, Torch 2.13 and Protobuf 6.33.5; the dependency audit gates current/core/minimum lanes and reports legacy upstream advisories separately. Dependency changes must resolve in both legacy and modern lanes. Historical tests under `tests/commands` provide reference use patterns; maintained pytest contracts use current APIs and explicit real fixtures.
 
 ## Maintenance
 

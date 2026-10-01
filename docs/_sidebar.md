@@ -83,3 +83,5 @@
 
   - [Asking help](Asking_Help.md)
   - [Roadmap](Roadmap.md)
+
+- [Maintenance and verification](Maintenance.md)

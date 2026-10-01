@@ -27,6 +27,8 @@ So that more people would have access to the undiluted potential and power of ad
   - 1/3 of **CODING** time for improving current features
   - 1/3 of **CODING** time for fixing broken features
 
+Annual compatibility and recovery maintenance verifies the declared Python/backend dependency matrix, all runnable documentation examples, held-out scientific metrics, archive restoration in fresh processes, and uninterrupted-versus-resumed trial equivalence. Refresh dependency/release metadata only after those checks pass. Physical GPU/power and external entropy services require separate environment-specific checks; CPU/provider fixtures cover the default workflow.
+
 ## How to contribute?
 
 - by using Talos
