@@ -2,6 +2,8 @@
 
 # v2.0.1
 
+- Apply the documented bounded backoff when external documentation links return transient failures.
+- Bind hash-locked official CPU framework builds to upstream advisory identities while auditing every installed dependency and recording lookup evidence.
 - Repair hosted Linux packaging locks, CPU framework execution, documentation backup fixtures and protected-base version comparison; verify optional dependency failure diagnostics.
 - Require native CodeQL security-result protection and document verified repository activation order, credential scope and automatic review behavior.
 - Adopt repository governance, issue and review contracts, measured quality ratchets, supply-chain checks and controlled release tooling for Autonomio Talos.

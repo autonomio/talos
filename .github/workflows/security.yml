@@ -28,13 +28,18 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install the hash-locked audit lane
         run: python -m pip install --require-hashes -r requirements/ci/${{ matrix.lock }}
-      - name: Audit supported locked dependencies
-        run: pip-audit --strict --require-hashes -r requirements/ci/${{ matrix.lock }} --format json --output audit.json
+      - name: Bind installed locked dependencies to upstream advisory identities
+        run: python scripts/prepare_dependency_audit.py --lock requirements/ci/${{ matrix.lock }} --requirements audit-requirements.txt --identities audit-identities.json
+      - name: Audit every supported locked dependency
+        run: pip-audit --strict --disable-pip --no-deps -r audit-requirements.txt --format json --output audit.json
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         if: always()
         with:
           name: dependency-audit-${{ matrix.lane }}
-          path: audit.json
+          path: |
+            audit.json
+            audit-identities.json
+            audit-requirements.txt
   legacy-report:
     name: Legacy TensorFlow compatibility advisory report
     runs-on: ubuntu-latest

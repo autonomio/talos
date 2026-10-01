@@ -19,7 +19,7 @@ The checked-in workflows, gate code and intended `master` ruleset are locally te
 
 | Name | Use | Required permissions |
 | --- | --- | --- |
-| `REPO_BOOTSTRAP_TOKEN` | Explicit existing-repository activation | Contents, Pull requests, Issues, Administration, Variables and Workflows read/write; Metadata read |
+| `REPO_BOOTSTRAP_TOKEN` | Explicit existing-repository activation | Administration, Variables and Issues read/write; Metadata read |
 | `RULESET_AUDIT_TOKEN` | Post-merge live ruleset audit, including bypass actors | Administration and Metadata read |
 | `RULESET_ID` | Identify the installed ruleset | Set after the ruleset is created |
 | `PYPI_PUBLISH_ENABLED` | Enable the separate PyPI workflow | Leave unset until trusted publishing and the `pypi` environment are configured |

@@ -196,6 +196,7 @@ export const RETRYABLE_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
 // required check, which is worse than a red one.
 export const MAX_ATTEMPTS = 3;
 const RETRY_BASE_MS = 500;
+const delay = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 
 export async function attemptLink(url, requestFunction = request) {
   const response = await requestFunction(url, 'HEAD');
@@ -211,7 +212,7 @@ export async function attemptLink(url, requestFunction = request) {
   return response.statusCode;
 }
 
-export async function checkLink(url, attempt = async (u) => attemptLink(u), sleep = null) {
+export async function checkLink(url, attempt = async (u) => attemptLink(u), sleep = delay) {
   let lastStatus = null;
   for (let tries = 1; tries <= MAX_ATTEMPTS; tries += 1) {
     let status;
@@ -223,9 +224,7 @@ export async function checkLink(url, attempt = async (u) => attemptLink(u), slee
       if (tries === MAX_ATTEMPTS) {
         throw error;
       }
-      if (sleep) {
-        await sleep(RETRY_BASE_MS * tries);
-      }
+      await sleep(RETRY_BASE_MS * tries);
       continue;
     }
     if (status >= 200 && status < 300) {
@@ -235,9 +234,7 @@ export async function checkLink(url, attempt = async (u) => attemptLink(u), slee
     if (!RETRYABLE_STATUS.has(status) || tries === MAX_ATTEMPTS) {
       break;
     }
-    if (sleep) {
-      await sleep(RETRY_BASE_MS * tries);
-    }
+    await sleep(RETRY_BASE_MS * tries);
   }
   throw new Error(`${url} returned ${lastStatus}`);
 }

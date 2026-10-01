@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-01T13:43:22.791472+00:00",
+  "repository": "autonomio/talos",
+  "branch": "codex/talos-limen-core",
+  "hosted_source_commit": "41786a2f5708ea241f71b2fd1e8bd7b17fe9cba4",
+  "pull_request": "https://github.com/autonomio/talos/pull/608",
+  "slice_issue": "https://github.com/autonomio/talos/issues/607",
+  "phase": "activation prepared; full remote enforcement disabled pending owner, audit credential and reviewed integration",
+  "hosted_verification_at_source_commit": {
+    "core_and_installed_wheel": "Python 3.10, 3.11, 3.12, 3.13 pass",
+    "frameworks": "Current TensorFlow, legacy TensorFlow, current PyTorch/Keras and supported minimum native suites pass; minimum reports 165 passed, no skips",
+    "required_source_gates": "Conventional commits, slice, typing, fail-loud, version, tests, lint, honesty and CodeQL analysis pass",
+    "lint": "501 passed, 22 optional-framework skips; coverage floors and changed-line coverage pass; 1899 inherited quality findings, none new",
+    "tests": "143 passed, 22 optional-framework skips in 196.60 seconds; runtime gate passes",
+    "packaging": "Two identical fixed-epoch builds, content audit, Twine, manifest and Pyroma10/10 pass; wheel installs across all four supported Python versions pass",
+    "known_failures_and_disposition": {
+      "strict_framework_dependency_audits": "PyPI rejects +cpu lookup versions. The pending helper binds every installed lock entry to an explicit advisory identity and maps only a hash-bound official Torch CPU wheel to its upstream public release. All packages remain audited with strict failure semantics.",
+      "site_documentation": "GitHub returned504 on an issue-form link. Production retry delay was not wired. Corrected bounded backoff and both site fences now pass locally; original hosted failure receipt remains preserved.",
+      "ruleset_and_readiness": "Expected bootstrap boundary: staged policy is disabled, no integrated protected-base workflows or eligible owner approval yet. No gate disabled or failure treated as activation success."
+    }
+  },
+  "affected_verification_after_hosted_failures": {
+    "governance_tests": 359,
+    "script_safety_and_audit_tests": 15,
+    "node_unit_tests": 46,
+    "linux_minimum_dependency_audit": {
+      "locked_installed_dependencies": 100,
+      "queried_dependencies": 100,
+      "skips": 0,
+      "known_vulnerabilities": 0,
+      "exit_status": 0,
+      "torch_installed": "2.13.0+cpu",
+      "torch_advisory_identity": "2.13.0",
+      "unqueryable_dependency_probe": "same strict lookup exits1"
+    },
+    "linux_native_archive_checks": "5/5 pass; former Adam/Triton crash path exercised",
+    "docs": {
+      "complete": true,
+      "counts": {
+        "fences": 140,
+        "examples": 10,
+        "notebook_code_cells": 42,
+        "inline_commands": 7
+      },
+      "provenance": "Linux hosted API, control, root and example execution at41786a2; corrected site fences executed on local macOS; all maintained executable-source hashes reverified",
+      "site": "Both finite command fences pass: 19 external links and28 browser tests each"
+    },
+    "quality": "No new strict lint findings or raised budgets; workflow/ShellCheck and relevant Ruff checks pass"
+  },
+  "preservation": {
+    "runtime_package": "unchanged from41786a2 and prior activation source; no Talos runtime edits",
+    "wheel_sha256": "2ae18218eb1b8b7d3a3d88aa3bd9bc55fa5a4ab9d3d8120e30e54a953bd76719",
+    "readme_sha256": "291d3dcb61e91a759aab5e0bb4c5f3b6fbddc66b21d38123acefddfe75c1e1a6",
+    "prior_receipts": "Historical adoption and activation records retained; none asserts later hosted success"
+  },
+  "remote_state": {
+    "ruleset_id": 24306812,
+    "enforcement": "disabled",
+    "bypass_actors": [],
+    "RULESET_ID": "24306812",
+    "audit_secret": "not provisioned as of this verification",
+    "second_code_owner": "awaiting user selection; no owner or reviewer role invented",
+    "settings": "Reconciled labels, read-only workflow defaults, administration approval environment, secret scanning/push protection and private vulnerability reporting remain configured"
+  },
+  "pending": [
+    "Select and configure an eligible second code owner",
+    "Provision a Talos-scoped RULESET_AUDIT_TOKEN directly in GitHub; verify bypass_actors visibility",
+    "Verify final hosted fixes and integrate through eligible non-author review",
+    "Establish master CodeQL results, enable reviewed ruleset, run scoped privileged audit and validate enforcement on a subsequent PR"
+  ],
+  "release_boundary": "No merge, tag, release or package publication; PyPI enablement remains separate",
+  "changed_source_sha256": {
+    ".github/workflows/security.yml": "aea0c44d61a50e3efd97ec3363c0e4d96da8276847af38de78de52eaef325a67",
+    "CHANGELOG.md": "f3d30ef97fdd9aa2be821ae3bc780f6f0dda4eb6d4b9a9dc558a5841241175ff",
+    "SETUP.md": "5abf46aa284773a50301b91f315ec261f41ef009c26f8e80a0664c6630de538e",
+    "docs-site/scripts/check-external-links.mjs": "a68ad95db250c9412658bb8dd98532cbfa486baae8b7c9280cf0828f909fbaab",
+    "docs-site/tests/check-external-links.test.mjs": "ff4a8642180284a1a1cdee9891861fd6e0a9ffbced66b59543ec0f05de0dc539",
+    "governance/tests/test_supply_chain.py": "1e214806589950dc164cdb5438d9233ae39d6a0fdec7fd3d905d544c90cda07a",
+    "scripts/prepare_dependency_audit.py": "6fc8ce260beddd44cbf60e2f3314678f9870cb13902a7c5415780a40f54fe720",
+    "scripts/tests/test_dependency_audit.py": "2190c27177c19c0798b5fcb99550378be18bce15d1f9da6db2a2f2b2d12ea267"
+  },
+  "evidence_sha256": {
+    "minimum-framework-fixed.log": "f115ef983fd06c33bbde26af507b204e044db5e367e9d1968dd2be0ab41a905f",
+    "lint-fixed.log": "857fee47b88cb3ee3985a46525b02e194ce633cb68a5c2de88c6269d865c2029",
+    "tests-fixed.log": "c498fe50f9087416742c696449c4edcd1312d0a04f283490a044f92aa906ddf0",
+    "packaging-fixed.log": "fa8e346faf136c822658f48803a4c03bfd365ac582d59236808dd1b74c685adc",
+    "version-local-proof.json": "d972720208c4e301eb505f23abf4a6e6b6f5282049f09f8e46514a52193c415c",
+    "docs-backup-branch-check.json": "3029749a673914dd4a5637f9446d4aa171f12c1d6e261f8d25b75a1e3cf3ecc9",
+    "docs-41786/manifest-41786-hosted.json": "7dd8d9c7662dc5e87f6e5c02798e50902fd27f05c279dcd5f07063bd5b79a8f5",
+    "docs-41786/manifest.json": "8d4f374b317a851a25fa16ea56a816d55b204ed788c503648ff266a709be9b6d",
+    "docs-41786/site-fix-verification.json": "9c699374c06e3c760f59617816fc4ca3b3368f73512c7107fb18f87f1881b77a",
+    "linux-cpu-proof/minimum-audit-identities.json": "d96dcdab293f1a47fda60dce1a0a73aed6608d51d62509ae03ac6329fa9ef3c9",
+    "linux-cpu-proof/minimum-audit.json": "bdf6090248049c34488b0e961e4d70cc4549a815977740c53d6ea6fa46b419bc",
+    "linux-cpu-proof/minimum-native-with-git.xml": "abe9aa39cbabcb64dd30f56aa5fea7a9537ec4ebc431aa69d6a591fe449fdfc6",
+    "linux-cpu-proof/unqueryable-strict-audit.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "staged-ruleset-latest.json": "1790e112d7e57254788dcfd9c25cecfdac4c38b74782bbed4e1b300e80807cd2"
+  }
+}

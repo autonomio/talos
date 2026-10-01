@@ -261,3 +261,17 @@ def test_matrix_hash_locks_exist_for_every_selected_lane() -> None:
                 lock = row['lock']
                 assert re.fullmatch(r'[a-z0-9.-]+\.txt', lock)
                 assert (REQUIREMENTS_DIR / lock).is_file(), (path.name, lock)
+
+
+def test_supported_security_audits_retain_strict_full_graph_lookup() -> None:
+    workflow = yaml.safe_load((WORKFLOWS_DIR / 'security.yml').read_text(encoding='utf-8'))
+    steps = workflow['jobs']['supported']['steps']
+    commands = [step['run'] for step in steps if 'run' in step]
+    assert commands[0] == 'python -m pip install --require-hashes -r requirements/ci/${{ matrix.lock }}'
+    assert commands[1] == ('python scripts/prepare_dependency_audit.py --lock requirements/ci/${{ matrix.lock }} '
+                           '--requirements audit-requirements.txt --identities audit-identities.json')
+    assert commands[2] == ('pip-audit --strict --disable-pip --no-deps -r audit-requirements.txt '
+                           '--format json --output audit.json')
+    assert not any(step.get('continue-on-error') for step in steps)
+    assert 'audit-identities.json' in steps[-1]['with']['path']
+    assert 'audit-requirements.txt' in steps[-1]['with']['path']

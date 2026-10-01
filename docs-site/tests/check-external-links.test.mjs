@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import {setImmediate as flushPromises} from 'node:timers/promises';
 
 import {
   checkLink,
@@ -51,6 +52,28 @@ test('retries a network-level failure', async () => {
   await checkLink('https://example.test/c', attempt, noSleep);
   assert.equal(calls.count, 2, 'a reset is the host, not the link');
 });
+
+for (const [failure, label] of [[504, 'gateway response'], [new Error('ECONNRESET'), 'network failure']]) {
+  test(`default retries wait before retrying a ${label}`, async (context) => {
+    context.mock.timers.enable({apis: ['setTimeout']});
+    const {attempt, calls} = responder([failure, failure, 200]);
+    const checked = checkLink('https://example.test/backoff', attempt);
+    await flushPromises();
+    assert.equal(calls.count, 1);
+    context.mock.timers.tick(499);
+    await flushPromises();
+    assert.equal(calls.count, 1);
+    context.mock.timers.tick(1);
+    await flushPromises();
+    assert.equal(calls.count, 2);
+    context.mock.timers.tick(999);
+    await flushPromises();
+    assert.equal(calls.count, 2);
+    context.mock.timers.tick(1);
+    await checked;
+    assert.equal(calls.count, MAX_ATTEMPTS);
+  });
+}
 
 test('does not retry a genuine broken link', async () => {
   const {attempt, calls} = responder([404, 200]);
