@@ -431,8 +431,8 @@ def _drop_codeql_law(text: str) -> str:
             line = re.sub(r'^\d+\.', f'{counter}.', line)
         out.append(line)
     return '\n'.join(out).replace(
-        'Eleven laws. Ten are workflow gates on every PR; the eleventh is branch protection',
-        'Ten laws. Nine are workflow gates on every PR; the tenth is branch protection',
+        'Eleven laws. Ten are workflow gates on every PR; the eleventh',
+        'Ten laws. Nine are workflow gates on every PR; the tenth',
     )
 
 
@@ -440,23 +440,26 @@ def _drop_codeql_context(ruleset: dict[str, object]) -> bool:
     rules = ruleset.get('rules')
     if not isinstance(rules, list):
         return False
-    for rule in rules:
-        if not isinstance(rule, dict) or rule.get('type') != 'required_status_checks':
+    changed = False
+    for rule in rules[:]:
+        if not isinstance(rule, dict):
             continue
+        kind = rule.get('type')
         params = rule.get('parameters')
-        if not isinstance(params, dict):
+        if kind not in ('required_status_checks', 'code_scanning') or not isinstance(params, dict):
             continue
-        checks = params.get('required_status_checks')
-        if not isinstance(checks, list):
+        key = 'code_scanning_tools' if kind == 'code_scanning' else 'required_status_checks'
+        entries = params.get(key)
+        if not isinstance(entries, list):
             continue
-        kept = [
-            c for c in checks
-            if not (isinstance(c, dict) and c.get('context') == CODEQL_CONTEXT)
-        ]
-        if len(kept) != len(checks):
-            params['required_status_checks'] = kept
-            return True
-    return False
+        field, target = ('tool', 'CodeQL') if kind == 'code_scanning' else ('context', CODEQL_CONTEXT)
+        kept = [entry for entry in entries if not (isinstance(entry, dict) and entry.get(field) == target)]
+        if len(kept) != len(entries):
+            params[key] = kept
+            if not kept and kind == 'code_scanning':
+                rules.remove(rule)
+            changed = True
+    return changed
 
 
 def _drop_codeql_from_config(text: str) -> str:
@@ -485,13 +488,10 @@ def _drop_codeql_from_config(text: str) -> str:
 
 
 def disable_codeql(repo_root: Path = REPO_ROOT) -> int:
-    """Drop CodeQL from the laws, the ruleset snapshot, the workflows,
-    the ruleset test fixtures, and the governance config.
+    """Remove CodeQL laws, analysis, findings requirements and mirrored config.
 
-    Used at bootstrap when the target repository cannot run CodeQL (private
-    without GitHub Advanced Security). Removing the law and the required
-    status check together keeps the pr_checks_honesty bijection satisfied;
-    stripping it from governance.yml keeps the config contract test passing.
+    Unsupported targets retain other scanner requirements and remaining laws;
+    the ruleset fixtures follow the same removal.
     """
     changed = 0
     laws_path = repo_root / 'CLAUDE.md'

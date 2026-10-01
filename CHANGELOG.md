@@ -2,6 +2,7 @@
 
 # v2.0.1
 
+- Require native CodeQL security-result protection and document verified repository activation order, credential scope and automatic review behavior.
 - Adopt repository governance, issue and review contracts, measured quality ratchets, supply-chain checks and controlled release tooling for Autonomio Talos.
 - Preserve the public Talos interfaces, optional Keras, TensorFlow and PyTorch integrations, reproducible experiment records and trusted archive recovery contracts.
 - Expand contributor, security, packaging and release documentation while retaining the existing README and carefully authored user guides.

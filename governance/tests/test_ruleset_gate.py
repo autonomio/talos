@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 RULESET_GATE = REPO_ROOT / 'governance/ruleset_gate.py'
 SNAPSHOT = REPO_ROOT / '.github/rulesets/master.json'
+CODEQL_PRESENT = 'PR Checks CodeQL (python)' in (REPO_ROOT / 'CLAUDE.md').read_text(encoding='utf-8')
 FIXTURES = REPO_ROOT / 'governance/tests/fixtures/github'
 
 
@@ -67,3 +71,23 @@ def test_ignored_live_fields_match_named_set() -> None:
         'source_type',
         'updated_at',
     })
+
+
+@pytest.mark.skipif(not CODEQL_PRESENT, reason='CodeQL explicitly removed from this repository')
+@pytest.mark.parametrize('security_threshold', [None, 'none', 'high_or_higher', 'medium_or_higher'])
+def test_missing_or_weakened_codeql_security_rule_is_drift(
+    security_threshold: str | None, tmp_path: Path,
+) -> None:
+    payload = json.loads((FIXTURES / 'ruleset_live_target.json').read_text(encoding='utf-8'))
+    rule = next(rule for rule in payload['rules'] if rule['type'] == 'code_scanning')
+    if security_threshold is None:
+        payload['rules'].remove(rule)
+    else:
+        rule['parameters']['code_scanning_tools'][0]['security_alerts_threshold'] = security_threshold
+    live_path = tmp_path / 'live_ruleset.json'
+    live_path.write_text(json.dumps(payload), encoding='utf-8')
+
+    result = run_gate(str(live_path))
+
+    assert result.returncode == 1
+    assert 'ruleset drift detected' in result.stderr

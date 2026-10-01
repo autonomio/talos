@@ -32,13 +32,13 @@ Eleven laws. Ten are workflow gates on every PR; the eleventh is intended branch
 
 7. **`pytest tests -q --maxfail=1` passes, inside its recorded runtime ceiling.** The suite completes within `runtime.max_total_seconds` in `.github/budgets.json`, and that ceiling cannot be raised by the PR it gates without a `[runtime-raise: <reason>]` marker in the PR body. Lowering it needs no marker. *(pr_checks_tests)*
 
-8. **CodeQL reports no new Python security anti-patterns.** *(PR Checks CodeQL (python))*
+8. **CodeQL analyzes Python security patterns; native code-scanning protection blocks new security findings at every severity.** Analysis/upload success alone does not prove that security findings are absent. *(PR Checks CodeQL (python))*
 
 9. **The configuration, the written laws, and the enforced gates agree exactly.** The gates `governance.yml` marks enabled and required, the workflow-gate laws here, and the required status checks on `master` are in three-way bijection — every required check has a law, and every gated law is required. A gate added to the ruleset without a law, or a law whose gate was dropped, fails this gate. *(pr_checks_honesty)*
 
 10. **Live branch protection on `master` matches `.github/rulesets/master.json`.** Changing branch protection out-of-band (in the GitHub UI) blocks the next PR until the snapshot is updated in a PR of its own. *(pr_checks_ruleset)*
 
-11. **No direct push to `master`. No force-push or deletion of the protected branch.** Branch must be up-to-date with `master` before merge. One Copilot review required; all review threads resolved. *(branch protection, server-side)*
+11. **No direct push to `master`. No force-push or deletion of the protected branch.** Branch must be up-to-date with `master` before merge. One eligible non-author approval required; Copilot reviews requested automatically on every push. All review threads resolved. *(branch protection, server-side)*
 
 Beyond the gates, `audit_master_ruleset` re-checks the live ruleset on every push to `master` with a privileged token — including `bypass_actors`, which the PR-time ruleset gate (`pr_checks_ruleset`) cannot observe. It is a post-merge alarm, not a merge gate, so it carries no law of its own.
 

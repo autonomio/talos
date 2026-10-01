@@ -67,10 +67,12 @@ def test_disable_codeql_removes_law_ruleset_and_workflow(tmp_path: Path) -> None
     checks = next(r for r in ruleset['rules'] if r['type'] == 'required_status_checks')
     contexts = {c['context'] for c in checks['parameters']['required_status_checks']}
     assert 'PR Checks CodeQL (python)' not in contexts
+    assert not any(rule['type'] == 'code_scanning' for rule in ruleset['rules'])
 
     laws = (repo / 'CLAUDE.md').read_text(encoding='utf-8')
+    assert 'CodeQL reports' not in laws
     assert 'PR Checks CodeQL (python)' not in laws
-    assert 'PR Checks CodeQL (python)' not in laws
+    assert 'Ten laws. Nine are workflow gates on every PR; the tenth' in laws
 
     # governance.yml is the contract anchor test_governance_config pins the
     # ruleset to; if disable_codeql leaves CodeQL here, a private bootstrap PR
@@ -113,3 +115,25 @@ def test_bootstrap_workflow_keeps_public_talos_codeql_active() -> None:
     assert '--codeql unsupported' not in wf
     assert (REPO_ROOT / '.github/workflows/pr_checks_codeql.yml').is_file()
     assert 'PR Checks CodeQL (python)' in (REPO_ROOT / 'CLAUDE.md').read_text()
+
+
+@_skip_if_no_codeql
+def test_disable_codeql_preserves_other_scanner_requirements(tmp_path: Path) -> None:
+    repo = _copy_template(tmp_path)
+    path = repo / '.github/rulesets/master.json'
+    payload = json.loads(path.read_text(encoding='utf-8'))
+    scanning = next(rule for rule in payload['rules'] if rule['type'] == 'code_scanning')
+    other_tool = {
+        'tool': 'OtherScanner',
+        'security_alerts_threshold': 'all',
+        'alerts_threshold': 'all',
+    }
+    scanning['parameters']['code_scanning_tools'].append(other_tool)
+    path.write_text(json.dumps(payload), encoding='utf-8')
+
+    _bootstrap().disable_codeql(repo)
+
+    result = json.loads(path.read_text(encoding='utf-8'))
+    remaining = next(rule for rule in result['rules'] if rule['type'] == 'code_scanning')
+    assert remaining['parameters']['code_scanning_tools'] == [other_tool]
+    assert 'PR Checks CodeQL (python)' not in (repo / 'CLAUDE.md').read_text(encoding='utf-8')

@@ -22,8 +22,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SNAPSHOT = REPO_ROOT / '.github/rulesets/master.json'
+CODEQL_PRESENT = 'PR Checks CodeQL (python)' in (REPO_ROOT / 'CLAUDE.md').read_text(encoding='utf-8')
 
 # Every `pull_request` flag whose value is a protection. Each must stay true.
 PROTECTION_FLAGS = (
@@ -79,3 +82,16 @@ def test_snapshot_still_protects_main_actively() -> None:
     payload = json.loads(SNAPSHOT.read_text(encoding='utf-8'))
     assert payload['enforcement'] == 'active'
     assert 'refs/heads/master' in payload['conditions']['ref_name']['include']
+
+
+@pytest.mark.skipif(not CODEQL_PRESENT, reason='CodeQL explicitly removed from this repository')
+def test_snapshot_blocks_every_new_codeql_security_alert() -> None:
+    """Analysis success alone cannot enforce the security finding contract."""
+    payload = json.loads(SNAPSHOT.read_text(encoding='utf-8'))
+    rules = [rule for rule in payload['rules'] if rule['type'] == 'code_scanning']
+    assert len(rules) == 1, 'a native CodeQL findings rule must accompany analysis'
+    assert rules[0]['parameters']['code_scanning_tools'] == [{
+        'tool': 'CodeQL',
+        'security_alerts_threshold': 'all',
+        'alerts_threshold': 'none',
+    }]

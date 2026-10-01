@@ -23,7 +23,7 @@ A manifest establishes recorded identities and execution evidence. It does not c
 
 ## Reviewed integration
 
-The checked-in `master` snapshot requires green checks, eligible non-author approval, enforcement-surface code-owner review, resolved threads and an up-to-date branch, and blocks force pushes/deletion. The live ruleset gate detects drift; the privileged post-merge audit also inspects bypass actors.
+The checked-in `master` snapshot requires green checks, eligible non-author approval, enforcement-surface code-owner review, resolved threads and an up-to-date branch, and blocks force pushes/deletion. Native CodeQL code-scanning protection blocks new security findings at every severity. A successful analysis/upload job alone does not establish an alert-free change. Copilot review requests run automatically; the ruleset separately requires an eligible non-author approval. The live ruleset gate detects drift; the privileged post-merge audit also inspects bypass actors.
 
 At adoption the complete check/review ruleset is a target control. Existing classic protection already covers administrators, force pushes and up-to-date branches, but supplies no required checks or reviews. Without an installed ruleset, `RULESET_ID` and the audit credential, local contract tests cannot prove reviewed integration is enforced on GitHub.
 

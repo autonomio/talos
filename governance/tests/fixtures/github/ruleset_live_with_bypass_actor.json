@@ -82,6 +82,18 @@
       }
     },
     {
+      "type": "code_scanning",
+      "parameters": {
+        "code_scanning_tools": [
+          {
+            "tool": "CodeQL",
+            "security_alerts_threshold": "all",
+            "alerts_threshold": "none"
+          }
+        ]
+      }
+    },
+    {
       "type": "copilot_code_review",
       "parameters": {
         "review_on_push": true,

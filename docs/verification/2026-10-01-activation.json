@@ -1,0 +1,251 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-01T12:31:12.452162+00:00",
+  "repository": "autonomio/talos",
+  "branch": "codex/talos-limen-core",
+  "baseline_commit": "b9518a66d45549077828e3014eaf466c63ffea72",
+  "phase": "staged; full enforcement disabled pending integration and prerequisites",
+  "remote_controls": {
+    "standard_labels_reconciled": 8,
+    "existing_labels_preserved": true,
+    "default_workflow_permissions": {
+      "default_workflow_permissions": "read",
+      "can_approve_pull_request_reviews": false
+    },
+    "administration_environment": {
+      "deployment_branch_policy": {
+        "custom_branch_policies": false,
+        "protected_branches": true
+      },
+      "name": "repository-administration",
+      "protection_rules": [
+        {
+          "id": 67323191,
+          "node_id": "GA_kwDOB-ECn84EA0U3",
+          "prevent_self_review": false,
+          "reviewers": [
+            {
+              "reviewer": {
+                "avatar_url": "https://avatars.githubusercontent.com/u/7943188?v=4",
+                "events_url": "https://api.github.com/users/mikkokotila/events{/privacy}",
+                "followers_url": "https://api.github.com/users/mikkokotila/followers",
+                "following_url": "https://api.github.com/users/mikkokotila/following{/other_user}",
+                "gists_url": "https://api.github.com/users/mikkokotila/gists{/gist_id}",
+                "gravatar_id": "",
+                "html_url": "https://github.com/mikkokotila",
+                "id": 7943188,
+                "login": "mikkokotila",
+                "node_id": "MDQ6VXNlcjc5NDMxODg=",
+                "organizations_url": "https://api.github.com/users/mikkokotila/orgs",
+                "received_events_url": "https://api.github.com/users/mikkokotila/received_events",
+                "repos_url": "https://api.github.com/users/mikkokotila/repos",
+                "site_admin": false,
+                "starred_url": "https://api.github.com/users/mikkokotila/starred{/owner}{/repo}",
+                "subscriptions_url": "https://api.github.com/users/mikkokotila/subscriptions",
+                "type": "User",
+                "url": "https://api.github.com/users/mikkokotila",
+                "user_view_type": "public"
+              },
+              "type": "User"
+            }
+          ],
+          "type": "required_reviewers"
+        },
+        {
+          "id": 67323192,
+          "node_id": "GA_kwDOB-ECn84EA0U4",
+          "type": "branch_policy"
+        }
+      ]
+    },
+    "secret_scanning": {
+      "dependabot_security_updates": {
+        "status": "enabled"
+      },
+      "secret_scanning": {
+        "status": "enabled"
+      },
+      "secret_scanning_non_provider_patterns": {
+        "status": "disabled"
+      },
+      "secret_scanning_push_protection": {
+        "status": "enabled"
+      },
+      "secret_scanning_validity_checks": {
+        "status": "disabled"
+      }
+    },
+    "private_vulnerability_reporting": true,
+    "ruleset": {
+      "bypass_actors": [],
+      "conditions": {
+        "ref_name": {
+          "exclude": [],
+          "include": [
+            "refs/heads/master"
+          ]
+        }
+      },
+      "enforcement": "disabled",
+      "id": 24306812,
+      "name": "Protect-Master",
+      "rules": [
+        {
+          "type": "deletion"
+        },
+        {
+          "type": "non_fast_forward"
+        },
+        {
+          "parameters": {
+            "allowed_merge_methods": [
+              "merge"
+            ],
+            "dismiss_stale_reviews_on_push": false,
+            "dismissal_restriction": {
+              "allowed_actors": [],
+              "enabled": false
+            },
+            "require_code_owner_review": true,
+            "require_extra_approval_for_unattributed_changes": true,
+            "require_last_push_approval": true,
+            "required_approving_review_count": 1,
+            "required_review_thread_resolution": true,
+            "required_reviewers": []
+          },
+          "type": "pull_request"
+        },
+        {
+          "parameters": {
+            "do_not_enforce_on_create": false,
+            "required_status_checks": [
+              {
+                "context": "PR Checks CodeQL (python)",
+                "integration_id": 15368
+              },
+              {
+                "context": "pr_checks_cc",
+                "integration_id": 15368
+              },
+              {
+                "context": "pr_checks_lint",
+                "integration_id": 15368
+              },
+              {
+                "context": "pr_checks_ruleset",
+                "integration_id": 15368
+              },
+              {
+                "context": "pr_checks_slice",
+                "integration_id": 15368
+              },
+              {
+                "context": "pr_checks_fail_loud",
+                "integration_id": 15368
+              },
+              {
+                "context": "pr_checks_typing",
+                "integration_id": 15368
+              },
+              {
+                "context": "pr_checks_version",
+                "integration_id": 15368
+              },
+              {
+                "context": "pr_checks_tests",
+                "integration_id": 15368
+              },
+              {
+                "context": "pr_checks_honesty",
+                "integration_id": 15368
+              }
+            ],
+            "strict_required_status_checks_policy": true
+          },
+          "type": "required_status_checks"
+        },
+        {
+          "parameters": {
+            "code_scanning_tools": [
+              {
+                "alerts_threshold": "none",
+                "security_alerts_threshold": "all",
+                "tool": "CodeQL"
+              }
+            ]
+          },
+          "type": "code_scanning"
+        },
+        {
+          "parameters": {
+            "review_draft_pull_requests": false,
+            "review_on_push": true
+          },
+          "type": "copilot_code_review"
+        }
+      ]
+    },
+    "ruleset_id_variable": "24306812",
+    "full_staged_parity": "pass including observable bypass_actors; checked using existing administrator CLI authentication, not the future scoped audit secret"
+  },
+  "source_changes": {
+    "CodeQL": "Native security-result protection at all severities, with negative drift tests and explicit fallback reconciliation preserving other scanners. Analysis/upload success is distinct from alert blocking.",
+    "Copilot": "Written law now states automatic review requests and a separate eligible non-author approval. The automatic-request rule does not require a completed or approving Copilot verdict.",
+    "activation_order": "Validate/review/integrate workflows, establish protected-base analysis, then enable intended enforcement and run scoped audit. Record initial live-gate prerequisite explicitly.",
+    "runtime": "Package code and README unchanged from the baseline. Candidate remains 2.0.1 within the same unmerged integration PR; no release/publishing performed."
+  },
+  "verification": {
+    "governance_tests_passed": 355,
+    "governance_test_seconds": 42.48,
+    "repository_safety_tests_passed": 9,
+    "quality_debt": "pass; 1899 inherited strict lint/dead-code findings, none new",
+    "module_budgets": "pass; no increases",
+    "swallowed_violations": "pass",
+    "markdown": "74 maintained sources pass; frozen README verified",
+    "site": "81 production routes verified; JS553659 and CSS100072 within bounds",
+    "previous_runtime_proof": "docs/verification/2026-10-01-template-adoption.json; runtime bytes remain unchanged",
+    "public_signature_evidence": "docs/verification/2026-10-01-public-contracts.json"
+  },
+  "pending": [
+    "User-selected eligible second code owner and corresponding reviewed CODEOWNERS change",
+    "Dedicated repository-scoped RULESET_AUDIT_TOKEN supplied directly to GitHub",
+    "Actual hosted PR CI and reviewed default-branch integration",
+    "Master CodeQL analysis, active exact-snapshot enforcement, scoped privileged audit and subsequent-PR enforcement verification"
+  ],
+  "credential_handling": "No broad CLI OAuth credential copied into Actions; no token values emitted or stored in source. Administration operations use existing local authentication.",
+  "release_boundary": "PyPI enablement remains separate; no release, package publication or tag created.",
+  "official_sources": [
+    "https://docs.github.com/en/rest/repos/rules",
+    "https://docs.github.com/en/copilot/how-tos/copilot-on-github/set-up-copilot/configure-code-review",
+    "https://docs.github.com/en/actions/how-tos/manage-workflow-runs/manually-run-a-workflow"
+  ],
+  "evidence_sha256": {
+    "actions-permissions.json": "f6e178fc1e56cf43900da383f85398b61de9ae61c6b8433116c1856605745924",
+    "administration-environment.json": "4e40356fd4f52e6c202949af7743f4ff7b888ad743942c3e0f3da4cf1bd87206",
+    "labels-after.json": "03b6a40bf9e01ebd651bdb2c24cbe61b76eb3520125661f2a48132756bc8c63c",
+    "security-settings.json": "3790df20a498454a4b2e4a4151b0f7d528ecbd8b46a47b71a61030ce889268c5",
+    "private-reporting.json": "26b3426b2593763c96d0890b4a77a0bbf66d13fc512b0c6b138a23c290f30a2a",
+    "staged-live-verified.json": "01b795032b41a91f0f6d415a87f1f0bfec2e15aaf4c1d54a4501d32213e38301",
+    "governance-tests.log": "9cc448fc628ab18328b0022136a39d4077e90f794a468210e0441dd40212fc35",
+    "markdown.log": "24c3b0005ffe2e023afca263227da8c865aabd8401b434d1927b90472e4fc6bd",
+    "site-build.log": "f1942d6ac5605fc002c76d5bb193a49c9d01c145c1e3feaedb7788e4415c4187",
+    "site-verify.log": "45fc7cd3127f215c9fd7a186a5764eba8ce0293d5046467d2107f1482d05f8d8"
+  },
+  "changed_source_sha256": {
+    ".github/rulesets/master.json": "10776c3f8081f1f2bb401f9dd89738a18f4aa5a137d9979b5640129a515f1740",
+    "CHANGELOG.md": "8274a3af20a3e1efb8e0ca8f037858b0e963b180c1e00853ee71784084ef2707",
+    "CLAUDE.md": "74a9b680ef9d535eda7967562e77b6f617a3ec214ce854d4a2290ec25cfbbb71",
+    "SETUP.md": "dc402467b7e1f342b4f84d099288fd49a9fd106e3f9368351860766fc38611d3",
+    "docs/Developer/Security-Assurance-Case.md": "8952143d433a0ce5242e80b311ae26a88370b7ac6fdfbf5dc89f8cfdeb4ff2e3",
+    "governance/bootstrap_repository.py": "a9b007e901ce783ee941fff60da1718eff8da1e3ce0d21a5deba6e5b417506bd",
+    "governance/tests/fixtures/github/ruleset_live_target.json": "10776c3f8081f1f2bb401f9dd89738a18f4aa5a137d9979b5640129a515f1740",
+    "governance/tests/fixtures/github/ruleset_live_target_without_bypass_actors.json": "7f26088d794e8ba288f9e396ebeac924b009a705eb905d2062695a1b52454e96",
+    "governance/tests/fixtures/github/ruleset_live_unexpected_field.json": "9a16e2fde97c5d32eeab638c7c3d15cc013638cabee5231c1f543c9d3d296cc0",
+    "governance/tests/fixtures/github/ruleset_live_with_bypass_actor.json": "d9ccb343ba47de1975be25f3cd8ffba7e74bcddef97a643c02ce6a08ec7ad7e5",
+    "governance/tests/test_codeql_fallback.py": "b439d6c98fab5391c28eb5d2ab39d35391b9310310a0ff4731ff83ce8651a2d4",
+    "governance/tests/test_privileged_ruleset_audit.py": "002780ef119b6b1976d840b86d8338c5864ca62a4efe504427b3181034743b6f",
+    "governance/tests/test_ruleset_gate.py": "9f61f554aa562238b1db77b13ace4fd659fade76d1bd6cd5bfdc086685268309",
+    "governance/tests/test_ruleset_snapshot_matches_live.py": "48228588270ed4be7041598e4157dca8dc2584ddcc0ce7c80f789f903cb8102c"
+  },
+  "root_readme_sha256": "291d3dcb61e91a759aab5e0bb4c5f3b6fbddc66b21d38123acefddfe75c1e1a6"
+}

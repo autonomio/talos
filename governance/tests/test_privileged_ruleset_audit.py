@@ -7,10 +7,13 @@ import json
 import types
 from pathlib import Path
 
+import pytest
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 RULESET_WORKFLOW = REPO_ROOT / '.github/workflows/pr_checks_ruleset.yml'
 AUDIT_WORKFLOW = REPO_ROOT / '.github/workflows/audit_master_ruleset.yml'
 SNAPSHOT = REPO_ROOT / '.github/rulesets/master.json'
+CODEQL_PRESENT = 'PR Checks CodeQL (python)' in (REPO_ROOT / 'CLAUDE.md').read_text(encoding='utf-8')
 FIXTURES = REPO_ROOT / 'governance/tests/fixtures/github'
 
 
@@ -116,3 +119,23 @@ def test_pr_checks_ruleset_runs_privileged_audit_contract() -> None:
 
     assert 'governance/tests/test_privileged_ruleset_audit.py' in workflow
     assert 'continue-on-error' not in workflow
+
+
+@pytest.mark.skipif(not CODEQL_PRESENT, reason='CodeQL explicitly removed from this repository')
+@pytest.mark.parametrize('security_threshold', [None, 'none', 'high_or_higher', 'medium_or_higher'])
+def test_privileged_audit_rejects_missing_or_weakened_codeql_security_rule(
+    security_threshold: str | None, tmp_path: Path,
+) -> None:
+    payload = json.loads((FIXTURES / 'ruleset_live_target.json').read_text(encoding='utf-8'))
+    rule = next(rule for rule in payload['rules'] if rule['type'] == 'code_scanning')
+    if security_threshold is None:
+        payload['rules'].remove(rule)
+    else:
+        rule['parameters']['code_scanning_tools'][0]['security_alerts_threshold'] = security_threshold
+    live_path = tmp_path / 'live_ruleset.json'
+    live_path.write_text(json.dumps(payload), encoding='utf-8')
+
+    code, _, stderr = _run_audit_fixture(str(live_path), tmp_path / 'audit')
+
+    assert code == 1
+    assert 'privileged_ruleset_audit: ruleset drift detected' in stderr

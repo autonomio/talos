@@ -30,13 +30,14 @@ Use repository secrets or organization secrets restricted to Talos. Never print 
 
 ## Activate existing-repository governance
 
-1. Review the adopted policy, all local evidence and the proposed snapshot in `.github/rulesets/master.json`.
-2. Set `RULESET_AUDIT_TOKEN` as a read-only secret. Add the activation credential only when the administrator chooses to run activation.
-3. Install the standard labels and apply the checked-in ruleset using the explicit `bootstrap_repository.yml` migration workflow, which runs `scripts/configure_repository.py --apply`. The migration must not rename the package, overwrite authored docs, reset the changelog or merge a seed PR.
-4. The configuration script records the resulting ruleset identifier in `RULESET_ID`; verify it matches the installed ruleset.
-5. Verify the live ruleset, required status-check contexts, non-author review, code-owner review, review-thread resolution, up-to-date branch requirement, force-push block and deletion block.
-6. Open a reviewable validation PR only when authorized; confirm every required check runs and the ruleset gate compares the intended snapshot with live settings.
-7. Confirm the privileged post-merge audit can read `bypass_actors`. A token that cannot see them cannot establish the complete protection contract.
+1. Review the adopted policy, all local evidence and the proposed snapshot in `.github/rulesets/master.json`. Reconcile the standard labels without deleting existing labels.
+2. Choose another eligible code owner for maintainer-authored PRs and include that owner in the reviewed integration change. Protect the `repository-administration` environment and use read-only default workflow permissions.
+3. Provision `RULESET_AUDIT_TOKEN` for Talos only. Verify its actual response includes `bypass_actors`; the permission label alone cannot prove complete observability. Keep the existing broad CLI OAuth credential out of Actions.
+4. Open and validate the adoption PR through the existing protection, then integrate the reviewed workflows. The initial ruleset check cannot pass while its live prerequisite is absent; record that bootstrap boundary explicitly. Do not install mandatory check contexts before their workflows are available and validated.
+5. Wait for the integrated master CodeQL analysis. Analysis/upload success is separate from the native `code_scanning` rule, which blocks new security findings at every severity. Copilot's rule requests reviews automatically; it does not itself require completion or an approving verdict.
+6. Apply the reviewed labels and ruleset with `scripts/configure_repository.py --apply` using the authorized local administrator credential, or dispatch the protected `bootstrap_repository.yml` workflow from master after separately provisioning its activation credential. Neither path renames Talos, rewrites authored docs or resets history. The script records the installed identifier in `RULESET_ID`.
+7. Verify exact live snapshot parity, including bypass actors, all required checks, CodeQL security thresholds, non-author/code-owner approval, resolved threads, up-to-date branches and force-push/deletion blocks. Preserve existing classic protection.
+8. Dispatch the integrated privileged audit and confirm the scoped credential can read the complete live ruleset. Validate enforcement on a subsequent PR; do not declare activation complete from source tests or an API write alone.
 
 For read-only verification, use `gh variable list --repo autonomio/talos`, `gh api repos/autonomio/talos/rulesets` and `gh label list --repo autonomio/talos`. The configured ruleset name and gate list come from `governance.yml`; compare the responses rather than merely checking that an API call succeeded.
 
