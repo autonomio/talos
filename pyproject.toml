@@ -33,7 +33,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   "pytest>=8,<10", "hypothesis>=6.100,<7", "ruff==0.16.1", "pyright==1.1.408",
-  "vulture>=2.14,<3", "coverage[toml]>=7.6,<8", "pyyaml>=6.0,<7",
+  "vulture>=2.14,<3", "coverage[toml]>=7.16.2,<8", "pyyaml>=6.0,<7",
   "pip-audit>=2.7,<3", "build>=1.2,<2", "hatchling==1.32.4", "editables>=0.5,<1",
 ]
 keras = ["keras>=3.15,<4"]
@@ -42,7 +42,7 @@ torch = ["torch>=2.13,<3"]
 legacy-tensorflow = ["tensorflow==2.14.1", "keras==2.14.0", "numpy>=1.26,<2"]
 plots = ["matplotlib>=3.8,<4"]
 samplers = ["chances>=0.1.9,<0.2"]
-test = ["pytest>=8,<10", "coverage>=7,<8", "build>=1.2,<2", "hatchling==1.32.4,<2", "editables>=0.5,<1", "ruff==0.16.1"]
+test = ["pytest>=8,<10", "coverage>=7.16.2,<8", "build>=1.2,<2", "hatchling==1.32.4,<2", "editables>=0.5,<1", "ruff==0.16.1"]
 
 [project.scripts]
 talos = "talos.cli.main:cli"
