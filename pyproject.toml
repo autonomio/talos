@@ -33,7 +33,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   "pytest>=8,<10", "hypothesis>=6.100,<7", "ruff==0.16.1", "pyright==1.1.408",
-  "vulture>=2.14,<3", "coverage[toml]>=7.6,<8", "pyyaml>=6.0,<7",
+  "vulture>=2.16,<3", "coverage[toml]>=7.6,<8", "pyyaml>=6.0,<7",
   "pip-audit>=2.7,<3", "build>=1.2,<2", "hatchling==1.32.4", "editables>=0.5,<1",
 ]
 keras = ["keras>=3.15,<4"]
