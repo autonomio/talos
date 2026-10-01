@@ -2,6 +2,7 @@
 
 # v2.0.1
 
+- Designate zero-bang and bit-mis alongside mikkokotila as code owners for governance and supply-chain surfaces.
 - Apply the documented bounded backoff when external documentation links return transient failures.
 - Bind hash-locked official CPU framework builds to upstream advisory identities while auditing every installed dependency and recording lookup evidence.
 - Repair hosted Linux packaging locks, CPU framework execution, documentation backup fixtures and protected-base version comparison; verify optional dependency failure diagnostics.

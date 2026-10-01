@@ -10,7 +10,7 @@ The checked-in workflows, gate code and intended `master` ruleset are locally te
 
 - Administration access to `autonomio/talos` and access to Actions settings.
 - GitHub Actions and CodeQL availability for this public repository.
-- An eligible non-author code owner with write access for governed surfaces. `governance.yml` and `CODEOWNERS` currently name only `mikkokotila`. Before enabling code-owner enforcement for maintainer-authored PRs, designate another eligible owner in a reviewed change; adding a collaborator alone does not satisfy code-owner approval.
+- An eligible non-author code owner with write access for governed surfaces. [.github/CODEOWNERS](.github/CODEOWNERS) designates `mikkokotila`, `zero-bang` and `bit-mis`; `governance.yml` retains `mikkokotila` as the approving authority. Integrate the ownership declaration through a reviewed change before enabling enforcement; adding a collaborator alone does not satisfy code-owner approval.
 - Copilot code review availability for the intended ruleset.
 - A protected `repository-administration` environment for activation and a protected `pypi` environment for release/publication.
 - A read-only ruleset audit token and, only for the activation operation, a separately scoped administrator credential.
@@ -31,7 +31,7 @@ Use repository secrets or organization secrets restricted to Talos. Never print 
 ## Activate existing-repository governance
 
 1. Review the adopted policy, all local evidence and the proposed snapshot in `.github/rulesets/master.json`. Reconcile the standard labels without deleting existing labels.
-2. Choose another eligible code owner for maintainer-authored PRs and include that owner in the reviewed integration change. Protect the `repository-administration` environment and use read-only default workflow permissions.
+2. Verify the selected code owners still have write access and obtain an eligible non-author review of the integration change. Protect the `repository-administration` environment and use read-only default workflow permissions.
 3. Provision `RULESET_AUDIT_TOKEN` for Talos only. Verify its actual response includes `bypass_actors`; the permission label alone cannot prove complete observability. Keep the existing broad CLI OAuth credential out of Actions.
 4. Open and validate the adoption PR through the existing protection, then integrate the reviewed workflows. The initial ruleset check cannot pass while its live prerequisite is absent; record that bootstrap boundary explicitly. Do not install mandatory check contexts before their workflows are available and validated.
 5. Wait for the integrated master CodeQL analysis. Analysis/upload success is separate from the native `code_scanning` rule, which blocks new security findings at every severity. Copilot's rule requests reviews automatically; it does not itself require completion or an approving verdict.
