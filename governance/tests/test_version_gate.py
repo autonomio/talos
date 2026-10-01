@@ -125,7 +125,7 @@ def test_hatch_version_is_read_without_executing_model_imports() -> None:
 def test_initial_legacy_hatch_release_can_migrate_to_semver() -> None:
     project = '[project]\ndynamic = ["version"]\n[tool.hatch.version]\npath = "talos/__init__.py"\n'
     assert version_gate.gate(
-        'chore: adopt repository governance', project, project,
+        'feat: adopt reproducible experiment core and repository governance', project, project,
         '# v1.4\n\n- Old release\n', '# v2.0.1\n\n- Adopt repository governance\n',
         '__version__ = "1.4"\n', '__version__ = "2.0.1"\n',
     ) == []
@@ -135,3 +135,32 @@ def test_hatch_version_rejects_nonliteral_assignment() -> None:
     project = '[project]\ndynamic = ["version"]\n[tool.hatch.version]\npath = "talos/__init__.py"\n'
     with pytest.raises(SystemExit):
         version_gate.extract_version(project, 'head', '__version__ = compute_version()\n')
+
+
+def test_initial_legacy_version_is_accepted_only_at_base() -> None:
+    project = '[project]\ndynamic = ["version"]\n[tool.hatch.version]\npath = "talos/__init__.py"\n'
+    with pytest.raises(SystemExit) as exc:
+        version_gate.gate(
+            'fix: preserve legacy version', project, project,
+            '# v1.3.0\n\n- Previous release\n', '# v1.4\n\n- Change behavior\n',
+            '__version__ = "1.3.0"\n', '__version__ = "1.4"\n',
+        )
+    assert exc.value.code == 2
+
+
+def test_version_workflow_compares_protected_base_without_quality_epoch() -> None:
+    from pathlib import Path
+
+    import yaml
+
+    workflow = yaml.safe_load(
+        (Path(__file__).resolve().parents[2] / '.github/workflows/pr_checks_version.yml').read_text()
+    )
+    extraction = next(
+        step['run'] for step in workflow['jobs']['pr_checks_version']['steps']
+        if step.get('id') == 'artifacts'
+    )
+    assert 'BASE_REV="origin/${{ github.base_ref }}"' in extraction
+    assert 'comparison_ref' not in extraction
+    assert 'git show "$BASE_REV:pyproject.toml"' in extraction
+    assert 'git show "$BASE_REV:talos/__init__.py"' in extraction

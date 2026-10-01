@@ -69,7 +69,8 @@ jobs:
           AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
           git -c "http.https://github.com/.extraheader=$AUTH" fetch origin "${{ github.base_ref }}" --depth=1
           git rev-parse --verify "$BASE_REV" >/dev/null
-          BASE_REV="$(python governance/comparison_ref.py --base-ref "$BASE_REV")"
+          # Release magnitude is measured against the actual protected base.
+          # The quality-debt adoption epoch is not a released package version.
 
           # Base artifacts must exist; if either is missing the gate
           # cannot compare.

@@ -79,7 +79,7 @@ EDITABLE_INSTALL_RE = re.compile(
     INSTALL_PREFIX
     + r'pip install (?:--python \S+ )?--no-build-isolation --no-deps -e \.'
 )
-REQUIREMENT_ENTRY_RE = re.compile(r'^[A-Za-z0-9][A-Za-z0-9._\[\],-]*==')
+REQUIREMENT_ENTRY_RE = re.compile(r'^[A-Za-z0-9][A-Za-z0-9._\[\],-]*(?:==|\s+@\s+)')
 
 
 def _workflow_files() -> list[Path]:
@@ -173,17 +173,33 @@ def test_requirement_sets_are_hash_complete_and_paired() -> None:
     violations: list[str] = []
     for path in compiled:
         lines = path.read_text(encoding='utf-8').splitlines()
-        for lineno, line in enumerate(lines, start=1):
-            if not REQUIREMENT_ENTRY_RE.match(line):
-                continue
-            block = [line]
-            for follower in lines[lineno:]:
-                if not follower.startswith((' ', '\t')):
-                    break
-                block.append(follower)
-            if '--hash=sha256' not in '\n'.join(block):
-                violations.append(f'{path.name}:{lineno}: {line.split(" ")[0]} has no hash')
+        for lineno in _unhashed_requirement_entries(lines):
+            violations.append(f'{path.name}:{lineno}: {lines[lineno - 1].split(" ")[0]} has no hash')
     assert not violations, '\n'.join(violations)
+
+
+def _unhashed_requirement_entries(lines: list[str]) -> list[int]:
+    violations = []
+    for lineno, line in enumerate(lines, start=1):
+        if not REQUIREMENT_ENTRY_RE.match(line):
+            continue
+        block = [line]
+        for follower in lines[lineno:]:
+            if not follower.startswith((' ', '\t')):
+                break
+            block.append(follower)
+        if not re.search(r'--hash=sha256:[0-9a-f]{64}(?:\s|$)', '\n'.join(block)):
+            violations.append(lineno)
+    return violations
+
+
+def test_named_wheel_urls_require_explicit_complete_hashes() -> None:
+    url = 'torch @ https://download.pytorch.org/whl/cpu/torch.whl#sha256=' + 'a' * 64
+    hashed = ['    --hash=sha256:' + 'a' * 64]
+    assert _unhashed_requirement_entries([url]) == [1]
+    assert _unhashed_requirement_entries([url, *hashed]) == []
+    assert _unhashed_requirement_entries([url, url, *hashed]) == [1]
+    assert _unhashed_requirement_entries([url, '    --hash=sha256:truncated']) == [1]
 
 
 def test_every_job_running_a_repo_file_checks_out_the_repository() -> None:

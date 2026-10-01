@@ -136,7 +136,7 @@ Other operations include `remove_is`, `remove_ge`, `remove_le`, `keep_is`, `inje
 
 ## Store and provenance
 
-Before committing, change `metadata.mode` in `manifests/first.yaml` to `production`. Commit accepts production manifests. Replace `MANIFEST_ID` below with the full hash printed by `commit`. The `MANIFEST_ID=...` assignment is a placeholder for that printed value. For the backup example, configure a local test remote with `git init --bare ../study-backup.git` and `git remote add origin ../study-backup.git`. In the existing `[store]` section of `talos.toml`, set `backup_remote = "../study-backup.git"`; backup reads this setting.
+Before committing, change `metadata.mode` in `manifests/first.yaml` to `production`. Commit accepts production manifests. Replace `MANIFEST_ID` below with the full hash printed by `commit`. The `MANIFEST_ID=...` assignment is a placeholder for that printed value. For the backup example, configure a local test remote with `git init --bare --initial-branch=main ../study-backup.git` and `git remote add origin ../study-backup.git`. Talos projects start on `main`; the bare remote must point its default branch there for clone restoration. In the existing `[store]` section of `talos.toml`, set `backup_remote = "../study-backup.git"`; backup reads this setting.
 
 ```sh
 talos commit manifests/first.yaml -m 'initial study'

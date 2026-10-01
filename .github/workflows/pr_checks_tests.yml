@@ -98,8 +98,8 @@ jobs:
           from pathlib import Path
 
           totals = json.loads(Path('coverage.json').read_text())['totals']
-          line = totals.get('percent_covered', 0.0)
-          branch = totals.get('percent_covered_branches', line)
+          line = totals['percent_statements_covered']
+          branch = totals['percent_branches_covered']
           print(
               '<!-- coverage-comment -->\n'
               '### Coverage\n\n'

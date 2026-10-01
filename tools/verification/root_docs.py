@@ -265,8 +265,9 @@ def main():
                             with manifest.open('w') as stream:
                                 yaml.dump(configuration, stream)
                             bare = cwd.parent / 'study-backup.git'
-                            checked(['git', 'init', '--bare', str(bare)], cwd=cwd, env=env,
-                                    log=folder / 'local-remote.log')
+                            branch = checked(['git', 'symbolic-ref', '--short', 'HEAD'], cwd=cwd, env=env).strip()
+                            checked(['git', 'init', '--bare', '--initial-branch', branch, str(bare)],
+                                    cwd=cwd, env=env, log=folder / 'local-remote.log')
                             checked(['git', 'remote', 'add', 'origin', str(bare)], cwd=cwd, env=env)
                             config = cwd / 'talos.toml'
                             config.write_text(re.sub(r'backup_remote\s*=\s*[^\n]*',
