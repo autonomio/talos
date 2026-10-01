@@ -37,7 +37,7 @@ The legacy extra retains known upstream advisories for compatibility. Use it onl
 
 ## Install this checkout
 
-Run these commands from the repository root to install the working source with development and framework extras, then execute the acceptance suite:
+For Linux CPU use, first install the [CPU Torch build](#linux-cpu-verification) in your environment. Run these commands from the repository root to install the working source with development and framework extras, then execute the acceptance suite:
 
 ```sh
 pip install -e '.[test,plots,samplers,tensorflow,torch]'
@@ -53,6 +53,12 @@ A resolver error or missing wheel usually means the selected framework does not 
 An editable install reads the working tree, so experiments can change behavior when that tree changes. For reproducible research, retain exact installed versions together with the run's manifest and provenance; editable installation alone is not a release artifact. GPU drivers and framework-specific accelerator setup remain external to Talos installation.
 
 The exact dependency bounds are maintained in [pyproject.toml](../pyproject.toml). [Maintenance](Maintenance.md) records the supported compatibility lanes and verification process.
+
+## Linux CPU verification
+
+For Linux CPU workloads, install a Torch version within Talos's declared bounds using the CPU compute platform in [PyTorch's installation selector](https://pytorch.org/get-started/locally/) before installing the Talos Torch extra or the combined development extras. The Linux verification lanes use official CPU wheels and record their exact versions and hashes in `requirements/ci/`.
+
+The combined TensorFlow/PyTorch test environment exposed a native Triton import crash with the default CUDA-enabled Torch build on a CPU runner. The verified CPU wheels avoid that stack. These results establish CPU compatibility; accelerator libraries and driver compatibility require verification on their target hardware.
 
 ## Read next
 
