@@ -4,13 +4,13 @@ import importlib
 import importlib.util
 import inspect
 import json
-import signal
-import shutil
-import sys
-import threading
 import logging
 import numbers
 import random
+import shutil
+import signal
+import sys
+import threading
 import time
 import uuid
 import warnings
@@ -22,12 +22,14 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
+from talos.parameters._resume import _legacy_key_witness, _strategy_identity
+
 from .artifacts import append_round, read_json, read_rounds, truncate_rounds, write_json
 from .context import reset_trial_context, set_trial_context
-from .provenance import environment, fingerprint, source_identity, file_hash
-from .serialization import content_hash, dumps
-from .source_snapshot import snapshot_sources, hydrate_sources
 from .log_projection import LogQueueView, log_frame
+from .provenance import environment, file_hash, fingerprint, source_identity
+from .serialization import content_hash, dumps
+from .source_snapshot import hydrate_sources, snapshot_sources
 
 logger = logging.getLogger(__name__)
 
@@ -60,12 +62,6 @@ def _load_recorded_source(metadata, run_dir):
                 specification.loader.exec_module(loaded)
             finally:
                 sys.path.pop(0)
-
-
-def _strategy_identity(strategy):
-    state = strategy.get_state().copy()
-    state.pop('rng_state', None)
-    return {'class': source_identity(type(strategy)), 'seed': getattr(strategy, '_seed', None), 'initial_state': state}
 
 
 def _pruner_identity(reducer):
@@ -415,7 +411,7 @@ def run(sfd, data=None, *, params=None, experiment_name='experiment', experiment
                 'prep_each_round': options.get('prep_each_round', legacy is None),
                 'legacy_controls': {k: source_identity(getattr(legacy, k)) if callable(getattr(legacy, k)) else getattr(legacy, k)
                                     for k in ('reduction_method', 'reduction_interval', 'reduction_window',
-                                              'reduction_threshold', 'reduction_metric', 'minimize_loss', 'performance_target')} if legacy else None}
+                                              'reduction_threshold', 'reduction_metric', 'minimize_loss', 'performance_target')} if legacy else None} | _legacy_key_witness(params, run_dir, resume, legacy)
     identity_hash = content_hash(identity)
     current_environment = environment()
     msq = MSQ(search_strategy, domain, n_permutations=limit)

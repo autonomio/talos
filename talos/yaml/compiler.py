@@ -1,12 +1,12 @@
+"""Compile validated caller models and recorded identities into executable SFDs."""
 from functools import wraps
 from importlib import import_module
 import json
 from pathlib import Path
 import inspect
-from talos.yaml.errors import ValidationError
 from talos.yaml.resolver import caller_imports, load_sfd, resolve_values, validate_sfd
 from talos.yaml.store import canonical_manifest_id
-from talos.yaml.validator import validate
+from talos.yaml.validator import validate_or_raise
 
 
 def _caller_scope(function):
@@ -20,9 +20,7 @@ def _caller_scope(function):
 class CompiledSFD:
     """Compile a generic manifest into the native params/prep/model SFD."""
     def __init__(self, document, source_path=None, *, source_module=None):
-        outcome = validate(document)
-        if not outcome.valid:
-            raise ValidationError(outcome.errors)
+        validate_or_raise(document)
         self._yaml = document
         self.source_path = Path(source_path).resolve() if source_path else None
         self.module_reference = document['sfd']['module']
@@ -47,6 +45,7 @@ class CompiledSFD:
         reference = raw['yaml_reference']
         if reference.get('manifest_id') != canonical_manifest_id(reference['content']):
             raise ValueError('Recorded manifest content does not match its hash')
+        validate_or_raise(reference['content'])
         bundle = verify_sources(raw, run_dir, originals=True)
         source = None
         if bundle and bundle.get('modules'):

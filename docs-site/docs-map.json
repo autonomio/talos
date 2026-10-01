@@ -42,7 +42,6 @@
       "dest": "index.md",
       "slug": "/",
       "sidebarPosition": 1,
-      "frozenSha256": "291d3dcb61e91a759aab5e0bb4c5f3b6fbddc66b21d38123acefddfe75c1e1a6",
       "className": "talos-product-home"
     },
     {
@@ -705,6 +704,13 @@
       "slug": "/developer/openssf",
       "sidebarPosition": 76,
       "sidebarLabel": "OpenSSF evidence"
+    },
+    {
+      "source": "docs/Citing_Talos.md",
+      "dest": "overview/citing-talos.md",
+      "slug": "/overview/citing-talos",
+      "sidebarPosition": 18,
+      "sidebarLabel": "Citing Talos"
     }
   ]
 }

@@ -22,7 +22,7 @@ DIST: Final[Path] = REPO_ROOT / 'dist'
 BOUNDED_RE: Final[re.Pattern[str]] = re.compile(r'>=[^,;]+,\s*<[^,;]+|==[^,;]+')
 REQUIRED_SDIST_PATHS: Final[frozenset[str]] = frozenset({
     'README.md', 'LICENSE', 'NOTICE', 'CHANGELOG.md', 'CONTRIBUTING.md',
-    'SECURITY.md', 'CITATION.cff', 'pyproject.toml', 'governance.yml',
+    'SECURITY.md', 'CITATION.cff', 'CITATION.bib', 'pyproject.toml', 'governance.yml',
     'AGENTS.md', 'CLAUDE.md', 'SETUP.md', 'scripts/package_audit.py',
     'docs-site/package-lock.json', 'requirements/ci/dev-env.txt',
 })

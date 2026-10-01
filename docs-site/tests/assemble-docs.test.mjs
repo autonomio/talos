@@ -315,3 +315,15 @@ test('new repository contracts enter the maintained inventory automatically', (t
   assert.ok(sources.includes('docs/Developer/Configuration.md'));
   assert.throws(() => validateInventory([{source: 'README.md'}], sources), /GOVERNANCE.md/);
 });
+
+
+test('owned documentation links use the local build for preview and publication', () => {
+  assert.equal(resolveDocLink('README.md', 'https://autonomio.github.io/talos/coverage/coverage.svg'), 'pathname:///talos/coverage/coverage.svg');
+  assert.equal(resolveDocLink('README.md', 'https://autonomio.github.io/talos/'), 'pathname:///talos/');
+  assert.equal(resolveDocLink('README.md', 'https://example.org/talos/coverage/coverage.svg'), 'https://example.org/talos/coverage/coverage.svg');
+});
+
+
+test('notebook paths with spaces resolve to their encoded repository file', () => {
+  assert.equal(resolveDocLink('README.md', 'examples/Iris%20SFD%20and%20Manifest%20Recovery.ipynb'), 'https://github.com/autonomio/talos/blob/master/examples/Iris%20SFD%20and%20Manifest%20Recovery.ipynb');
+});

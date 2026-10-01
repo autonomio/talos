@@ -1,3 +1,4 @@
+"""Legacy training callbacks use the shared executor and preserve checkpointed row selection."""
 from types import SimpleNamespace
 from talos.experiment.runner import RunResult
 
@@ -11,16 +12,14 @@ class Scan(RunResult):
                  minimize_loss=False, disable_progress_bar=False, print_params=False,
                  clear_session=True, save_weights=True, save_models=False, **options):
         from talos.parameters.ParamSpace import ParamSpace
+        from talos.parameters._resume import _resume_initial_state
         from talos.utils.validation_split import validation_split
         from talos.experiment.runner import run
 
         if not callable(model):
             raise TypeError('model must be a callable training function')
-        values = locals().copy()
-        values.pop('self')
-        values.pop('options')
-        for key, value in values.items():
-            setattr(self, key, value)
+        values = {key: value for key, value in locals().items() if key not in ('self', 'options')}
+        self.__dict__.update(values)
         self.custom_val_split = x_val is not None or y_val is not None
         if (x_val is None) != (y_val is None):
             raise ValueError('x_val and y_val must be supplied together')
@@ -28,7 +27,8 @@ class Scan(RunResult):
         if isinstance(params, dict):
             self.param_object = ParamSpace(params, list(params), random_method=random_method,
                                           fraction_limit=fraction_limit, round_limit=round_limit,
-                                          time_limit=time_limit, boolean_limit=boolean_limit, seed=seed)
+                                          time_limit=time_limit, boolean_limit=boolean_limit, seed=seed,
+                                          _initial_state=_resume_initial_state(options, list(params)))
         elif isinstance(params, ParamSpace):
             self.param_object = params
         else:

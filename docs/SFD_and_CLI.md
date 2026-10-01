@@ -112,6 +112,8 @@ uel:
 
 `module` can be an importable module or a project `.py` file. Parameter overrides merge with `params()`. Literal strings stay literal; explicit callable values use `{callable: 'package.module:qualified_name'}`. Optional `sfd.context` carries plain caller configuration to `prep`. No `data_source`, finance configuration, feature catalog or reader registry exists.
 
+Objective strings such as `loss` retain metric inference. An objective mapping accepts `direction: min` or `direction: max`; other directions fail validation before caller imports. `save_models`, `prep_each_round` and `progress_bar` require YAML booleans (`true` or `false`), so a quoted `"false"` cannot silently enable a policy. These checks apply to both direct compilation and saved-manifest recovery.
+
 Grid search is lazy; random search has a finite legal domain and reproducible queue state. Both allow runtime domain mutation and priority injections. Legacy `Scan` uses its own ordering/sampling facade over the same mutable queue. General pruning strategies are `correlation`, `sanity`, `saturation`, `budget` and `focus`; consult their Python constructors for parameters.
 
 ## Execute and control
@@ -149,7 +151,9 @@ talos reindex
 talos backup
 ```
 
-Committed manifests are immutable and content-addressed; full or unambiguous short hashes resolve to the same identity. Fork records its parent, lineage prints ancestry, and reindex rebuilds the derived store index. Backup commits/pushes the project to its configured Git remote; restore with `talos new restored --from <remote>`.
+Committed manifests are immutable and content-addressed; full or unambiguous short hashes resolve to the same identity. Resolution checks both `lineage.id` and the recomputed content digest against the stored filename. Recommit and fork reject a changed committed copy; reindex reports and excludes it from the derived index. The lineage envelope remains outside the content digest, preserving historical commit and runtime identities.
+
+Working YAML files remain mutable. Editing a draft produces a new content identity at the next commit, even when the draft retains an earlier `lineage.id`. Fork records its parent and lineage prints ancestry. Backup commits/pushes the project to its configured Git remote; restore with `talos new restored --from <remote>`.
 
 `profile` reports domain complexity and samples caller model runs to estimate runtime. It executes your code and reports sample errors. Profiles do not acquire data independently.
 

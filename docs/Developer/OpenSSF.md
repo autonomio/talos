@@ -95,8 +95,9 @@ The portal requires application data to be submitted under the Community Data
 License Agreement–Permissive Version 2.0. The authorized project representative
 must accept those terms before submission. After a level is attained, publish
 its achievement link on the repository front page or live project website
-within 48 hours, as the criteria require. The frozen root README remains
-unchanged; do not claim an undeployed documentation site provides that notice.
+within 48 hours, as the criteria require. The README links the live OpenSSF application and measured coverage publication;
+the maintainer explicitly lifted its prior freeze for this update. An undeployed
+documentation site does not establish achievement notice.
 
 ## Annual review
 

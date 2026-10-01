@@ -239,6 +239,17 @@ export async function checkLink(url, attempt = async (u) => attemptLink(u), slee
   throw new Error(`${url} returned ${lastStatus}`);
 }
 
+export function localSiteSource(url, profile, documents, sections = []) {
+  const target = new URL(url);
+  if (target.origin !== new URL(profile.siteUrl).origin || !target.pathname.startsWith(profile.basePath)) return null;
+  const route = '/' + decodeURIComponent(target.pathname.slice(profile.basePath.length)).replace(/\/$/, '');
+  if (route.split('/').includes('..')) throw new Error('local site URL escapes its static directory');
+  const document = documents.find((item) => item.slug === route);
+  if (document) return document.source;
+  if (sections.some((section) => section.slug === route)) return 'docs-site/product-docs.json';
+  return 'docs-site/static' + route;
+}
+
 async function main() {
   const links = new Set();
   for (const document of docsMap.documents) {
@@ -248,8 +259,11 @@ async function main() {
       links.add(url);
     }
   }
+  const profile = JSON.parse(await fs.readFile(path.resolve(repoRoot, 'docs-site/product-docs.json'), 'utf8'));
   for (const url of [...links].sort()) {
-    await checkLink(url);
+    const source = localSiteSource(url, profile, docsMap.documents, docsMap.sections);
+    if (source === null) await checkLink(url);
+    else await fs.access(resolveRepositoryFile(repoRoot, source));
   }
   process.stdout.write(`External links healthy: ${links.size}\n`);
 }

@@ -640,31 +640,27 @@ def test_focus_resolves_nullable_numeric_categories_before_interpolation(tmp_pat
 
 @pytest.mark.parametrize('method', ['quantum', 'ambience'])
 def test_external_entropy_refills_duplicate_invalid_and_inclusive_indexes(method, monkeypatch):
-    import sys
+    from talos.reducers import remote_entropy
     calls = []
-    class ExternalRandomizer:
-        def __init__(self, maximum, count):
-            calls.append((maximum, count))
-        def quantum(self):
-            return [np.int64(0), 0, 31, -1, '2', True, 1] if len(calls) == 1 else [2]
-        ambience = quantum
-    monkeypatch.setitem(sys.modules, 'chances', SimpleNamespace(Randomizer=ExternalRandomizer))
+    def provider(maximum, count, selected_method):
+        assert selected_method == method
+        calls.append((maximum, count))
+        return [np.int64(0), 0, 31, -1, '2', True, 1] if len(calls) == 1 else [2]
+    monkeypatch.setattr(remote_entropy, 'sample_indexes', provider)
     assert sample_reducer(3, 31, method) == [0, 1, 2]
     assert calls == [(31, 3), (31, 1)]
 
 
 @pytest.mark.parametrize('method', ['quantum', 'ambience'])
 def test_external_entropy_fails_explicitly_if_unique_population_is_unavailable(method, monkeypatch):
-    import sys
+    from talos.reducers import remote_entropy
     from talos.utils.exceptions import TalosDataError
     calls = []
-    class ExternalRandomizer:
-        def __init__(self, maximum, count):
-            calls.append(count)
-        def quantum(self):
-            return [0, 0]
-        ambience = quantum
-    monkeypatch.setitem(sys.modules, 'chances', SimpleNamespace(Randomizer=ExternalRandomizer))
+    def provider(maximum, count, selected_method):
+        assert maximum == 31 and selected_method == method
+        calls.append(count)
+        return [0, 0]
+    monkeypatch.setattr(remote_entropy, 'sample_indexes', provider)
     with pytest.raises(TalosDataError, match='unique indexes'):
         sample_reducer(2, 31, method)
     assert len(calls) == 32

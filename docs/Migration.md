@@ -1,6 +1,6 @@
 # Talos 2 migration
 
-Talos 2 owns an independent fork of Limen's general experiment core. There is one search queue, executor and artifact format for `Scan`, native SFDs and the CLI. Finance, feature/indicator catalogs, backtests and automatic experiment readers are absent.
+Talos 2 uses one search queue, executor and artifact format for `Scan`, native SFDs and the CLI. The core manages parameter experiments; data acquisition, model architecture and training remain caller-owned.
 
 ## Prerequisites and scope
 

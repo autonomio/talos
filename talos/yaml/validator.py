@@ -1,64 +1,49 @@
-from dataclasses import dataclass, field
+"""Validate declarative manifest fields before resolving trusted caller code."""
 import re
-from talos.yaml.errors import YAMLError
-from talos.yaml.schema import VERSION, VALID_MODES
+from collections.abc import Mapping
+from dataclasses import dataclass, field
+from typing import cast
+
+from talos.yaml._validation import sfd_errors, uel_errors
+from talos.yaml.errors import ValidationError, YAMLError
+from talos.yaml.schema import VALID_MODES, VERSION
 
 
 @dataclass
 class ValidationResult:
     valid: bool
-    errors: list = field(default_factory=list)
-    warnings: list = field(default_factory=list)
+    errors: list[YAMLError] = field(default_factory=list[YAMLError])
+    warnings: list[YAMLError] = field(default_factory=list[YAMLError])
     mode: str = 'development'
 
 
-def validate(document):
-    errors = []
-    def issue(path, message):
-        errors.append(YAMLError(message, path=path))
+def validate(document: object) -> ValidationResult:
+    """Return field-specific errors without importing or invoking the SFD."""
     if not isinstance(document, dict):
         return ValidationResult(False, [YAMLError('Manifest must be a mapping')])
-    for key in set(document) - {'schema_version', 'metadata', 'sfd', 'uel', 'lineage'}:
-        issue(key, 'Unknown manifest field')
-    if document.get('schema_version') != VERSION:
-        issue('schema_version', f'Expected schema_version: "{VERSION}"')
-    metadata = document.get('metadata', {})
+    manifest = cast(Mapping[str, object], document)
+    errors = [YAMLError('Unknown manifest field', path=key)
+              for key in set(manifest) - {'schema_version', 'metadata', 'sfd', 'uel', 'lineage'}]
+    if manifest.get('schema_version') != VERSION:
+        errors.append(YAMLError(f'Expected schema_version: "{VERSION}"', path='schema_version'))
+    metadata = manifest.get('metadata', {})
     if not isinstance(metadata, dict):
-        issue('metadata', 'Must be a mapping'); metadata = {}
-    name = metadata.get('name')
+        errors.append(YAMLError('Must be a mapping', path='metadata'))
+        metadata = {}
+    fields = cast(Mapping[str, object], metadata)
+    name = fields.get('name')
     if not isinstance(name, str) or not re.fullmatch(r'[A-Za-z0-9_-]+', name):
-        issue('metadata.name', 'Use a nonempty name containing letters, digits, underscores or hyphens')
-    mode = metadata.get('mode', 'development')
-    if mode not in VALID_MODES:
-        issue('metadata.mode', 'Expected development or production')
-    sfd = document.get('sfd', {})
-    if not isinstance(sfd, dict):
-        issue('sfd', 'Must be a mapping'); sfd = {}
-    if not isinstance(sfd.get('module'), str) or not sfd.get('module'):
-        issue('sfd.module', 'Required caller SFD module name or project .py path')
-    for key in set(sfd) - {'module', 'params', 'task', 'objective', 'backend', 'context'}:
-        issue(f'sfd.{key}', 'Unknown SFD field; data acquisition belongs in caller prep/entrypoint')
-    params = sfd.get('params', {})
-    if not isinstance(params, dict):
-        issue('sfd.params', 'Must be a parameter mapping')
-    else:
-        for key, values in params.items():
-            if not isinstance(values, (list, tuple, range)) or not len(values):
-                issue(f'sfd.params.{key}', 'Each parameter requires a nonempty sequence')
-    uel = document.get('uel', {})
-    if not isinstance(uel, dict):
-        issue('uel', 'Must be a mapping'); uel = {}
-    allowed = {'n_permutations','round_limit','seed','search_strategy','pruning_strategies','feedback_interval','checkpoint_interval','output_format','output_path','prep_each_round','intra_callback','objective','backend','progress_bar','time_limit','performance_target','save_models','context'}
-    for key in set(uel) - allowed:
-        issue(f'uel.{key}', 'Unknown experiment setting')
-    for key in ('n_permutations','round_limit','feedback_interval','checkpoint_interval'):
-        if key in uel and (isinstance(uel[key], bool) or not isinstance(uel[key], int) or uel[key] < 1):
-            issue(f'uel.{key}', 'Must be a positive integer')
-    strategy = uel.get('search_strategy', {})
-    if not isinstance(strategy, dict) or strategy.get('type', 'random') not in {'random', 'grid'}:
-        issue('uel.search_strategy', 'Expected random or grid strategy mapping')
-    if uel.get('output_format', 'csv') not in {'csv', 'parquet'}:
-        issue('uel.output_format', 'Expected csv or parquet')
-    if not isinstance(uel.get('pruning_strategies', []), list):
-        issue('uel.pruning_strategies', 'Must be a list')
-    return ValidationResult(not errors, errors, mode=mode)
+        errors.append(YAMLError('Use a nonempty name containing letters, digits, underscores or hyphens', path='metadata.name'))
+    mode = fields.get('mode', 'development')
+    if not isinstance(mode, str) or mode not in VALID_MODES:
+        errors.append(YAMLError('Expected development or production', path='metadata.mode'))
+    errors.extend(sfd_errors(manifest.get('sfd', {})))
+    errors.extend(uel_errors(manifest.get('uel', {})))
+    return ValidationResult(not errors, errors, mode=mode if isinstance(mode, str) else 'development')
+
+
+def validate_or_raise(document: object) -> None:
+    """Stop compilation before caller imports when manifest controls are invalid."""
+    outcome = validate(document)
+    if not outcome.valid:
+        raise ValidationError(outcome.errors)
