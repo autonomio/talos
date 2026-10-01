@@ -1,0 +1,160 @@
+name: pr_checks_lint
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  pr_checks_lint:
+    name: pr_checks_lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78  # v7.6.0
+
+      - name: Set up Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38  # v6.5.0
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: docs-site/package-lock.json
+
+      - name: Install documentation toolchain
+        run: npm --prefix docs-site ci
+
+      - name: Install documentation browser
+        run: npm --prefix docs-site exec -- playwright install --with-deps chromium
+
+      - name: Audit documentation dependencies
+        run: npm --prefix docs-site run security:audit
+
+      - name: Check documentation site
+        run: npm --prefix docs-site run check
+
+      - name: Set up lint venv
+        run: python -m venv .venv-lint
+
+      - name: Install gate toolchain and project
+        run: |
+          uv pip install --python .venv-lint/bin/python --require-hashes -r requirements/ci/dev-env.txt
+          uv pip install --python .venv-lint/bin/python --require-hashes -r requirements/ci/runtime-env.txt
+          uv pip install --python .venv-lint/bin/python --require-hashes -r requirements/ci/build-tools.txt
+          uv pip install --python .venv-lint/bin/python --no-build-isolation --no-deps -e .
+
+      - name: Resolve layout
+        id: package
+        run: |
+          set -euo pipefail
+          .venv-lint/bin/python - <<'PY' >> "$GITHUB_OUTPUT"
+          import sys
+          from pathlib import Path
+
+          import yaml
+
+          layout = yaml.safe_load(Path('governance.yml').read_text()).get('layout', {})
+          for key in ('package_root', 'coverage_source'):
+              value = layout.get(key)
+              if not isinstance(value, str) or not value:
+                  sys.exit(f'governance.yml: layout.{key} must be a non-empty string')
+              if not Path(value).is_dir():
+                  sys.exit(f"governance.yml: layout.{key} '{value}' is not a directory")
+              print(f'{key}={value}')
+
+          # The lint plane's sub-checks are individually switchable, so a
+          # repository can adopt part of it. Absent means on.
+          lint = yaml.safe_load(Path('governance.yml').read_text()).get('gates', {}).get('lint', {})
+          for key in ('ruff', 'module_budgets', 'dead_code',
+                      'dependency_vulnerabilities', 'no_swallowed_violations'):
+              value = lint.get(key, True)
+              if not isinstance(value, bool):
+                  sys.exit(f'governance.yml: gates.lint.{key} must be a boolean')
+              print(f'{key}={str(value).lower()}')
+          PY
+
+      - name: Ratchet Ruff and dead-code findings against the source baseline
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: .venv-lint/bin/python governance/check_quality_debt.py --base-ref "origin/$BASE_REF"
+
+      - name: Module line-count budget gate
+        if: steps.package.outputs.module_budgets == 'true'
+        run: .venv-lint/bin/python governance/check_module_budgets.py
+
+      - name: Module docstring gate
+        run: .venv-lint/bin/python governance/check_module_docstrings.py
+
+      - name: Docstring conventions gate
+        run: .venv-lint/bin/python governance/check_docstrings.py
+
+      - name: File size balance gate
+        run: .venv-lint/bin/python governance/check_file_size_balance.py
+
+      - name: Test/code SLOC ratio gate
+        run: .venv-lint/bin/python governance/check_test_code_ratio.py
+
+      - name: No-swallowed-violations gate
+        if: steps.package.outputs.no_swallowed_violations == 'true'
+        run: .venv-lint/bin/python governance/check_no_swallowed_violations.py
+
+      - name: Test fallback gate
+        run: .venv-lint/bin/python governance/check_test_fallbacks.py
+
+      - name: Dependency vulnerability gate
+        if: steps.package.outputs.dependency_vulnerabilities == 'true'
+        run: .venv-lint/bin/python governance/check_dependency_vulnerabilities.py
+
+      - name: Coverage floor gate
+        run: |
+          .venv-lint/bin/python -m coverage run --branch --source="${{ steps.package.outputs.coverage_source }}" \
+            -m pytest tests/test_*.py governance/tests/ -q
+          .venv-lint/bin/python -m coverage json -o coverage.json
+          .venv-lint/bin/python governance/check_coverage_floor.py
+
+      - name: Diff coverage gate
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
+          git -c "http.https://github.com/.extraheader=$AUTH" fetch origin "$BASE_REF"
+          .venv-lint/bin/python governance/check_diff_coverage.py --base-ref "origin/$BASE_REF"
+
+      - name: Budget-raise ratchet gate
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
+          git -c "http.https://github.com/.extraheader=$AUTH" fetch origin "$BASE_REF" --depth=1
+          .venv-lint/bin/python governance/check_budget_ratchet.py \
+            --base-ref "origin/$BASE_REF" \
+            --pr-number "$PR_NUMBER"
+
+      - name: Coverage ratchet gate
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
+          git -c "http.https://github.com/.extraheader=$AUTH" fetch origin "$BASE_REF" --depth=1
+          .venv-lint/bin/python governance/check_coverage_ratchet.py \
+            --base-ref "origin/$BASE_REF" \
+            --pr-number "$PR_NUMBER"

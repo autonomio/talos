@@ -1,6 +1,6 @@
 class AutoModel:
 
-    def __init__(self, task, experiment_name, metric=None):
+    def __init__(self, task, experiment_name, metric=None, backend='tensorflow'):
 
         '''
 
@@ -27,7 +27,10 @@ class AutoModel:
 
         from talos.callbacks.experiment_log import ExperimentLog
 
-        self.task = task
+        if backend in ('torch', 'pytorch'):
+            raise ValueError('AutoModel builds Keras architectures; provide a Torch model callback or use the Torch SFD template.')
+        self.backend = backend
+        self.task = {'multiclass': 'multi_class', 'multilabel': 'multi_label', 'regression': 'continuous'}.get(task, task)
         self.experiment_name = experiment_name
         self.metric = metric
 
@@ -36,7 +39,7 @@ class AutoModel:
         elif self.metric is not None and isinstance(self.metric, list):
             self.metrics = self.metric + ['acc']
         else:
-            print("Either pick task or provide list as input for metric.")
+            raise ValueError("Either pick task or provide list as input for metric.")
 
         # create the model
         self.model = self._create_input_model
@@ -49,24 +52,27 @@ class AutoModel:
 
         import talos as ta
 
-        if self.task in ['binary', 'multiclass', 'multilabel']:
+        if self.task in ['binary', 'multi_class', 'multi_label', 'multiclass', 'multilabel']:
             return [ta.utils.metrics.f1score, 'acc']
         elif self.task == 'continuous':
             return [ta.utils.metrics.mae, 'acc']
 
     def _create_input_model(self, x_train, y_train, x_val, y_val, params):
 
-        import wrangle as wr
-
-        from tensorflow.keras.models import Sequential
-        from tensorflow.keras.layers import Dropout, Flatten
-        from tensorflow.keras.layers import LSTM, Conv1D, SimpleRNN, Dense, Bidirectional
+        import numpy as np
+        if self.backend in ('tensorflow', 'tf', 'tf.keras'):
+            from tensorflow import keras
+        else:
+            import keras
+        Sequential = keras.models.Sequential
+        Dropout, Flatten = keras.layers.Dropout, keras.layers.Flatten
+        LSTM, Conv1D, SimpleRNN, Dense, Bidirectional = keras.layers.LSTM, keras.layers.Conv1D, keras.layers.SimpleRNN, keras.layers.Dense, keras.layers.Bidirectional
 
         model = Sequential()
 
         if params['network'] != 'dense':
-            x_train = wr.array_reshape_conv1d(x_train)
-            x_val = wr.array_reshape_conv1d(x_val)
+            x_train = np.asarray(x_train).reshape(len(x_train), x_train.shape[1], 1)
+            x_val = np.asarray(x_val).reshape(len(x_val), x_val.shape[1], 1)
 
         if params['network'] == 'conv1d':
             model.add(Conv1D(params['first_neuron'], x_train.shape[1]))
@@ -106,7 +112,7 @@ class AutoModel:
 
         # bundle the optimizer with learning rate changes
         from talos.model.normalizers import lr_normalizer
-        optimizer = params['optimizer'](lr=lr_normalizer(params['lr'],
+        optimizer = params['optimizer'](learning_rate=lr_normalizer(params['lr'],
                                                          params['optimizer']))
 
         # compile the model
@@ -119,7 +125,7 @@ class AutoModel:
                         batch_size=params['batch_size'],
                         epochs=params['epochs'],
                         verbose=0,
-                        callbacks=[self.callback(self.experiment_name, params)],
+                        callbacks=[self.callback(self.experiment_name, params, backend=self.backend)],
                         validation_data=(x_val, y_val))
 
         # pass the output to Talos

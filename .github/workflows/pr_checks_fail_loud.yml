@@ -1,0 +1,105 @@
+name: pr_checks_fail_loud
+
+# Mechanical fail-loud gate. Seven silent-fallback categories
+# ratcheted against .github/budgets.json. Every PR that
+# raises any category's total fails and is blocked from merge.
+#
+# Categories enforced (governance/fail_loud_gate.py for the exact AST):
+#
+#   1. bare_except           -- `except:` without a type
+#   2. empty_pass            -- `except X: pass`
+#   3. empty_ellipsis        -- `except X: ...`
+#   4. empty_return_none     -- `except X: return` / `return None`
+#   5. empty_continue_break  -- `except X: continue` / `break`
+#   6. contextlib_suppress   -- `contextlib.suppress(...)` calls
+#                               (resolves aliased imports)
+#   7. errors_ignore_kwarg   -- any call with `errors='ignore'`
+#
+# Same base-vs-head discipline as pr_checks_typing: the head budget
+# cannot be weakened in the same PR that gates against it. The
+# workflow fetches the base-ref budget via `git show` and passes it
+# as --base-budget to the gate script.
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  pr_checks_fail_loud:
+    name: pr_checks_fail_loud
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: ${{ github.event_name == 'pull_request' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Install gate toolchain
+        run: pip install --require-hashes -r requirements/ci/gate-tools.txt
+
+      - name: Resolve base ref and fetch base-ref budget
+        id: base
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Mirror pr_checks_typing: if base has the budget, fetch it;
+          # otherwise the head must introduce it (bootstrap path,
+          # verified mechanically via git diff).
+          set -euo pipefail
+          BASE_REV="origin/${{ github.base_ref }}"
+          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
+          git -c "http.https://github.com/.extraheader=$AUTH" fetch origin "${{ github.base_ref }}" --depth=1
+          git rev-parse --verify "$BASE_REV" >/dev/null
+          BASE_REV="$(python governance/comparison_ref.py --base-ref "$BASE_REV")"
+
+          git show "$BASE_REV:governance.yml" > base_governance.yml 2>/dev/null || true
+
+          if git show "$BASE_REV:.github/budgets.json" > base_budget.json 2>/dev/null; then
+            mode="compare"
+            echo "mode=$mode" >> "$GITHUB_OUTPUT"
+            echo "base budget fetched ($(wc -c < base_budget.json) bytes); mode=$mode"
+          else
+            rm -f base_budget.json
+            CHANGED="$(git diff --name-only "$BASE_REV"...HEAD)"
+            if echo "$CHANGED" | grep -qx '.github/budgets.json'; then
+              echo "mode=bootstrap" >> "$GITHUB_OUTPUT"
+              echo "::warning::bootstrap commit: base ref has no budgets.json; HEAD introduces it."
+            else
+              echo "::error::base ref has no .github/budgets.json and this commit does not introduce it. The budget was deleted from the protected base ref; restore it before merging."
+              exit 1
+            fi
+          fi
+
+      - name: Run fail-loud gate
+        run: |
+          set -euo pipefail
+          case "${{ steps.base.outputs.mode }}" in
+            compare)
+              python governance/fail_loud_gate.py --base-budget base_budget.json \
+                --base-config base_governance.yml
+              ;;
+            bootstrap)
+              python governance/fail_loud_gate.py --bootstrap
+              ;;
+            *)
+              echo "::error::base step did not set mode; refusing to run gate"
+              exit 2
+              ;;
+          esac

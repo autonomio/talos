@@ -1,43 +1,131 @@
-name: Build
-
-on: [push]
-
+name: Test and build
+on: [push, pull_request]
+permissions:
+  contents: read
 jobs:
-  build:
-    name: Python ${{ matrix.python-version }} and ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+  core:
+    runs-on: ubuntu-latest
     strategy:
-      max-parallel: 9
+      fail-fast: false
       matrix:
-        python-version: ['3.9', '3.10', '3.11']
-        os: [ubuntu-latest, macos-latest]
-
+        include:
+          - python: '3.10'
+            lock: core-3.10.txt
+          - python: '3.11'
+            lock: core-3.11.txt
+          - python: '3.12'
+            lock: core-3.12.txt
+          - python: '3.13'
+            lock: core-3.13.txt
     steps:
-    - uses: actions/checkout@v1
-    - name: Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Dependencies
-      run: |
-        export MPLBACKEND=agg
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Style
-      run: |
-        pip install flake8
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Tests
-      run: |
-        export MPLBACKEND=agg
-        pip install tensorflow==2.14.1
-        pip install coveralls
-        coverage run --source=talos ./test-ci.py
-    - name: Coverage
-      env:
-        COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-      run: |
-        coveralls
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install --require-hashes -r requirements/ci/${{ matrix.lock }}
+      - run: python -m pip install --no-build-isolation --no-deps -e .
+      - run: ruff check talos tests/test_*.py
+      - run: coverage run -m pytest -q
+      - run: coverage report
+      - run: python -m build --no-isolation
+      - name: Verify installed wheel outside the checkout
+        run: |
+          python -m venv /tmp/talos-wheel
+          /tmp/talos-wheel/bin/python -m pip install --require-hashes -r requirements/ci/${{ matrix.lock }}
+          /tmp/talos-wheel/bin/python -m pip install --no-deps dist/*.whl
+          mkdir -p /tmp/talos-wheel-tests/tests /tmp/talos-wheel-tests/examples/sfd /tmp/talos-wheel-tests/talos/sfd/templates
+          cp tests/__init__.py tests/test_*.py /tmp/talos-wheel-tests/tests/
+          cp examples/sfd/*.py /tmp/talos-wheel-tests/examples/sfd/
+          cp talos/sfd/templates/keras.py talos/sfd/templates/tf_keras.py talos/sfd/templates/pytorch.py /tmp/talos-wheel-tests/talos/sfd/templates/
+          cd /tmp
+          /tmp/talos-wheel/bin/python -c 'import sys,talos; from talos.experiment import run; assert not {"tensorflow","keras","torch","matplotlib","pyarrow"}.intersection(sys.modules)'
+          /tmp/talos-wheel/bin/talos --help
+          cd /tmp/talos-wheel-tests
+          /tmp/talos-wheel/bin/python -m pytest -q --import-mode=importlib tests
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: distribution-${{ matrix.python }}
+          path: dist/*
+  backends:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python: '3.11'
+            lock: legacy-3.11.txt
+            keras_backend: tensorflow
+          - python: '3.12'
+            lock: tensorflow-3.12.txt
+            keras_backend: tensorflow
+          - python: '3.12'
+            lock: torch-keras-3.12.txt
+            keras_backend: torch
+          - python: '3.11'
+            lock: minimum-3.11.txt
+            keras_backend: tensorflow
+    env:
+      KERAS_BACKEND: ${{ matrix.keras_backend }}
+      KERAS_TORCH_DEVICE: cpu
+      CUDA_VISIBLE_DEVICES: '-1'
+      TF_NUM_INTRAOP_THREADS: '1'
+      TF_NUM_INTEROP_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install the declared framework lane
+        run: python -m pip install --require-hashes -r requirements/ci/${{ matrix.lock }}
+      - name: Verify the declared CPU PyTorch build
+        if: matrix.lock == 'minimum-3.11.txt' || matrix.lock == 'torch-keras-3.12.txt'
+        run: python -c 'import torch; assert torch.version.cuda is None, torch.__version__; print(torch.__version__)'
+      - run: python -m pip install --no-build-isolation --no-deps -e .
+      - run: python -m pytest -q
+
+  documentation:
+    name: Execute documentation and examples
+    runs-on: ubuntu-latest
+    env:
+      KERAS_BACKEND: tensorflow
+      KERAS_TORCH_DEVICE: cpu
+      CUDA_VISIBLE_DEVICES: '-1'
+      TF_NUM_INTRAOP_THREADS: '1'
+      TF_NUM_INTEROP_THREADS: '1'
+      OMP_NUM_THREADS: '1'
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --require-hashes -r requirements/ci/documentation-3.12.txt
+      - name: Verify the declared CPU PyTorch build
+        run: python -c 'import torch; assert torch.version.cuda is None, torch.__version__; print(torch.__version__)'
+      - run: python -m pip install --no-build-isolation --no-deps -e .
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38  # v6.5.0
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: docs-site/package-lock.json
+      - run: npm --prefix docs-site ci
+      - run: npm --prefix docs-site exec -- playwright install --with-deps chromium
+      - run: python tools/verify_documentation.py --output-dir verification-output
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        if: always()
+        with:
+          name: documentation-verification
+          path: verification-output/
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        if: always()
+        with:
+          name: documentation-browser-proof
+          path: docs-site/test-results/

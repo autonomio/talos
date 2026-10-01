@@ -32,25 +32,13 @@ class AutoScan:
 
         import talos
 
-        m = talos.autom8.AutoModel(self.task, self.experiment_name).model
-
-        try:
-            kwargs['params']
-            scan_object = talos.Scan(x, y,
-                                     model=m,
-                                     experiment_name=self.experiment_name,
-                                     **kwargs)
-        except KeyError:
-            p = talos.autom8.AutoParams(task=self.task)
-
+        options = dict(kwargs)
+        m = options.pop('model', None)
+        if m is None:
+            m = talos.autom8.AutoModel(self.task, self.experiment_name, backend=options.get('backend', 'tensorflow')).model
+        if 'params' not in options:
+            p = talos.autom8.AutoParams(task=self.task, backend=options.get('backend', 'tensorflow'))
             if self.max_param_values is not None:
                 p.resample_params(self.max_param_values)
-            params = p.params
-            scan_object = talos.Scan(x=x,
-                                     y=y,
-                                     params=params,
-                                     model=m,
-                                     experiment_name=self.experiment_name,
-                                     **kwargs)
-
-        return scan_object
+            options['params'] = p.params
+        return talos.Scan(x, y, model=m, experiment_name=self.experiment_name, **options)

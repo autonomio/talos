@@ -1,0 +1,19 @@
+name: Support Request
+description: Ask for help with usage, setup, or documentation.
+labels:
+  - support
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: State the exact support request.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Include Talos/Python/framework versions, backend, OS, complete model and sweep command, real fixture origin, attempts made and full error output. Use the docs first and remove private records.
+    validations:
+      required: true

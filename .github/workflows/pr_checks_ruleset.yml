@@ -1,0 +1,48 @@
+name: pr_checks_ruleset
+
+on:
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pr_checks_ruleset:
+    name: pr_checks_ruleset
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Set up contract venv
+        run: python -m venv .venv-ruleset
+
+      - name: Install contract dependencies
+        run: .venv-ruleset/bin/python -m pip install --require-hashes -r requirements/ci/dev-env.txt
+
+      - name: Run CI contract tests
+        run: .venv-ruleset/bin/python -m pytest governance/tests/test_cc_gate.py governance/tests/test_ruleset_gate.py governance/tests/test_privileged_ruleset_audit.py governance/tests/test_ci_contract.py governance/tests/test_lint_ci_contract.py governance/tests/test_tests_ci_contract.py governance/tests/test_bootstrap_workflow_contract.py governance/tests/test_codeql_fallback.py -q
+
+      - name: Compare live ruleset to checked-in snapshot
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${{ vars.RULESET_ID }}" ]; then
+            echo "::error::repository variable RULESET_ID is not set. Configure it to the live Protect-Master ruleset id."
+            exit 2
+          fi
+          .venv-ruleset/bin/python governance/ruleset_gate.py \
+            --ruleset-file .github/rulesets/master.json \
+            --repo "${{ github.repository }}" \
+            --ruleset-id "${{ vars.RULESET_ID }}"

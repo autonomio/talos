@@ -1,0 +1,308 @@
+name: pr_checks_slice_on_issue
+
+# Re-run the slice gate on every PR that closes an issue when that
+# issue's state changes, and heal each such PR's `pr_checks_slice`
+# verdict: rerun the canonical pull_request run when it disagrees with
+# the fresh verdict, post a superseding check-run when a previously
+# API-posted verdict disagrees, and post fail-closed when no verdict
+# surface exists at all.
+#
+# Why: `pr_checks_slice` runs on pull_request activity and caches its
+# verdict. Rules 3-10 depend on mutable issue state (OPEN, slice label,
+# title, body content, Surfaces, Out of Scope, sub-issue graph, Done
+# Means checkboxes). A green PR can become stale if its linked issue is
+# subsequently closed, unlabeled, retitled, body-edited, or
+# scope-edited. Branch protection sees only the latest check-run per
+# name per commit SHA; it does not re-fetch issue state. This workflow
+# closes that gap by reposting `pr_checks_slice` whenever an issue
+# changes, which immediately invalidates or re-validates the PR's
+# required check status.
+#
+# GitHub branch protection does not treat the most recent check-run of
+# a name as authoritative: once an API-posted check-run exists on a
+# head SHA it outranks the workflow-run entries of the same name, and
+# only a newer API-posted check-run supersedes it (observed on
+# the experiment engine PR #757, where a fallback failure POSTed while the
+# canonical run was still in progress kept the merge blocked after the
+# canonical run was rerun green). Posting a failure here therefore
+# blocks merge immediately, and delivery must repost whenever a stale
+# API-posted verdict disagrees with the fresh one -- rerunning the
+# canonical run alone never clears it.
+#
+# The rerun set includes the parent PRD's slice siblings because rule
+# 9's verdict depends on the parent's other open slices, not only on
+# the issue a PR cites. Delivery is rerun-first: the canonical
+# pull_request run is healed instead of stacking parallel check-runs.
+# Both forms were first proven downstream in the experiment engine (its S691
+# and S724 series); the API-posted reconciliation followed from its
+# PR #757 (its S760 series).
+
+on:
+  issues:
+    types: [edited, labeled, unlabeled, closed, reopened, deleted]
+
+concurrency:
+  # Keyed per issue, so rapid-fire edits collapse.
+  group: ${{ github.workflow }}-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+jobs:
+  rerun_slice_gate_for_linked_prs:
+    name: pr_checks_slice_on_issue
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+      checks: write  # required to POST fallback check-runs
+      actions: write  # required to rerun the canonical pr_checks_slice run
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML
+        run: pip install --require-hashes -r requirements/ci/gate-tools.txt
+
+      - name: Find linked PRs
+        id: linked
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Why scan, not GraphQL: when the issue action is `deleted`
+          # the issue node is gone, `repository.issue(number:$num)`
+          # returns null, and `closedByPullRequestsReferences` is
+          # unreachable. A GraphQL-first path silently posts no
+          # check-runs for deleted issues -- the very gap this
+          # workflow exists to close.
+          #
+          # Scanning every open PR's body with the SAME closing-keyword
+          # regex the slice gate uses (rule 1) produces the same set
+          # of linked PRs that rule 1 would recognise, for every event
+          # action including `deleted`.
+          #
+          # The affected set is the changed issue PLUS the slice
+          # sub-issues of its parent PRD: rule 9's verdict for a
+          # sibling's PR flips when this issue closes or reopens (the
+          # sibling becomes, or stops being, the parent's last open
+          # slice), so those PRs' checks are stale too. A deleted
+          # issue's parent is unreachable; its siblings keep their
+          # verdicts until their own next event.
+          set -euo pipefail
+          REPO="${{ github.repository }}"
+          ISSUE_NUM="${{ github.event.issue.number }}"
+
+          AFFECTED="$ISSUE_NUM"
+          # Fail loud on a parent-lookup failure: collapsing transient
+          # API errors into "no parent" would silently drop the sibling
+          # set — the exact staleness this workflow exists to prevent.
+          # Only a deleted issue, whose parent is genuinely
+          # unreachable, degrades to the parentless path.
+          if ! PARENT=$(gh api graphql \
+            -f query="query(\$owner: String!, \$name: String!, \$number: Int!) { repository(owner: \$owner, name: \$name) { issue(number: \$number) { parent { number } } } }" \
+            -F owner="${REPO%/*}" -F name="${REPO#*/}" -F number="$ISSUE_NUM" \
+            --jq '.data.repository.issue.parent.number // "null"'); then
+            if [ "${{ github.event.action }}" = "deleted" ]; then
+              PARENT=null
+            else
+              echo "::error::parent lookup for issue #$ISSUE_NUM failed; refusing to compute a sibling set that may be incomplete"
+              exit 1
+            fi
+          fi
+          if [ -n "$PARENT" ] && [ "$PARENT" != "null" ]; then
+            SIBLINGS=$(gh api "repos/$REPO/issues/$PARENT/sub_issues" --paginate \
+              --jq '.[] | select(any(.labels[]; .name == "slice")) | .number')
+            AFFECTED="$AFFECTED $SIBLINGS"
+          fi
+          echo "affected issues: $AFFECTED"
+
+          gh pr list --repo "$REPO" --state open --limit 1000 \
+            --json number,body,headRefOid > open_prs.json
+
+          AFFECTED_ISSUES="$AFFECTED" python3 - <<'PYEOF' > linked_prs.json
+          import json, os, re, sys
+          targets = {int(a) for a in os.environ['AFFECTED_ISSUES'].split()}
+          pat = re.compile(
+              r'\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s+#(\d+)\b',
+              re.IGNORECASE,
+          )
+          with open('open_prs.json', encoding='utf-8') as fh:
+              prs = json.load(fh)
+          linked = []
+          for pr in prs:
+              body = pr.get('body') or ''
+              if any(int(m.group(1)) in targets for m in pat.finditer(body)):
+                  linked.append({
+                      'number': pr['number'],
+                      'headRefOid': pr['headRefOid'],
+                  })
+          json.dump(linked, sys.stdout)
+          PYEOF
+
+          echo "linked PRs:"
+          jq -c '.[]' linked_prs.json
+          COUNT=$(jq 'length' linked_prs.json)
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+
+      - name: Re-run slice gate per linked PR and post check-run
+        if: steps.linked.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          REPO="${{ github.repository }}"
+          ISSUE_NUM="${{ github.event.issue.number }}"
+
+          jq -c '.[]' linked_prs.json | while IFS= read -r pr; do
+            PR_NUM=$(echo "$pr" | jq -r .number)
+            HEAD_SHA=$(echo "$pr" | jq -r .headRefOid)
+            echo "::group::re-running slice gate for PR #$PR_NUM @ $HEAD_SHA"
+
+            # Title + body + canonical file count; files come from the
+            # paginated REST endpoint, not `gh pr view --json files`
+            # (which caps at 100 and would silently under-enforce
+            # rules 7 and 8 on large PRs).
+            gh pr view "$PR_NUM" --repo "$REPO" \
+              --json title,body,changedFiles > pr_view.json
+            jq -r '.title' pr_view.json > pr_title.txt
+            jq -r '.body // ""' pr_view.json > pr_body.txt
+            EXPECTED_FILES=$(jq -r '.changedFiles' pr_view.json)
+
+            gh api "repos/$REPO/pulls/$PR_NUM/files" \
+              --paginate --jq '.[].filename' > pr_files.txt
+            ACTUAL_FILES=$(wc -l < pr_files.txt | tr -d ' ')
+
+            if [ "$ACTUAL_FILES" -ne "$EXPECTED_FILES" ]; then
+              # Post a FAILURE check-run immediately rather than
+              # silently proceeding with a truncated file set. This
+              # closes the silent-under-enforcement door even when the
+              # recovery workflow's own prerequisites fail.
+              gh api "repos/$REPO/check-runs" \
+                --method POST \
+                -f "name=pr_checks_slice" \
+                -f "head_sha=$HEAD_SHA" \
+                -f "status=completed" \
+                -f "conclusion=failure" \
+                -f "output[title]=Slice gate rerun ABORTED: file enumeration incomplete" \
+                -f "output[summary]=pr_checks_slice_on_issue got $ACTUAL_FILES files from the paginated API but the PR object reports $EXPECTED_FILES. The rerun refuses to run a scope check on a truncated set." \
+                -f "details_url=https://github.com/$REPO/actions/runs/${{ github.run_id }}"
+              echo "::endgroup::"
+              continue
+            fi
+
+            # Run the slice gate; capture output and exit code.
+            PR_TITLE=$(cat pr_title.txt)
+            set +e
+            GATE_OUT=$(python governance/slice_gate.py \
+              --pr-title "$PR_TITLE" \
+              --pr-body-file pr_body.txt \
+              --pr-files-file pr_files.txt \
+              --template .github/ISSUE_TEMPLATE/slice.yml \
+              --repo "$REPO" 2>&1)
+            GATE_EXIT=$?
+            set -e
+            echo "$GATE_OUT"
+
+            if [ "$GATE_EXIT" -eq 0 ]; then
+              CONCLUSION="success"
+              TITLE_OUT="Slice gate re-passed after issue #$ISSUE_NUM change"
+            else
+              CONCLUSION="failure"
+              TITLE_OUT="Slice gate FAILED after issue #$ISSUE_NUM change"
+            fi
+
+            # Rerun-first delivery with API-posted reconciliation
+            # (S724, then the experiment engine PR #757): the pull_request-event
+            # run is the canonical checks-UI entry and a workflow run's
+            # conclusion is immutable unless rerun, so a canonical run
+            # that disagrees with the fresh verdict is healed by rerun.
+            # An API-posted check-run is immutable too, and branch
+            # protection keeps honouring it even after a later
+            # canonical run lands the opposite verdict, so a fresh POST
+            # of the same name is its only supersession. Delivery
+            # reconciles both surfaces: rerun the canonical run when it
+            # disagrees, POST when the latest API-posted check-run
+            # disagrees, and POST fail-closed when neither surface
+            # carries a verdict at all. Check-runs inside the check
+            # suites of pr_checks_slice.yml's own workflow runs are
+            # job-backed; every other completed check-run of the name
+            # is an API-posted fallback.
+            RUNS=$(gh api \
+              "repos/$REPO/actions/workflows/pr_checks_slice.yml/runs?head_sha=$HEAD_SHA&per_page=100" \
+              --jq '.workflow_runs')
+            SUITES=$(echo "$RUNS" | jq '[.[].check_suite_id]')
+            CANONICAL=$(echo "$RUNS" | jq -c \
+              '[.[] | select(.event == "pull_request" and .status == "completed")][0] // empty')
+            gh api \
+              "repos/$REPO/commits/$HEAD_SHA/check-runs?check_name=pr_checks_slice&per_page=100&filter=all" \
+              --paginate --jq '.check_runs[]' > check_runs.jsonl
+            # jq variables belong to the literal query.
+            # shellcheck disable=SC2016
+            LATEST_POSTED=$(jq -rs --argjson suites "$SUITES" \
+              '[.[] | select(.status == "completed")
+                    | .check_suite.id as $s | select(($suites | index($s)) == null)]
+               | sort_by(.completed_at) | last | .conclusion // empty' check_runs.jsonl)
+
+            DELIVER=""
+            if [ -n "$LATEST_POSTED" ] && [ "$LATEST_POSTED" != "$CONCLUSION" ]; then
+              DELIVER="latest API-posted check-run is $LATEST_POSTED; superseding"
+            fi
+            if [ -n "$CANONICAL" ]; then
+              RUN_ID=$(echo "$CANONICAL" | jq -r .id)
+              RUN_CONCLUSION=$(echo "$CANONICAL" | jq -r .conclusion)
+              if [ "$RUN_CONCLUSION" != "$CONCLUSION" ]; then
+                if gh api --method POST "repos/$REPO/actions/runs/$RUN_ID/rerun" > /dev/null; then
+                  echo "canonical run $RUN_ID rerun requested ($RUN_CONCLUSION -> expected $CONCLUSION)"
+                else
+                  DELIVER="rerun of canonical run $RUN_ID failed; falling back to check-run POST"
+                fi
+              else
+                echo "canonical run $RUN_ID already $CONCLUSION"
+              fi
+            elif [ -z "$LATEST_POSTED" ]; then
+              DELIVER="no completed canonical run and no API-posted check-run for $HEAD_SHA; posting fail-closed"
+            fi
+            if [ -z "$DELIVER" ]; then
+              echo "verdict $CONCLUSION already delivered for $HEAD_SHA; nothing to post"
+              echo "::endgroup::"
+              continue
+            fi
+            echo "$DELIVER"
+
+            # Keep output.summary under the 65 KB API limit. Truncation
+            # uses a parameter expansion, not a pipe: with pipefail, a
+            # `printf | head -c` pipeline dies by SIGPIPE exactly when
+            # output is long enough to truncate, aborting the loop.
+            # Markdown code fences intentionally remain literal.
+            # shellcheck disable=SC2016
+            SUMMARY=$(printf 'Triggered by issue #%s change.\n\n```\n%s\n```\n' \
+              "$ISSUE_NUM" "$GATE_OUT")
+            SUMMARY=${SUMMARY:0:60000}
+
+            # Post the check-run. Using the same name the pull_request
+            # workflow uses ensures branch protection sees this as the
+            # current status of `pr_checks_slice` on that head SHA.
+            gh api "repos/$REPO/check-runs" \
+              --method POST \
+              -f "name=pr_checks_slice" \
+              -f "head_sha=$HEAD_SHA" \
+              -f "status=completed" \
+              -f "conclusion=$CONCLUSION" \
+              -f "output[title]=$TITLE_OUT" \
+              -f "output[summary]=$SUMMARY" \
+              -f "details_url=https://github.com/$REPO/actions/runs/${{ github.run_id }}"
+            echo "::endgroup::"
+          done

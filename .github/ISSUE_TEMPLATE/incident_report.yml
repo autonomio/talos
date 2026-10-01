@@ -1,0 +1,95 @@
+name: Incident Report
+description: Initial incident report (will be updated with resolution details)
+title: "[INCIDENT] "
+labels: ["incident", "incident-open"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Initial incident report
+        Report incidents immediately with the information available. This issue will be updated throughout the incident lifecycle and concluded with a post-mortem.
+
+        **Workflow:**
+        1. File this initial report (you are here)
+        2. Add updates as comments during the incident
+        3. Add resolution details when resolved
+        4. Complete post-mortem analysis
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the incident as you understand it
+      placeholder: Brief description of what went wrong...
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: What is the impact?
+      description: Who/what is affected? How severe is it?
+      placeholder: |
+        - Users affected
+        - Systems impacted
+        - Severity (Critical/High/Medium/Low)
+    validations:
+      required: true
+
+  - type: input
+    id: start-time
+    attributes:
+      label: When did it start?
+      description: When was this first noticed?
+      placeholder: "YYYY-MM-DD HH:MM UTC (or approximate)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity Level
+      description: Select the incident severity
+      options:
+        - "Critical - Data/artifact loss or materially incorrect scientific results"
+        - "High - Common training, sweep or recovery path broken"
+        - "Medium - Limited failure with an explicit workaround"
+        - "Low - Minor operational or documentation issue"
+    validations:
+      required: true
+
+  - type: textarea
+    id: initial-response
+    attributes:
+      label: Initial Response (if any)
+      description: What immediate actions have been taken?
+      placeholder: Describe any immediate steps already taken...
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+
+        ## On-Going Resolution Checklist
+
+        **Engineering team: Complete these items once the incident is resolved:**
+
+        - [ ] Keep all discussion and updates in this issue
+        - [ ] If discussion takes place in other channels, summarize here
+
+        ## Post-Resolution Checklist
+
+        **Engineering team: Complete these items once the incident is resolved:**
+
+        - [ ] Create a sub-issue using the Incident Post-Mortem template
+        - [ ] Incident resolved and end time documented
+        - [ ] Mitigation steps documented
+        - [ ] Root cause analysis (Five Whys) completed
+        - [ ] Action items identified and tracked
+        - [ ] Post-mortem review scheduled (if needed)
+
+        **Use the post-mortem comment template below to document resolution details.**

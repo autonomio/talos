@@ -1,86 +1,51 @@
-from tensorflow.keras.callbacks import Callback
+"""Framework callback factory for explicit trial-level epoch logs."""
+import csv
+import json
+import uuid
+from pathlib import Path
+from talos.experiment.context import get_trial_context
 
 
-class ExperimentLog(Callback):
+def _callback_base(backend):
+    if backend in ('torch', 'pytorch', 'generic'):
+        return object
+    if backend in ('tensorflow', 'tf', 'tf.keras'):
+        from tensorflow.keras.callbacks import Callback
+    else:
+        from keras.callbacks import Callback
+    return Callback
 
-    def __init__(self,
-                 experiment_name,
-                 params):
 
-        '''Takes as input the name of the experiment which will be
-        used for creating a .log file with the outputs and the params
-        dictionary from the input model in `Scan()`
+class ExperimentLog:
+    def __new__(cls, experiment_name, params, backend='keras'):
+        base = _callback_base(backend)
+        context = get_trial_context() or {}
+        folder = Path(context.get('run_dir', experiment_name))
+        folder.mkdir(parents=True, exist_ok=True)
+        trial = str(context.get('trial_id', uuid.uuid4().hex))
+        class EpochLog(base):
+            def __init__(self):
+                super().__init__()
+                self.name = str(folder / ('epochs-' + trial + '.log'))
+                self.params = params
+                self.counter = 1
 
-        experiment_name | str | must match the experiment_name in `Scan()`
-        params | dict | the params dictionary from the input model in `Scan()
+            def on_train_begin(self, logs=None):
+                self.final_out = []
+                self.hash = trial
+                self.keys = None
 
-        '''
+            def on_epoch_end(self, epoch, logs=None):
+                logs = logs or {}
+                if self.keys is None:
+                    self.keys = list(logs)
+                self.final_out.append({'id': trial, 'epoch': epoch + 1, **logs})
+                with open(self.name, 'a', newline='') as stream:
+                    writer = csv.writer(stream)
+                    if epoch == 0:
+                        writer.writerow(['id', 'epoch', *self.keys, 'params'])
+                    writer.writerow([trial, epoch + 1, *[logs.get(key) for key in self.keys], json.dumps(params, default=str, sort_keys=True)])
 
-        super(ExperimentLog, self).__init__()
-
-        import glob
-        import os
-
-        # get the experiment id first
-        list_of_files = glob.glob('./' + experiment_name + '/*.csv')
-
-        try:
-            latest_file = max(list_of_files, key=os.path.getmtime)
-        except ValueError:
-            print("\nERROR: `experiment_name` has to match `Scan(experiment_name)`\n")
-
-        self.name = latest_file.replace('.csv', '') + '.log'
-
-        # rest of the config variables
-        self.params = params
-        self.counter = 1
-        self.new_file = True
-
-    def on_train_begin(self, logs={}):
-
-        import random
-        self.hash = hex(abs(hash(str(random.random()))))
-        self.final_out = []
-
-    def on_train_end(self, logs={}):
-
-        f = open(self.name, 'a+')
-        [f.write(','.join(map(str, i)) + '\n') for i in self.final_out]
-        f.close()
-
-    def on_epoch_begin(self, epoch, logs={}):
-
-        self.epoch_out = []
-
-    def on_epoch_end(self, epoch, logs={}):
-
-        if len(self.final_out) == 0:
-
-            try:
-                open(self.name, 'r')
-            except FileNotFoundError:
-
-                self.epoch_out.append('id')
-                self.epoch_out.append('epoch')
-
-                for key in logs.keys():
-
-                    # add to the epoch out list
-                    self.epoch_out.append(key)
-
-                self.final_out.append(self.epoch_out)
-                self.epoch_out = []
-
-        self.epoch_out.append(self.hash)
-        self.epoch_out.append(epoch + 1)
-
-        for key in logs.keys():
-
-            # round the values
-            rounded = round(logs[key], 4)
-
-            # add to the epoch out list
-            self.epoch_out.append(rounded)
-
-        # add to the final out list
-        self.final_out.append(self.epoch_out)
+            def on_train_end(self, logs=None):
+                return self.name
+        return EpochLog()

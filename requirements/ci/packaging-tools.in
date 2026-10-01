@@ -1,0 +1,7 @@
+# Packaging-gate set: builds the distributions and validates what they
+# contain. Separate from build-tools, which mirrors [build-system].requires
+# for --no-build-isolation editable installs and must stay minimal.
+build>=1,<2
+twine>=5,<7
+check-manifest>=0.50,<1
+pyroma>=4,<6

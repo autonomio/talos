@@ -1,0 +1,160 @@
+name: Slice Closeout Guard
+
+# Fill-then-verify: a slice issue closed by a merged PR gets its Done
+# Means evidence fields (Merge SHA, Merged PR number, required CI run
+# ids) written by this workflow and the close stands; a close with no
+# merged closing PR and no evidence is reopened with a comment naming
+# what is missing. This is the closeout bot the slice template's Done
+# Means section names; slice-gate rule 10 enforces the checkboxes ahead
+# of it, so nothing about done-ness rests on memory.
+
+on:
+  issues:
+    types: [closed]
+
+permissions:
+  contents: read
+
+jobs:
+  slice_closeout_guard:
+    name: Slice Closeout Guard
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: read
+      checks: read
+    # `not planned` and `duplicate` are both decisions not to build the
+    # slice: neither has a merged PR, a merge SHA or a required-run list,
+    # and neither ever will, so guarding them reopens the issue forever.
+    # `state_reason` is the durable record, surfaced by the API and the UI.
+    # `completed` and an absent reason still go through the full check.
+    if: >-
+      contains(github.event.issue.labels.*.name, 'slice')
+      && github.event.issue.state_reason != 'not_planned'
+      && github.event.issue.state_reason != 'duplicate'
+    steps:
+      # The evidence splice lives in governance/closeout_evidence.py, so the
+      # job needs the repository on disk. Every other step reaches GitHub
+      # through `gh` against $GITHUB_REPOSITORY and needs no working tree,
+      # which is why this job had no checkout until the splice moved out of
+      # the workflow.
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+
+      - name: Resolve the closing PR
+        id: closing_pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          set -euo pipefail
+          gh api graphql \
+            -f query="query(\$owner: String!, \$name: String!, \$number: Int!) { repository(owner: \$owner, name: \$name) { issue(number: \$number) { closedByPullRequestsReferences(first: 10, includeClosedPrs: true) { nodes { number merged mergeCommit { oid } headRefOid } } } } }" \
+            -F owner="${GITHUB_REPOSITORY%/*}" \
+            -F name="${GITHUB_REPOSITORY#*/}" \
+            -F number="$ISSUE_NUMBER" \
+            --jq '[.data.repository.issue.closedByPullRequestsReferences.nodes[] | select(.merged)] | last // empty | "pr_number=\(.number)\nmerge_sha=\(.mergeCommit.oid)\nhead_sha=\(.headRefOid)"' \
+            >> "$GITHUB_OUTPUT"
+      - name: Write closeout evidence from the merged closing PR
+        id: writer
+        if: steps.closing_pr.outputs.pr_number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          PR_NUMBER: ${{ steps.closing_pr.outputs.pr_number }}
+          MERGE_SHA: ${{ steps.closing_pr.outputs.merge_sha }}
+          HEAD_SHA: ${{ steps.closing_pr.outputs.head_sha }}
+        run: |
+          set -euo pipefail
+          gh api "repos/$GITHUB_REPOSITORY/rules/branches/master" \
+            --jq '[.[] | select(.type == "required_status_checks") | .parameters.required_status_checks[].context] | .[]' \
+            > required_contexts.txt
+          gh api "repos/$GITHUB_REPOSITORY/commits/$HEAD_SHA/check-runs" \
+            --paginate --jq '.check_runs[] | select(.conclusion == "success") | "\(.name)\t\(.id)"' \
+            > check_runs.txt
+          gh api "repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER" --jq '.body // ""' > issue_body.txt
+          python governance/closeout_evidence.py
+          gh issue edit "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file new_body.txt
+      - name: Detect a close with no merged closing PR and no evidence
+        id: closeout
+        if: steps.closing_pr.outputs.pr_number == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          set -euo pipefail
+          python - <<'EOF'
+          import os
+          import re
+          from pathlib import Path
+
+          matches = list(re.finditer(
+              r'^##+ Done Means\b.*?^##+ Author Checks\b',
+              os.environ['ISSUE_BODY'],
+              re.MULTILINE | re.DOTALL,
+          ))
+          claimed = ''
+          if len(matches) != 1:
+              if not matches:
+                  missing = 'no parseable Done Means closeout section'
+              else:
+                  missing = f'{len(matches)} Done Means closeout sections (expected exactly one)'
+          else:
+              section = matches[0].group(0)
+              dangling = False
+              for line in section.splitlines():
+                  box = re.match(r'^\s*[-*+] +\[ \]\s*(.*)$', line)
+                  if box and not re.search(r'\bOVERRULED:\s*(?!<reason>)\S', box.group(1)):
+                      dangling = True
+              sha_match = re.search(r'^Merge SHA:[ \t]*([0-9a-fA-F]{7,40})\b', section, re.MULTILINE)
+              if sha_match:
+                  claimed = sha_match.group(1)
+              pr_match = re.search(r'^Merged PR number:[ \t]*#\d+\b', section, re.MULTILINE)
+              run_match = re.search(r'^\s*- \S.* : \d+\s*$', section, re.MULTILINE)
+              missing = ' and '.join(
+                  name
+                  for name, hit in (
+                      ('unchecked Done Means boxes', dangling),
+                      ('empty Merge SHA', sha_match is None),
+                      ('empty Merged PR number', pr_match is None),
+                      ('empty required-run list', run_match is None),
+                  )
+                  if hit
+              )
+          Path('missing.txt').write_text(missing, encoding='utf-8')
+          Path('claimed_sha.txt').write_text(claimed, encoding='utf-8')
+          EOF
+          MISSING=$(cat missing.txt)
+          CLAIMED=$(cat claimed_sha.txt)
+          # A hand-typed Merge SHA must actually be merged history: the
+          # compare API says the claimed commit is an ancestor of master
+          # (behind) or master itself (identical); anything else -- ahead,
+          # diverged, or unresolvable -- is not evidence.
+          if [ -z "$MISSING" ] && [ -n "$CLAIMED" ]; then
+            STATUS=$(gh api "repos/$GITHUB_REPOSITORY/compare/master...$CLAIMED" --jq .status 2>/dev/null || echo unresolvable)
+            if [ "$STATUS" != "identical" ] && [ "$STATUS" != "behind" ]; then
+              MISSING="a Merge SHA ($CLAIMED) that is not reachable from master"
+            fi
+          fi
+          echo "missing=$MISSING" >> "$GITHUB_OUTPUT"
+      - if: steps.closeout.outputs.missing != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          MISSING: ${{ steps.closeout.outputs.missing }}
+        run: |
+          gh issue reopen "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY"
+          gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "slice_closeout_guard: reopened — closed with $MISSING and no merged closing PR. A slice is done when its closeout evidence is recorded, not when its PR merges. Nothing dangles."
+      - name: Reopen on guard failure
+        # failure() with no step qualifier: whether the closing-PR
+        # resolution, the writer, or the detect path died, the close
+        # may not stand on an unverified body.
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh issue reopen "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY"
+          gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "slice_closeout_guard: reopened — the guard failed before closeout evidence could be verified or written (see the failed run log). A close may not rest without evidence. Nothing dangles."

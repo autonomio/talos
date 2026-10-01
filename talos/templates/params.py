@@ -1,13 +1,13 @@
 def titanic(debug=False):
 
-    from tensorflow.keras.optimizers.legacy import Adam, Adagrad
+    from tensorflow.keras.optimizers import Adam, Adagrad
 
     # here use a standard 2d dictionary for inputting the param boundaries
     p = {'lr': (0.5, 5, 10),
          'first_neuron': [4, 8, 16],
          'batch_size': [20, 30, 40],
          'dropout': (0, 0.5, 5),
-         'optimizer': [Adam(), Adagrad()],
+         'optimizer': [Adam, Adagrad],
          'epochs': [50, 100, 150],
          'losses': ['LogCosh', 'binary_crossentropy'],
          'shapes': ['brick', 'triangle', 0.2],
@@ -21,7 +21,7 @@ def titanic(debug=False):
              'first_neuron': [4, 8],
              'batch_size': [20, 30],
              'dropout': [0.2, 0.3],
-             'optimizer': [Adam(), Adagrad()],
+             'optimizer': [Adam, Adagrad],
              'epochs': [50, 100],
              'losses': ['LogCosh', 'binary_crossentropy'],
              'shapes': ['brick', 'triangle', 0.2],
@@ -34,7 +34,7 @@ def titanic(debug=False):
 
 def iris():
 
-    from tensorflow.keras.optimizers.legacy import Adam, Adagrad
+    from tensorflow.keras.optimizers import Adam, Adagrad
     from tensorflow.keras.activations import relu, elu, softmax
 
     # here use a standard 2d dictionary for inputting the param boundaries
@@ -57,7 +57,7 @@ def iris():
 
 def breast_cancer():
 
-    from tensorflow.keras.optimizers.legacy import Adam, Adagrad, RMSprop
+    from tensorflow.keras.optimizers import Adam, Adagrad, RMSprop
     from tensorflow.keras.activations import relu, elu, sigmoid
 
     # then we can go ahead and set the parameter space

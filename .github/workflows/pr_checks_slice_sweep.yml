@@ -1,0 +1,233 @@
+name: pr_checks_slice_sweep
+
+# Re-run the slice gate for every open PR targeting master on a fixed
+# cadence and, when the latest `pr_checks_slice` check-run -- or the
+# latest previously API-posted check-run -- disagrees with the fresh
+# verdict, publish the master-computed verdict as a new check-run on the
+# head commit.
+#
+# Why: `pr_checks_slice` runs on pull_request activity and caches its
+# verdict; `pr_checks_slice_on_issue` reposts it when a linked issue
+# changes. If that on-issue rerun crashes before posting, a stale green
+# verdict persists until the PR's next own event. This sweep bounds the
+# staleness window: a stale verdict now survives at most one sweep
+# interval. The sweep is a backstop, not a single point of failure --
+# the pull_request-event gate still runs on every PR update.
+#
+# The gate here executes from a checkout of master, never from a PR's
+# merge ref, so a sweep verdict cannot be self-attested by the PR it
+# judges. For the same reason the sweep never reruns the pull_request
+# workflow: that would re-execute the gate from the judged PR's merge
+# ref and publish whatever it computes — the exact channel this
+# master-only contract closes. The on-issue rerun owns UI healing; the
+# sweep owns authoritative delivery.
+#
+# GitHub branch protection does not treat the most recent check-run
+# per name as authoritative: once an API-posted check-run exists on a
+# head SHA it outranks the workflow-run entries of the same name, and
+# only a newer API-posted check-run supersedes it (observed on
+# the experiment engine PR #757). A failure posted here blocks merge
+# immediately, and a stale API-posted verdict must be reposted -- a
+# green canonical run alone never clears it.
+#
+# The fail-closed truncation and file-enumeration contracts mirror
+# pr_checks_slice_on_issue.yml; first proven downstream in the experiment engine
+# (its S691 and S724 series).
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+concurrency:
+  # No cancel-in-progress: killing a sweep mid-posting would leave some
+  # PRs reposted and others stale for a full extra interval. A queued
+  # run simply follows.
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sweep_slice_gate_for_open_prs:
+    name: pr_checks_slice_sweep
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: read
+      pull-requests: read
+      checks: write  # required to POST the master-computed check-runs
+      actions: read  # required to classify check-runs by canonical check suite
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          # Pin to master so a workflow_dispatch from another ref still
+          # executes the gate from master's tree, keeping the
+          # master-only execution contract mechanical.
+          ref: master
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML
+        run: pip install --require-hashes -r requirements/ci/gate-tools.txt
+
+      - name: List open PRs targeting master
+        id: open_prs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          REPO="${{ github.repository }}"
+          gh pr list --repo "$REPO" --base master --state open --limit 1000 \
+            --json number,headRefOid > open_prs.json
+          echo "open PRs targeting master:"
+          jq -c '.[]' open_prs.json
+          COUNT=$(jq 'length' open_prs.json)
+          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
+
+      - name: Re-run slice gate per open PR and post check-run
+        if: steps.open_prs.outputs.count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          REPO="${{ github.repository }}"
+
+          jq -c '.[]' open_prs.json | while IFS= read -r pr; do
+            PR_NUM=$(echo "$pr" | jq -r .number)
+            HEAD_SHA=$(echo "$pr" | jq -r .headRefOid)
+            echo "::group::re-running slice gate for PR #$PR_NUM @ $HEAD_SHA"
+
+            # Title + body + canonical file count; files come from the
+            # paginated REST endpoint, not `gh pr view --json files`
+            # (which caps at 100 and would silently under-enforce
+            # rules 7 and 8 on large PRs).
+            gh pr view "$PR_NUM" --repo "$REPO" \
+              --json title,body,changedFiles > pr_view.json
+            jq -r '.title' pr_view.json > pr_title.txt
+            jq -r '.body // ""' pr_view.json > pr_body.txt
+            # The author decides the automation exemption. Read from REST
+            # rather than `gh pr view --json author`: for a GitHub App the
+            # latter serializes the login as `app/dependabot`, while the
+            # pull_request event -- and therefore `automation.bot_authors` --
+            # carries `dependabot[bot]`. The two never match, so the sweep
+            # would enforce and publish a failure over a correct SKIP.
+            PR_AUTHOR=$(gh api "repos/$REPO/pulls/$PR_NUM" --jq '.user.login // ""')
+            EXPECTED_FILES=$(jq -r '.changedFiles' pr_view.json)
+
+            gh api "repos/$REPO/pulls/$PR_NUM/files" \
+              --paginate --jq '.[].filename' > pr_files.txt
+            ACTUAL_FILES=$(wc -l < pr_files.txt | tr -d ' ')
+
+            if [ "$ACTUAL_FILES" -ne "$EXPECTED_FILES" ]; then
+              # Post a FAILURE check-run immediately rather than
+              # silently proceeding with a truncated file set -- the
+              # same fail-closed contract as the on-issue rerun.
+              gh api "repos/$REPO/check-runs" \
+                --method POST \
+                -f "name=pr_checks_slice" \
+                -f "head_sha=$HEAD_SHA" \
+                -f "status=completed" \
+                -f "conclusion=failure" \
+                -f "output[title]=Slice gate sweep ABORTED: file enumeration incomplete" \
+                -f "output[summary]=pr_checks_slice_sweep got $ACTUAL_FILES files from the paginated API but the PR object reports $EXPECTED_FILES. The sweep refuses to run a scope check on a truncated set." \
+                -f "details_url=https://github.com/$REPO/actions/runs/${{ github.run_id }}"
+              echo "::endgroup::"
+              continue
+            fi
+
+            # Run the slice gate; capture output and exit code.
+            PR_TITLE=$(cat pr_title.txt)
+            set +e
+            GATE_OUT=$(python governance/slice_gate.py \
+              --pr-title "$PR_TITLE" \
+              --pr-body-file pr_body.txt \
+              --pr-files-file pr_files.txt \
+              --template .github/ISSUE_TEMPLATE/slice.yml \
+              --repo "$REPO" \
+              --pr-author "$PR_AUTHOR" 2>&1)
+            GATE_EXIT=$?
+            set -e
+            echo "$GATE_OUT"
+
+            if [ "$GATE_EXIT" -eq 0 ]; then
+              CONCLUSION="success"
+              TITLE_OUT="Slice gate re-passed by scheduled sweep"
+            else
+              CONCLUSION="failure"
+              TITLE_OUT="Slice gate FAILED in scheduled sweep"
+            fi
+
+            # Publish on disagreement; never rerun. The sweep never
+            # reruns the pull_request workflow: that would re-execute
+            # the gate from the judged PR's merge ref and let the PR
+            # self-attest, the exact channel the master-only execution
+            # contract closes. Two verdict surfaces are compared
+            # separately: an API-posted check-run is immutable and
+            # branch protection keeps honouring it even after a later
+            # canonical run lands the opposite verdict (the experiment engine
+            # PR #757), so a disagreeing latest API-posted check-run
+            # always draws a fresh superseding POST; otherwise the
+            # sweep posts only when the latest completed check-run of
+            # the name disagrees with the fresh verdict. Check-runs
+            # inside the check suites of pr_checks_slice.yml's own
+            # workflow runs are job-backed; every other completed
+            # check-run of the name is an API-posted fallback.
+            RUNS=$(gh api \
+              "repos/$REPO/actions/workflows/pr_checks_slice.yml/runs?head_sha=$HEAD_SHA&per_page=100" \
+              --jq '.workflow_runs')
+            SUITES=$(echo "$RUNS" | jq '[.[].check_suite_id]')
+            gh api \
+              "repos/$REPO/commits/$HEAD_SHA/check-runs?check_name=pr_checks_slice&per_page=100&filter=all" \
+              --paginate --jq '.check_runs[]' > check_runs.jsonl
+            # jq variables belong to the literal query.
+            # shellcheck disable=SC2016
+            LATEST_POSTED=$(jq -rs --argjson suites "$SUITES" \
+              '[.[] | select(.status == "completed")
+                    | .check_suite.id as $s | select(($suites | index($s)) == null)]
+               | sort_by(.completed_at) | last | .conclusion // empty' check_runs.jsonl)
+            LATEST=$(jq -rs \
+              '[.[] | select(.status == "completed")]
+               | sort_by(.completed_at) | last | .conclusion // empty' check_runs.jsonl)
+            if [ -n "$LATEST_POSTED" ] && [ "$LATEST_POSTED" != "$CONCLUSION" ]; then
+              echo "latest API-posted check-run is $LATEST_POSTED; posting superseding check-run"
+            elif [ "$LATEST" != "$CONCLUSION" ]; then
+              echo "latest pr_checks_slice check-run is ${LATEST:-absent}; posting $CONCLUSION"
+            else
+              echo "latest pr_checks_slice check-run already $CONCLUSION; nothing to deliver"
+              echo "::endgroup::"
+              continue
+            fi
+
+            # Keep output.summary under the 65 KB API limit. Truncation
+            # uses a parameter expansion, not a pipe: with pipefail, a
+            # `printf | head -c` pipeline dies by SIGPIPE exactly when
+            # output is long enough to truncate, aborting the sweep.
+            # Markdown code fences intentionally remain literal.
+            # shellcheck disable=SC2016
+            SUMMARY=$(printf 'Posted by pr_checks_slice_sweep run %s.\n\n```\n%s\n```\n' \
+              "${{ github.run_id }}" "$GATE_OUT")
+            SUMMARY=${SUMMARY:0:60000}
+
+            # Same check-run name as the pull_request workflow, so
+            # branch protection sees this as the current status of
+            # `pr_checks_slice` on that head SHA.
+            gh api "repos/$REPO/check-runs" \
+              --method POST \
+              -f "name=pr_checks_slice" \
+              -f "head_sha=$HEAD_SHA" \
+              -f "status=completed" \
+              -f "conclusion=$CONCLUSION" \
+              -f "output[title]=$TITLE_OUT" \
+              -f "output[summary]=$SUMMARY" \
+              -f "details_url=https://github.com/$REPO/actions/runs/${{ github.run_id }}"
+            echo "::endgroup::"
+          done

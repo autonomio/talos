@@ -1,39 +1,41 @@
-## What we do?
+# Development priorities
 
-Keep pushing the boundaries of automated deep learning workflows. Start where everyone else stops. Do it with tender loving care.
+“Researchers first” guides Talos development: make automated deep learning workflows available to more researchers, and reduce the manual work required to use them. This page records that direction and the project’s established planning model; it is not a schedule of promised releases.
 
-## Why we do it?
+## Current boundary
 
-So that more people would have access to the undiluted potential and power of advanced deep learning. So that those who already have access, would feel less pain and instead have more joy.
+Talos 2 preserves the Python Scan workflow and runs it through the shared SFD and CLI core. [Migration](Migration.md) describes that implemented boundary. [Capabilities](Overview.md) lists current user-facing features; planned ideas belong in the [issue tracker](https://github.com/autonomio/talos/issues) until implementation and verification establish them.
 
-## Who we do it for?
+## Planning, testing and coding
 
-"Researchers first" drives Talos development. Everything is done for researchers, by researchers.
+The original roadmap allocated equal thirds to planning, testing and coding. Its internal priorities remain a useful review framework:
 
-## How we use time?
+| Activity | Share within the activity | Purpose |
+|---|---|---|
+| Planning | One third | Design the future |
+| Planning | One third | Write specifications |
+| Planning | One third | Create documentation |
+| Testing | One half | Hands-on use |
+| Testing | One quarter | Add tests |
+| Testing | One quarter | Improve existing tests |
+| Coding | One third | Add features |
+| Coding | One third | Improve current features |
+| Coding | One third | Fix broken features |
 
-- 1/3 of time for **PLANNING**
-    - 1/3 of **PLANNING** for designing the future
-    - 1/3 of **PLANNING** for writing specification
-    - 1/3 of **PLANNING** for creating documentation
+These proportions express the project’s development approach rather than a measured current staffing allocation.
 
-- 1/3 of time for **TESTING**
-    - 1/2 of **TESTING** time to hands-on use
-    - 1/4 of **TESTING** time for creating new tests
-    - 1/4 of **TESTING** time for improving current tests
+## Maintenance priorities
 
-- 1/3 of time for **CODING**
-  - 1/3 of **CODING** time for new features
-  - 1/3 of **CODING** time for improving current features
-  - 1/3 of **CODING** time for fixing broken features
+Annual compatibility and recovery maintenance verifies the declared Python/backend dependency matrix, all runnable documentation examples, held-out scientific metrics, archive restoration in fresh processes, and uninterrupted-versus-resumed trial equivalence. Refresh dependency/release metadata only after those checks pass. Physical GPU/power and external entropy services require separate environment-specific checks; CPU/provider fixtures cover the default workflow.
 
-## How to contribute?
+The executable procedure and accepted evidence belong in [maintenance verification](Maintenance.md). This page supplies direction rather than duplicating its commands or claiming tests that have not run.
 
-- by using Talos
-- by writing about Talos
-- by creating examples of using Talos
-- by recommending Talos
-- by testing Talos
-- by contributing code (or tests)
-- by making feature requests
-- by improving the documentation
+## Contribute
+
+You can contribute by using Talos, writing or teaching about it, creating examples, recommending it, testing it, contributing code or regression checks, making feature requests, and improving the documentation.
+
+To turn an idea into a reviewable change, first inspect the relevant current behavior, reproduce the proposed improvement with a bounded example, and follow [contribution guidance](../CONTRIBUTING.md). Implementation, documentation and meaningful proof establish when an idea becomes a current capability.
+
+## Read next
+
+Review [current capabilities](Overview.md), [maintenance verification](Maintenance.md), or [contribution guidance](../CONTRIBUTING.md). Use [support](Asking_Help.md) for a reproducible defect or feature request.

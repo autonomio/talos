@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-01T14:20:41.593345+00:00",
+  "repository": "autonomio/talos",
+  "branch": "codex/talos-limen-core",
+  "hosted_source_commit": "da86aac63530bd32c26f744888b562a5c53b8ee7",
+  "pull_request": "https://github.com/autonomio/talos/pull/608",
+  "phase": "activation prepared; enforcement disabled pending owner, scoped audit credential and reviewed integration",
+  "hosted_verification": {
+    "core_and_installed_wheels": "Python 3.10, 3.11, 3.12 and 3.13 pass",
+    "frameworks": "Current TensorFlow, legacy TensorFlow, current PyTorch/Keras and minimum native suites pass",
+    "packaging": "Reproducibility, distribution content audit, package checks and all installed-wheel lanes pass",
+    "source_gates": "Conventional commits, slice, typing, fail-loud, version, lint, tests, honesty and CodeQL analysis pass",
+    "docs": {
+      "complete": true,
+      "counts": {
+        "fences": 140,
+        "examples": 10,
+        "notebook_code_cells": 42,
+        "inline_commands": 7
+      },
+      "python": "3.12.14",
+      "versions": {
+        "talos": "2.0.1",
+        "tensorflow": "2.21.0",
+        "keras": "3.15.1",
+        "torch": "2.14.1+cpu",
+        "numpy": "2.5.3",
+        "protobuf": "7.36.2",
+        "scikit-learn": "1.9.1"
+      },
+      "hardware_scope": "CPU training. NVIDIA power/command paths use an explicitly declared provider; physical hardware and remote entropy services are not verified.",
+      "manifest_sha256": "3dc25a190be2b9b2b15e6f8c4616f798c631a8baafbc12a1848628ae124b9b81",
+      "run": "https://github.com/autonomio/talos/actions/runs/36871069591",
+      "job": "https://github.com/autonomio/talos/actions/runs/36871069591/job/110398664025"
+    },
+    "dependency_audits": {
+      "run": "https://github.com/autonomio/talos/actions/runs/36871069697",
+      "lanes": {
+        "current": {
+          "dependencies": 97,
+          "skips": 0,
+          "known_vulnerabilities": 0,
+          "identities_sha256": "dbaa62ae04872e89d92ddf802394351d88ca078220029654be810f6a43fb0397",
+          "result_sha256": "a64e1631186029186cca56316692d0b6dc691d642b5ff256a6f8eaae9998c830"
+        },
+        "minimum": {
+          "dependencies": 100,
+          "skips": 0,
+          "known_vulnerabilities": 0,
+          "identities_sha256": "d96dcdab293f1a47fda60dce1a0a73aed6608d51d62509ae03ac6329fa9ef3c9",
+          "result_sha256": "bdf6090248049c34488b0e961e4d70cc4549a815977740c53d6ea6fa46b419bc"
+        }
+      }
+    },
+    "remaining_failures": [
+      "pr_checks_ruleset",
+      "pr_merge_readiness"
+    ],
+    "remaining_failure_reason": "Disabled staged ruleset and unintegrated protected-base governance; no eligible non-author code-owner approval",
+    "checks_receipt_sha256": "34d30fc4446dd8f061c931728c8fe2adf39f37df01aa0997c4261b90f50ca08e"
+  },
+  "followup_scope": {
+    "install_guidance": "Add Linux CPU installation guidance from the verified framework stack",
+    "install_guidance_sha256": "fe48da722f8d5089d087ba0195849072cd042b01d3b08af0f69e1e8ce245328d",
+    "executable_inventory": "All current executable sources exactly match the complete hosted receipt; only installation prose and this evidence record were added afterward",
+    "local_docs": "Markdown lint, 20 external links, production build and 81-route/asset verification pass",
+    "runtime_package": "No Talos runtime changes",
+    "readme_sha256": "291d3dcb61e91a759aab5e0bb4c5f3b6fbddc66b21d38123acefddfe75c1e1a6"
+  },
+  "remote_state": {
+    "ruleset_id": 24306812,
+    "enforcement": "disabled",
+    "bypass_actors": [],
+    "audit_secret": "not provisioned",
+    "second_code_owner": "awaiting user selection"
+  },
+  "pending": [
+    "Select and configure an eligible second code owner",
+    "Provision and verify Talos-scoped RULESET_AUDIT_TOKEN, including bypass_actors visibility",
+    "Obtain eligible non-author review and integrate governance on master",
+    "Establish master CodeQL results, enable reviewed policy and verify scoped privileged audit and enforcement"
+  ],
+  "release_boundary": "No merge, tag, release or package publication; PyPI activation remains separate"
+}

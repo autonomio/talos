@@ -1,48 +1,34 @@
-def trees(self, quantile=.8):
+import numpy as np
+from .reduce_utils import parameter_indicators
 
-    '''Extra Trees based reduction strategy. Like 'forrest', somewhat more
-    aggressive than for example 'spearman' because there are no
-    negative values, but instead the highest positive correlation
-    is minused from all the values so that max value is 0, and then
-    values are turned into positive. The one with the highest positive
-    score in the end will be dropped. This means that anything with
-    0 originally, is a candidate for dropping. Because there are multiple
-    zeroes in many cases, there is an element of randomness on which one
-    is dropped.
 
-    '''
-
-    import wrangle
-    import numpy as np
-
-    # handle conversion to multi_labels
-    from .reduce_utils import cols_to_multilabel
-    data = cols_to_multilabel(self)
-
-    # because extra trees wants label as 'y' we first transform with quantile
-    quantile_value = data[self.reduction_metric].quantile(quantile)
-    data[self.reduction_metric] = data[self.reduction_metric] > quantile_value
-
-    # get the correlations
-    corr_values = wrangle.df_corr_extratrees(data, self.reduction_metric)
-
-    # drop labels where value is NaN
-    corr_values.dropna(inplace=True)
-
-    # handle the turning around of values (see docstring for more info)
-    corr_values -= corr_values[0]
-    corr_values = corr_values.abs()
-
-    # get the strongest correlation
-    corr_values = corr_values.index[-1]
-
-    # get the label, value, and dtype from the column header
-    label, dtype, value = corr_values.split('~')
-
-    # convert things back to their original dtype
-    value = np.array([value]).astype(dtype)[0]
-
-    # this is where we modify the parameter space accordingly
-    self.param_object.remove_is(label, value)
-
+def _tree_reduce(self, forest=False, quantile=.8):
+    matrix, target, candidates = parameter_indicators(self)
+    if len(target) < 3 or matrix.shape[1] == 0 or len(set(target)) < 2:
+        return self
+    from sklearn.ensemble import ExtraTreesClassifier, RandomForestRegressor
+    if forest:
+        estimator = RandomForestRegressor(n_estimators=64, random_state=getattr(self, 'seed', None))
+        labels = target
+    else:
+        estimator = ExtraTreesClassifier(n_estimators=64, random_state=getattr(self, 'seed', None))
+        cutoff = np.quantile(target, 1 - quantile if self.minimize_loss else quantile)
+        labels = target < cutoff if self.minimize_loss else target > cutoff
+        if len(set(labels)) < 2:
+            return self
+    estimator.fit(matrix, labels)
+    global_mean = target.mean()
+    unwanted = []
+    for index, (label, value) in enumerate(candidates):
+        mean = target[matrix[:, index].astype(bool)].mean()
+        worse = mean > global_mean if self.minimize_loss else mean < global_mean
+        if worse:
+            unwanted.append((estimator.feature_importances_[index], index))
+    if unwanted:
+        _, index = min(unwanted)
+        self.param_object.remove_is(*candidates[index])
     return self
+
+
+def trees(self, quantile=.8):
+    return _tree_reduce(self, quantile=quantile)

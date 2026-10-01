@@ -1,0 +1,101 @@
+name: pr_checks_slice
+
+# Mechanical PR <-> slice-issue gate. The deterministic rules are defined
+# once, in governance/slice_gate.py's module docstring (the single source);
+# this workflow only runs it. If any rule is false the gate fails and merge
+# is blocked. There is no graceful skip, no optional mode, and no bypass flag.
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+  # NOTE: no merge_group trigger. The merge_group event payload does
+  # not carry github.event.pull_request.*, and this workflow reads
+  # those fields. Re-enabling merge_group requires a dedicated path
+  # that derives the PR (or PRs) from the merge-group payload.
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+jobs:
+  pr_checks_slice:
+    name: pr_checks_slice
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: ${{ github.event_name == 'pull_request' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML
+        run: pip install --require-hashes -r requirements/ci/gate-tools.txt
+
+      - name: Fetch PR title, body, and changed files
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          if [ -z "$PR_NUMBER" ]; then
+            echo "::error::this workflow only runs on pull_request events that carry a PR number"
+            exit 1
+          fi
+
+          # Title + body + canonical file count from `gh pr view`.
+          # NOTE: we do NOT read files via `gh pr view --json files`
+          # here -- that field is capped at 100 by the gh client, so
+          # PRs with more than 100 changed paths would hide file 101+
+          # from rules 7 and 8. Instead we enumerate via the REST
+          # pull-request files endpoint with --paginate (up to the
+          # GitHub hard ceiling of 3000 files).
+          gh pr view "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --json title,body,changedFiles > pr_view.json
+          jq -r '.title' pr_view.json > pr_title.txt
+          jq -r '.body' pr_view.json > pr_body.txt
+          EXPECTED_FILES=$(jq -r '.changedFiles' pr_view.json)
+
+          gh api "repos/${{ github.repository }}/pulls/$PR_NUMBER/files" \
+            --paginate --jq '.[].filename' > pr_files.txt
+          ACTUAL_FILES=$(wc -l < pr_files.txt | tr -d ' ')
+
+          echo "PR #$PR_NUMBER title:       $(cat pr_title.txt)"
+          echo "PR #$PR_NUMBER body bytes:  $(wc -c < pr_body.txt)"
+          echo "PR #$PR_NUMBER files:       $ACTUAL_FILES (canonical: $EXPECTED_FILES)"
+
+          # Hard-fail if the enumerated set disagrees with the
+          # canonical count. If GitHub's 3000-file ceiling is hit or
+          # pagination breaks, we refuse to run a scope check that
+          # can silently under-enforce.
+          if [ "$ACTUAL_FILES" -ne "$EXPECTED_FILES" ]; then
+            echo "::error::scope-enforcement prerequisite failed: got $ACTUAL_FILES changed-file paths from the paginated API but the PR object reports $EXPECTED_FILES. The validator cannot scope-check a truncated set; investigate API pagination or PR size before retrying."
+            exit 1
+          fi
+
+      - name: Run slice gate
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          PR_TITLE=$(cat pr_title.txt)
+          python governance/slice_gate.py \
+            --pr-title "$PR_TITLE" \
+            --pr-body-file pr_body.txt \
+            --pr-files-file pr_files.txt \
+            --template .github/ISSUE_TEMPLATE/slice.yml \
+            --repo "${{ github.repository }}" \
+            --pr-author "${{ github.event.pull_request.user.login }}"

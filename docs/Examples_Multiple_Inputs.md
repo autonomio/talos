@@ -1,129 +1,121 @@
-# Multiple Inputs
+# Multiple-input Keras sweep
 
-This example highlights a toyish example on using Keras functional API for multi-input model. One would approach building an experiment around a more elaborate multi-input model exactly in the same manner as is highlighted below.
+Train a functional Keras model that receives two aligned arrays, each containing a different pair of Iris features. The same pattern applies to larger multi-input models. The [complete program](Examples_Multiple_Inputs_Code.md) combines the steps below.
 
-The single-file code example can be found [here](Examples_Multiple_Inputs_Code.md).
+## Prerequisites
+
+Use Python 3.11–3.13 with the [TensorFlow extra](Backends.md) (`talos[tensorflow]`) installed in the active interpreter. The scikit-learn dataset is available offline through the core dependencies. Run the Python blocks in order, in one session, from a writable experiment directory. These bounded training runs demonstrate the interface; they do not establish clinical or generalization performance.
+
+## Procedure
+
+1. Import the libraries for this recipe.
+2. Prepare aligned training and validation data.
+3. Define the callback, or select the built-in AutoML model.
+4. Declare the parameter candidates.
+5. Run the bounded Scan configuration and inspect its completed rows.
 
 ### Imports
 
 ```python
 import talos
-import wrangle
-
-from tensorflow.keras.layers import Input, Dense, Dropout
-from tensorflow.keras.models import Model
-from tensorflow.keras.utils import plot_model
-from tensorflow.keras.layers.merge import concatenate
+import numpy as np
+from sklearn.model_selection import train_test_split
+from tensorflow.keras import Sequential, Model
+from tensorflow.keras.layers import Input, Dense, Dropout, Conv2D, Flatten, concatenate
 ```
-NOTE: In this example we use another Autonomio package 'wrangle' for splitting the data.
 
-### Loading Data
+The scikit-learn split uses one set of row indices for all aligned arrays.
+
+### Loading data
+
 ```python
 x, y = talos.templates.datasets.iris()
-x_train, y_train, x_val, y_val = wrangle.array_split(x, y, .5)
+x_train, x_val, y_train, y_val = train_test_split(
+    x.astype('float32'), y.astype('float32'), test_size=.2, random_state=17,
+    stratify=y.argmax(axis=1))
 ```
+
 In the case of multi-input models, the data must be split into training and validation datasets before using it in `Scan()`. `x` is expected to be a list of numpy arrays and `y` a numpy array.
 
 **NOTE:** For full support of Talos features for multi-input models, set `Scan(...multi_input=True...)`.
 
-### Defining the Model
+### Defining the model
+
 ```python
-
 def iris_multi(x_train, y_train, x_val, y_val, params):
-
-    # the first side of the network
-    first_input = Input(shape=(4,))
-    first_hidden1 = Dense(params['left_neurons'], activation=params['activation'])(first_input)
-    first_hidden2 = Dense(params['left_neurons'], activation=params['activation'])(first_hidden1)
-
-    # the second side of the network
-    second_input = Input(shape=(4,))
-    second_hidden1 = Dense(params['right_neurons'], activation=params['activation'])(second_input)
-    second_hidden2 = Dense(params['right_neurons'], activation=params['activation'])(second_hidden1)
-    third_hidden2 = Dense(params['right_neurons'], activation=params['activation'])(second_hidden2)
-
-    # merging the two networks
-    merged = concatenate([first_hidden2, first_hidden2])
-
-    # creating the output
+    # Each input contains a different pair of measured Iris features.
+    first_input = Input(shape=(2,))
+    first_hidden = Dense(params['left_neurons'], activation=params['activation'])(first_input)
+    second_input = Input(shape=(2,))
+    second_hidden = Dense(params['right_neurons'], activation=params['activation'])(second_input)
+    merged = concatenate([first_hidden, second_hidden])
     output = Dense(3, activation='softmax')(merged)
-
-    # put the model together, compile and fit
     model = Model(inputs=[first_input, second_input], outputs=output)
-    model.compile('adam',
-                  'binary_crossentropy',
-                  metrics=['acc', talos.utils.metrics.f1score])
-
-    out = model.fit(x=x_train,
-                    y=y_train,
-                    validation_data=[x_val, y_val],
-                    epochs=150,
-                    batch_size=params['batch_size'],
-                    verbose=0)
-
+    model.compile(optimizer='adam', loss='categorical_crossentropy',
+                  metrics=['accuracy', talos.utils.metrics.f1score])
+    out = model.fit(x=x_train, y=y_train, validation_data=(x_val, y_val),
+                    epochs=params['epochs'], batch_size=params['batch_size'], verbose=0)
     return out, model
 ```
 
 First, the input model must accept arguments exactly as in the example:
 
-```python
-def iris_multi(x_train, y_train, x_val, y_val, params):
-```
+`def iris_multi(x_train, y_train, x_val, y_val, params):`
 
-Even though it is a multi-output model, data can be inputted to `model.fit()` as you would otherwise do it. The multi-input part will be handled later in `Scan()` as shown below.
+Even though it is a multi-input model, data can be inputted to `model.fit()` as you would otherwise do it. The multi-input part will be handled later in `Scan()` as shown below.
 
-```python
-out = model.fit(x=x_train,
-                y=y_train,
-                ...)
-```
+`model.fit(x_train, y_train, validation_data=(x_val, y_val), ...)`
 
-The model must explicitly declare `validation_data` in `model.fit` because it is a multi-input model. Talos data splitting is not available for multi-input or multi-output models, or other cases where either `x` or `y` is more than 2d.
+The model must explicitly declare `validation_data` in `model.fit` because it is a multi-input model. Talos preserves aligned row splits across array inputs and outputs; explicit splits make this recipe easier to inspect.
 
-```python
-out = model.fit(...
-                validation_data=[x_val, y_val]
-                ...)
-```
+`model.fit(x_train, y_train, validation_data=(x_val, y_val), ...)`
 
-Finally, the model must `return` the `model.fit` object as well as the model itself in the order of the of the example:
+Finally, the model must `return` the `model.fit` object as well as the model itself, in the order shown:
+
+`return out, model`
+
+### Parameter dictionary
 
 ```python
-return out, model
+p = {'activation': ['relu', 'elu'], 'left_neurons': [8],
+     'right_neurons': [8], 'batch_size': [16], 'epochs': [2]}
 ```
 
-
-### Parameter Dictionary
-
-```python
-p = {'activation':['relu', 'elu'],
-     'left_neurons': [10, 20, 30],
-     'right_neurons': [10, 20, 30],
-     'batch_size': [15, 20, 25]}
-```
-
-Note that the parameter dictionary allows either list of values, or tuples with range in the form `(min, max, step)`
-
+The parameter dictionary accepts candidate lists or range tuples in the form `(min, max, number_of_values)`.
 
 ### Scan()
-```python
-scan_object = talos.Scan(x=[x_train, x_train],
-                         y=y_train,
-                         x_val=[x_val, x_val],
-                         y_val=y_val,
-                         params=p,
-                         model=iris_multi)
-```
-
-`Scan()` always needs to have `x`, `y`, `model`, and `params` arguments declared. In the case of multi-output model, we also have to explicitly declare `val_x` and `val_y`.
-
-The important thing to note here is that how `y` and `y_val` are handled:
 
 ```python
-scan_object = talos.Scan(x=[x_train, x_train],
-                         ...
-                         x_val=[x_val, x_val],
-                         ...)
+scan_object = talos.Scan(x=[x_train[:, :2], x_train[:, 2:]], y=y_train,
+                         x_val=[x_val[:, :2], x_val[:, 2:]], y_val=y_val,
+                         params=p, model=iris_multi, multi_input=True,
+                         experiment_name='iris_multi_input', round_limit=2,
+                         seed=17, backend='tensorflow')
+assert len(scan_object.data) == 2
 ```
 
-Find the description for all `Scan()` arguments [here](Scan.md#scan-arguments).
+`Scan()` always needs to have `x`, `y`, `model`, and `params` arguments declared. In the case of multi-input model, we also have to explicitly declare `x_val` and `y_val`.
+
+Pass the same two feature arrays to prediction as you supplied during training:
+
+```python
+predictions = talos.Predict(scan_object).predict(
+    [x_val[:, :2], x_val[:, 2:]], metric='val_loss', asc=True)
+print(predictions.shape)  # One class-probability vector per validation row.
+```
+
+Find the description for all `Scan()` arguments [Scan arguments](Scan.md#arguments).
+
+## Expected result
+
+`scan_object.data` contains two completed rows. The final prediction block returns one three-class probability vector per validation row. The two input arrays preserve the order of the corresponding target rows. The run directory contains `results.csv` and checkpoint artifacts; inspect `scan_object.run_dir` for its location.
+
+## Failure boundaries
+
+Keep both arrays aligned and pass them in the same order to training, validation and prediction. Each input layer expects two columns; a single four-column array does not match this model. Keep `multi_input=True` when using the established multi-input facade.
+
+If an import fails, check the active interpreter and [installation options](Install_Options.md). If a scan fails before its first trial, compare the data shapes, parameter keys and callback return with the [Scan contract](Scan.md).
+
+## Read next
+
+[Predict](Predict.md) describes candidate selection and input forwarding; [multiple outputs](Examples_Multiple_Outputs.md) covers aligned target lists.

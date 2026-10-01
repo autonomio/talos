@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use Talos in published work, cite this software and record the version used."
+title: "Talos"
+type: software
+authors:
+  - family-names: Kotila
+    given-names: Mikko
+repository-code: "https://github.com/autonomio/talos"
+url: "https://autonomio.github.io/talos/"
+license: MIT
+version: "2.0.1"

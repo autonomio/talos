@@ -11,7 +11,12 @@ def hidden_layers(model, params, last_neuron):
 
     # check for the params that are required for hidden_layers
 
-    from tensorflow.keras.layers import Dense, Dropout
+    from talos.backends import backend_for
+    adapter = backend_for(model)
+    if adapter.name == 'tensorflow':
+        from tensorflow.keras.layers import Dense, Dropout
+    else:
+        from keras.layers import Dense, Dropout
     from .network_shape import network_shape
     from ..utils.exceptions import TalosParamsError
 

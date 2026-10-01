@@ -1,47 +1,31 @@
-# first import things as you would usually
+"""Run a small Iris sweep: python examples/iris.py (install Talos with TensorFlow)."""
+import numpy as np
+from sklearn.datasets import load_iris
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout
-from tensorflow.keras.losses import categorical_crossentropy
-from tensorflow.keras.activations import relu, softmax
-
-# import talos
+from tensorflow.keras.layers import Dense, Dropout, Input, Normalization
 import talos
 
-# load rthe iris dataset
-x, y = talos.templates.datasets.iris()
-
-# then define the parameter boundaries
-
-p = {'first_neuron': [8, 16, 32],
-     'batch_size': [2, 3, 4]}
+# Real bundled observations; no remote dataset is required.
+x, labels = load_iris(return_X_y=True)
+y = np.eye(3)[labels]
+p = {'first_neuron': [8, 16], 'batch_size': [16, 32], 'epochs': [3]}
 
 
-# then define your Keras model
 def iris_model(x_train, y_train, x_val, y_val, params):
-
-    model = Sequential()
-    model.add(Dense(params['first_neuron'],
-                    input_dim=x_train.shape[1],
-                    activation='relu'))
-    model.add(Dropout(.5))
-    model.add(Dense(y_train.shape[1], activation='softmax'))
-
-    model.compile(optimizer='adam',
-                  loss='categorical_crossentropy',
-                  metrics=['acc'])
-
-    out = model.fit(x_train, y_train,
-                    batch_size=params['batch_size'],
-                    epochs=50,
-                    verbose=0,
-                    validation_data=[x_val, y_val])
-
-    return out, model
+    # Keep fitted preprocessing in the saved model, using only training observations.
+    normalization = Normalization()
+    normalization.adapt(x_train)
+    model = Sequential([Input(shape=(x_train.shape[1],)), normalization,
+                        Dense(params['first_neuron'], activation='relu'), Dropout(.2),
+                        Dense(y_train.shape[1], activation='softmax')])
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+    history = model.fit(x_train, y_train, batch_size=params['batch_size'],
+                        epochs=params['epochs'], verbose=0, validation_data=(x_val, y_val))
+    return history, model
 
 
-# and run the scan
-h = talos.Scan(x, y,
-               params=p,
-               experiment_name='talos-debug',
-               model=iris_model,
-               round_limit=10)
+if __name__ == '__main__':
+    h = talos.Scan(x, y, params=p, experiment_name='iris-example', model=iris_model,
+                   seed=17, disable_progress_bar=True)
+    assert len(h.data) == 4
+    print(h.data[['val_loss', 'val_accuracy', 'first_neuron', 'batch_size']])

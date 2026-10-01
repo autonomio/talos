@@ -1,0 +1,140 @@
+name: PRD
+description: Define a product requirement and proposed delivery shape.
+labels:
+  - prd
+body:
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: State the core problem or opportunity and why this change matters now.
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Describe, in one concise paragraph, how the proposed solution will achieve the stated objective.
+    validations:
+      required: true
+
+  - type: textarea
+    id: necessity
+    attributes:
+      label: Is This Really Necessary?
+      description: Justify why this should be done now and why this approach is the best use of our limited time and resources.
+    validations:
+      required: true
+
+  - type: textarea
+    id: named_concepts
+    attributes:
+      label: Named Concepts
+      description: Define any new terms, concepts, or names introduced in this request so they are unambiguous.
+    validations:
+      required: true
+
+  - type: textarea
+    id: outline
+    attributes:
+      label: Outline
+      description: Describe what will be delivered and how it differs from the current state, at a concrete but high level.
+    validations:
+      required: true
+
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of Scope
+      description: List what is explicitly not included in this work, including related ideas or future phases.
+    validations:
+      required: true
+
+  - type: textarea
+    id: user_experience
+    attributes:
+      label: User Experience
+      description: Describe what users will experience, how it will feel, and how they will benefit from this change.
+    validations:
+      required: true
+
+  - type: textarea
+    id: new_data
+    attributes:
+      label: New Data
+      description: Describe any new data that will be captured, stored, or exposed, including its purpose and main structures.
+    validations:
+      required: true
+
+  - type: textarea
+    id: support
+    attributes:
+      label: Support
+      description: Explain how these user journeys will be supported operationally, including how failures or issues will be handled.
+    validations:
+      required: true
+
+  - type: textarea
+    id: market_desirability
+    attributes:
+      label: Market Desirability
+      description: Explain how this work improves our position in the market or increases appeal to target customers.
+    validations:
+      required: true
+
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks
+      description: Identify the key risks of doing this work and how we plan to mitigate each of them.
+    validations:
+      required: true
+
+  - type: textarea
+    id: drawbacks
+    attributes:
+      label: Drawbacks
+      description: Describe the main downsides and long-term tradeoffs of this approach, including how it might limit us or complicate future work.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives
+      description: List viable alternative approaches and how their impact, effort, and risk compare to this proposal (including any 80/20 options).
+    validations:
+      required: true
+
+  - type: textarea
+    id: unresolved_questions
+    attributes:
+      label: Unresolved Questions
+      description: List the key open questions and known unknowns that could affect scope, design, or success.
+    validations:
+      required: true
+
+  - type: textarea
+    id: success_metrics
+    attributes:
+      label: Success Metrics
+      description: Define how we will measure success, including key quantitative metrics and any critical qualitative outcomes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: design
+    attributes:
+      label: Design
+      description: Provide an end-to-end overview of the solution.
+    validations:
+      required: true
+
+  - type: textarea
+    id: work_slices
+    attributes:
+      label: Work Slices
+      description: Break down into one or more slices and link the underlying slice issues below.
+    validations:
+      required: true

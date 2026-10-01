@@ -18,7 +18,7 @@ def breast_cancer(x_train, y_train, x_val, y_val, params):
     model.add(Dense(1, activation=params['last_activation']))
 
     model.compile(optimizer=params['optimizer']
-                  (lr=lr_normalizer(params['lr'],
+                  (learning_rate=lr_normalizer(params['lr'],
                                     params['optimizer'])),
                   loss=params['losses'],
                   metrics=['acc',
@@ -59,7 +59,7 @@ def cervical_cancer(x_train, y_train, x_val, y_val, params):
     model.add(Dense(1, activation=params['last_activation']))
 
     model.compile(optimizer=params['optimizer']
-                  (lr=lr_normalizer(params['lr'],
+                  (learning_rate=lr_normalizer(params['lr'],
                                     params['optimizer'])),
                   loss=params['losses'],
                   metrics=['acc',
@@ -84,6 +84,7 @@ def titanic(x_train, y_train, x_val, y_val, params):
 
     from tensorflow.keras.models import Sequential
     from tensorflow.keras.layers import Dropout, Dense
+    from talos.model import lr_normalizer
 
     # note how instead of passing the value, we pass a dictionary entry
     model = Sequential()
@@ -98,7 +99,10 @@ def titanic(x_train, y_train, x_val, y_val, params):
     model.add(Dense(1, activation=params['last_activation']))
 
     # here are using a learning rate boundary
-    model.compile(optimizer=params['optimizer'],
+    optimizer = params['optimizer']
+    if isinstance(optimizer, type):
+        optimizer = optimizer(learning_rate=lr_normalizer(params['lr'], optimizer))
+    model.compile(optimizer=optimizer,
                   loss=params['losses'],
                   metrics=['acc'])
 
@@ -138,7 +142,7 @@ def iris(x_train, y_train, x_val, y_val, params):
 
     # using a learning rate boundary
     model.compile(optimizer=params['optimizer']
-                  (lr=lr_normalizer(params['lr'],
+                  (learning_rate=lr_normalizer(params['lr'],
                                     params['optimizer'])),
                   loss=params['losses'],
                   metrics=['acc'])

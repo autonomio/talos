@@ -1,46 +1,30 @@
-from tensorflow.keras.callbacks import Callback
+import subprocess
+import time
+from .experiment_log import _callback_base
 
 
-class PowerDraw(Callback):
+class PowerDraw:
+    def __new__(cls, device=0, backend='keras', provider=None):
+        base = _callback_base(backend)
+        def measure():
+            if provider is not None:
+                return float(provider())
+            result = subprocess.run(['nvidia-smi', '-i', str(device), '--query-gpu=power.draw', '--format=csv,noheader,nounits'],
+                                    check=True, capture_output=True, text=True)
+            return float(result.stdout.strip())
+        class PowerCallback(base):
+            def __init__(self):
+                super().__init__()
+                self.log = {'epoch_begin': [], 'epoch_end': [], 'seconds': []}
 
-    '''A callback for recording GPU power draw (watts) on epoch begin and end.
+            def on_train_begin(self, logs=None):
+                self.log = {'epoch_begin': [], 'epoch_end': [], 'seconds': []}
 
-    Example use:
+            def on_epoch_begin(self, epoch, logs=None):
+                self.epoch_start_time = time.monotonic()
+                self.log['epoch_begin'].append(measure())
 
-    power_draw = PowerDraw()
-
-    model.fit(...callbacks=[power_draw]...)
-
-    history = talos.utils.power_draw_append(history, power_draw)
-
-    '''
-
-    def __init__(self):
-
-        super(PowerDraw, self).__init__()
-
-        import os
-        import time
-
-        self.os = os
-        self.time = time.time
-        self.command = "nvidia-smi -i 0 -q | grep -i 'power draw' | tr -s ' ' | cut -d ' ' -f5"
-
-    def on_train_begin(self, logs={}):
-        self.log = {}
-        self.log['epoch_begin'] = []
-        self.log['epoch_end'] = []
-        self.log['seconds'] = []
-
-    def on_epoch_begin(self, batch, logs=None):
-        self.epoch_start_time = self.time()
-        temp = self.os.popen(self.command).read()
-        temp = float(temp.strip())
-        self.log['epoch_begin'].append(temp)
-
-    def on_epoch_end(self, batch, logs=None):
-        temp = self.os.popen(self.command).read()
-        temp = float(temp.strip())
-        self.log['epoch_end'].append(temp)
-        seconds = round(self.time() - self.epoch_start_time, 3)
-        self.log['seconds'].append(seconds)
+            def on_epoch_end(self, epoch, logs=None):
+                self.log['epoch_end'].append(measure())
+                self.log['seconds'].append(time.monotonic() - self.epoch_start_time)
+        return PowerCallback()

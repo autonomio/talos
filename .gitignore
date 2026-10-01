@@ -16,3 +16,40 @@ test.sh
 .vscode
 test_*/
 test/
+.coverage
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+build/
+*.keras
+*.pt
+verification-output/
+!docs/verification/*.json
+
+# Authored documentation profile; generated site artifacts stay ignored.
+!.markdownlint.json
+!docs-site/package.json
+!docs-site/package-lock.json
+!docs-site/product-docs.json
+!docs-site/docs-map.json
+
+# Repository governance and locked CI inputs are authored sources.
+!.github/**/*.json
+!governance/**/*.json
+!requirements/**/*.txt
+!requirements/constraints.txt
+!/AUTHORS
+!CITATION.cff
+.coverage.*
+coverage.json
+runtime-artifacts/
+.venv*/
+dist-first/
+dist-second/
+.pr-gate-inputs/
+
+# Local developer environments and ad hoc uv lockfiles are not release inputs.
+venv/
+uv.lock
+.hypothesis/
+!/requirements.txt

@@ -1,163 +1,158 @@
-# PyTorch
+# Native PyTorch sweep
 
-This example highlights how Talos can be used with PyTorch models. The single-file example can be found [here](Examples_PyTorch_Code.md).
+Train two PyTorch networks while retaining the established Talos callback interface. The recipe records epoch metrics explicitly and provides a reconstruction factory for native Torch archives. The [complete program](Examples_PyTorch_Code.md) guards training so archive restoration can import the model without starting another sweep.
+
+## Prerequisites
+
+Use Python 3.10–3.13 with the [Torch extra](Backends.md) (`talos[torch]`) installed in the active interpreter. The scikit-learn dataset is available offline through the core dependencies. Run the Python blocks in order, in one session, from a writable experiment directory. These bounded training runs demonstrate the interface; they do not establish clinical or generalization performance.
+
+## Procedure
+
+1. Import the libraries for this recipe.
+2. Prepare aligned training and validation data.
+3. Define the callback, or select the built-in AutoML model.
+4. Declare the parameter candidates.
+5. Run the bounded Scan configuration and inspect its completed rows.
 
 ### Imports
 
 ```python
 import talos
 import numpy as np
-
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch_optimizer import torch_optimizer
-
+from torch import nn
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import f1_score
 ```
 
-### Loading Data
-```python
-x, y = talos.templates.datasets.breast_cancer()
-x = talos.utils.rescale_meanzero(x)
-x_train, y_train, x_val, y_val = talos.utils.val_split(x, y, .2)
+### Loading data
 
-# convert arrays to tensors
-x_train = torch.from_numpy(x_train).float()
-y_train = torch.from_numpy(y_train).long()
-x_val = torch.from_numpy(x_val).float()
-y_val = torch.from_numpy(y_val).long()
+```python
+x, y = load_breast_cancer(return_X_y=True)
+x_train, x_val, y_train, y_val = train_test_split(
+    x, y, train_size=144, test_size=36, stratify=y, random_state=17)
+scaler = StandardScaler().fit(x_train)
+x_train = torch.as_tensor(scaler.transform(x_train), dtype=torch.float32)
+x_val = torch.as_tensor(scaler.transform(x_val), dtype=torch.float32)
+y_train = torch.as_tensor(y_train, dtype=torch.long)
+y_val = torch.as_tensor(y_val, dtype=torch.long)
 ```
+
 Unlike Keras, PyTorch expects the input data to be converted into tensors.
 
-### Defining the Model
-```python
-def breast_cancer(x_train, y_train, x_val, y_val, params):
-
-    # takes in a module and applies the specified weight initialization
-    def weights_init_uniform_rule(m):
-        classname = m.__class__.__name__
-        # for every Linear layer in a model..
-        if classname.find('Linear') != -1:
-            # get the number of the inputs
-            n = m.in_features
-            y = 1.0 / np.sqrt(n)
-            m.weight.data.uniform_(-y, y)
-            m.bias.data.fill_(0)
-
-    class BreastCancerNet(nn.Module, talos.utils.TorchHistory):
-
-        def __init__(self, n_feature):
-
-            super(BreastCancerNet, self).__init__()
-            self.hidden = torch.nn.Linear(n_feature, params['first_neuron'])
-            torch.nn.init.normal_(self.hidden.weight)
-            self.hidden1 = torch.nn.Linear(params['first_neuron'], params['second_neuron'])
-            self.dropout = torch.nn.Dropout(params['dropout'])
-            self.out = torch.nn.Linear(params['second_neuron'], 2)
-
-        def forward(self, x):
-
-            x = F.relu(self.hidden(x))
-            x = self.dropout(x)
-            x = torch.sigmoid(self.hidden1(x))
-            x = self.out(x)
-            return x
-
-
-    net = BreastCancerNet(x_train.shape[1])
-    net.apply(weights_init_uniform_rule)
-    loss_func = nn.CrossEntropyLoss()
-    optimizer = torch_optimizer(net,
-                                params['optimizer'],
-                                lr=params['lr'],
-                                momentum=params['momentum'],
-                                weight_decay=params['weight_decay'])
-
-    # Initialize history of net
-    net.init_history()
-
-    for epoch in range(params['epochs']):
-
-        # zero the parameter gradients
-        optimizer.zero_grad()
-
-        # forward
-        outputs = net(x_train)
-
-        # calculate accuracy
-        prediction = torch.max(outputs, 1)[1]
-        metric = f1_score(y_train.data, prediction.data)
-
-        # calculate loss + backward + optimize
-        loss = loss_func(outputs, y_train)
-        loss.backward()
-        optimizer.step()
-
-        # calculate accuracy for validation data
-        output_val = net(x_val)
-        prediction = torch.max(output_val, 1)[1]
-        val_metric = f1_score(y_val.data, prediction.data)
-
-        # calculate loss for validation data
-        val_loss = loss_func(output_val, y_val)
-
-        # append history
-        net.append_loss(loss.item())
-        net.append_metric(metric)
-        net.append_val_loss(val_loss.item())
-        net.append_val_metric(val_metric)
-
-
-    # Get history object
-    return net, net.parameters()
-```
-In order to unify `Scan()` API for Keras and PyTorch, a Keras-like history with epoch-by-epoch metrics is required. This is achieved with `talos.utils.TorchHistory` helper:
+### Defining the model
 
 ```python
 class BreastCancerNet(nn.Module, talos.utils.TorchHistory):
+    def __init__(self, n_feature, first_neuron=8, second_neuron=4, dropout=.1):
+        super().__init__()
+        self.layers = nn.Sequential(nn.Linear(n_feature, first_neuron), nn.ReLU(),
+                                    nn.Dropout(dropout), nn.Linear(first_neuron, second_neuron),
+                                    nn.ReLU(), nn.Linear(second_neuron, 2))
+        self.init_history()
+
+    def forward(self, x):
+        return self.layers(x)
+
+
+def build_network(n_feature, first_neuron=8, second_neuron=4, dropout=.1):
+    return BreastCancerNet(n_feature, first_neuron, second_neuron, dropout)
+
+
+def breast_cancer(x_train, y_train, x_val, y_val, params):
+    config = {name: params[name] for name in ('first_neuron', 'second_neuron', 'dropout')}
+    config['n_feature'] = x_train.shape[1]
+    net = build_network(**config)
+    # An importable module-level factory makes state_dict archives portable.
+    net.talos_factory, net.talos_config = build_network, config
+    optimizer = getattr(torch.optim, params['optimizer'])(net.parameters(), lr=params['lr'])
+    criterion = nn.CrossEntropyLoss()
+    for _ in range(params['epochs']):
+        net.train()
+        for start in range(0, len(x_train), params['batch_size']):
+            optimizer.zero_grad()
+            loss = criterion(net(x_train[start:start + params['batch_size']]),
+                             y_train[start:start + params['batch_size']])
+            loss.backward()
+            optimizer.step()
+        net.eval()
+        with torch.no_grad():
+            train_logits, val_logits = net(x_train), net(x_val)
+            net.append_loss(criterion(train_logits, y_train).item())
+            net.append_val_loss(criterion(val_logits, y_val).item())
+            net.append_metric(f1_score(y_train.numpy(), train_logits.argmax(1).numpy()))
+            net.append_val_metric(f1_score(y_val.numpy(), val_logits.argmax(1).numpy()))
+    # The historical Torch return is supported; (net.history, net) also works.
+    return net, net.parameters()
+```
+
+In order to unify `Scan()` API for Keras and PyTorch, a Keras-like history with epoch-by-epoch metrics is required. This is achieved with `talos.utils.TorchHistory` helper:
+
+```python
+preview_net = build_network(n_feature=x_train.shape[1])
+print(preview_net)  # TorchHistory is mixed into the network defined above.
+print(preview_net.history)  # Epoch metrics are initially empty.
 ```
 
 In each iteration (epoch), metrics must be computed and then appended to the history object:
 
 ```python
-# append history
-net.append_loss(loss.item())
-net.append_metric(metric)
-net.append_val_loss(val_loss.item())
-net.append_val_metric(val_metric)
+preview_params = {'first_neuron': 8, 'second_neuron': 4, 'dropout': .1,
+                  'optimizer': 'Adam', 'lr': .01, 'batch_size': 16, 'epochs': 2}
+preview_net, _ = breast_cancer(x_train, y_train, x_val, y_val, preview_params)
+assert len(preview_net.history['val_loss']) == 2
 ```
 
-Finally, the input model must return the history and the model itself:
+The current `(history, model)` return is supported alongside the historical `(net, net.parameters())` return shown here:
 
 ```python
-return net, net.parameters()
+legacy_result = (preview_net, preview_net.parameters())
+normalized = talos.backends.normalise_result(legacy_result, backend='torch')
+print(normalized['metrics'])  # Final values from the real training history.
+assert normalized['model'] is preview_net
+
+# The current return passes the history dictionary and trained network directly.
+modern_result = (preview_net.history, preview_net)
+print(talos.backends.normalise_result(modern_result, backend='torch')['metrics'])
 ```
 
-### Parameter Dictionary
+### Parameter dictionary
 
 ```python
-p = {'activation':['relu', 'elu'],
-       'optimizer': ['Adagrad', 'Adam'],
-       'losses': ['LogCosh'],
-       'hidden_layers':[0, 1, 2],
-       'batch_size': (20, 50, 5),
-       'epochs': [10, 20]}
+p = {'first_neuron': [8, 16], 'second_neuron': [4], 'dropout': [.1],
+     'optimizer': ['Adam'], 'lr': [.01], 'batch_size': [16], 'epochs': [2]}
 ```
-Note that the parameter dictionary allows either list of values, or tuples with range in the form `(min, max, step)`
 
+The parameter dictionary accepts candidate lists or range tuples in the form `(min, max, number_of_values)`.
 
 ### Scan()
 
 ```python
-scan_object = talos.Scan(x=x_train,
-                         y=y_train,
-                         x_val=x_val,
-                         y_val=y_val,
-                         params=p,
-                         model=breast_cancer,
-                         experiment_name='breast_cancer',
-                         round_limit=100)
+scan_object = talos.Scan(x=x_train, y=y_train, x_val=x_val, y_val=y_val,
+                         params=p, model=breast_cancer, experiment_name='breast_cancer_torch',
+                         round_limit=2, seed=17, backend='torch')
+assert len(scan_object.data) == 2
+predicted = talos.Predict(scan_object).predict_classes(
+    x_val, metric='val_loss', asc=True, task='multi_class')
+assert predicted.shape == (len(x_val),)
 ```
 
-`Scan()` always needs to have `x`, `y`, `model`, and `params` arguments declared. Find the description for all `Scan()` arguments [here](Scan.md#scan-arguments).
+`Scan()` always needs to have `x`, `y`, `model`, and `params` arguments declared. Find the description for all `Scan()` arguments [Scan arguments](Scan.md#arguments).
+
+The module-level `build_network` factory and `talos_config` describe reconstruction for native Torch archives. The [complete example](Examples_PyTorch_Code.md) guards training in `run_example()` so importing its factory during restore cannot retrain. Save it as an importable Python module for portable restore; a factory defined only in `__main__` must be supplied explicitly to `Restore(model_factory=build_network)`. Validation runs in evaluation mode under `torch.no_grad()`.
+
+## Expected result
+
+`scan_object.data` contains two completed rows; the final block produces a class index for each validation row. `TorchHistory` holds two validation-loss observations per trial. Its metric helper uses the names `metric` and `val_metric`; in this recipe those values are the explicitly computed F1 scores, not classification accuracy. The run directory contains `results.csv` and checkpoint artifacts; inspect `scan_object.run_dir` for its location.
+
+## Failure boundaries
+
+This callback owns the optimizer, gradient updates and train/evaluation modes. Keep integer class labels and two output logits consistent with cross-entropy. Histories must contain numeric scalar metrics; use finite values for meaningful candidate ranking. A factory defined only in `__main__` needs an explicit `Restore(model_factory=build_network)`; use the guarded importable complete program for portable source-based restoration.
+
+If an import fails, check the active interpreter and [installation options](Install_Options.md). If a scan fails before its first trial, compare the data shapes, parameter keys and callback return with the [Scan contract](Scan.md).
+
+## Read next
+
+[Backends](Backends.md) describes both supported callback returns. [Deploy](Deploy.md) and [Restore](Restore.md) describe the native Torch archive and factory contract.

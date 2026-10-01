@@ -1,0 +1,4 @@
+# Maintained framework lane compiled against its supported Linux Python version.
+.[dev,plots,samplers,tensorflow,keras,torch]
+# Hosted Linux runners execute CPU training; use the official CPU wheel without CUDA/Triton.
+torch @ https://download.pytorch.org/whl/cpu/torch-2.14.1%2Bcpu-cp312-cp312-manylinux_2_28_x86_64.whl#sha256=5a6363570c753812540a05eb82380e329469cbe668643e88111414c12627711f

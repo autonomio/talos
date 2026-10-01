@@ -1,0 +1,212 @@
+name: pr_merge_readiness
+
+# Maintain one auto-updated comment per PR that evaluates every merge
+# condition together -- each required status check's latest conclusion
+# on the head commit, the review decision, and the count of unresolved
+# review conversations -- so readiness is visible in a single surface
+# instead of being discovered one gate at a time. Thread resolution has
+# no Actions trigger of its own (pull_request_review_thread is a webhook
+# event only, not a workflow trigger); inline-comment activity, reviews,
+# pushes, and check-suite completions refresh the comment instead.
+#
+# Informational only: this workflow is not a required check, so it can
+# never deadlock the merge it reports on. Fail-closed: when the
+# required-check inventory cannot be established, the comment says so,
+# reports NOT MERGEABLE, and the run fails loud. First proven
+# downstream in the experiment engine (its S724 series).
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_review:
+    types: [submitted, dismissed]
+  pull_request_review_comment:
+    types: [created, deleted]
+  check_suite:
+    types: [completed]
+
+# Keyed by PR number for every event that carries one — including
+# check_suite, whose payload lists its PRs — so runs for the same PR
+# serialize instead of racing the read-then-create on the marker
+# comment; the head SHA and run id are last-resort fallbacks only.
+#
+# cancel-in-progress is false because cancelling is not serialising: it
+# kills the earlier run, and a cancelled run surfaces as a failed check.
+# This workflow fires on four event types, so an active PR reliably
+# produced cancelled runs and the readiness reporter made its own output
+# look red while reporting correctly. Queuing gives the serialisation the
+# group was added for and leaves no failed runs behind.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.event.check_suite.pull_requests[0].number || github.event.check_suite.head_sha || github.run_id }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  report_merge_readiness:
+    name: pr_merge_readiness
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      checks: read
+      pull-requests: write  # create or update the readiness comment
+
+    steps:
+      - name: Evaluate every merge condition and update the readiness comment
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          EVENT_NAME: ${{ github.event_name }}
+          SUITE_RUNS_URL: ${{ github.event.check_suite.check_runs_url || '' }}
+        run: |
+          set -euo pipefail
+
+          # A check_suite completion fired by this workflow's own suite
+          # would retrigger it forever; skip suites whose only run is
+          # this job.
+          if [ "$EVENT_NAME" = "check_suite" ] && [ -n "$SUITE_RUNS_URL" ]; then
+            SUITE_NAMES=$(gh api "$SUITE_RUNS_URL" --jq '[.check_runs[].name] | unique | join(",")')
+            if [ "$SUITE_NAMES" = "pr_merge_readiness" ]; then
+              echo "own suite completed; skipping to avoid a retrigger loop"
+              exit 0
+            fi
+          fi
+
+          # A check suite can be associated with multiple pull requests;
+          # evaluate every one of them, not only the first.
+          if [ "$EVENT_NAME" = "check_suite" ]; then
+            PR_NUMS=$(jq -r '[.check_suite.pull_requests[].number] | unique | .[]' "$GITHUB_EVENT_PATH")
+          else
+            PR_NUMS=$(jq -r '.pull_request.number' "$GITHUB_EVENT_PATH")
+          fi
+          if [ -z "$PR_NUMS" ]; then
+            echo "no associated pull request; nothing to report"
+            exit 0
+          fi
+
+          FAILED=0
+          for PR_NUM in $PR_NUMS; do
+            echo "::group::readiness for PR #$PR_NUM"
+            HEAD_SHA=$(gh pr view "$PR_NUM" --repo "$REPO" --json headRefOid --jq .headRefOid)
+
+            gh api "repos/$REPO/commits/$HEAD_SHA/check-runs?per_page=100" --paginate \
+              --jq '.check_runs[] | {name, conclusion, started_at}' > check_runs.jsonl
+
+            # Fail closed on an unreadable or empty required-check
+            # inventory: classic branch protection, a non-matching
+            # ruleset pattern, or a rules-API error must never read as
+            # "no required checks, ready to merge".
+            REQUIRED=$(gh api "repos/$REPO/rules/branches/master" \
+              --jq '[.[] | select(.type == "required_status_checks") | .parameters.required_status_checks[].context] | unique | .[]' \
+              || true)
+            if [ -z "$REQUIRED" ]; then
+              {
+                echo '<!-- merge-readiness -->'
+                echo '### ❌ NOT MERGEABLE — required-check inventory unavailable (fail-closed)'
+                echo ''
+                echo "The rules API returned no required status checks for \`master\` at \`${HEAD_SHA:0:8}\`. This surface refuses to declare readiness it cannot verify."
+              } > readiness.md
+              FAILED=1
+            else
+              CHECK_ROWS=""
+              CHECKS_OUTSTANDING=0
+              while IFS= read -r context; do
+                [ -z "$context" ] && continue
+                # A run that has not started yet carries a null
+                # started_at; sorting it LAST makes it the latest, so a
+                # freshly queued rerun reads as pending, never as the
+                # previous green.
+                LATEST=$(jq -r -s --arg name "$context" \
+                  "[.[] | select(.name == \$name)] | sort_by(.started_at // \"9999-12-31T23:59:59Z\") | last | .conclusion // \"pending\"" \
+                  check_runs.jsonl)
+                if [ "$LATEST" = "success" ]; then
+                  ICON="✅"
+                else
+                  ICON="❌"
+                  CHECKS_OUTSTANDING=$((CHECKS_OUTSTANDING + 1))
+                fi
+                CHECK_ROWS="${CHECK_ROWS}| ${ICON} | \`${context}\` | ${LATEST} |"$'\n'
+              done <<< "$REQUIRED"
+
+              REVIEW_DECISION=$(gh pr view "$PR_NUM" --repo "$REPO" \
+                --json reviewDecision --jq '.reviewDecision // "REVIEW_REQUIRED"')
+              if [ "$REVIEW_DECISION" = "APPROVED" ]; then
+                REVIEW_ICON="✅"
+              else
+                REVIEW_ICON="❌"
+              fi
+
+              # Paginate the full reviewThreads connection; a single
+              # first:100 page undercounts on long reviews and could
+              # report readiness with unresolved conversations hidden
+              # past the page boundary.
+              UNRESOLVED=0
+              CURSOR="null"
+              while : ; do
+                THREADS_QUERY="query(\$owner: String!, \$name: String!, \$number: Int!, \$cursor: String) { repository(owner: \$owner, name: \$name) { pullRequest(number: \$number) { reviewThreads(first: 100, after: \$cursor) { pageInfo { hasNextPage endCursor } nodes { isResolved } } } } }"
+                if [ "$CURSOR" = "null" ]; then
+                  PAGE=$(gh api graphql -f query="$THREADS_QUERY" \
+                    -F owner="${REPO%/*}" -F name="${REPO#*/}" -F number="$PR_NUM" \
+                    --jq '.data.repository.pullRequest.reviewThreads')
+                else
+                  PAGE=$(gh api graphql -f query="$THREADS_QUERY" \
+                    -F owner="${REPO%/*}" -F name="${REPO#*/}" -F number="$PR_NUM" \
+                    -F cursor="$CURSOR" \
+                    --jq '.data.repository.pullRequest.reviewThreads')
+                fi
+                COUNT=$(echo "$PAGE" | jq '[.nodes[] | select(.isResolved == false)] | length')
+                UNRESOLVED=$((UNRESOLVED + COUNT))
+                HAS_NEXT=$(echo "$PAGE" | jq -r '.pageInfo.hasNextPage')
+                [ "$HAS_NEXT" != "true" ] && break
+                CURSOR=$(echo "$PAGE" | jq -r '.pageInfo.endCursor')
+              done
+              if [ "$UNRESOLVED" = "0" ]; then
+                THREADS_ICON="✅"
+              else
+                THREADS_ICON="❌"
+              fi
+
+              OUTSTANDING=""
+              [ "$CHECKS_OUTSTANDING" != "0" ] && OUTSTANDING="$OUTSTANDING $CHECKS_OUTSTANDING required check(s),"
+              [ "$REVIEW_DECISION" != "APPROVED" ] && OUTSTANDING="$OUTSTANDING approval,"
+              [ "$UNRESOLVED" != "0" ] && OUTSTANDING="$OUTSTANDING $UNRESOLVED unresolved conversation(s),"
+              if [ -z "$OUTSTANDING" ]; then
+                VERDICT="### ✅ READY TO MERGE"
+              else
+                VERDICT="### ❌ NOT MERGEABLE — outstanding:${OUTSTANDING%,}"
+              fi
+
+              {
+                echo '<!-- merge-readiness -->'
+                echo "$VERDICT"
+                echo ''
+                echo "Evaluated together at \`${HEAD_SHA:0:8}\` ($(date -u +%Y-%m-%dT%H:%M:%SZ)):"
+                echo ''
+                echo '| | Required check | Latest |'
+                echo '|---|---|---|'
+                printf '%s' "$CHECK_ROWS"
+                echo ''
+                echo "| | Condition | State |"
+                echo '|---|---|---|'
+                echo "| $REVIEW_ICON | Review decision | $REVIEW_DECISION |"
+                echo "| $THREADS_ICON | Unresolved conversations | $UNRESOLVED |"
+              } > readiness.md
+            fi
+
+            COMMENT_ID=$(gh api "repos/$REPO/issues/$PR_NUM/comments" --paginate \
+              --jq '[.[] | select(.body | startswith("<!-- merge-readiness -->"))][0].id // empty')
+            if [ -n "$COMMENT_ID" ]; then
+              gh api --method PATCH "repos/$REPO/issues/comments/$COMMENT_ID" \
+                -F body=@readiness.md > /dev/null
+              echo "readiness comment $COMMENT_ID updated"
+            else
+              gh api --method POST "repos/$REPO/issues/$PR_NUM/comments" \
+                -F body=@readiness.md > /dev/null
+              echo "readiness comment created"
+            fi
+            echo "::endgroup::"
+          done
+
+          exit "$FAILED"

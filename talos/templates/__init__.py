@@ -1,4 +1,3 @@
-from . import datasets
-from . import models
-from . import params
-from . import pipelines
+from . import datasets, models, params, pipelines
+
+__all__ = ['datasets', 'models', 'params', 'pipelines']

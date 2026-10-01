@@ -8,15 +8,14 @@ class GamifyMap:
         during the `Scan()` experiment.
         '''
 
-        self.params = scan_object.param_object.params
+        self.params = scan_object.param_object.p
         self.scan_object = scan_object
         self.generate_gamify_dict()
         self.gamify_map = self.generate_gamify_dict_map()
 
         # parse together the output file name
-        _folder = './' + scan_object.experiment_name + '/'
-        _id = scan_object._experiment_id
-        self._filename = _folder + _id
+        from pathlib import Path
+        self._filename = str(Path(scan_object.experiment_name) / scan_object._experiment_id)
 
     def run_updates(self):
 
@@ -28,7 +27,8 @@ class GamifyMap:
                     value = self.params[label][int(val)]
 
                     self.gamify_dict[key][val] = self.updated_dict[key][val]
-                    self.scan_object.param_object.remove_is(label, value)
+                    if self.updated_dict[key][val][0] == 'disabled':
+                        self.scan_object.param_object.remove_is(label, value)
 
         return self.scan_object
 
@@ -78,8 +78,13 @@ class GamifyMap:
 
         import json
 
-        with open(self._filename + '.json', 'w') as fp:
+        from pathlib import Path
+        path = Path(self._filename + '.json')
+        path.parent.mkdir(parents=True, exist_ok=True)
+        temporary = path.with_suffix('.json.tmp')
+        with temporary.open('w') as fp:
             json.dump(self.gamify_dict, fp)
+        temporary.replace(path)
 
     def import_json(self):
 

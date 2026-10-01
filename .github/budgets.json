@@ -1,0 +1,302 @@
+{
+  "schema_version": 1,
+  "typing": {
+    "patterns": {
+      "any_annotation": {
+        "pattern": ":\\s*Any\\b",
+        "total": 100
+      },
+      "any_return": {
+        "pattern": "->\\s*Any\\b",
+        "total": 9
+      },
+      "any_import": {
+        "pattern": "from typing import[^\\n]*\\bAny\\b",
+        "total": 38
+      },
+      "cast_any": {
+        "pattern": "cast\\([^)]*\\bAny\\b",
+        "total": 10
+      },
+      "dict_any": {
+        "pattern": "dict\\[[^]]*\\bAny\\b",
+        "total": 201
+      },
+      "list_any": {
+        "pattern": "list\\[\\s*Any\\b",
+        "total": 14
+      },
+      "tuple_any": {
+        "pattern": "tuple\\[[^]]*\\bAny\\b",
+        "total": 16
+      },
+      "type_ignore": {
+        "pattern": "#\\s*type:\\s*ignore",
+        "total": 0
+      },
+      "pyright_ignore": {
+        "pattern": "#\\s*pyright:\\s*ignore",
+        "total": 0
+      },
+      "noqa": {
+        "pattern": "#\\s*noqa",
+        "total": 2
+      }
+    },
+    "any_references": {
+      "total": 356
+    },
+    "pyright_errors": {
+      "total": 9662
+    },
+    "pyright_warnings": {
+      "total": 39
+    }
+  },
+  "fail_loud": {
+    "categories": {
+      "bare_except": {
+        "total": 0
+      },
+      "empty_pass": {
+        "total": 3
+      },
+      "empty_ellipsis": {
+        "total": 0
+      },
+      "empty_return_none": {
+        "total": 0
+      },
+      "empty_continue_break": {
+        "total": 4
+      },
+      "contextlib_suppress": {
+        "total": 0
+      },
+      "errors_ignore_kwarg": {
+        "total": 4
+      }
+    }
+  },
+  "modules": {
+    "talos/__init__.py": 31,
+    "talos/__main__.py": 10,
+    "talos/_optional.py": 13,
+    "talos/autom8/__init__.py": 10,
+    "talos/autom8/automodel.py": 93,
+    "talos/autom8/autoparams.py": 209,
+    "talos/autom8/autopredict.py": 18,
+    "talos/autom8/autoscan.py": 34,
+    "talos/backends/__init__.py": 10,
+    "talos/backends/adapters.py": 335,
+    "talos/calibration/__init__.py": 14,
+    "talos/calibration/pipeline.py": 80,
+    "talos/calibration/probability.py": 30,
+    "talos/calibration/threshold.py": 66,
+    "talos/callbacks/__init__.py": 10,
+    "talos/callbacks/experiment_log.py": 44,
+    "talos/callbacks/power_draw.py": 25,
+    "talos/callbacks/training_plot.py": 22,
+    "talos/cli/__init__.py": 10,
+    "talos/cli/commands/__init__.py": 10,
+    "talos/cli/commands/_constants.py": 10,
+    "talos/cli/commands/_load_yaml.py": 35,
+    "talos/cli/commands/backup.py": 78,
+    "talos/cli/commands/commit.py": 71,
+    "talos/cli/commands/fork.py": 72,
+    "talos/cli/commands/init.py": 98,
+    "talos/cli/commands/lineage.py": 63,
+    "talos/cli/commands/list_templates.py": 18,
+    "talos/cli/commands/ls.py": 47,
+    "talos/cli/commands/new.py": 92,
+    "talos/cli/commands/profile.py": 109,
+    "talos/cli/commands/reindex.py": 21,
+    "talos/cli/commands/resume.py": 36,
+    "talos/cli/commands/run.py": 52,
+    "talos/cli/commands/validate.py": 14,
+    "talos/cli/git_utils.py": 111,
+    "talos/cli/main.py": 339,
+    "talos/cohort/__init__.py": 10,
+    "talos/cohort/cohort.py": 102,
+    "talos/cohort/sfc/__init__.py": 10,
+    "talos/cohort/sfc/all.py": 10,
+    "talos/cohort/sfc/diverse_metrics.py": 179,
+    "talos/cohort/sfc/pareto.py": 102,
+    "talos/cohort/sfc/top_n.py": 68,
+    "talos/commands/__init__.py": 10,
+    "talos/commands/analyze.py": 118,
+    "talos/commands/deploy.py": 116,
+    "talos/commands/evaluate.py": 76,
+    "talos/commands/predict.py": 27,
+    "talos/commands/restore.py": 64,
+    "talos/experiment/__init__.py": 10,
+    "talos/experiment/artifacts.py": 43,
+    "talos/experiment/checkpoint_manager.py": 219,
+    "talos/experiment/context.py": 10,
+    "talos/experiment/errors.py": 10,
+    "talos/experiment/experiment_core.py": 26,
+    "talos/experiment/feedback_controller.py": 317,
+    "talos/experiment/log_projection.py": 106,
+    "talos/experiment/manifest_core.py": 461,
+    "talos/experiment/msq.py": 381,
+    "talos/experiment/param_domain.py": 199,
+    "talos/experiment/param_search/__init__.py": 12,
+    "talos/experiment/param_search/grid_strategy.py": 119,
+    "talos/experiment/param_search/legacy_strategy.py": 72,
+    "talos/experiment/param_search/random_strategy.py": 59,
+    "talos/experiment/param_search/registry.py": 10,
+    "talos/experiment/param_search/search_strategy.py": 127,
+    "talos/experiment/provenance.py": 78,
+    "talos/experiment/reducer/__init__.py": 30,
+    "talos/experiment/reducer/budget_reducer.py": 221,
+    "talos/experiment/reducer/correlation_analysis.py": 142,
+    "talos/experiment/reducer/correlation_reducer.py": 248,
+    "talos/experiment/reducer/filter_types.py": 53,
+    "talos/experiment/reducer/focus_reducer.py": 317,
+    "talos/experiment/reducer/pruning_strategy.py": 49,
+    "talos/experiment/reducer/registry.py": 13,
+    "talos/experiment/reducer/sanity_reducer.py": 178,
+    "talos/experiment/reducer/saturation_reducer.py": 132,
+    "talos/experiment/runner.py": 714,
+    "talos/experiment/serialization.py": 203,
+    "talos/experiment/source_snapshot.py": 275,
+    "talos/inference/__init__.py": 10,
+    "talos/inference/errors.py": 10,
+    "talos/inference/params.py": 13,
+    "talos/inference/sensor.py": 68,
+    "talos/inference/trainer.py": 82,
+    "talos/log/__init__.py": 10,
+    "talos/log/_experiment_parameter_correlation.py": 151,
+    "talos/log/_read_from_file.py": 31,
+    "talos/log/log.py": 150,
+    "talos/logging/__init__.py": 10,
+    "talos/logging/logging_finish.py": 10,
+    "talos/logging/logging_run.py": 22,
+    "talos/logging/results.py": 30,
+    "talos/metrics/__init__.py": 10,
+    "talos/metrics/balanced_metric.py": 27,
+    "talos/metrics/binary_metrics.py": 44,
+    "talos/metrics/continuous_metrics.py": 41,
+    "talos/metrics/entropy.py": 10,
+    "talos/metrics/keras_metrics.py": 157,
+    "talos/metrics/multiclass_metrics.py": 33,
+    "talos/metrics/safe_ovr_auc.py": 41,
+    "talos/model/__init__.py": 10,
+    "talos/model/early_stopper.py": 20,
+    "talos/model/hidden_layers.py": 39,
+    "talos/model/ingest_model.py": 10,
+    "talos/model/network_shape.py": 46,
+    "talos/model/normalizers.py": 10,
+    "talos/model/output_layer.py": 17,
+    "talos/parameters/DistributeParamSpace.py": 30,
+    "talos/parameters/ParamSpace.py": 102,
+    "talos/parameters/__init__.py": 10,
+    "talos/preparation/__init__.py": 10,
+    "talos/preparation/random_slice.py": 31,
+    "talos/preparation/splits.py": 120,
+    "talos/reducers/GamifyMap.py": 66,
+    "talos/reducers/__init__.py": 10,
+    "talos/reducers/correlation.py": 17,
+    "talos/reducers/forrest.py": 10,
+    "talos/reducers/gamify.py": 13,
+    "talos/reducers/limit_by_metric.py": 13,
+    "talos/reducers/local_strategy.py": 195,
+    "talos/reducers/reduce_run.py": 62,
+    "talos/reducers/reduce_utils.py": 50,
+    "talos/reducers/sample_reducer.py": 64,
+    "talos/reducers/trees.py": 30,
+    "talos/scalers/__init__.py": 14,
+    "talos/scalers/causal_rolling_robust_scaler.py": 96,
+    "talos/scalers/linear_scaler.py": 114,
+    "talos/scalers/logreg_scaler.py": 10,
+    "talos/scalers/rank_gauss_scaler.py": 88,
+    "talos/scalers/registry.py": 12,
+    "talos/scalers/robust_scaler.py": 67,
+    "talos/scan/Scan.py": 71,
+    "talos/scan/__init__.py": 10,
+    "talos/scan/scan_addon.py": 10,
+    "talos/scan/scan_utils.py": 19,
+    "talos/sfd/__init__.py": 10,
+    "talos/sfd/templates/__init__.py": 10,
+    "talos/sfd/templates/keras.py": 34,
+    "talos/sfd/templates/pytorch.py": 41,
+    "talos/sfd/templates/tf_keras.py": 34,
+    "talos/templates/__init__.py": 10,
+    "talos/templates/datasets.py": 120,
+    "talos/templates/models.py": 108,
+    "talos/templates/params.py": 60,
+    "talos/templates/pipelines.py": 14,
+    "talos/transforms/__init__.py": 12,
+    "talos/transforms/mad_transform.py": 23,
+    "talos/transforms/quantile_trim_transform.py": 28,
+    "talos/transforms/shift_column_transform.py": 14,
+    "talos/transforms/winsorize_transform.py": 25,
+    "talos/transforms/zscore_transform.py": 26,
+    "talos/utils/__init__.py": 28,
+    "talos/utils/best_model.py": 36,
+    "talos/utils/exceptions.py": 10,
+    "talos/utils/generator.py": 13,
+    "talos/utils/gpu_utils.py": 43,
+    "talos/utils/load_model.py": 12,
+    "talos/utils/power_draw_append.py": 17,
+    "talos/utils/recover_best_model.py": 53,
+    "talos/utils/rescale_meanzero.py": 10,
+    "talos/utils/sequence_generator.py": 22,
+    "talos/utils/test_utils.py": 12,
+    "talos/utils/torch_history.py": 20,
+    "talos/utils/validation_split.py": 46,
+    "talos/yaml/__init__.py": 10,
+    "talos/yaml/compiler.py": 141,
+    "talos/yaml/config.py": 95,
+    "talos/yaml/errors.py": 29,
+    "talos/yaml/parser.py": 53,
+    "talos/yaml/profiler.py": 136,
+    "talos/yaml/resolver.py": 84,
+    "talos/yaml/schema.py": 10,
+    "talos/yaml/store.py": 339,
+    "talos/yaml/validator.py": 60,
+    "governance/__init__.py": 10,
+    "governance/_common.py": 348,
+    "governance/bootstrap_repository.py": 576,
+    "governance/cc_gate.py": 299,
+    "governance/check_budget_ratchet.py": 107,
+    "governance/check_coverage_floor.py": 118,
+    "governance/check_coverage_ratchet.py": 110,
+    "governance/check_dependency_vulnerabilities.py": 118,
+    "governance/check_diff_coverage.py": 94,
+    "governance/check_docstrings.py": 81,
+    "governance/check_file_size_balance.py": 78,
+    "governance/check_module_budgets.py": 69,
+    "governance/check_module_docstrings.py": 118,
+    "governance/check_no_swallowed_violations.py": 104,
+    "governance/check_test_code_ratio.py": 51,
+    "governance/check_test_fallbacks.py": 62,
+    "governance/check_test_runtime.py": 173,
+    "governance/closeout_evidence.py": 113,
+    "governance/fail_loud_gate.py": 382,
+    "governance/privileged_ruleset_audit.py": 114,
+    "governance/pytest_runtime.py": 45,
+    "governance/ruleset_gate.py": 186,
+    "governance/slice_gate.py": 769,
+    "governance/typing_gate.py": 748,
+    "governance/version_gate.py": 374,
+    "governance/check_quality_debt.py": 51,
+    "governance/_quality.py": 134,
+    "governance/comparison_ref.py": 12
+  },
+  "coverage": {
+    "line": 67,
+    "branch": 56
+  },
+  "runtime": {
+    "max_total_seconds": 234,
+    "baseline": {
+      "note": "CPU-only maintained Talos suite, isolated Python3.12.12 core/plots/samplers/dev; 137passed22frameworkskips. Framework lanes remain separately required by ci.yml. One measured sample; 60seconds headroom.",
+      "workflow": "pr_checks_tests",
+      "job": "pr_checks_tests",
+      "sample_count": 1,
+      "observed_max_seconds": 173.7890729579958,
+      "headroom_seconds": 60.21092704200419
+    }
+  }
+}

@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Private security advisory
+    url: https://github.com/autonomio/talos/security/advisories/new
+    about: Report vulnerabilities privately.
