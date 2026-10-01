@@ -1,0 +1,2 @@
+# Compile the canonical developer extra and the maintained core-test helpers.
+.[dev,plots,samplers]

@@ -565,6 +565,139 @@
       "legacySlugs": [
         "/Workflow"
       ]
+    },
+    {
+      "source": "AGENTS.md",
+      "dest": "developer/agent-entrypoint.md",
+      "slug": "/developer/agent-entrypoint",
+      "sidebarPosition": 57,
+      "sidebarLabel": "Agent entrypoint"
+    },
+    {
+      "source": "CLAUDE.md",
+      "dest": "developer/contributor-constitution.md",
+      "slug": "/developer/contributor-constitution",
+      "sidebarPosition": 58,
+      "sidebarLabel": "Contributor constitution"
+    },
+    {
+      "source": "GOVERNANCE.md",
+      "dest": "developer/governance.md",
+      "slug": "/developer/governance",
+      "sidebarPosition": 59,
+      "sidebarLabel": "Governance"
+    },
+    {
+      "source": "MAINTAINERS.md",
+      "dest": "developer/maintainers.md",
+      "slug": "/developer/maintainers",
+      "sidebarPosition": 60,
+      "sidebarLabel": "Maintainers"
+    },
+    {
+      "source": "SECURITY.md",
+      "dest": "reference/security.md",
+      "slug": "/reference/security",
+      "sidebarPosition": 61,
+      "sidebarLabel": "Security"
+    },
+    {
+      "source": "SUPPORT.md",
+      "dest": "guides/support.md",
+      "slug": "/guides/support",
+      "sidebarPosition": 62,
+      "sidebarLabel": "Support"
+    },
+    {
+      "source": "SETUP.md",
+      "dest": "developer/repository-setup.md",
+      "slug": "/developer/repository-setup",
+      "sidebarPosition": 63,
+      "sidebarLabel": "Repository setup"
+    },
+    {
+      "source": "AUTONOMIO_PR_GUIDELINE.md",
+      "dest": "developer/pr-guideline.md",
+      "slug": "/developer/pr-guideline",
+      "sidebarPosition": 64,
+      "sidebarLabel": "PR guideline"
+    },
+    {
+      "source": "TALOS_REPO_SPECIFICS.md",
+      "dest": "developer/repository-specifics.md",
+      "slug": "/developer/repository-specifics",
+      "sidebarPosition": 65,
+      "sidebarLabel": "Talos repository specifics"
+    },
+    {
+      "source": "THIRD_PARTY.md",
+      "dest": "reference/third-party.md",
+      "slug": "/reference/third-party",
+      "sidebarPosition": 66,
+      "sidebarLabel": "Third-party ownership"
+    },
+    {
+      "source": "CHANGELOG.md",
+      "dest": "overview/changelog.md",
+      "slug": "/overview/changelog",
+      "sidebarPosition": 67,
+      "sidebarLabel": "Changelog"
+    },
+    {
+      "source": "docs/Developer/Configuration.md",
+      "dest": "developer/configuration.md",
+      "slug": "/developer/configuration",
+      "sidebarPosition": 68,
+      "sidebarLabel": "Configuration"
+    },
+    {
+      "source": "docs/Developer/Making-Release.md",
+      "dest": "developer/making-release.md",
+      "slug": "/developer/making-release",
+      "sidebarPosition": 69,
+      "sidebarLabel": "Making Release"
+    },
+    {
+      "source": "docs/Developer/Packaging.md",
+      "dest": "developer/packaging.md",
+      "slug": "/developer/packaging",
+      "sidebarPosition": 70,
+      "sidebarLabel": "Packaging"
+    },
+    {
+      "source": "docs/Developer/Release-Policy.md",
+      "dest": "developer/release-policy.md",
+      "slug": "/developer/release-policy",
+      "sidebarPosition": 71,
+      "sidebarLabel": "Release Policy"
+    },
+    {
+      "source": "docs/Developer/Security-Assurance-Case.md",
+      "dest": "developer/security-assurance-case.md",
+      "slug": "/developer/security-assurance-case",
+      "sidebarPosition": 72,
+      "sidebarLabel": "Security Assurance Case"
+    },
+    {
+      "source": "docs/Developer/Semantic-Versioning.md",
+      "dest": "developer/semantic-versioning.md",
+      "slug": "/developer/semantic-versioning",
+      "sidebarPosition": 73,
+      "sidebarLabel": "Semantic Versioning"
+    },
+    {
+      "source": "docs/Developer/Technical-Debt.md",
+      "dest": "developer/technical-debt.md",
+      "slug": "/developer/technical-debt",
+      "sidebarPosition": 74,
+      "sidebarLabel": "Technical Debt"
+    },
+    {
+      "source": "docs/Developer/Writing-Docstrings.md",
+      "dest": "developer/writing-docstrings.md",
+      "slug": "/developer/writing-docstrings",
+      "sidebarPosition": 75,
+      "sidebarLabel": "Writing Docstrings"
     }
   ]
 }

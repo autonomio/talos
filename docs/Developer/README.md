@@ -20,6 +20,14 @@ checkout and test commands. Documentation-site work additionally needs Node.js
 | Author or restructure documentation | [Documentation system](Documentation-System.md) | Source-backed prose, exhaustive routes, runnable examples and full site checks |
 | Change visual treatment | [Documentation style](Documentation-Style.md) | Measured desktop/mobile previews, keyboard access, light/dark contrast |
 | Build and inspect the documentation site | [Site operation](../../docs-site/README.md) | Locked installation, audit, build, local search and browser proof |
+| Inspect merge contracts and gate settings | [Configuration](Configuration.md) | Law/configuration/snapshot agreement and measured ratchets |
+| Assess supply-chain and trust boundaries | [Security assurance case](Security-Assurance-Case.md) | Exact candidate, audit, artifact and live-setting evidence |
+| Inspect distributions | [Packaging](Packaging.md) | Reproducible builds, complete source archive and installed-wheel checks |
+| Prepare an authorized release | [Making a release](Making-Release.md) | Reviewed version, matching notes, explicit release and provenance |
+| Choose the compatibility bump | [Semantic versioning](Semantic-Versioning.md) | Python/CLI/schema/archive impact and matching metadata |
+| Change public documentation strings | [Writing docstrings](Writing-Docstrings.md) | Caller meaning and no new measured debt |
+| Review accepted limitations | [Technical debt](Technical-Debt.md) | Current evidence and explicit repair conditions |
+| Activate external governance | [Repository setup](../../SETUP.md) | Installed live protection, least-privilege audit and release setup |
 | Participate in the project | [Code of conduct](../../CODE_OF_CONDUCT.md) | The stated community expectations |
 
 ## Review boundary

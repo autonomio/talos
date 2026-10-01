@@ -1,6 +1,6 @@
 # Contributing to Talos
 
-Work on a branch and submit a reviewed pull request. Preserve working public Talos interfaces and use one executor for legacy Python, SFD and CLI behavior.
+Read [CLAUDE.md](CLAUDE.md) and [Talos repository specifics](TALOS_REPO_SPECIFICS.md). Work on a branch and submit a reviewed pull request when the task authorizes one. Preserve working public Talos interfaces and use one executor for legacy Python, SFD and CLI behavior.
 
 ## Verification
 
@@ -27,3 +27,11 @@ Update documentation with behavior changes. The migration guide identifies corre
 Talos and Limen evolve independently. Generic infrastructure copied from Limen is owned here; preserve the MIT attribution in NOTICE. Keep finance, built-in experiment readers and indicator catalogs out of the Talos core. Do not add automatic data acquisition to the execution path.
 
 Publishing requires a reviewed release and the configured PyPI trusted publisher/environment. The release workflow runs acceptance tests before building and publishing. No development task should merge or publish implicitly.
+
+## Governance checks
+
+Install the pinned toolchains in `requirements/ci/` using their hash-locked files. For the complete local contributor environment, use `pip install -e '.[dev,plots,samplers,tensorflow,torch]'`. Run `python governance/check_quality_debt.py` for the strict quality ratchet; the basic Ruff command above remains a compatibility check. Run `python -m pytest governance/tests -q` for repository contracts. The lint workflow enumerates the current scanners, measured debt ratchets, coverage and runtime checks; [Configuration](docs/Developer/Configuration.md) explains their settings. Test authoring may generate parser inputs; training evidence uses the real fixtures specified above.
+
+A normal human-authored PR closes one open slice issue, matches its title and declared surfaces, advances the Hatch version in `talos/__init__.py` and adds a matching changelog section. The parent PRD closes with the slice only when it is the final open sub-issue. Dependency-bot exemptions are explicit in `governance.yml`.
+
+Review against [.github/copilot-instructions.md](.github/copilot-instructions.md). Separate local test results from live CI and branch-protection status. [SETUP.md](SETUP.md) records activation of external controls; [Packaging](docs/Developer/Packaging.md) and [Release policy](docs/Developer/Release-Policy.md) define distribution and publication evidence.

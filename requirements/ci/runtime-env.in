@@ -1,0 +1,2 @@
+# Compile declared core dependencies and the maintained pure-core test helpers.
+.[plots,samplers]

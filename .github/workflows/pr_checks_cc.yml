@@ -1,0 +1,98 @@
+name: pr_checks_cc
+
+# Mechanical Conventional Commits gate. The deterministic rules (PR title,
+# commit messages, linked-issue title, allowed types, and the AI/LLM
+# attribution scan) are defined once, in governance/cc_gate.py's module
+# docstring (the single source); this workflow only runs it. No graceful
+# skip, no optional mode, no bypass flag.
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+  # NOTE: no merge_group trigger. The merge_group event payload does
+  # not carry github.event.pull_request.* fields, and this workflow
+  # reads `pull_request.number`, `base_ref`, and `pull_request.head.sha`.
+  # Re-enabling merge_group requires a dedicated path that derives
+  # those values from the merge-group payload.
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+jobs:
+  pr_checks_cc:
+    name: pr_checks_cc
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: ${{ github.event_name == 'pull_request' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0  # need full history for git log base..head
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Install gate toolchain
+        run: pip install --require-hashes -r requirements/ci/gate-tools.txt
+
+      - name: Fetch PR title and body
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          if [ -z "$PR_NUMBER" ]; then
+            echo "::error::this workflow only runs on pull_request events that carry a PR number"
+            exit 1
+          fi
+          # Single gh call; split with jq. Avoids redundant API round-trips.
+          gh pr view "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --json title,body > pr_view.json
+          jq -r '.title' pr_view.json > pr_title.txt
+          jq -r '.body // ""' pr_view.json > pr_body.txt
+          echo "PR #$PR_NUMBER title: $(cat pr_title.txt)"
+
+      - name: Resolve base and head refs
+        id: refs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          BASE_REF="origin/${{ github.base_ref }}"
+          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
+          git -c "http.https://github.com/.extraheader=$AUTH" fetch origin "${{ github.base_ref }}"
+          git rev-parse --verify "$BASE_REF" >/dev/null
+          HEAD_REF="${{ github.event.pull_request.head.sha }}"
+          git rev-parse --verify "$HEAD_REF" >/dev/null
+          echo "base=$BASE_REF" >> "$GITHUB_OUTPUT"
+          echo "head=$HEAD_REF" >> "$GITHUB_OUTPUT"
+          echo "base: $BASE_REF"
+          echo "head: $HEAD_REF"
+          echo "commits in range:"
+          git log --oneline "$BASE_REF..$HEAD_REF" || true
+
+      - name: Run CC gate
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          PR_TITLE=$(cat pr_title.txt)
+          python governance/cc_gate.py \
+            --pr-title "$PR_TITLE" \
+            --pr-body-file pr_body.txt \
+            --base-ref "${{ steps.refs.outputs.base }}" \
+            --head-ref "${{ steps.refs.outputs.head }}" \
+            --repo "${{ github.repository }}"

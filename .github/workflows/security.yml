@@ -12,30 +12,25 @@ jobs:
         include:
           - lane: core
             python: '3.10'
-            extras: ''
+            lock: core-3.10.txt
           - lane: current-frameworks
             python: '3.12'
-            extras: '[tensorflow,keras,torch]'
+            lock: documentation-3.12.txt
           - lane: minimum-frameworks
             python: '3.11'
-            extras: '[tensorflow,keras,torch]'
-            minimum: true
+            lock: minimum-3.11.txt
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
         with:
           python-version: ${{ matrix.python }}
-      - name: Install current supported dependencies
-        if: ${{ !matrix.minimum }}
-        run: python -m pip install '.${{ matrix.extras }}' pip-audit
-      - name: Install supported minimum frameworks
-        if: ${{ matrix.minimum }}
-        run: >-
-          python -m pip install '.${{ matrix.extras }}' pip-audit
-          'tensorflow==2.20.0' 'keras==3.15.0' 'torch==2.13.0'
-          'protobuf==6.33.5' 'numpy==1.26.4' 'scikit-learn==1.5.0'
-      - run: pip-audit --strict --format json --output audit.json
-      - uses: actions/upload-artifact@v4
+      - name: Install the hash-locked audit lane
+        run: python -m pip install --require-hashes -r requirements/ci/${{ matrix.lock }}
+      - name: Audit supported locked dependencies
+        run: pip-audit --strict --require-hashes -r requirements/ci/${{ matrix.lock }} --format json --output audit.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         if: always()
         with:
           name: dependency-audit-${{ matrix.lane }}
@@ -44,14 +39,16 @@ jobs:
     name: Legacy TensorFlow compatibility advisory report
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
         with:
           python-version: '3.11'
-      - run: python -m pip install '.[legacy-tensorflow]' pip-audit
+      - run: python -m pip install --require-hashes -r requirements/ci/legacy-3.11.txt
       - name: Record legacy upstream advisories
         continue-on-error: true
-        run: pip-audit --strict --format json --output legacy-audit.json
+        run: pip-audit --strict --require-hashes -r requirements/ci/legacy-3.11.txt --format json --output legacy-audit.json
       - name: Summarize compatibility-only findings
         if: always()
         run: |
@@ -66,7 +63,7 @@ jobs:
               if not findings:
                   summary.write('No known vulnerabilities found in this resolved legacy environment.\n')
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         if: always()
         with:
           name: dependency-audit-legacy-compatibility

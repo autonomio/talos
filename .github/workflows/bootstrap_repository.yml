@@ -1,0 +1,39 @@
+name: Configure Talos repository
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  bootstrap:
+    name: Configure reviewed repository controls
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: repository-administration
+    steps:
+      - name: Checkout the reviewed default branch
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          ref: master
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: '3.12'
+      - name: Apply declared labels and master protection
+        env:
+          GH_TOKEN: ${{ secrets.REPO_BOOTSTRAP_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "::error::REPO_BOOTSTRAP_TOKEN is required for explicit repository administration."
+            exit 1
+          fi
+          python scripts/configure_repository.py --repo "$GITHUB_REPOSITORY" --apply

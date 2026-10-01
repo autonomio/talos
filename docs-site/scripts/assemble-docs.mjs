@@ -124,7 +124,10 @@ export function validateProfile(profileValue) {
 }
 
 export function maintainedMarkdownSources(root = repoRoot) {
-  const sources = ['README.md', 'CONTRIBUTING.md', 'CODE_OF_CONDUCT.md', 'talos/README.md', 'docs-site/README.md'];
+  const sources = fsSync.readdirSync(root, {withFileTypes: true})
+    .filter((entry) => entry.isFile() && entry.name.endsWith('.md'))
+    .map((entry) => entry.name);
+  sources.push('talos/README.md', 'docs-site/README.md');
   function collect(directory) {
     for (const entry of fsSync.readdirSync(directory, {withFileTypes: true})) {
       const entryPath = path.resolve(directory, entry.name);

@@ -1,8 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 
 import {
   normalizeForMdx,
+  maintainedMarkdownSources,
   rewriteOutsideCode,
   validateDocuments,
   validateInventory,
@@ -296,4 +300,18 @@ test('Markdown autolinks remain links in MDX without changing fenced examples', 
   assert.match(output, /\[contact@example.com\]\(mailto:contact@example.com\)/);
   assert.match(output, /\[https:\/\/example.com\]\(https:\/\/example.com\)/);
   assert.match(output, /```text\n<contact@example.com>\n```/);
+});
+
+
+test('new repository contracts enter the maintained inventory automatically', (t) => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'talos-doc-inventory-'));
+  t.after(() => fs.rmSync(root, {recursive: true, force: true}));
+  fs.mkdirSync(path.join(root, 'docs', 'Developer'), {recursive: true});
+  fs.writeFileSync(path.join(root, 'README.md'), '# Talos\n');
+  fs.writeFileSync(path.join(root, 'GOVERNANCE.md'), '# Governance\n');
+  fs.writeFileSync(path.join(root, 'docs', 'Developer', 'Configuration.md'), '# Configuration\n');
+  const sources = maintainedMarkdownSources(root);
+  assert.ok(sources.includes('GOVERNANCE.md'));
+  assert.ok(sources.includes('docs/Developer/Configuration.md'));
+  assert.throws(() => validateInventory([{source: 'README.md'}], sources), /GOVERNANCE.md/);
 });

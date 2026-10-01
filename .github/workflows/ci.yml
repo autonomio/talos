@@ -8,23 +8,33 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ['3.10', '3.11', '3.12', '3.13']
+        include:
+          - python: '3.10'
+            lock: core-3.10.txt
+          - python: '3.11'
+            lock: core-3.11.txt
+          - python: '3.12'
+            lock: core-3.12.txt
+          - python: '3.13'
+            lock: core-3.13.txt
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
         with:
           python-version: ${{ matrix.python }}
-      - run: python -m pip install '.[test,plots,samplers]'
+      - run: python -m pip install --require-hashes -r requirements/ci/${{ matrix.lock }}
+      - run: python -m pip install --no-build-isolation --no-deps -e .
       - run: ruff check talos tests/test_*.py
       - run: coverage run -m pytest -q
       - run: coverage report
-      - run: python -m build
+      - run: python -m build --no-isolation
       - name: Verify installed wheel outside the checkout
         run: |
           python -m venv /tmp/talos-wheel
-          for wheel in dist/*.whl; do
-            /tmp/talos-wheel/bin/pip install "${wheel}[test,plots,samplers]"
-          done
+          /tmp/talos-wheel/bin/python -m pip install --require-hashes -r requirements/ci/${{ matrix.lock }}
+          /tmp/talos-wheel/bin/python -m pip install --no-deps dist/*.whl
           mkdir -p /tmp/talos-wheel-tests/tests /tmp/talos-wheel-tests/examples/sfd /tmp/talos-wheel-tests/talos/sfd/templates
           cp tests/__init__.py tests/test_*.py /tmp/talos-wheel-tests/tests/
           cp examples/sfd/*.py /tmp/talos-wheel-tests/examples/sfd/
@@ -34,7 +44,7 @@ jobs:
           /tmp/talos-wheel/bin/talos --help
           cd /tmp/talos-wheel-tests
           /tmp/talos-wheel/bin/python -m pytest -q --import-mode=importlib tests
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
           name: distribution-${{ matrix.python }}
           path: dist/*
@@ -45,35 +55,30 @@ jobs:
       matrix:
         include:
           - python: '3.11'
-            extras: 'legacy-tensorflow'
+            lock: legacy-3.11.txt
             keras_backend: tensorflow
           - python: '3.12'
-            extras: 'tensorflow,keras'
+            lock: tensorflow-3.12.txt
             keras_backend: tensorflow
           - python: '3.12'
-            extras: 'torch,keras'
+            lock: torch-keras-3.12.txt
             keras_backend: torch
           - python: '3.11'
-            extras: 'tensorflow,keras,torch'
+            lock: minimum-3.11.txt
             keras_backend: tensorflow
-            minimum: true
     env:
       KERAS_BACKEND: ${{ matrix.keras_backend }}
       MPLBACKEND: Agg
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
         with:
           python-version: ${{ matrix.python }}
-      - name: Install current frameworks
-        if: ${{ !matrix.minimum }}
-        run: python -m pip install '.[test,plots,samplers,${{ matrix.extras }}]'
-      - name: Install supported minimum frameworks
-        if: ${{ matrix.minimum }}
-        run: >-
-          python -m pip install '.[test,plots,samplers,${{ matrix.extras }}]'
-          'tensorflow==2.20.0' 'keras==3.15.0' 'torch==2.13.0'
-          'protobuf==6.33.5' 'numpy==1.26.4' 'scikit-learn==1.5.0'
+      - name: Install the declared framework lane
+        run: python -m pip install --require-hashes -r requirements/ci/${{ matrix.lock }}
+      - run: python -m pip install --no-build-isolation --no-deps -e .
       - run: python -m pytest -q
 
   documentation:
@@ -88,12 +93,15 @@ jobs:
       OMP_NUM_THREADS: '1'
       MPLBACKEND: Agg
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
         with:
           python-version: '3.12'
-      - run: python -m pip install '.[tensorflow,keras,torch,plots,samplers,test]'
-      - uses: actions/setup-node@v4
+      - run: python -m pip install --require-hashes -r requirements/ci/documentation-3.12.txt
+      - run: python -m pip install --no-build-isolation --no-deps -e .
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38  # v6.5.0
         with:
           node-version: '22'
           cache: npm
@@ -101,12 +109,12 @@ jobs:
       - run: npm --prefix docs-site ci
       - run: npm --prefix docs-site exec -- playwright install --with-deps chromium
       - run: python tools/verify_documentation.py --output-dir verification-output
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         if: always()
         with:
           name: documentation-verification
           path: verification-output/
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         if: always()
         with:
           name: documentation-browser-proof

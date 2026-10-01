@@ -1,0 +1,50 @@
+name: Bug Report
+description: Report reproducible incorrect behavior.
+labels:
+  - bug
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: State the observed bug and expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: Provide the callback/parameter dictionary/Scan call or SFD/config/CLI command, real fixture origin, expected and actual output. Confirm the model also trains without Talos.
+      value: |
+        Command:
+        ```
+        ```
+
+        Expected:
+
+        Actual:
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: "Talos Version"
+      placeholder: "2.0.1 or commit SHA"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "Python 3.12; OS; Keras/TensorFlow/PyTorch versions and backend"
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Reproduction checks
+      options:
+        - label: I searched existing issues for the same behavior.
+          required: true
+        - label: I included a complete reproduction with shareable real data and removed secrets/private records.
+          required: true

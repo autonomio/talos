@@ -1,9 +1,10 @@
-Talos 2 incorporates and adapts general experiment infrastructure from Vaquum/Limen.
+Talos 2 incorporates and adapts general experiment infrastructure from Limen.
 Donor baseline: 724a4ebf7896f93ea0f8beaa3dc42a3f0b9a8a22 (2026-09-30).
 Limen upstream main was reviewed at 44eff3b244c80ce8473845bd60b074b3682fe441.
 Talos owns this fork independently; it has no runtime dependency on Limen.
 Documentation scaffold baseline: fa7bf92caab5bb8d7f73120d4dc3526fd86c0348.
-The following upstream MIT notice also covers the adopted documentation scaffold.
+Repository governance baseline: fa7bf92caab5bb8d7f73120d4dc3526fd86c0348.
+The following upstream MIT notice covers the adopted code and documentation.
 
 MIT License
 

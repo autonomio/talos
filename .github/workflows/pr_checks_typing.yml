@@ -1,0 +1,123 @@
+name: pr_checks_typing
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  merge_group:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  pr_checks_typing:
+    name: pr_checks_typing
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Install package and typing dependencies
+        run: |
+          python -m pip install --require-hashes -r requirements/ci/dev-env.txt
+          python -m pip install --require-hashes -r requirements/ci/runtime-env.txt
+          python -m pip install --require-hashes -r requirements/ci/build-tools.txt
+          python -m pip install --no-build-isolation --no-deps -e .
+
+      - name: Resolve base ref and fetch base-ref budget
+        id: base
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -n "${{ github.base_ref }}" ]; then
+            BASE_REV="origin/${{ github.base_ref }}"
+            AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
+            git -c "http.https://github.com/.extraheader=$AUTH" fetch origin "${{ github.base_ref }}" --depth=1
+          elif git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
+            BASE_REV="HEAD~1"
+          else
+            echo "mode=bootstrap" >> "$GITHUB_OUTPUT"
+            echo "::warning::initial repository commit has no parent; running typing gate in bootstrap mode."
+            exit 0
+          fi
+          echo "base rev: $BASE_REV"
+          git rev-parse --verify "$BASE_REV" >/dev/null
+          BASE_REV="$(python governance/comparison_ref.py --base-ref "$BASE_REV")"
+
+          git show "$BASE_REV:governance.yml" > base_governance.yml 2>/dev/null || true
+
+          if git show "$BASE_REV:.github/budgets.json" > base_budget.json 2>/dev/null; then
+            mode="compare"
+            echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          else
+            rm -f base_budget.json
+            CHANGED="$(git diff --name-only "$BASE_REV"...HEAD)"
+            if echo "$CHANGED" | grep -qx '.github/budgets.json'; then
+              echo "mode=bootstrap" >> "$GITHUB_OUTPUT"
+              echo "::warning::bootstrap commit: base ref has no budgets.json; HEAD introduces it."
+            else
+              echo "::error::base ref has no .github/budgets.json and this commit does not introduce it."
+              exit 1
+            fi
+          fi
+
+      - name: Run pyright strict (capture JSON)
+        run: |
+          set +e
+          pyright --outputjson > pyright_output.json
+          pyright_exit=$?
+          set -e
+          echo "pyright exit code: $pyright_exit"
+          python <<'PY'
+          import json, pathlib, sys
+          p = pathlib.Path('pyright_output.json')
+          if not p.exists() or p.stat().st_size == 0:
+              print('::error::pyright produced no output', file=sys.stderr)
+              sys.exit(2)
+          d = json.loads(p.read_text())
+          s = d.get('summary', {})
+          print(f"pyright: files={s.get('filesAnalyzed')} errors={s.get('errorCount')} warnings={s.get('warningCount')}")
+          PY
+
+      - name: Run typing gate
+        run: |
+          case "${{ steps.base.outputs.mode }}" in
+            compare)
+              python governance/typing_gate.py \
+                --pyright-json pyright_output.json \
+                --base-budget base_budget.json \
+                --base-config base_governance.yml
+              ;;
+            bootstrap)
+              python governance/typing_gate.py \
+                --pyright-json pyright_output.json \
+                --bootstrap
+              ;;
+            *)
+              echo "::error::base step did not set mode; refusing to run gate"
+              exit 2
+              ;;
+          esac
+
+      - name: Upload pyright output
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: pyright-output
+          path: pyright_output.json

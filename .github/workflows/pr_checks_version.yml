@@ -1,0 +1,125 @@
+name: pr_checks_version
+
+# Mechanical version + changelog gate. The deterministic rules are defined
+# once, in governance/version_gate.py's module docstring (the single source);
+# this workflow only runs it. "Whatever is changed must leave a trail and the
+# version must change." No graceful skip, no bypass flag.
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  pr_checks_version:
+    name: pr_checks_version
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: ${{ github.event_name == 'pull_request' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Install gate toolchain
+        # version_gate reads pyproject.toml. This repository is 3.12, where
+        # tomllib is stdlib, but a derived repository below 3.11 needs the
+        # tomli fallback this set pins -- and this job installed nothing.
+        run: python -m pip install --require-hashes -r requirements/ci/gate-tools.txt
+
+      - name: Extract PR title from event payload
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          set -euo pipefail
+          if [ -z "${PR_TITLE:-}" ]; then
+            echo "::error::github.event.pull_request.title is empty; this workflow only runs on pull_request events that carry a PR title"
+            exit 1
+          fi
+          # Read from the event payload rather than shelling out to
+          # `gh pr view` -- the title is already in the event context,
+          # so the extra API call (and its rate-limit / transient-
+          # failure surface) was unnecessary.
+          printf '%s' "$PR_TITLE" > pr_title.txt
+          echo "PR title: $PR_TITLE"
+
+      - name: Extract base + head artifacts
+        id: artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          BASE_REV="origin/${{ github.base_ref }}"
+          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
+          git -c "http.https://github.com/.extraheader=$AUTH" fetch origin "${{ github.base_ref }}" --depth=1
+          git rev-parse --verify "$BASE_REV" >/dev/null
+          BASE_REV="$(python governance/comparison_ref.py --base-ref "$BASE_REV")"
+
+          # Base artifacts must exist; if either is missing the gate
+          # cannot compare.
+          if ! git show "$BASE_REV:pyproject.toml" > base_pyproject.toml 2>/dev/null; then
+            echo "::error::base ref has no pyproject.toml; cannot run version gate"
+            exit 1
+          fi
+          if ! git show "$BASE_REV:CHANGELOG.md" > base_CHANGELOG.md 2>/dev/null; then
+            CHANGED="$(git diff --name-only "$BASE_REV"...HEAD)"
+            if echo "$CHANGED" | grep -qx 'CHANGELOG.md'; then
+              : > base_CHANGELOG.md
+              echo "::warning::bootstrap commit: base ref has no CHANGELOG.md; HEAD introduces it."
+            else
+              echo "::error::base ref has no CHANGELOG.md and this commit does not introduce it. Restore CHANGELOG.md before merging."
+              exit 1
+            fi
+          fi
+
+          # Head artifacts come from the checkout -- they must be
+          # present on the PR for the bump to be meaningful.
+          if [ ! -f pyproject.toml ]; then
+            echo "::error::head has no pyproject.toml"
+            exit 1
+          fi
+          if [ ! -f CHANGELOG.md ]; then
+            echo "::error::head has no CHANGELOG.md"
+            exit 1
+          fi
+          cp pyproject.toml head_pyproject.toml
+          cp CHANGELOG.md head_CHANGELOG.md
+
+          echo "base pyproject bytes:  $(wc -c < base_pyproject.toml)"
+          echo "head pyproject bytes:  $(wc -c < head_pyproject.toml)"
+          echo "base CHANGELOG bytes:  $(wc -c < base_CHANGELOG.md)"
+          echo "head CHANGELOG bytes:  $(wc -c < head_CHANGELOG.md)"
+
+          git show "$BASE_REV:talos/__init__.py" > base_version_source.py
+          cp talos/__init__.py head_version_source.py
+
+
+      - name: Run version gate
+        run: |
+          set -euo pipefail
+          PR_TITLE=$(cat pr_title.txt)
+          python governance/version_gate.py \
+            --pr-title "$PR_TITLE" \
+            --base-pyproject base_pyproject.toml \
+            --head-pyproject head_pyproject.toml \
+            --base-version-source base_version_source.py \
+            --head-version-source head_version_source.py \
+            --base-changelog base_CHANGELOG.md \
+            --head-changelog head_CHANGELOG.md \
+            --pr-author "${{ github.event.pull_request.user.login }}"

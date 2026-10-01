@@ -1,0 +1,223 @@
+# The repository's configuration, in one file.
+#
+# Read at run time by every gate through `governance/_common.py`. A gate that
+# cannot read it blocks rather than falling back to a default nobody asked for,
+# because a silently-defaulted gate is one that stopped checking what the
+# repository declared.
+#
+# This file carries SHAPE: what the repository is, where things live, which
+# gates run, and the policy numbers they enforce. Ratchets -- values that may
+# only move one way -- live in `.github/budgets.json`, so `check_budget_ratchet`
+# can tell a configuration edit from a budget raise.
+#
+# Adopting this template partially means setting `enabled: false` on the gates
+# you do not want. `pr_checks_honesty` then requires the enabled-and-required
+# gates, the laws in CLAUDE.md, and the required status checks on `master` to
+# agree exactly, and names both sides when they do not.
+#
+# One thing deliberately stays elsewhere: GitHub reads workflow YAML, which
+# cannot be pointed here, so `governance/tests/test_governance_config.py` fails
+# when that mirror disagrees with this file. Tool versions are NOT mirrored --
+# ruff and pyright are pinned in `pyproject.toml` alone, and everything else
+# derives from it, so a dependency bump has one file to find.
+schema_version: 2
+
+repository:
+  name: talos
+  description: Reproducible parameter sweeps for Keras, TensorFlow and PyTorch.
+
+adoption:
+  # Already completed core and documentation work; only used while the protected base lacks governance.
+  baseline_commit: 94dd00ff16f9b57d79ce5cb6324d776aab495ced
+
+# Where things live. Every gate that scans a tree resolves it from here rather
+# than hardcoding a path, so a repository that names its package differently
+# changes one line instead of five files.
+layout:
+  package_root: talos
+  test_paths:
+    - tests/test_*.py
+  gate_test_paths:
+    - governance/tests
+  coverage_source: talos
+  # Never scanned, by any gate. A gate's own `excludes` extend this rather
+  # than replace it, so no gate can accidentally re-include build output.
+  excludes:
+    - __pycache__
+    - build
+    - dist
+
+runtime:
+  python_version: "3.12"
+
+review:
+  approving_authority: mikkokotila
+
+slice:
+  label: slice
+  issue_template: .github/ISSUE_TEMPLATE/slice.yml
+  # A PR closes its slice, plus the parent PRD when the slice is the PRD's
+  # last open sub-issue. Nothing legitimate needs a third reference.
+  max_closing_references: 2
+
+commits:
+  types:
+    - feat
+    - fix
+    - docs
+    - style
+    - refactor
+    - perf
+    - test
+    - build
+    - ci
+    - chore
+    - revert
+
+changelog:
+  # A template carrying `{version}`. `## [{version}] - ` is the other common
+  # form; `newest` says which end of the file the new section sits at.
+  header: "# v{version}"
+  newest: first
+
+
+bootstrap:
+  timeout_minutes: 30
+  secrets:
+    bootstrap_token: REPO_BOOTSTRAP_TOKEN
+    ruleset_audit_token: RULESET_AUDIT_TOKEN
+  variables:
+    ruleset_id: RULESET_ID
+
+ruleset:
+  name: Protect-Master
+
+# Dependency updates arrive as pull requests opened by a bot. They close no
+# slice issue and bump no version, so laws 1 and 5 block every one of them
+# permanently -- the repository simply accumulates unmergeable pull requests
+# until a human hand-wraps each bump in a slice issue and a version bump. That
+# tax buys no reviewer anything: the diff is a version string someone else
+# already reviewed upstream, and the remaining nine laws still run.
+#
+# `exempt_gates` names the gates that step aside, and only for the authors in
+# `bot_authors`. Emptying either list holds bots to the same laws as anyone
+# else, which is the setting to choose if a repository would rather batch its
+# bumps by hand than let them merge unaccompanied.
+#
+# This cannot be widened by accident: a gate skips only when the author matches
+# AND the gate is named here, and both lists default to empty in code, so a
+# missing section enforces rather than exempts.
+automation:
+  bot_authors:
+    - dependabot[bot]
+  exempt_gates:
+    - slice
+    - version
+
+# The control surface.
+#
+#   enabled  -- does this gate run at all
+#   required -- is its check required on `master`, and therefore owed a law
+#
+# `enabled` appears only on gates with a Python entry point that can consult
+# it. The rest -- honesty, tests, codeql, package_install -- are the workflow
+# itself, so they are switched off by removing the workflow, which is what
+# `bootstrap_repository.disable_codeql` already does for CodeQL. A key that
+# could not be honoured would be exactly the dead control this file forbids.
+#
+# The two are separate because a gate can legitimately run without blocking:
+# packaging and the install matrix do exactly that today.
+gates:
+  slice:
+    enabled: true
+    required: true
+    context: pr_checks_slice
+  cc:
+    enabled: true
+    required: true
+    context: pr_checks_cc
+  typing:
+    enabled: true
+    required: true
+    context: pr_checks_typing
+  fail_loud:
+    enabled: true
+    required: true
+    context: pr_checks_fail_loud
+  version:
+    enabled: true
+    required: true
+    context: pr_checks_version
+  honesty:
+    required: true
+    context: pr_checks_honesty
+  ruleset:
+    enabled: true
+    required: true
+    context: pr_checks_ruleset
+  tests:
+    required: true
+    context: pr_checks_tests
+  codeql:
+    required: true
+    context: PR Checks CodeQL (python)
+
+  lint:
+    enabled: true
+    required: true
+    context: pr_checks_lint
+    # Each sub-check of the lint plane, individually switchable.
+    ruff: true
+    module_budgets: true
+    dead_code: true
+    dependency_vulnerabilities: true
+    no_swallowed_violations: true
+
+  packaging:
+    enabled: true
+    required: false
+    context: pr_checks_packaging
+    pyroma_min: 9
+  package_install:
+    # No context: the install matrix reports per interpreter, as
+    # `pr_checks_package_install (3.12)`, so a bare context could never match.
+    # It is advisory rather than required, so it is owed no law either.
+    required: false
+
+  module_docstrings:
+    enabled: true
+    excludes: []
+    # A module below this many significant lines is too small to hold a claim
+    # a docstring could add. 0 disables the rule.
+    exempt_below_significant_lines: 0
+    # A module exporting one public symbol named after the file can only
+    # repeat the filename, which the stance forbids.
+    exempt_filename_matching_single_symbol: false
+  docstrings:
+    enabled: true
+    forbidden_title_verbs:
+      - calculate
+      - generate
+      - make
+      - build
+  test_fallbacks:
+    enabled: true
+    excludes: []
+  test_code_ratio:
+    enabled: true
+    min: 0.2072265302755321
+    max: 2.00
+    min_source_sloc: 50
+  file_size_balance:
+    enabled: true
+    max_ratio: 15.894736842105264
+    min_files: 3
+  coverage:
+    enabled: true
+    diff_floor: 80.0
+    min_statements_for_track: 50
+    min_branches_for_track: 20
+    track_slack: 2
+  runtime_budget:
+    enabled: true
+    slowest_tests_limit: 10

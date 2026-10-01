@@ -1,0 +1,12 @@
+# Governance and supply-chain enforcement surfaces require an eligible non-author owner review.
+# The live ruleset must enable code-owner review; this file alone does not enforce it.
+/AGENTS.md @mikkokotila
+/CLAUDE.md @mikkokotila
+/AUTONOMIO_PR_GUIDELINE.md @mikkokotila
+/TALOS_REPO_SPECIFICS.md @mikkokotila
+/governance/ @mikkokotila
+/.github/ @mikkokotila
+/governance.yml @mikkokotila
+/pyproject.toml @mikkokotila
+/requirements/ @mikkokotila
+/scripts/ @mikkokotila

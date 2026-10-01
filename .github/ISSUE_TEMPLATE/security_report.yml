@@ -1,0 +1,19 @@
+name: Security Report
+description: Do not file public security reports here.
+labels:
+  - security
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not submit vulnerabilities through public issues.
+
+        Use GitHub Security Advisories instead:
+        https://github.com/autonomio/talos/security/advisories/new
+  - type: checkboxes
+    id: acknowledgement
+    attributes:
+      label: Acknowledgement
+      options:
+        - label: I understand vulnerabilities must be reported privately through GitHub Security Advisories.
+          required: true

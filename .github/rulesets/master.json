@@ -1,0 +1,97 @@
+{
+  "name": "Protect-Master",
+  "target": "branch",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "exclude": [],
+      "include": [
+        "refs/heads/master"
+      ]
+    }
+  },
+  "rules": [
+    {
+      "type": "deletion"
+    },
+    {
+      "type": "non_fast_forward"
+    },
+    {
+      "type": "pull_request",
+      "parameters": {
+        "required_approving_review_count": 1,
+        "dismiss_stale_reviews_on_push": false,
+        "required_reviewers": [],
+        "require_code_owner_review": true,
+        "require_extra_approval_for_unattributed_changes": true,
+        "require_last_push_approval": true,
+        "required_review_thread_resolution": true,
+        "allowed_merge_methods": [
+          "merge"
+        ],
+        "dismissal_restriction": {
+          "enabled": false,
+          "allowed_actors": []
+        }
+      }
+    },
+    {
+      "type": "required_status_checks",
+      "parameters": {
+        "strict_required_status_checks_policy": true,
+        "do_not_enforce_on_create": false,
+        "required_status_checks": [
+          {
+            "context": "PR Checks CodeQL (python)",
+            "integration_id": 15368
+          },
+          {
+            "context": "pr_checks_cc",
+            "integration_id": 15368
+          },
+          {
+            "context": "pr_checks_lint",
+            "integration_id": 15368
+          },
+          {
+            "context": "pr_checks_ruleset",
+            "integration_id": 15368
+          },
+          {
+            "context": "pr_checks_slice",
+            "integration_id": 15368
+          },
+          {
+            "context": "pr_checks_fail_loud",
+            "integration_id": 15368
+          },
+          {
+            "context": "pr_checks_typing",
+            "integration_id": 15368
+          },
+          {
+            "context": "pr_checks_version",
+            "integration_id": 15368
+          },
+          {
+            "context": "pr_checks_tests",
+            "integration_id": 15368
+          },
+          {
+            "context": "pr_checks_honesty",
+            "integration_id": 15368
+          }
+        ]
+      }
+    },
+    {
+      "type": "copilot_code_review",
+      "parameters": {
+        "review_on_push": true,
+        "review_draft_pull_requests": false
+      }
+    }
+  ],
+  "bypass_actors": []
+}

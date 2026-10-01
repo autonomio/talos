@@ -1,0 +1,8 @@
+# Gate-tools set: the YAML parser the slice gate and bootstrap read
+# issue templates with. Compiled to gate-tools.txt with hashes; CI
+# installs only the compiled set.
+pyyaml==6.0.2
+# tomllib is stdlib only from 3.11. The gates that read pyproject.toml
+# fall back to tomli, so a derived repository with a lower floor needs it
+# installed wherever a gate runs.
+tomli==2.4.1

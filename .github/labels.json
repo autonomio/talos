@@ -1,0 +1,42 @@
+[
+  {
+    "name": "slice",
+    "color": "0052CC",
+    "description": "One executable implementation scope and acceptance contract"
+  },
+  {
+    "name": "prd",
+    "color": "5319E7",
+    "description": "Parent product requirement and its implementation slices"
+  },
+  {
+    "name": "bug",
+    "color": "D73A4A",
+    "description": "Reproducible incorrect behavior"
+  },
+  {
+    "name": "enhancement",
+    "color": "A2EEEF",
+    "description": "New supported capability or public surface"
+  },
+  {
+    "name": "security",
+    "color": "B60205",
+    "description": "Security policy or private advisory follow-up"
+  },
+  {
+    "name": "support",
+    "color": "D4C5F9",
+    "description": "Usage, setup or documentation question"
+  },
+  {
+    "name": "incident",
+    "color": "B60205",
+    "description": "Operational or scientific correctness incident"
+  },
+  {
+    "name": "incident-open",
+    "color": "D93F0B",
+    "description": "Incident investigation in progress"
+  }
+]

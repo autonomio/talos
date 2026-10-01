@@ -1,0 +1,56 @@
+name: audit_master_ruleset
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit_master_ruleset:
+    name: audit_master_ruleset
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Set up audit venv
+        run: python -m venv .venv-ruleset-audit
+
+      - name: Audit live master ruleset with privileged token
+        env:
+          GH_TOKEN: ${{ secrets.RULESET_AUDIT_TOKEN }}
+          RULESET_ID: ${{ vars.RULESET_ID }}
+        run: |
+          set -euo pipefail
+          if [ -z "${RULESET_ID:-}" ]; then
+            echo "::error::RULESET_ID is required; apply the reviewed ruleset through manual setup."
+            exit 1
+          fi
+          if [ -z "${GH_TOKEN:-}" ]; then
+            echo "::error::RULESET_AUDIT_TOKEN is required for the privileged post-merge ruleset audit (it must be able to read bypass_actors)."
+            exit 1
+          fi
+          .venv-ruleset-audit/bin/python governance/privileged_ruleset_audit.py \
+            --ruleset-file .github/rulesets/master.json \
+            --repo "${{ github.repository }}" \
+            --ruleset-id "$RULESET_ID" \
+            --output-dir .ruleset-audit
+
+      - name: Upload compared live payload on failure
+        if: ${{ failure() && hashFiles('.ruleset-audit/*') != '' }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: audit-master-ruleset-live-payload
+          path: .ruleset-audit
