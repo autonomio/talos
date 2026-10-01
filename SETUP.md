@@ -4,13 +4,25 @@ Talos is an existing repository adopting governance tooling. Preserve its packag
 
 ## Current boundary
 
-The checked-in workflows, gate code and intended `master` ruleset are locally testable. At adoption, live Talos has no installed ruleset and no `RULESET_ID` variable. Existing classic protection covers administrators, force pushes and up-to-date branches; it has no required checks or reviews. Preserve those existing protections while activating the adopted policy. Local success is not live enforcement. An administrator must complete the steps below before relying on required checks, review protection or the post-merge audit.
+Governance is active on `master` as of 1 October 2026. Ruleset `24306812`
+matches the checked-in snapshot, requires all ten declared gates and an eligible
+non-author approval, and has no bypass actors. [PR 608](https://github.com/autonomio/talos/pull/608)
+merged as `9783406eafd0c9d72d00010aeffb379a534a5349` after approval from `bit-mis`.
+The integrated [CodeQL analysis](https://github.com/autonomio/talos/actions/runs/36893895563)
+and [privileged ruleset audit](https://github.com/autonomio/talos/actions/runs/36893895454)
+passed. The audit used `RULESET_AUDIT_TOKEN` and inspected bypass actors.
+
+These are dated observations, not a permanent assertion about remote settings.
+The steps below remain the activation and recovery runbook. Preserve classic
+protection and compare the complete live snapshot when changing settings.
+PyPI publication remains separately disabled until its prerequisites and
+release authorization are satisfied.
 
 ## Prerequisites
 
 - Administration access to `autonomio/talos` and access to Actions settings.
 - GitHub Actions and CodeQL availability for this public repository.
-- An eligible non-author code owner with write access for governed surfaces. [.github/CODEOWNERS](.github/CODEOWNERS) designates `mikkokotila`, `zero-bang` and `bit-mis`; `governance.yml` retains `mikkokotila` as the approving authority. Integrate the ownership declaration through a reviewed change before enabling enforcement; adding a collaborator alone does not satisfy code-owner approval.
+- An eligible non-author code owner with write access for governed surfaces. [.github/CODEOWNERS](.github/CODEOWNERS) designates `mikkokotila`, `zero-bang` and `bit-mis`; `governance.yml` retains `mikkokotila` as the approving authority. The ownership declaration was integrated through PR 608; adding a collaborator alone does not satisfy code-owner approval.
 - Copilot code review availability for the intended ruleset.
 - A protected `repository-administration` environment for activation and a protected `pypi` environment for release/publication.
 - A read-only ruleset audit token and, only for the activation operation, a separately scoped administrator credential.

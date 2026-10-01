@@ -173,7 +173,7 @@ def test_pr_checks_lint_runs_pinned_ruff_on_tools_and_tests_tools() -> None:
     assert 'governance/check_budget_ratchet.py' in workflow
     assert 'uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38  # v6.5.0' in workflow
     assert 'npm --prefix docs-site ci' in workflow
-    assert 'npm --prefix docs-site exec -- playwright install --with-deps chromium' in workflow
+    assert 'node docs-site/node_modules/playwright/cli.js install --with-deps chromium' in workflow
     assert 'npm --prefix docs-site run security:audit' in workflow
     assert 'npm --prefix docs-site run check' in workflow
     assert '--base-ref' in workflow

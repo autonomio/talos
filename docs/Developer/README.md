@@ -22,6 +22,7 @@ checkout and test commands. Documentation-site work additionally needs Node.js
 | Build and inspect the documentation site | [Site operation](../../docs-site/README.md) | Locked installation, audit, build, local search and browser proof |
 | Inspect merge contracts and gate settings | [Configuration](Configuration.md) | Law/configuration/snapshot agreement and measured ratchets |
 | Assess supply-chain and trust boundaries | [Security assurance case](Security-Assurance-Case.md) | Exact candidate, audit, artifact and live-setting evidence |
+| Review OpenSSF evidence and remaining criteria | [OpenSSF evidence](OpenSSF.md) | Current public score, complete coverage, signed release and human confirmation |
 | Inspect distributions | [Packaging](Packaging.md) | Reproducible builds, complete source archive and installed-wheel checks |
 | Prepare an authorized release | [Making a release](Making-Release.md) | Reviewed version, matching notes, explicit release and provenance |
 | Choose the compatibility bump | [Semantic versioning](Semantic-Versioning.md) | Python/CLI/schema/archive impact and matching metadata |

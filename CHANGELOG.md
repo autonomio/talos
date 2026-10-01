@@ -1,5 +1,13 @@
 # Changelog
 
+# v2.0.2
+
+- Verify complete-package statement coverage across framework acceptance and runnable documentation without narrowing the measured source.
+- Add scientific cohort-selection, causal-scaling and shipped-framework-template regression tests.
+- Attach immutable distribution assets, checksums and verified Sigstore build provenance to authorized GitHub releases while keeping PyPI publication explicitly gated.
+- Tighten workflow token permissions and invoke the locked local browser tooling directly.
+- Restore explicit contribution test/style requirements and document vulnerability handling and the annual maintenance horizon.
+
 # v2.0.1
 
 - Designate zero-bang and bit-mis alongside mikkokotila as code owners for governance and supply-chain surfaces.

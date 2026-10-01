@@ -16,25 +16,38 @@ A tagged or uploaded version is burned. PyPI filenames cannot be reused after de
 
 | Control | Mechanism |
 | --- | --- |
-| Candidate selection | Explicit manual release workflow with a version tag matching the package |
-| Reviewed integration | Required checks and reviews on the activated `master` ruleset |
+| Candidate selection | Explicit release creation with a version tag matching the package |
+| Reviewed integration | Release commit belongs to protected `master`, with required checks and reviews |
+| Source identity | Tag, checkout and workflow `GITHUB_SHA` identify the same commit |
 | Release notes | Matching changelog section; no new prose at release time |
-| PyPI enablement | `PYPI_PUBLISH_ENABLED` must be `true` |
+| GitHub artifacts | Tested distributions, signed checksums and authentic Sigstore bundle; independent of PyPI enablement |
+| Asset integrity | Verify hashes, signer workflow, source commit/ref and hosted runner before attachment |
+| Existing assets | Reject matching filenames; never replace assets with `--clobber` |
+| PyPI enablement | `PYPI_PUBLISH_ENABLED=true` and successful build and GitHub attachment |
 | Upload authority | PyPI trusted publishing from the protected `pypi` environment |
-| Existing filenames | Pre-build PyPI guard rejects already served versions |
-| Artifact provenance | GitHub build-provenance attestations and publish-run SHA-256 digests |
+| Existing PyPI filenames | Pre-build guard rejects already served versions when PyPI publication is enabled |
 
-The workflows are installed by this migration; the live controls and trusted publisher must be configured separately. Release creation with `GITHUB_TOKEN` needs explicit publication dispatch because its release event does not start another workflow. A normal merge does not create a release or publish the package.
+A published release event can start `deploy.yml`. Release creation with `GITHUB_TOKEN` needs explicit dispatch because its release event does not start another workflow. For manual dispatch, select `master`: the tag must match that workflow run's master commit. The workflow also fetches protected `master` and rejects a tag outside its history. These checks prevent a current workflow from attributing a historical checkout to a different attested source.
+
+The build and GitHub asset attachment run without `PYPI_PUBLISH_ENABLED`. PyPI publication remains a separate gated job and requires a configured trusted publisher and protected environment. A normal merge does not create a release or publish the package.
 
 ## Deliverables
 
-The wheel and source distribution are the install and inspection artifacts. The adopted publication workflow attests both and records their digests. Consumers of releases produced through that path can run `gh attestation verify ARTIFACT --repo autonomio/talos` and compare a local SHA-256 digest with the run summary.
+After a successful `deploy.yml` run, the GitHub release receives the wheel, source distribution, `SHA256SUMS` and `talos-vMAJOR.MINOR.PATCH.sigstore.json`, with the concrete release version in the bundle filename. The pinned attestation action signs the distributions and checksum file together. The bundle is copied directly from its `bundle-path` output and retains the authentic JSON Sigstore format.
 
-No CycloneDX SBOM, offline provenance bundle or release-attached distribution assets are promised. Historical releases are not retroactively attested by adopting this workflow.
+The separate attachment job downloads the build artifacts without checking out or executing Talos. It checks the distribution hashes against `SHA256SUMS`, then verifies each distribution and the checksum file against the bundle before uploading any asset. Only the wheel and source distribution enter the `release-dist` artifact used by PyPI.
+
+Consumers can use `gh attestation verify ARTIFACT --repo autonomio/talos`, or supply the downloaded bundle with `--bundle`. Match the signer workflow to `autonomio/talos/.github/workflows/deploy.yml`, the source digest/ref to the recorded release run, and require a GitHub-hosted runner. Verify the checksum file's attestation before checking its listed distribution hashes. A digest alone does not establish the producer's identity.
+
+Actual GitHub OIDC signing and release attachment remain unproven until an authorized Talos release completes this path and its assets verify. Source configuration and local contract tests do not establish release execution. Historical releases gain no provenance from this change. A CycloneDX SBOM is not produced.
 
 ## Recovery
 
-An existing tag makes release creation idempotent; it does not establish that publication completed. If a PyPI upload partly succeeds, advance the version and regenerate the reviewed changelog/citation identity. Never rerun a full upload expecting accepted filenames to be reusable. If only an attestation or evidence step failed, inspect its exact state before choosing the narrow repair.
+An existing tag makes release creation idempotent; it does not establish that artifact attachment or PyPI publication completed. Inspect the original run and asset inventory before retrying. Signature, checksum or source-identity failures must be resolved before attachment.
+
+The attachment job fails if any expected asset name already exists, including after a partial upload; it never deletes or overwrites accepted assets. Do not use a full rerun to replace them. If failure occurred before attachment, a retry must preserve the original reviewed source identity. A manual dispatch after `master` advances cannot substitute a different workflow commit for the old tag.
+
+If a PyPI upload partly succeeds, advance the version and regenerate the reviewed changelog/citation identity. Never rerun a full upload expecting accepted filenames to be reusable. Enabling PyPI later does not start publication or bypass existing GitHub assets. Any narrow recovery needs an explicitly reviewed procedure for the observed failure.
 
 ## Read next
 

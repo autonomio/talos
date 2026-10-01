@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-01T17:51:37.355032+00:00",
+  "base_commit": "9783406eafd0c9d72d00010aeffb379a534a5349",
+  "candidate_version": "2.0.2",
+  "scope": "Local source candidate; hosted CI and release execution are separate evidence.",
+  "environment": {
+    "python": "3.12.12",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "frameworks": {
+      "coverage": "7.16.2",
+      "pytest": "9.1.1",
+      "keras": "3.15.1",
+      "tensorflow": "2.21.0",
+      "torch": "2.14.1",
+      "numpy": "2.5.3",
+      "polars": "1.44.2",
+      "scikit-learn": "1.9.1"
+    },
+    "device": "CPU"
+  },
+  "acceptance": {
+    "passed": 215,
+    "failed": 0,
+    "skipped": 0,
+    "warnings": 49,
+    "seconds": 348.5
+  },
+  "coverage": {
+    "modules": 176,
+    "covered_statements": 7046,
+    "total_statements": 8711,
+    "statement_percent": 80.8862357938239,
+    "covered_branches": 2153,
+    "total_branches": 3160,
+    "existing_excluded_lines": 104,
+    "custom_source_omissions": 0,
+    "aggregation": "coverage combine --append --keep",
+    "report_sha256": "df32d12db27c0efb90c035daeb8118b53119825f4a7f08af65a28e5f0c974cc0",
+    "package_source_hash_map_sha256": "18c46e854a4855819459617fa8865632548dec41117c553068f1890069090219"
+  },
+  "documentation": {
+    "complete": true,
+    "fences": 140,
+    "examples": 10,
+    "notebook_code_cells": 42,
+    "inline_commands": 7,
+    "errors": [],
+    "components": [
+      "site",
+      "root",
+      "control",
+      "examples",
+      "api"
+    ],
+    "manifest_sha256": "93c5417ddeab0c0922e63362409e8906a5534c3d42677ab52f802bf7e4fbaad1",
+    "receipt_sha256": {
+      "api": "91a51e1334c3c7ecd7e56352d98a4dad2a412d16b764bde23af0446ec33c8046",
+      "control": "ef9ca27ae0d8935504a45a664d9f25b459e46d83e477258bb07318938cb1a083",
+      "root": "5f146df7441522088b43cc9f705b8f32bdb3f4062591d5c8aad455e0342abcc7",
+      "examples": "fe55e3a7cc4252029390cb1f2e70ce7a42d0d1f1cfe8fccd2e513fa29db6769e",
+      "site": "5b78c5b5556b328c713beafd23cd309aaac3148c4dc3de73c48e076d5aa30087"
+    }
+  },
+  "governance": {
+    "passed": 380,
+    "failures": 0,
+    "skipped": 0,
+    "junit_sha256": "ffb03128e7f6df63e419a507abacdc66d63d021db6206e2f7e3afb0cec82a65f"
+  },
+  "source_contracts": {
+    "nested_coverage_report": "Prior combine loses a phase (3/4); append preserves both (4/4).",
+    "signed_release": "Verified immutable upload contract tested; actual signing/publishing has not run.",
+    "workflow_lint": "actionlint and ShellCheck pass for all five changed workflows.",
+    "quality_debt": "1899 inherited findings unchanged; no debt budget or required gate weakened."
+  },
+  "file_sha256": {
+    ".github/coverage-full.toml": "26a11296b50f440253005742f194ddf928b2f177bb11560e635e2d7391e8b711",
+    ".github/workflows/ci.yml": "a2da955bb189da56ab68f9abc39de6da0acec930ee09d0a79dbac72b98a0e083",
+    ".github/workflows/deploy.yml": "a563d8563ac2359ede37093de08540f49296516b21ea2218f4fec4a17ac8cf29",
+    "tools/check_statement_coverage.py": "6380862c055da84a05eedbe189aeb70fbab859ac515358ea4a9b09b5da2c87bb",
+    "governance/tests/test_statement_coverage.py": "40ed5a6e5f0b73cb3ed06420f6bc5613715648a28f1c40e679540c152c4126c8",
+    "governance/tests/test_release_workflow.py": "dfb634e4ddadccd5cdfedb46ca40e26c3420c77deb4134fe4ba9c425ed8dc308",
+    "tests/test_causal_scaler.py": "78f91e7a77ab54689b76b0d6e3d8f2a008581ae3036b87fea5512957c419b7c5",
+    "tests/test_cohort_selectors.py": "109890f124ad94512256910b68c2c1693abfaa671d42ef3bcd98be16ec6bf105",
+    "tests/test_packaged_sfd_templates.py": "b6d6176260b7bd287b8ded9d9deba66abfa4c7ee609b86faaadbe4ff2ae78a6d"
+  },
+  "published_observations": {
+    "scorecard": 7.7,
+    "scorecard_commit": "9783406eafd0c9d72d00010aeffb379a534a5349",
+    "scorecard_reported_at_utc": "2026-10-01T16:42:55Z",
+    "best_practices_project": "https://www.bestpractices.dev/en/projects/15140",
+    "attainment": "In progress; no Passing or Silver attainment claimed."
+  },
+  "limitations": [
+    "macOS arm64 CPU; no GPU or Windows execution claim.",
+    "Current full-framework lane measured; minimum and legacy compatibility require hosted CI.",
+    "Package coverage does not measure repository governance/tools.",
+    "NVIDIA and entropy-service documentation paths use explicitly declared providers; physical hardware and remote services are not verified.",
+    "Historical releases remain unsigned."
+  ]
+}
