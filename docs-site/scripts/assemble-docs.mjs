@@ -208,12 +208,16 @@ function buildFrontMatter(doc) {
 }
 
 export function resolveDocLink(fromSource, target, mappedAsRoute = false) {
+  const ownSite = profile.siteUrl + profile.basePath;
+  if (target?.startsWith(ownSite)) {
+    return 'pathname://' + siteRoute(profile.basePath, '/' + target.slice(ownSite.length));
+  }
   if (!target || /^(https?:|mailto:|#|\/)/.test(target)) {
     return target;
   }
   const [targetPath, targetHash] = target.split('#');
   const resolvedSource = normalizePath(
-    path.posix.normalize(path.posix.join(path.posix.dirname(normalizePath(fromSource)), targetPath))
+    path.posix.normalize(path.posix.join(path.posix.dirname(normalizePath(fromSource)), decodeURIComponent(targetPath)))
   );
   let targetDoc = mappingBySource.get(resolvedSource);
   if (!targetDoc && !path.posix.extname(resolvedSource)) {
@@ -224,16 +228,17 @@ export function resolveDocLink(fromSource, target, mappedAsRoute = false) {
     if (!isPathInside(repoRoot, repoFsPath) || !fsSync.existsSync(repoFsPath)) {
       return target;
     }
+    const encodedSource = resolvedSource.split('/').map(encodeURIComponent).join('/');
     if (/\.(?:png|jpe?g|gif|webp|svg|pdf)$/i.test(resolvedSource)) {
-      const route = `/repository/${resolvedSource}`;
+      const route = `/repository/${encodedSource}`;
       return targetHash ? `${route}#${targetHash}` : route;
     }
     const repoUrlBase = fsSync.statSync(repoFsPath).isDirectory()
       ? repoTreeBaseUrl
       : repoBlobBaseUrl;
     return targetHash
-      ? `${repoUrlBase}/${resolvedSource}#${targetHash}`
-      : `${repoUrlBase}/${resolvedSource}`;
+      ? `${repoUrlBase}/${encodedSource}#${targetHash}`
+      : `${repoUrlBase}/${encodedSource}`;
   }
   if (mappedAsRoute) {
     const route = siteRoute(profile.basePath, targetDoc.slug);
@@ -411,6 +416,7 @@ async function main() {
   for (const doc of documents) {
     await copyDoc(doc);
   }
+  await fs.cp(path.resolve(siteRoot, 'static'), staticRoot, {recursive: true});
   await writeRobots();
   await copySourceAssets();
 }

@@ -11,7 +11,7 @@ The example trains on a training split and uses a separate validation split. It 
 ## Install the TensorFlow backend
 
 ```sh
-pip install 'talos[tensorflow]'
+python -m pip install 'talos[tensorflow] @ git+https://github.com/autonomio/talos@master'
 ```
 
 See [installation options](../Install_Options.md) for other backends.

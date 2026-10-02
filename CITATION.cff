@@ -1,11 +1,26 @@
 cff-version: 1.2.0
-message: "If you use Talos in published work, cite this software and record the version used."
+message: >-
+  If you use Talos in published work, cite the exact software version used.
+  For a development checkout, also record its full source commit.
+  Follow docs/Citing_Talos.md to identify the associated experiment.
 title: "Talos"
 type: software
 authors:
   - family-names: Kotila
     given-names: Mikko
+abstract: >-
+  Parameter sweeps for Keras, TensorFlow and PyTorch models through the
+  established Talos Scan interface, single-file definitions and a manifest CLI.
+keywords:
+  - hyperparameter optimization
+  - parameter sweeps
+  - reproducible experiments
+  - Keras
+  - TensorFlow
+  - PyTorch
 repository-code: "https://github.com/autonomio/talos"
 url: "https://autonomio.github.io/talos/"
 license: MIT
-version: "2.0.2"
+version: "2.0.3"
+# This is the unreleased source version. No release date, DOI or exact revision
+# is asserted here. Generated release citations can bind their resolved commit.

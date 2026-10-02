@@ -6,12 +6,12 @@ Prerequisites are Python 3.10–3.13 and pip with access to a package index cont
 
 ## Install a framework extra
 
-If your package index does not yet offer the required version and extras, use the checkout installation below.
+Talos 2 is actively maintained source; PyPI currently serves Talos 1.4. Install the current generation from the repository, or use the checkout installation below. For research, replace `master` with an exact reviewed source commit.
 
 ```sh
 python -m venv .venv
 . .venv/bin/activate
-pip install 'talos[tensorflow]'
+python -m pip install 'talos[tensorflow] @ git+https://github.com/autonomio/talos@master'
 ```
 
 The modern minimums are TensorFlow 2.20, Keras 3.15 and Torch 2.13. The TensorFlow extra also requires patched Protobuf 6.33.5 or newer.
@@ -28,12 +28,18 @@ Framework choices:
 | `keras,torch` | Standalone Keras using Torch; set `KERAS_BACKEND=torch` |
 | `legacy-tensorflow` | Compatibility lane: TensorFlow 2.14.1, Keras 2.14 and NumPy 1.26; Python 3.10–3.11 |
 | `plots` | Matplotlib experiment/training plots |
-| `samplers` | Optional Chances quantum samplers |
+| `samplers` | Compatibility extra; remote samplers use the core's verified HTTPS clients |
 | `test` | Acceptance tests, coverage, lint and build tools |
 
 The legacy extra retains known upstream advisories for compatibility. Use it only for controlled existing workloads; use the modern extras for new work.
 
-`pip install talos` installs the core and CLI without TensorFlow, Keras, Torch or plotting. Do not combine the legacy lane with modern framework extras. Upgrade with `pip install -U 'talos[your-extra]'` so dependencies are resolved together.
+`python -m pip install 'talos @ git+https://github.com/autonomio/talos@master'` installs the current core and CLI without TensorFlow, Keras, Torch or plotting. Change the extra in the repository installation command to choose a backend. Do not combine the legacy lane with modern framework extras. Resolve framework and Talos upgrades together in a fresh environment.
+
+## Established Talos 1.x
+
+The last published old-generation release is Talos 1.4. In a separate Python 3.10 or 3.11 environment, install `python -m pip install 'talos==1.4' 'ipython<9'`. The IPython constraint preserves compatibility with its `kerasplotlib` dependency. The official unchanged wheel is verified on Python 3.11 with TensorFlow 2.14.1, Keras 2.14.0, NumPy 1.26.4 and IPython 8.39.0.
+
+Talos 1.x will remain supported at least until 2028. Its TensorFlow dependency retains known upstream advisories; the maintenance commitment does not remove those findings. The `legacy-tensorflow` extra above runs historical framework callbacks on Talos 2; it does not install Talos 1.4.
 
 ## Install this checkout
 

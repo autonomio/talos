@@ -45,3 +45,7 @@ A seed controls supported sampling and recorded RNG state. Hardware, framework k
 ## Read next
 
 Start with the [first sweep](Guides/Quickstart.md) for the Python interface, [SFD and CLI](SFD_and_CLI.md) for a file-based experiment, or [migration](Migration.md) for an existing Talos project.
+
+## Cite an experiment
+
+Use the [citation guide](Citing_Talos.md) to cite the software version and retain manifest and run identities with research artifacts.

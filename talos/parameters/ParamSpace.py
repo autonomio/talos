@@ -1,3 +1,4 @@
+"""Current caller domains and original realized rows share one legacy search facade."""
 from datetime import datetime
 import math
 import numpy as np
@@ -5,6 +6,7 @@ import numpy as np
 from talos.experiment.param_domain import ParamDomain, values_equal
 from talos.experiment.serialization import callable_reference
 from talos.experiment.param_search.legacy_strategy import LegacyStrategy
+from ._resume import _BooleanLimit, _constructor_state, _row_state
 
 
 def _expand_range(values):
@@ -37,7 +39,8 @@ class ParamSpace:
 
     def __init__(self, params, param_keys=None, random_method='uniform_mersenne',
                  fraction_limit=None, round_limit=None, time_limit=None,
-                 boolean_limit=None, seed=None):
+                 boolean_limit: _BooleanLimit | None = None, seed: int | None = None, **_resume_options: object):
+        initial_state = _constructor_state(_resume_options)
         self.params = params
         self.param_keys = list(params) if param_keys is None else list(param_keys)
         self.random_method = random_method
@@ -47,22 +50,19 @@ class ParamSpace:
         self.boolean_limit = boolean_limit
         self.seed = seed
         self.round_counter = 0
-        self.shard_namespace = None
-        self.shard_id = None
+        self.shard_namespace, self.shard_id = None, None
         self.p = self._param_input_conversion()
         self._params_temp = [list(self.p[key]) for key in self.param_keys]
         self.dimensions = math.prod(len(values) for values in self._params_temp)
-        indices = self._param_apply_limits()
+        indices = self._param_apply_limits() if initial_state is None else []
         rows = [self._index_to_values(index) for index in indices]
-        if boolean_limit is not None:
+        if initial_state is None and boolean_limit is not None:
             rows = [values for values in rows if boolean_limit(self._round_parameters_todict(values))]
-        self.param_space = np.empty((len(rows), len(self.param_keys)), dtype=object)
-        for index, values in enumerate(rows):
-            for column, value in enumerate(values):
-                self.param_space[index, column] = value
-        self.param_index = list(range(len(rows)))
+        self.param_space, self.param_index = _row_state(rows, len(self.param_keys))
         domain = ParamDomain({key: list(self.p[key]) for key in self.param_keys})
         self.strategy = LegacyStrategy(self, domain, seed=seed)
+        if initial_state is not None:
+            self.strategy.set_state(initial_state)
 
     def _param_input_conversion(self):
         return normalize_domains({key: self.params[key] for key in self.param_keys})

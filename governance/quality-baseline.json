@@ -4814,12 +4814,6 @@
     {
       "kind": "ruff",
       "path": "talos/experiment/runner.py",
-      "message": "I001: Import block is un-sorted or un-formatted",
-      "source_sha256": "37effa9caacd97bad7e2ded872a87a97b8975fca47afea9c20251191e2a288dd"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/experiment/runner.py",
       "message": "ANN201: Missing return type annotation for public function `load_sfd`",
       "source_sha256": "4b631917cea933b6e9ef5204962edb8252a9e4ab0cf7e6450aaf81124f746ed7"
     },
@@ -4846,18 +4840,6 @@
       "path": "talos/experiment/runner.py",
       "message": "ANN001: Missing type annotation for function argument `run_dir`",
       "source_sha256": "96a9fd65d12cc2af5c20de08ce514682a9f9b06d4ec3349c069664160b7b132d"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/experiment/runner.py",
-      "message": "ANN202: Missing return type annotation for private function `_strategy_identity`",
-      "source_sha256": "58d3c53ec1030c1245cd3630d9187a6cbf7169415e8a48aca9519e484097eee4"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/experiment/runner.py",
-      "message": "ANN001: Missing type annotation for function argument `strategy`",
-      "source_sha256": "58d3c53ec1030c1245cd3630d9187a6cbf7169415e8a48aca9519e484097eee4"
     },
     {
       "kind": "ruff",
@@ -7580,18 +7562,6 @@
     {
       "kind": "ruff",
       "path": "talos/parameters/ParamSpace.py",
-      "message": "ANN001: Missing type annotation for function argument `boolean_limit`",
-      "source_sha256": "0e3b07fc46f1b0d941b63da19e102ad2966a525581d25588c3157f09d785e293"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/parameters/ParamSpace.py",
-      "message": "ANN001: Missing type annotation for function argument `seed`",
-      "source_sha256": "0e3b07fc46f1b0d941b63da19e102ad2966a525581d25588c3157f09d785e293"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/parameters/ParamSpace.py",
       "message": "ANN202: Missing return type annotation for private function `_param_input_conversion`",
       "source_sha256": "7fa19fb4dc6b68c266183d1d551ac78e066f026248051fedad18b9f1a319fb3a"
     },
@@ -8296,24 +8266,6 @@
       "path": "talos/reducers/reduce_utils.py",
       "message": "ANN001: Missing type annotation for function argument `scan`",
       "source_sha256": "0a03d75134de6e5fb699508206baeb3e57da476fcbfaffd0181479c9b875e307"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/reducers/sample_reducer.py",
-      "message": "C901: `sample_reducer` is too complex (19 > 10)",
-      "source_sha256": "2c210fee9b067913c0a184301dd828dfb79bda1415d2bf844baa7c5726ace693"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/reducers/sample_reducer.py",
-      "message": "PLR0912: Too many branches (19 > 12)",
-      "source_sha256": "2c210fee9b067913c0a184301dd828dfb79bda1415d2bf844baa7c5726ace693"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/reducers/sample_reducer.py",
-      "message": "PLR0915: Too many statements (51 > 50)",
-      "source_sha256": "2c210fee9b067913c0a184301dd828dfb79bda1415d2bf844baa7c5726ace693"
     },
     {
       "kind": "ruff",
@@ -10472,80 +10424,8 @@
     {
       "kind": "ruff",
       "path": "talos/yaml/store.py",
-      "message": "C901: `resolve_manifest_uri` is too complex (12 > 10)",
-      "source_sha256": "c1a6d6f7ccf434ba46dc8b6c7699ff55dbe4db2e7f0f99e15dbc45252525dd01"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/yaml/store.py",
       "message": "ANN401: Dynamically typed expressions (typing.Any) are disallowed in `value`",
       "source_sha256": "08065bd7afe9e09452913470177f989ce221d5352223b34ed6cd93e45b7275ec"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/yaml/validator.py",
-      "message": "I001: Import block is un-sorted or un-formatted",
-      "source_sha256": "e98b1ef8c905ca7881ab778fdd7ac7001d0bb818527b22a1bc7321b3198135da"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/yaml/validator.py",
-      "message": "C901: `validate` is too complex (21 > 10)",
-      "source_sha256": "e5d5be1fc38799805946aad7b609e02ec78dbc6b3875a18f106dcf94136e8b0f"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/yaml/validator.py",
-      "message": "PLR0912: Too many branches (20 > 12)",
-      "source_sha256": "e5d5be1fc38799805946aad7b609e02ec78dbc6b3875a18f106dcf94136e8b0f"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/yaml/validator.py",
-      "message": "ANN201: Missing return type annotation for public function `validate`",
-      "source_sha256": "e5d5be1fc38799805946aad7b609e02ec78dbc6b3875a18f106dcf94136e8b0f"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/yaml/validator.py",
-      "message": "ANN001: Missing type annotation for function argument `document`",
-      "source_sha256": "e5d5be1fc38799805946aad7b609e02ec78dbc6b3875a18f106dcf94136e8b0f"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/yaml/validator.py",
-      "message": "ANN202: Missing return type annotation for private function `issue`",
-      "source_sha256": "46ec351ed10e6bc610a1f2656706b3848f6025da36c8d6d83fdc8b44b0abedb5"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/yaml/validator.py",
-      "message": "ANN001: Missing type annotation for function argument `path`",
-      "source_sha256": "46ec351ed10e6bc610a1f2656706b3848f6025da36c8d6d83fdc8b44b0abedb5"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/yaml/validator.py",
-      "message": "ANN001: Missing type annotation for function argument `message`",
-      "source_sha256": "46ec351ed10e6bc610a1f2656706b3848f6025da36c8d6d83fdc8b44b0abedb5"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/yaml/validator.py",
-      "message": "E702: Multiple statements on one line (semicolon)",
-      "source_sha256": "ac2fddef1d0a238ef0f232f1754359afe19dabccf194e4f9ba711ff04c253f37"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/yaml/validator.py",
-      "message": "E702: Multiple statements on one line (semicolon)",
-      "source_sha256": "d995d8306d5c85942257a00fc7f9cf995dd0a2a3244bc45bb6840e18135656b9"
-    },
-    {
-      "kind": "ruff",
-      "path": "talos/yaml/validator.py",
-      "message": "E702: Multiple statements on one line (semicolon)",
-      "source_sha256": "f6e616a238dacf67bcd180c8448fd28646bc5186f650815d4ecc8e17cdaa65a3"
     },
     {
       "kind": "ruff",
@@ -11283,12 +11163,6 @@
       "kind": "ruff",
       "path": "tests/test_search_core.py",
       "message": "I001: Import block is un-sorted or un-formatted",
-      "source_sha256": "9e77b3746ea081eb4c557e71cc84ca29dc66a89d18a07e85dba66a336e7310ae"
-    },
-    {
-      "kind": "ruff",
-      "path": "tests/test_search_core.py",
-      "message": "I001: Import block is un-sorted or un-formatted",
       "source_sha256": "e98665b0177631c6ad1d03e4df3c9b52406240ed8c752a95f830c029ecb0ad04"
     },
     {
@@ -11971,12 +11845,6 @@
     },
     {
       "kind": "module_docstrings",
-      "path": "talos/parameters/ParamSpace.py",
-      "message": "first stmt is not a string literal",
-      "source_sha256": "f33baa1bb7530a9faec953f1dca9799931800182834949f375154d04b537b545"
-    },
-    {
-      "kind": "module_docstrings",
       "path": "talos/preparation/__init__.py",
       "message": "first stmt is not a string literal",
       "source_sha256": "06d13b9c4e7565d73cd447fd79a4602cad2f2fbe991f9d4bacb6f8c9cc1e966d"
@@ -12043,12 +11911,6 @@
     },
     {
       "kind": "module_docstrings",
-      "path": "talos/reducers/sample_reducer.py",
-      "message": "first stmt is not a string literal",
-      "source_sha256": "8ea453f346536af8c04b8d17f12a3927e8d63e46f772af99fa62fb25c51b3952"
-    },
-    {
-      "kind": "module_docstrings",
       "path": "talos/reducers/trees.py",
       "message": "first stmt is not a string literal",
       "source_sha256": "81eee2a45f11a869b9f3e5dff6b23b522bcbd52d100e55911b567a6c2afa8198"
@@ -12100,12 +11962,6 @@
       "path": "talos/scalers/robust_scaler.py",
       "message": "first stmt is not a string literal",
       "source_sha256": "80e0c94e1973982b37fe783d96997ee26cc2d30bdf9a0778d56831065fcca1ab"
-    },
-    {
-      "kind": "module_docstrings",
-      "path": "talos/scan/Scan.py",
-      "message": "first stmt is not a string literal",
-      "source_sha256": "c6bb1fecf06f0561a303c6ea7f2a383f7c31988cf05c372ce089dd6c21c83055"
     },
     {
       "kind": "module_docstrings",
@@ -12247,12 +12103,6 @@
     },
     {
       "kind": "module_docstrings",
-      "path": "talos/yaml/compiler.py",
-      "message": "first stmt is not a string literal",
-      "source_sha256": "a534d0c0c3b8e931c5018f6c5dfe3635761137a2be74cce1c5b0f474b0c1b7af"
-    },
-    {
-      "kind": "module_docstrings",
       "path": "talos/yaml/config.py",
       "message": "first stmt is not a string literal",
       "source_sha256": "3dcc9447c8e7f72a5988ccf9e6503acb001ffcabcc74d391816b797ae325c016"
@@ -12292,18 +12142,6 @@
       "path": "talos/yaml/schema.py",
       "message": "first stmt is not a string literal",
       "source_sha256": "077cf62c27deb4bef1963190f53271b51bad7c56b266bc2d00aa9a89a1e0357c"
-    },
-    {
-      "kind": "module_docstrings",
-      "path": "talos/yaml/store.py",
-      "message": "first stmt is not a string literal",
-      "source_sha256": "c2f8daa0dc92e521728411248fe7e034efc6a0e6811a8c5eb7ec5775bf89b5fb"
-    },
-    {
-      "kind": "module_docstrings",
-      "path": "talos/yaml/validator.py",
-      "message": "first stmt is not a string literal",
-      "source_sha256": "79b3a0568c6c808e3280d7478adf6d1b4b4016ed809b44795652bb10c7b84441"
     }
   ]
 }

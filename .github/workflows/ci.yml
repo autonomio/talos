@@ -29,6 +29,8 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: python -m pip install --require-hashes -r requirements/ci/${{ matrix.lock }}
       - run: python -m pip install --no-build-isolation --no-deps -e .
+      - name: Verify versioned software citations
+        run: python -m tools.citation --check
       - run: ruff check talos tests/test_*.py
       - run: coverage run -m pytest -q
       - run: coverage report
@@ -132,6 +134,17 @@ jobs:
           python -m coverage combine --append --keep
           python -m coverage json -o verification-output/coverage.json
           python tools/check_statement_coverage.py verification-output/coverage.json
+      - name: Generate source-bound statement coverage publication
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: python -m tools.coverage_badge verification-output/coverage.json --output docs-site/build/coverage --commit "$SOURCE_SHA" --run-url "$RUN_URL"
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        with:
+          name: documentation-site
+          path: docs-site/build/
+          if-no-files-found: error
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         if: always()
         with:

@@ -1,0 +1,314 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-01",
+  "status": "passed_local_source_candidate",
+  "scope": "Local Talos 2.0.3 maintenance candidate; retained machine evidence and explicitly attributed maintainer statements. No release or certification claim.",
+  "candidate": {
+    "source_version": "2.0.3",
+    "base_commit": "2388cec668e8e6e5b99d19d578a4f74a485f69fd",
+    "released": false,
+    "binding": "Tested working-tree package hashes, retained before committing; source revision is the commit containing this receipt.",
+    "package_modules": 179,
+    "package_source_hash_map_sha256": "45d5b45d6110272a317a1850fff03ff71475fc251f7d17b9a04fa59666649918"
+  },
+  "acceptance": {
+    "maintained_runtime": {
+      "status": "passed",
+      "passed": 356,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "evidence": "runtime_junit",
+      "source_snapshot": "pre_readme_runtime",
+      "seconds": 448.88
+    },
+    "full_governance": {
+      "status": "passed",
+      "passed": 386,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "evidence": "governance_junit",
+      "seconds": 34.41
+    },
+    "core_and_governance": {
+      "status": "passed",
+      "passed": 702,
+      "skipped": 34,
+      "failures": 0,
+      "errors": 0,
+      "evidence": "core_governance_junit",
+      "seconds": 187.28
+    },
+    "count_semantics": "These suites overlap. Do not add their passed counts."
+  },
+  "documentation": {
+    "fence_inventory": 134,
+    "inline_commands": 7,
+    "component_fences": {
+      "api": 58,
+      "control": 59,
+      "root": 15,
+      "site": 2
+    },
+    "component_status": "All api/control/root block statuses passed; block source hashes matched current inventory at preparation.",
+    "examples": 12,
+    "notebooks": 6,
+    "notebook_code_cells": 52,
+    "example_status": "All 12 passed; each whole-file source hash matched current source at preparation.",
+    "aggregate": {
+      "status": "passed",
+      "evidence": "documentation_aggregate",
+      "complete": true,
+      "errors": []
+    },
+    "site": {
+      "status": "passed",
+      "evidence": "documentation_site",
+      "fences": 2,
+      "unit_tests": 49,
+      "external_links": 56,
+      "browser_tests": 28,
+      "browser_scope": "1440px/390px, light/dark, WCAG2A/AA, no console errors; repeated for both published documentation command fences."
+    },
+    "source_sha256": {
+      "README.md": "d68a0b77e9ffbac91a69b34d01c596338ce578050f0ee30e999a48f01185cac7",
+      "CITATION.cff": "0a19ba2cb7f604029036a22cbd925cb6b37143100fb44c8cd1d88bb5dc5300cd",
+      "CITATION.bib": "bb1a14242ec2c429b3204d3fffed2edd77d29642e6a3272229112d953f1b3307",
+      "docs/Citing_Talos.md": "718f4ca73a8b46f96e712d7969f6e6198a2c00eea5eaeb01546a3281cade9d9c",
+      "docs/_media/keras-to-talos.svg": "87388afc03e72d31b5cbf66ea0522406c160ac84f08d1b74b3f1055d1102645e",
+      "examples/keras_to_talos.py": "8243f38e5d9b73dda998656a8e59cb31890637fb4f01ac5f083c6ad9ab6d5e25",
+      "examples/Iris SFD and Manifest Recovery.ipynb": "c4f9c04c661b43f8e6c73b19f43334fd1595a038cfb72b86265b905c696c5a7a",
+      "tools/verification/root_docs.py": "0471954fa3b7415611b5484cecb3f6c17cc3291cbbebc43201f861aafefecdb9",
+      "docs-site/scripts/assemble-docs.mjs": "28539d48fcba9e00cb4674bb108aa01ef611b15934b7cf870225ab8231179cbd",
+      "docs-site/scripts/check-external-links.mjs": "b116866f7f97b110a1a8cd4a78ce99c07a400bdc9a075769b48e9d2fadcb97e6"
+    }
+  },
+  "execution_scope": {
+    "hardware": "CPU; accelerator execution and physical power measurements not validated.",
+    "modern_backend_scope": "TensorFlow 2.21.0, standalone Keras 3.15.1 and Torch 2.14.1 in Python 3.12.12 evidence; standalone Keras exercised with Torch and TensorFlow engines.",
+    "core_scope": "Framework-free core acceptance in the recorded environment; this receipt does not assert a newly completed full supported-platform matrix.",
+    "remote_entropy": "Controlled provider responses and HTTPS/validation boundary tests; no successful live-provider entitlement or live entropy claim.",
+    "power_provider": "Explicit local nvidia-smi/PowerDraw provider fixtures; no physical energy claim."
+  },
+  "scientific_examples": {
+    "notebook": {
+      "evidence": "notebook_backends",
+      "dataset": "scikit-learn bundled Iris",
+      "split_rows": [
+        120,
+        30
+      ],
+      "native_trials": 4,
+      "recovered_manifest_trials": 2,
+      "checks": "Train-only scaling, committed-trial preservation, audited pending-work intervention, CLI resume, idempotency and saved-model metric recomputation."
+    },
+    "paired_keras": {
+      "evidence": "paired_keras",
+      "trials_per_engine": 4,
+      "checks": "Same fitting callback; explicit min val_loss; retained rows/history; all four model metrics and predictions verified in independent fresh processes.",
+      "source_import": "No DL framework load, output or training on import."
+    },
+    "metric_limit": "Validation guides candidate selection; these short examples do not establish an independent test-set performance estimate."
+  },
+  "legacy_14": {
+    "status": "passed_bounded_compatibility_probe",
+    "evidence": "official_legacy_14",
+    "distribution": "Unchanged official PyPI talos 1.4 wheel; isolated macOS ARM64 / Python 3.11.6 environment, not Talos 2 substitution.",
+    "frameworks": {
+      "tensorflow": "2.14.1",
+      "keras": "2.14.0",
+      "numpy": "1.26.4",
+      "ipython": "8.39.0"
+    },
+    "install": "python -m pip install 'talos==1.4' 'ipython<9'",
+    "plain_install_limit": "Unconstrained install resolved IPython 9.17.1 and failed kerasplotlib 1.0 import; ipython<9 restored import and genuine training.",
+    "real_data": {
+      "dataset": "scikit-learn bundled Iris",
+      "split_rows": [
+        105,
+        45
+      ],
+      "split_seed": 17,
+      "scaling": "Training partition only"
+    },
+    "trials": 2,
+    "epochs_per_trial": 20,
+    "callback_arguments": 5,
+    "checks": "Parameter membership, loss/accuracy histories, min-loss selection and restored JSON/weight predictions; maximum prediction error 0.",
+    "security_limit": "The legacy 1.4 probe was not freshly dependency-audited. Training success is not security clearance."
+  },
+  "dependency_locks": {
+    "status": "passed",
+    "locks": 11,
+    "same_pins": true,
+    "evidence": "lock_resolution",
+    "scope": "Re-resolution reproduced the recorded lock graphs; not a substitute for installation, runtime or vulnerability audits."
+  },
+  "maintainer_attestations": {
+    "provenance": "Maintainer claims relayed by root task and explicitly attributed in README/docs; not independently measured by these tests.",
+    "claims": [
+      "Talos 1.x support at least until 2028.",
+      "No breaking Talos 1.x bug found or reported during the preceding two years.",
+      "Talos used in at least 1,000 research papers."
+    ],
+    "locations": [
+      "README.md:1",
+      "README.md:87",
+      "docs/Install_Options.md:42",
+      "docs/Citing_Talos.md:8"
+    ]
+  },
+  "citation_and_attribution": {
+    "historical_citation_preserved": "Autonomio Talos [Computer software]. (2024). Retrieved from http://github.com/autonomio/talos.",
+    "historical_citation_scope": "Citation year does not establish an exact release; no invented DOI, release date or source revision.",
+    "current_files": [
+      "CITATION.cff",
+      "CITATION.bib",
+      "docs/Citing_Talos.md"
+    ],
+    "current_version": "2.0.3, unreleased source; release date/DOI/exact revision unasserted.",
+    "notice_preserved": true,
+    "notice_sha256": "0ba6e5614c444681f197eec701dcea4e337860ca84bd3b72b34cf110fb0b7b1f",
+    "organization_scan": {
+      "matches": 0,
+      "scope": "README and authored documentation; required license attribution remains in NOTICE outside the reader documentation."
+    }
+  },
+  "known_limits": {
+    "legacy_upstream_security": {
+      "unresolved_advisories": 12,
+      "evidence": [
+        "legacy_dependency_audit",
+        "legacy_advisory_dispositions"
+      ],
+      "scope": "Previously audited TensorFlow 2.14 / Keras 2.14 compatibility lane after bounded absent Keras 3 module dispositions; not claimed fixed or unexploitable."
+    },
+    "code_identity": {
+      "status": "known_unresolved",
+      "evidence": "code_identity_limitation",
+      "path": "talos/experiment/provenance.py",
+      "effect": "Default marshal format can hash an unchanged complete code object differently as constant reference counts change, rejecting legitimate same-process resume.",
+      "boundary": "Existing identity/checkpoint checks remain unchanged; this maintenance receipt does not claim a general fix or historical identity migration."
+    },
+    "talos_revision_record": "Existing model/SFD git_revision identifies caller code; it does not establish the exact Talos installation revision. Retain Talos source revision separately."
+  },
+  "references": {
+    "pre_readme_runtime": "/tmp/talos-openssf/pre-readme-runtime-evidence.json",
+    "runtime_junit": "/tmp/talos-openssf/maintenance-final/pytest.xml",
+    "governance_junit": "/tmp/talos-openssf/maintenance-governance-final.xml",
+    "core_governance_junit": "/tmp/talos-openssf/maintenance-core-final/pytest.xml",
+    "documentation_aggregate": "/tmp/talos-openssf/documentation-maintenance-final/manifest.json",
+    "documentation_api": "/tmp/talos-openssf/documentation-maintenance-final/api.json",
+    "documentation_control": "/tmp/talos-openssf/documentation-maintenance-final/control.json",
+    "documentation_root": "/tmp/talos-openssf/documentation-maintenance-final/root.json",
+    "documentation_examples": "/tmp/talos-openssf/documentation-maintenance-final/examples.json",
+    "documentation_site": "/tmp/talos-openssf/documentation-maintenance-final/site.json",
+    "notebook_backends": "/tmp/talos-openssf/new-example-drafts/new-notebook-evidence-summary.json",
+    "paired_keras": "/tmp/talos-openssf/readme-comparison-drafts/paired-comparison-evidence.json",
+    "official_legacy_14": "/tmp/talos-openssf/legacy14-readme-proof.json",
+    "lock_resolution": "/tmp/talos-openssf/maintenance-locks/verification.json",
+    "legacy_dependency_audit": "/tmp/talos-openssf/dependency-monitoring/legacy-audit.json",
+    "legacy_advisory_dispositions": "/tmp/talos-openssf/portal-silver-audit-update.json",
+    "code_identity_limitation": "/tmp/talos-openssf/provenance-marshal-review/assessment.json",
+    "complete_coverage": "/tmp/talos-openssf/maintenance-final/coverage.json",
+    "distribution_audit": "/tmp/talos-openssf/maintenance-dist-final/audit.json",
+    "wheel_core_install": "/tmp/talos-openssf/maintenance-wheel-core-proof.json",
+    "diff_coverage": "/tmp/talos-openssf/maintenance-diff-coverage.json"
+  },
+  "date_basis": "UTC evidence date; Helsinki crosses to 2 October while this finalization is in progress.",
+  "recorded_at_utc": "2026-10-01T21:03:07.737030+00:00",
+  "coverage": {
+    "scope": "All179 Pythonpackage modules, complete maintained framework acceptance plus instrumented documentation; unchanged core/governance floors verified separately.",
+    "covered_statements": 7320,
+    "total_statements": 8942,
+    "statement_percent": 81.86088123462312,
+    "covered_branches": 2258,
+    "total_branches": 3244,
+    "excluded_lines": 113,
+    "report_sha256": "a87b62b8f26e701a358de28d061837a01f8594da3afeb001e89ec0340d7144e7",
+    "aggregation": "coverage combine --append --keep",
+    "evidence": "complete_coverage",
+    "core_statement_percent": 71.60590471930217,
+    "core_branch_percent": 61.46732429099877
+  },
+  "quality": {
+    "inherited_strict_findings": 1878,
+    "resolved_baseline_entries": 27,
+    "added_baseline_entries": 0,
+    "changed_package_statement_coverage": 96.11111111111111,
+    "pyright_errors": 9597,
+    "pyright_warnings": 39,
+    "typing_ratchet": "passed",
+    "module_budgets": "passed",
+    "docstrings": "passed",
+    "test_fallbacks": "passed",
+    "test_code_ratio": 0.3
+  },
+  "distribution": {
+    "status": "passed",
+    "scope": "Every authored contributor file byte-checked in source distribution; installed runtime wheel isolated. Citation bibliography included.",
+    "evidence": "distribution_audit",
+    "core_install_evidence": "wheel_core_install",
+    "wheel_sha256": "c371900b6ba1799f7c086e1d01dea5c7b163c95ff8d4b072cd1179e4ad0d6378",
+    "sdist_note": "Final source archive audit byte-checks this receipt. The archive hash is retained outside the archive to avoid self-referential hashing."
+  },
+  "publication": {
+    "documentation_and_coverage": "Prepared successful-current-master CI artifact publisher; deployment awaits merge and successful master execution.",
+    "coverage_readme_badge": "Dynamic source-bound report; predeployment asset explicitly says awaiting publication.",
+    "openssf_passing_attained": false,
+    "openssf_silver_attained": false,
+    "release_executed": false
+  },
+  "review_follow_up": {
+    "recorded_at_utc": "2026-10-02T06:07:42.134214+00:00",
+    "base_commit": "400f453fce514da5328aa5d2a5ce3f937a8a6367",
+    "package_source_binding": "All 179 package-file hashes match the original complete-framework and coverage measurement. No package source changed in this follow-up. Original full-framework execution is retained as dated evidence.",
+    "source_sha256": {
+      ".github/workflows/docs_pages.yml": "c8b48d844c4c35d72e61dd9438de557c0cef666f277642d88a5fc038df7540e5",
+      "docs/Developer/OpenSSF.md": "da028b0733f378f17c6a23675e450b076a542a12c2ba19c7d3029cadf6cb251a",
+      "examples/Iris SFD and Manifest Recovery.ipynb": "ee636788fab05e8288a8469c49790c9a26039394ead65412e91c7a3ee26b359f",
+      "examples/keras_to_talos.py": "cbc195685f2cd4d8c22af1c129a9e247c8391d21a0635c928830a1c773b89af6",
+      "governance/tests/test_coverage_publication.py": "41ab5f6ac89b4ee94b48c7ff698e06bc9e865234662cfc80a6d215f834358cf9",
+      "tests/test_search_core.py": "985644001862e2a70046f08604490f99821e65ca406d214f36f89e8cc04b11b7",
+      "tools/coverage_badge.py": "12e9ce6190e1b009940a4c432213eb51d30704d56ecd512d22459cf0875b8711"
+    },
+    "governance": {
+      "passed": 397,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 49.444,
+      "junit_sha256": "ee162335817a3c38ffec2128063275e5a8798f1e85934a511c48ebeaf7f0c0ea"
+    },
+    "core_runtime_with_coverage": {
+      "passed": 322,
+      "skipped": 34,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 126.335,
+      "junit_sha256": "b000d6c0707c723ff5a9c36ae36ade46c89dd926c7fd501db0e33d09586a4b4e"
+    },
+    "runtime_profile_seconds": 126.35308512498159,
+    "runtime_ceiling_seconds": 234,
+    "runtime_gate": "passed; same CI coverage/profile command and unchanged ceiling",
+    "examples": {
+      "passed": 12,
+      "seconds": 116.39,
+      "notebook_code_cells": 52,
+      "aggregate_complete": true,
+      "manifest_sha256": "8b0b22a552072d177f606d658e4f98f48e5ba9a4aab0cdb4476aea447cfcd16a",
+      "scope": "Every current example rerun after install-prose changes; unchanged fence/code hashes retained and revalidated."
+    },
+    "site": {
+      "unit_tests": 49,
+      "external_links": 59,
+      "browser_tests": 28,
+      "routes": 83,
+      "status": "passed",
+      "scope": "Full lint, links, production build, routes, browser and WCAG checks after documentation changes."
+    },
+    "semantic_runtime_proof": "/tmp/talos-openssf/pr627-runtime/comparison.json",
+    "limits": "Local timing is not hosted timing. Hosted CI for the containing commit remains required. Neither signed release nor OpenSSF attainment is asserted."
+  }
+}

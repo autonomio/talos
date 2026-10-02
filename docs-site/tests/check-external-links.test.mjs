@@ -134,3 +134,17 @@ test('a missing page stays broken when GET confirms its missing status', async (
   const status = await attemptLink('https://example.com/missing', async () => ({statusCode: 404, resume() {}}));
   assert.equal(status, 404);
 });
+
+
+test('owned site links require mapped source or an existing static asset', async () => {
+  const {localSiteSource} = await import('../scripts/check-external-links.mjs');
+  const profile = {siteUrl: 'https://autonomio.github.io', basePath: '/talos/'};
+  const documents = [{slug: '/', source: 'README.md'}, {slug: '/overview/citing-talos', source: 'docs/Citing_Talos.md'}];
+  assert.equal(localSiteSource('https://autonomio.github.io/talos/', profile, documents), 'README.md');
+  assert.equal(localSiteSource('https://autonomio.github.io/talos/overview/citing-talos', profile, documents), 'docs/Citing_Talos.md');
+  assert.equal(localSiteSource('https://autonomio.github.io/talos/coverage/coverage.svg', profile, documents), 'docs-site/static/coverage/coverage.svg');
+  assert.equal(localSiteSource('https://autonomio.github.io/talos-copy/', profile, documents), null);
+  assert.equal(localSiteSource('https://example.org/talos/', profile, documents), null);
+  assert.equal(localSiteSource('https://autonomio.github.io/talos/missing.svg', profile, documents), 'docs-site/static/missing.svg');
+  assert.throws(() => localSiteSource('https://autonomio.github.io/talos/..%2fsecret', profile, documents), /escapes/);
+});

@@ -76,3 +76,9 @@ Configure the PyPI project's trusted publisher for `autonomio/talos`, the publis
 - [Configuration](docs/Developer/Configuration.md)
 - [Security assurance case](docs/Developer/Security-Assurance-Case.md)
 - [Making a release](docs/Developer/Making-Release.md)
+
+## Publish the verified documentation
+
+Set Settings → Pages → Build and deployment → Source to GitHub Actions. The `docs_pages.yml` workflow consumes only the successful protected-master Test and build artifact and publishes the documentation and measured statement coverage badge. It carries Pages and identity-token write access only in the deployment job; the source testing workflow stays read-only. The initial coverage asset reports awaiting publication until a complete measured report passes the statement gate.
+
+First deployment requires the Pages workflow and static-site artifact changes to be merged. Check the public documentation URL and coverage report after that deployment; local build evidence does not prove the public site is available.

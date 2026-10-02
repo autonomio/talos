@@ -17,15 +17,17 @@ require the named maintainer's confirmation.
 
 | Observation | Scope and evidence |
 | --- | --- |
-| Scorecard 7.7/10 | Public API report dated 1 October 2026, 16:42:55 UTC; commit `9783406eafd0c9d72d00010aeffb379a534a5349`; Scorecard v5.3.0 |
+| Scorecard 8.3/10 | Public API report dated 2 October 2026, 05:20:04 UTC; commit `06a635e06d13ff95a1c04632f89383740ffa57b1` |
+| Best Practices application | Passing 97%, Silver 67% after the 2 October evidence update; neither level awarded |
+| Coverage and test policy | [PR 625](https://github.com/autonomio/talos/pull/625) merged at `06a635e`; its source tree equals the verified candidate `2388cec` |
 | Reviewed integration | [PR 608](https://github.com/autonomio/talos/pull/608), approved by `bit-mis`, merged at the same commit |
 | Live protection | Active ruleset `24306812`; [privileged audit](https://github.com/autonomio/talos/actions/runs/36893895454) passed with exact snapshot parity and no bypass actors |
 | Security analysis | [CodeQL on merged master](https://github.com/autonomio/talos/actions/runs/36893895563) passed; upload success alone does not certify absence of security defects |
 | Published Scorecard workflow | [Master run](https://github.com/autonomio/talos/actions/runs/36893895393) succeeded with public results enabled |
 
 The [Scorecard API](https://api.scorecard.dev/projects/github.com/autonomio/talos)
-reports the commit and assessment date. An earlier score of 3.1 referred to the
-pre-adoption source. Historic review and test activity continue to affect the
+reports the commit and assessment date. Earlier scores of 3.1 and 7.7 refer to
+earlier public source and assessment dates. Historic review and test activity continue to affect the
 new score; a workflow edit cannot change past reviewed changesets.
 
 ## Coverage and regression proof
@@ -44,14 +46,17 @@ and retains its JSON report. The existing required lint gate keeps its separate
 core coverage floor and ratchet.
 
 The pre-improvement full-framework measurement was 6,756 of 8,711 statements
-(77.56%), across 176 modules. The 2.0.2 candidate measured 7,046 of 8,711
+(77.56%), across 176 modules. The reviewed and merged 2.0.2 source measured 7,046 of 8,711
 statements (80.89%) with 215 passing maintained tests and no skips, plus the
 complete documentation corpus and examples; its 104 existing excluded lines
 were unchanged. The [dated verification receipt](../verification/2026-10-01-openssf.json)
-records local execution evidence pending public integration. New regression
+records local execution evidence. The complete coverage guard and all framework
+lanes also passed in [hosted candidate CI](https://github.com/autonomio/talos/actions/runs/36914568173).
+The post-merge execution has its own [master run](https://github.com/autonomio/talos/actions/runs/36968443428);
+its result must be checked before describing that run as successful. New regression
 cases exercise Pareto/diversity
 selection, causal scaling and the packaged Keras, TensorFlow and PyTorch SFD
-training and restoration paths. Use the candidate's executed report for its
+training and restoration paths. Use the selected source's executed report for its
 result; do not substitute a projected total or narrow the measured package.
 
 ## Release evidence
@@ -76,14 +81,20 @@ exception. Keep unsupported answers Unknown. In particular:
 
 - Name a primary developer who confirms secure-design and common-vulnerability
   knowledge; policies and generated prose cannot establish that expertise.
-- Confirm six-month private vulnerability-response history, twelve-month
-  reporter credit, and disposition of any publicly known medium-or-higher
-  vulnerability older than 60 days.
+- Retain the maintainer's supplied vulnerability-history attestation and the
+  bounded project advisory inventories; legacy dependency advisories remain
+  a separate unresolved obligation.
 - Name an independent backup maintainer and confirm their ability, credentials
   and legal authority to continue development and issue a fix within one week.
 - Review substantive static diagnostics. An inherited-debt ratchet is not a
   claim that every warning is fixed or every style exception is rare and local.
-- Link actual signed-release and full-package coverage evidence when available.
+- Resolve legacy dependency advisories individually without treating trusted
+  model execution as proof that a dependency vulnerability is unexploitable.
+- Link an actual signed release and verify its artifacts from a consumer environment.
+- Reconcile the six-month fixed-bug ledger with regression-test evidence.
+- Reassess input, certificate and credential validation after the reviewed
+  maintenance changes are integrated; candidate tests alone do not establish
+  the deployed state.
 
 The [security assurance case](Security-Assurance-Case.md) records trust
 boundaries; [CONTRIBUTING](../../CONTRIBUTING.md) records contribution and test
@@ -95,8 +106,9 @@ The portal requires application data to be submitted under the Community Data
 License Agreement–Permissive Version 2.0. The authorized project representative
 must accept those terms before submission. After a level is attained, publish
 its achievement link on the repository front page or live project website
-within 48 hours, as the criteria require. The frozen root README remains
-unchanged; do not claim an undeployed documentation site provides that notice.
+within 48 hours, as the criteria require. The README links the live OpenSSF application and measured coverage publication;
+the maintainer explicitly lifted its prior freeze for this update. An undeployed
+documentation site does not establish achievement notice.
 
 ## Annual review
 

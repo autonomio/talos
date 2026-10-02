@@ -42,3 +42,5 @@ Check the [backend contract](../Backends.md) before changing the search policy. 
 ## Read next
 
 Run the [first sweep](Quickstart.md), or choose the recipe matching your current model. After training, continue with [Analyze](../Analyze.md), [Evaluate](../Evaluate.md) and [Deploy](../Deploy.md).
+
+Use the [citation guide](../Citing_Talos.md) to identify the software and recorded experiment in a research paper.

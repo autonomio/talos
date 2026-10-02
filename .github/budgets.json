@@ -282,7 +282,10 @@
     "governance/version_gate.py": 374,
     "governance/check_quality_debt.py": 51,
     "governance/_quality.py": 134,
-    "governance/comparison_ref.py": 12
+    "governance/comparison_ref.py": 12,
+    "talos/yaml/_validation.py": 63,
+    "talos/reducers/remote_entropy.py": 136,
+    "talos/parameters/_resume.py": 84
   },
   "coverage": {
     "line": 70,

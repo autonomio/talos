@@ -456,3 +456,9 @@ and quality behavior remains intact.
 - [Documentation-site operation](../../docs-site/README.md)
 - [Interface reference](../Reference/README.md)
 - [Developer home](README.md)
+
+## Public documentation and coverage
+
+Successful protected-master runs of the Test and build workflow retain the verified static site. The Pages publisher deploys that artifact after the complete run succeeds and skips superseded master assessments. Pull-request code is never executed by the publisher. The deployed statement coverage badge links its complete-package report, source commit and originating CI run; the initial static placeholder makes no measured claim. Repository-owned documentation links resolve against mapped source pages or checked-in static assets before deployment, while external destinations still require successful HTTP responses.
+
+The Pages publishing source must use GitHub Actions. [Setup](../../SETUP.md) owns repository activation; building the site locally does not establish publication.

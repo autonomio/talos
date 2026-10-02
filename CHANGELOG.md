@@ -1,5 +1,17 @@
 # Changelog
 
+# v2.0.3
+
+- Restore familiar README navigation and notebook introductions, preserve historical citations and systemize version-specific software and experiment references.
+- Replace the model animation with a runnable Keras-to-SFD comparison and verify an additional recovery notebook on all three frameworks.
+- Publish verified documentation and source-bound statement coverage from successful master CI, with live OpenSSF status badges.
+- Document the tested Talos 1.4 installation constraint and support commitment through at least 2028.
+
+- Verify committed manifest content against its immutable identity before execution or reindexing.
+- Reject malformed objective directions and execution settings before importing caller code.
+- Verify external sampler TLS certificates and hostname, reject transport downgrade, and require caller-owned service credentials.
+- Restore realized dictionary-sweep candidates before sampling and attest ordered parameter keys for new run identities.
+
 # v2.0.2
 
 - Bank the core coverage gain at 70% lines and 59% branches under the existing ratchet.

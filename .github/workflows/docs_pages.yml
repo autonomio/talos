@@ -1,0 +1,70 @@
+name: Publish verified documentation and coverage
+on:
+  workflow_run:
+    workflows: [Test and build]
+    types: [completed]
+    branches: [master]
+permissions:
+  contents: read
+concurrency:
+  group: talos-pages-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.repository == 'autonomio/talos' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish only the current master assessment
+        id: current
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          CURRENT_SHA=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/master" --jq .object.sha)
+          if [ "$SOURCE_SHA" = "$CURRENT_SHA" ]; then
+            echo 'publish=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'publish=false' >> "$GITHUB_OUTPUT"
+            echo 'Skip superseded documentation build; master has advanced.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Download the verified static site
+        if: steps.current.outputs.publish == 'true'
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53  # v6.0.0
+        with:
+          name: documentation-site
+          path: site
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+      - name: Prepare the static Pages artifact
+        if: steps.current.outputs.publish == 'true'
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b  # v4.0.0
+        with:
+          path: site
+      - name: Recheck master immediately before deployment
+        if: steps.current.outputs.publish == 'true'
+        id: deployable
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          CURRENT_SHA=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/master" --jq .object.sha)
+          if [ "$SOURCE_SHA" = "$CURRENT_SHA" ]; then
+            echo 'publish=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'publish=false' >> "$GITHUB_OUTPUT"
+            echo 'Skip superseded documentation build; master has advanced.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Deploy documentation and the measured coverage badge
+        if: steps.deployable.outputs.publish == 'true'
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e  # v4.0.5

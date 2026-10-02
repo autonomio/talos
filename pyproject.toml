@@ -41,7 +41,7 @@ tensorflow = ["tensorflow>=2.20,<3", "keras>=3.15,<4", "protobuf>=6.33.5,<8"]
 torch = ["torch>=2.13,<3"]
 legacy-tensorflow = ["tensorflow==2.14.1", "keras==2.14.0", "numpy>=1.26,<2"]
 plots = ["matplotlib>=3.8,<4"]
-samplers = ["chances>=0.1.9,<0.2"]
+samplers = []
 test = ["pytest>=8,<10", "coverage>=7,<8", "build>=1.2,<2", "hatchling==1.32.4,<2", "editables>=0.5,<1", "ruff==0.16.1"]
 
 [project.scripts]
@@ -63,7 +63,7 @@ packages = ["talos"]
 
 [tool.hatch.build.targets.sdist]
 core-metadata-version = "2.4"
-include = ["/talos", "/tests", "/examples", "/docs", "/README.md", "/CONTRIBUTING.md", "/CODE_OF_CONDUCT.md", "/NOTICE", "/LICENSE", "/pyproject.toml", "/tools", "/docs-site", "/.markdownlint.json", "/.gitignore", "/.pep8speaks.yml", "/logo.png", "/requirements.txt", "/test-ci.py", "/test-local.sh", "/AGENTS.md", "/CLAUDE.md", "/GOVERNANCE.md", "/MAINTAINERS.md", "/SECURITY.md", "/SUPPORT.md", "/SETUP.md", "/AUTONOMIO_PR_GUIDELINE.md", "/TALOS_REPO_SPECIFICS.md", "/THIRD_PARTY.md", "/CHANGELOG.md", "/AUTHORS", "/CITATION.cff", "/governance", "/governance.yml", "/scripts", "/requirements", "/.github"]
+include = ["/talos", "/tests", "/examples", "/docs", "/README.md", "/CONTRIBUTING.md", "/CODE_OF_CONDUCT.md", "/NOTICE", "/LICENSE", "/pyproject.toml", "/tools", "/docs-site", "/.markdownlint.json", "/.gitignore", "/.pep8speaks.yml", "/logo.png", "/requirements.txt", "/test-ci.py", "/test-local.sh", "/AGENTS.md", "/CLAUDE.md", "/GOVERNANCE.md", "/MAINTAINERS.md", "/SECURITY.md", "/SUPPORT.md", "/SETUP.md", "/AUTONOMIO_PR_GUIDELINE.md", "/TALOS_REPO_SPECIFICS.md", "/THIRD_PARTY.md", "/CHANGELOG.md", "/AUTHORS", "/CITATION.cff", "/CITATION.bib", "/governance", "/governance.yml", "/scripts", "/requirements", "/.github"]
 exclude = ["/docs-site/node_modules", "/docs-site/node_modules/**", "/docs-site/build", "/docs-site/build/**", "/docs-site/.generated", "/docs-site/.generated/**", "/docs-site/.docusaurus", "/docs-site/.docusaurus/**", "/docs-site/test-results", "/docs-site/test-results/**"]
 
 [tool.pytest.ini_options]

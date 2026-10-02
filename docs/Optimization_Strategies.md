@@ -20,7 +20,7 @@ Sampling chooses a bounded candidate set; reduction removes remaining candidates
 
 ## Before choosing a strategy
 
-Install the [backend](Backends.md) used by the training callback and execute the [Scan minimal example](Scan.md#minimal-example), which supplies the arrays and model used below. Start with a writable experiment directory. External entropy methods additionally need `talos[samplers]` and their provider service; offline methods do not.
+Install the [backend](Backends.md) used by the training callback and execute the [Scan minimal example](Scan.md#minimal-example), which supplies the arrays and model used below. Start with a writable experiment directory. External entropy methods require caller-owned provider credentials and a usable provider service; see [remote entropy configuration](#remote-entropy-configuration).
 
 1. Determine the full candidate count from the declared lists or expanded ranges.
 2. Choose a full grid or a sampling limit and method.
@@ -49,7 +49,7 @@ random_scan = talos.Scan(x, y, p, input_model, 'random', x_val=x_val, y_val=y_va
 
 PARAMETER | DESCRIPTION
 --------- | -----------
-`ambience` | External ambient-sound entropy service
+`ambience` | External RANDOM.ORG entropy service
 `halton` | Halton sequences
 `korobov_matrix` | Korobov matrix based sequence
 `latin_matrix` | Latin hypercube
@@ -60,7 +60,58 @@ PARAMETER | DESCRIPTION
 `uniform_crypto` | Cryptographically sound uniform
 `uniform_mersenne` | Uniform Mersenne twister
 
-Each method differs in discrepancy and other observable aspects. `seed` makes supported offline methods repeatable; `uniform_crypto`, `quantum`, and `ambience` draw fresh entropy. Checkpoints retain the realized pending rows so a resumed sweep does not resample them. Performance depends on the search space; compare methods on your own experiment. `quantum` and `ambience` require the optional `chances` package and external entropy services; availability, cost, and physical entropy claims are service-specific. They are not required for the examples or the default workflow.
+Each method differs in discrepancy and other observable aspects. `seed` makes supported offline methods repeatable; `uniform_crypto`, `quantum`, and `ambience` draw fresh entropy. Checkpoints retain the realized pending rows so a resumed sweep does not resample them. Performance depends on the search space; compare methods on your own experiment. `quantum` and `ambience` use the provider configuration below; availability, cost and physical entropy claims are service-specific. The default workflow and examples use offline methods.
+
+### Remote entropy configuration
+
+Talos owns both HTTPS clients. `quantum` uses the current
+[ANU Quantum Numbers API](https://quantumnumbers.anu.edu.au/documentation);
+`ambience` uses [RANDOM.ORG's current JSON-RPC API](https://api.random.org/json-rpc/4/basic).
+Obtain a key from the selected provider and save it as one UTF-8 line in a
+caller-owned file outside the project, manifest store and result directories.
+Set `TALOS_ANU_KEY_FILE` or `TALOS_RANDOM_ORG_KEY_FILE` to that file's path.
+RANDOM.ORG keys use UUID syntax. Restrict file access to the account running
+Talos. Replacing the file's contents rotates the credential; each service
+request reads it again.
+
+ANU requests batches of 1,024 unsigned 16-bit values and retains Talos's legacy
+conversion to candidate indexes. RANDOM.ORG requests integer sequences in
+batches of at most 10,000, with maximum indexes up to 1,000,000,000. Talos
+validates response types, lengths, bounds and identities, then retains the
+existing selection of unique indexes in the legal parameter space. Its
+32-attempt refill bound still fails visibly when a provider cannot supply the
+requested population.
+
+Both clients verify certificate chains and hostnames, require TLS 1.2 or newer,
+refuse redirects and apply a 15-second transport timeout. Credentials stay out
+of URLs and Talos logs. Missing or malformed keys, certificate failures,
+invalid responses and exhausted quotas fail the selected sampler. RANDOM.ORG's
+reported advisory delay is honored up to 60 seconds; a larger or invalid delay
+fails instead of blocking the run indefinitely.
+
+Loopback tests verify these transport and protocol contracts with controlled
+responses. They do not establish live account access, service availability or
+physical entropy quality.
+
+For `Scan(..., params=dict, resume=True, experiment_dir=...)` without an explicit
+`search_strategy`, Talos reconstructs its original realized rows from saved run
+metadata before sampling or executing
+`boolean_limit`. The normal runner then validates the current parameters,
+model/preparation source, data, seed and environment before restoring the
+checkpoint's remaining queue. Provider availability and new entropy do not
+change recovery. Sampling limits and the boolean selection are frozen to those
+original rows during dictionary recovery; changing them does not regenerate
+candidates. A caller-created `ParamSpace` or explicit native `search_strategy`
+remains caller-owned and uses the runner's existing checkpoint recovery path.
+
+New dictionary runs record their ordered parameter keys in the hashed identity;
+reordered caller keys fail before saved rows are reused. The older record format
+without that witness remains supported and requires the caller to preserve its
+original dictionary key order; those records cannot universally attest the
+order. Resume still requires the recorded Talos version, backend/dependency
+environment and caller source identities. Record-format compatibility does not
+migrate checkpoints across versions. Missing or malformed original row state
+fails without resampling.
 
 ## Grid search
 

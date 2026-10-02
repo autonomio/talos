@@ -5,7 +5,6 @@ Installer examples use the unpublished wheel and preinstalled dependency matrix.
 Every development command still executes; no remote repository is contacted.
 """
 import argparse
-import ast
 import contextlib
 import hashlib
 import io
@@ -26,7 +25,7 @@ from control_docs import blocks
 
 PAGES = ['README.md', 'docs/Guides/Quickstart.md', 'docs/SFD_and_CLI.md',
          'docs/Migration.md', 'docs/Backends.md', 'docs/Install_Options.md',
-         'CONTRIBUTING.md']
+         'docs/Citing_Talos.md', 'CONTRIBUTING.md']
 
 
 def checked(command, *, cwd=None, env=None, log=None):
@@ -46,6 +45,8 @@ def checked(command, *, cwd=None, env=None, log=None):
 
 def dispatch(kind, arguments):
     """Shell functions keep the fixture interpreter after venv activation."""
+    if kind == 'python' and list(arguments)[:2] == ['-m', 'pip']:
+        return dispatch('pip', arguments[2:])
     virtual = Path(os.environ.get('VIRTUAL_ENV') or os.environ['TALOS_DOC_VENV'])
     python = str(virtual / 'bin/python')
     if kind == 'pip':
@@ -54,9 +55,13 @@ def dispatch(kind, arguments):
             raise ValueError('Unassigned installer command')
         resolved = []
         for value in args[1:]:
-            if value == 'talos' or value.startswith('talos['):
-                suffix = value[5:] if value.startswith('talos[') else ''
-                resolved.append(os.environ['TALOS_DOC_WHEEL'] + suffix)
+            requirement = re.fullmatch(
+                r'talos(\[[A-Za-z0-9_,.-]+\])?(?:\s*@\s*git\+https://github\.com/autonomio/talos(?:@[^\s]+)?)?',
+                value)
+            if requirement:
+                resolved.append(os.environ['TALOS_DOC_WHEEL'] + (requirement[1] or ''))
+            elif value.startswith('talos'):
+                raise ValueError('Versioned or foreign Talos installs need their own fixture: ' + value)
             else:
                 resolved.append(value)
         command = [python, '-m', 'pip', 'install', '--no-index', '--no-deps',
@@ -107,6 +112,24 @@ def copy_checkout(root, destination):
         '.git', '__pycache__', '.pytest_cache', '.ruff_cache', '.venv',
         '.coverage', 'dist', 'build', 'results', 'verification-output',
         'node_modules', '.generated', '.docusaurus', 'test-results'))
+
+
+def migration_fixture(folder):
+    """Use the importable paired example independently of README fence order."""
+    from examples.keras_to_talos import prepare_data
+
+    fixture = 'from examples.keras_to_talos import existing_model\n'
+    callback = folder / 'my_models.py'
+    callback.write_text(fixture)
+    sys.modules.pop('my_models', None)
+    sys.modules.pop('my_sfd', None)
+    source = folder / 'examples/keras_to_talos.py'
+    return prepare_data(), {
+        'path': str(callback), 'source_sha256': hashlib.sha256(fixture.encode()).hexdigest(),
+        'source': 'examples/keras_to_talos.py',
+        'example_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
+        'context': 'canonical paired Iris example; unchanged five-argument existing_model callback',
+    }
 
 
 def main():
@@ -169,7 +192,6 @@ def main():
                            'versions': {'talos': talos.__version__, 'numpy': np.__version__,
                                         'tensorflow': tf.__version__}}}
     failures = 0
-    contexts = {}
     original_cwd = Path.cwd()
 
     def save():
@@ -189,7 +211,6 @@ def main():
             sys.modules[module.__name__] = module
             context = module.__dict__
             context['__name__'] = module.__name__
-            contexts[page] = context
             sys.path.insert(0, str(folder))
             for imported in list(sys.modules):
                 if imported == 'examples' or imported.startswith('examples.'):
@@ -199,18 +220,7 @@ def main():
             sys.modules['examples'] = examples_package
             os.chdir(folder)
             if page == 'docs/Migration.md':
-                readme_source = blocks(root / 'README.md')[0][1]['source']
-                tree = ast.parse(readme_source)
-                callback = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'model')
-                callback.name = 'existing_model'
-                fixture = 'from tensorflow import keras\n\n' + ast.unparse(callback) + '\n'
-                (folder / 'my_models.py').write_text(fixture)
-                sys.modules.pop('my_models', None)
-                sys.modules.pop('my_sfd', None)
-                context['my_splits'] = contexts['README.md']['my_splits']
-                report['fixtures']['migration_callback'] = {'path': str(folder / 'my_models.py'),
-                    'source_sha256': hashlib.sha256(fixture.encode()).hexdigest(),
-                    'context': 'README real Iris five-argument callback, renamed existing_model'}
+                context['my_splits'], report['fixtures']['migration_callback'] = migration_fixture(folder)
             for index, block in enumerate(page_blocks):
                 record = {key: value for key, value in block.items() if key != 'source'}
                 record.update(path=page, block_index=index, context='sequential page context; documented file saves')
@@ -235,10 +245,6 @@ def main():
                         with log.open('w') as stream, contextlib.redirect_stdout(stream), contextlib.redirect_stderr(stream):
                             with tf.device('/CPU:0'):
                                 exec(compile(source, str(source_file), 'exec'), context)
-                                if page == 'README.md' and 'trained = scan.best_model' in source:
-                                    assert len(context['scan'].data) == 2
-                                    assert context['predictions'].shape == (30, 3)
-                                    assert np.isfinite(context['scan'].data.val_loss).all()
                                 if 'predictions = result.predict' in source:
                                     assert context['predictions'].shape == (30, 3)
                                     assert np.isfinite(context['result'].data.val_loss).all()
@@ -250,7 +256,8 @@ def main():
                                         experiment_name='migration', objective={'metric': 'val_loss', 'direction': 'min'})
                                     assert len(migrated.data) == 2
                                     assert np.isfinite(migrated.data.val_loss).all()
-                                    record['context'] = 'README real Iris callback fixture; execute wrapper in two real 5/10-epoch trials'
+                                    record['context'] = 'canonical paired Iris callback; execute wrapper in two real 5/10-epoch trials'
+                                    record['migration_source_sha256'] = report['fixtures']['migration_callback']['example_sha256']
                     elif language in ('sh', 'bash', 'shell'):
                         cwd = Path.cwd()
                         if 'pip install -e' in source:

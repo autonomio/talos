@@ -1,9 +1,9 @@
+"""Persist, resolve and verify content-addressed experiment manifests."""
 import hashlib
 import json
 import re
 import warnings
-from datetime import datetime
-from datetime import timezone
+from datetime import datetime, timezone
 from io import StringIO
 from pathlib import Path
 from typing import Any
@@ -114,15 +114,26 @@ def lineage_block(data: dict[str, Any]) -> dict[str, Any]:
     return lineage if is_mapping(lineage) else {}
 
 
+def _verify_committed(data: object, name: str, expected_id: str) -> None:
+    """Verify the stored lineage label and unchanged scientific manifest content."""
+    if not is_mapping(data):
+        raise ValueError(f"Invalid manifest format in '{name}'")
+    if lineage_block(data).get('id') != expected_id:
+        raise ValueError(f"Integrity check failed: '{name}' lineage.id does not match expected '{expected_id}'")
+    try:
+        content_id = canonical_manifest_id(data)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"Integrity check failed: '{name}' content cannot be hashed: {exc}") from exc
+    if content_id != expected_id:
+        raise ValueError(f"Integrity check failed: '{name}' content does not match expected '{expected_id}'")
+
+
 def commit_manifest(yaml_path: Path,
                     project_root: Path,
                     parent_id: str | None = None) -> tuple[str, bool]:
 
     '''
-    Content-address and store a YAML manifest in the committed store.
-
-    Reads the source YAML, computes its SHA256, injects a lineage block,
-    writes to manifests/committed/<hex>.yaml, and updates index.json.
+    Verify committed sources, persist content-addressed drafts and update the index.
 
     Args:
         yaml_path (Path): Path to the source YAML file
@@ -130,9 +141,7 @@ def commit_manifest(yaml_path: Path,
         parent_id (str | None): Parent manifest ID for lineage tracking
 
     Returns:
-        tuple[str, bool]: (manifest_id, already_existed). manifest_id is
-            "sha256:<hex>". already_existed is True if the manifest was
-            already in the store (idempotent).
+        tuple[str, bool]: SHA256 manifest ID and whether it was already in the store
 
     '''
 
@@ -147,6 +156,11 @@ def commit_manifest(yaml_path: Path,
     if not is_mapping(data):
         raise ValueError(f"Invalid YAML format in '{yaml_path.name}': expected a mapping")
 
+    store_path = project_root / STORE_RELATIVE
+    source_path = yaml_path.resolve()
+    if source_path.parent == store_path.resolve():
+        _verify_committed(data, source_path.name, f'{SHA256_PREFIX}{source_path.stem}')
+
     if parent_id is None:
         source_parent = lineage_block(data).get('parent_id')
         if isinstance(source_parent, str):
@@ -154,7 +168,6 @@ def commit_manifest(yaml_path: Path,
 
     manifest_id = canonical_manifest_id(data)
 
-    store_path = project_root / STORE_RELATIVE
     dest = store_path / f'{manifest_id[len(SHA256_PREFIX):]}.yaml'
 
     already_existed = dest.exists()
@@ -178,6 +191,7 @@ def commit_manifest(yaml_path: Path,
             raise ValueError(f"Cannot read committed manifest '{dest.name}': {exc}") from exc
         if not is_mapping(existing):
             raise ValueError(f"Invalid committed manifest format in '{dest.name}': expected a mapping")
+        _verify_committed(existing, dest.name, manifest_id)
         name = manifest_name(existing, fallback=dest.stem)
         existing_lineage = lineage_block(existing)
         committed_at = existing_lineage.get('committed_at', '')
@@ -190,23 +204,17 @@ def commit_manifest(yaml_path: Path,
 
 def resolve_manifest_uri(uri: str, start: Path) -> tuple[Path, Path]:
 
-    '''
-    Resolve a manifest:// URI to a filesystem path.
-
-    Verifies that lineage.id in the committed file matches the URI hash,
-    catching cases where the wrong file is at the expected path.
+    '''Resolve a full or unambiguous short manifest URI after verifying stored content.
 
     Args:
-        uri (str): URI of the form manifest://sha256:<hex>
+        uri (str): manifest://sha256:<hex> URI
         start (Path): Directory to start searching for the project root
 
     Returns:
-        tuple[Path, Path]: (manifest_path, project_root) — resolved path to the
-            committed manifest file and the talos project root
+        tuple[Path, Path]: Committed manifest path and project root
 
     Raises:
-        ValueError: If the URI is malformed, the project root is not found,
-            the manifest is not in the store, or lineage.id does not match
+        ValueError: If resolution fails or the stored label/content differs from its hash
 
     '''
 
@@ -248,14 +256,8 @@ def resolve_manifest_uri(uri: str, start: Path) -> tuple[Path, Path]:
         data = yaml_obj.load(candidate.read_text(encoding='utf-8'))
     except (OSError, YAMLError) as exc:
         raise ValueError(f"Cannot read manifest '{candidate.name}': {exc}") from exc
-    if not is_mapping(data):
-        raise ValueError(f"Invalid manifest format in '{candidate.name}'")
     expected_id = f'{SHA256_PREFIX}{full_hex}'
-    actual_id = lineage_block(data).get('id')
-    if actual_id != expected_id:
-        raise ValueError(
-            f"Integrity check failed: '{candidate.name}' lineage.id does not match expected '{expected_id}'"
-        )
+    _verify_committed(data, candidate.name, expected_id)
 
     return candidate, project_root
 
@@ -365,6 +367,7 @@ def fork_manifest(committed_path: Path, dest: Path, new_name: str) -> str:
     if not is_mapping(data):
         raise ValueError(f"Invalid manifest format in '{committed_path.name}'")
 
+    _verify_committed(data, committed_path.name, parent_id)
     metadata = data.get('metadata')
     if not is_mapping(metadata):
         raise ValueError(f"Committed manifest '{committed_path.name}' has no metadata block")
@@ -387,10 +390,8 @@ def rebuild_index(project_root: Path) -> tuple[int, list[str]]:
     Rebuild manifests/committed/index.json from the committed manifest files.
 
     The committed *.yaml files are the source of truth; the index is a derived
-    cache. Scans every committed manifest, reads its lineage block, verifies
-    that lineage.id matches the filename, and writes a fresh index. Files that
-    are unreadable, non-mappings, missing a lineage block, or whose lineage.id
-    does not match their filename are skipped and reported.
+    cache. Verify lineage IDs and content hashes against filenames, then index
+    valid committed manifests. Report and skip unreadable or malformed entries.
 
     Args:
         project_root (Path): Root directory of the talos project
@@ -412,21 +413,14 @@ def rebuild_index(project_root: Path) -> tuple[int, list[str]]:
         except (OSError, YAMLError) as exc:
             warnings_out.append(f"{path.name}: cannot read ({type(exc).__name__}) — skipped")
             continue
-        if not is_mapping(data):
-            warnings_out.append(f"{path.name}: not a mapping — skipped")
-            continue
-
-        lineage = data.get('lineage')
-        if not is_mapping(lineage):
-            warnings_out.append(f"{path.name}: missing lineage block — skipped")
-            continue
-
-        manifest_id = lineage.get('id')
         expected_id = f'{SHA256_PREFIX}{path.stem}'
-        if manifest_id != expected_id:
-            warnings_out.append(f"{path.name}: lineage.id does not match filename — skipped")
+        try:
+            _verify_committed(data, path.name, expected_id)
+        except ValueError as exc:
+            warnings_out.append(f'{exc} — skipped')
             continue
 
+        lineage = lineage_block(data)
         entries.append(_index_entry(
             expected_id,
             manifest_name(data, fallback=path.stem),
