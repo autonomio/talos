@@ -178,3 +178,40 @@ def test_compiler_warning_is_rejected_before_execution(style_project: Path, scop
     target.write_text("pattern = r'\\d'\n")
     accepted = subprocess.run(command, cwd=style_project, capture_output=True, text=True, check=False)
     assert accepted.returncode == 0, accepted.stdout + accepted.stderr
+
+
+def test_fitted_scaler_accepts_typed_mapping_values(tmp_path: Path) -> None:
+    source = tmp_path / 'typed_caller.py'
+    source.write_text(
+        'from talos.experiment.manifest_core import make_fitted_scaler\n'
+        '\n'
+        'def transform(data: object, factor: float | str = 1.0) -> object:\n'
+        '    return data\n'
+        '\n'
+        'numeric: dict[str, float] = {"factor": 1.0}\n'
+        'dynamic: dict[str, str] = {"factor": "learning_rate"}\n'
+        'invalid_keys: dict[int, float] = {1: 1.0}\n'
+        'make_fitted_scaler("numeric", transform, numeric)\n'
+        'make_fitted_scaler("dynamic", transform, dynamic)\n'
+        'make_fitted_scaler("invalid", transform, invalid_keys)\n')
+    config = tmp_path / 'pyrightconfig.json'
+    config.write_text(json.dumps({
+        'include': [source.name], 'extraPaths': [str(ROOT)],
+        'pythonVersion': '3.10', 'typeCheckingMode': 'strict',
+    }))
+    result = subprocess.run(
+        [sys.executable, '-m', 'pyright', '--pythonpath', sys.executable,
+         '--project', str(config), '--outputjson'],
+        cwd=tmp_path, text=True, capture_output=True, check=False)
+    assert result.returncode == 1, result.stdout + result.stderr
+    report = json.loads(result.stdout)
+    (tmp_path / 'pyright-report.json').write_text(result.stdout)
+    assert report['summary']['filesAnalyzed'] == 1
+    # Keep inherited Unknown diagnostics; test typed-call compatibility only.
+    argument_errors = [item for item in report['generalDiagnostics']
+                       if item.get('rule') == 'reportArgumentType']
+    assert len(argument_errors) == 1, result.stdout + result.stderr
+    error = argument_errors[0]
+    assert error['range']['start']['line'] == 10, result.stdout
+    assert 'dict[int, float]' in error['message'], result.stdout
+    assert 'extra_params' in error['message'], result.stdout

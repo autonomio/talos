@@ -6,8 +6,9 @@ import inspect
 import logging
 import random
 import re
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field, fields, is_dataclass
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 import polars as pl
@@ -101,14 +102,14 @@ def _apply_fitted_transform(data: pl.DataFrame, fitted_transform: Any) -> pl.Dat
     return fitted_transform.transform(data)
 
 
-def _split_extra_params(extra_params: dict[str, Any] | None) -> tuple[dict[str, Any], dict[str, Any]]:
+def _split_extra_params(extra_params: Mapping[str, object] | None) -> tuple[dict[str, object], dict[str, object]]:
     _extra = dict(extra_params or {})
     _static = {k: v for k, v in _extra.items() if not isinstance(v, str)}
-    _dynamic = {k: v for k, v in _extra.items() if isinstance(v, str)}
+    _dynamic: dict[str, object] = {k: v for k, v in _extra.items() if isinstance(v, str)}
     return (_static, _dynamic)
 
 
-def make_fitted_scaler(param_name: str, transform_class: Callable[..., object], extra_params: dict[str, object] | None = None) -> FittedTransformEntry:
+def make_fitted_scaler(param_name: str, transform_class: Callable[..., object], extra_params: Mapping[str, object] | None = None) -> FittedTransformEntry:
     _static, _dynamic = _split_extra_params(extra_params)
 
     def _factory(data: pl.DataFrame, _cls: Callable[..., object] = transform_class, _p: dict[str, object] = _static, **dyn: object) -> object:
@@ -537,6 +538,5 @@ def _compress_pca(manifest, splits, round_params, fitted, targets):
     return transformed, fitted
 
 
-__all__ = ['AblationConfig', 'CalibrationBuilder',
-    'CalibrationConfig', 'MLManifest', 'MachineLearningManifest', 'Manifest', 'PCACompressionConfig',
+__all__ = ['AblationConfig', 'CalibrationBuilder', 'CalibrationConfig', 'MLManifest', 'MachineLearningManifest', 'Manifest', 'PCACompressionConfig',
     'TargetClassConfig', 'TransformEntry', 'make_fitted_scaler', ]

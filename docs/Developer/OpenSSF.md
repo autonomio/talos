@@ -18,9 +18,9 @@ require the named maintainer's confirmation.
 | Observation | Scope and evidence |
 | --- | --- |
 | Scorecard 8.3/10 | Public API report dated 2 October 2026, 05:20:04 UTC; commit `06a635e06d13ff95a1c04632f89383740ffa57b1` |
-| Best Practices application | Passing 97%, Silver 75% after the 2 October evidence update; neither level awarded |
+| Best Practices application | Passing 97%, Silver 76% after the 2 October evidence update; neither level awarded |
 | Coverage and test policy | [PR 625](https://github.com/autonomio/talos/pull/625) merged at `06a635e`; its source tree equals the verified candidate `2388cec` |
-| Reviewed integration | [PR 608](https://github.com/autonomio/talos/pull/608), approved by `bit-mis`, merged at the same commit |
+| Reviewed integration | [PR 608](https://github.com/autonomio/talos/pull/608), approved by `bit-mis`, merged at `9783406`; PR 625 later merged at `06a635e` |
 | Live protection | Active ruleset `24306812`; [privileged audit](https://github.com/autonomio/talos/actions/runs/36893895454) passed with exact snapshot parity and no bypass actors |
 | Security analysis | [CodeQL on merged master](https://github.com/autonomio/talos/actions/runs/36893895563) passed; upload success alone does not certify absence of security defects |
 | Published Scorecard workflow | [Master run](https://github.com/autonomio/talos/actions/runs/36893895393) succeeded with public results enabled |

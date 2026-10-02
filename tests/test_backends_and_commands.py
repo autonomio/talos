@@ -79,6 +79,8 @@ def test_real_classification_score_encodings():
 
 
 def test_commands_and_new_archive(tmp_path):
+    from talos.scan.scan_addon import func_best_model, func_evaluate
+
     x, y = load_iris(return_X_y=True)
     model = LogisticRegression(max_iter=500).fit(x, y)
     scan = SimpleNamespace(data=pd.DataFrame({'val_loss': [float(-model.score(x, y))]}),
@@ -86,6 +88,15 @@ def test_commands_and_new_archive(tmp_path):
                            details=pd.Series({'experiment_name': 'iris'}), round_history=[], x=x, y=y)
     predicted = Predict(scan).predict(x, 'val_loss', True)
     np.testing.assert_array_equal(predicted, model.predict(x))
+    selected = func_best_model(scan, metric='val_loss', asc=True)
+    assert selected is model
+    np.testing.assert_array_equal(backend_for(selected).predict(selected, x), predicted)
+    func_evaluate(scan, x, y, 'multi_class', metric='val_loss', folds=3, shuffle=False, asc=True)
+    fold_x, fold_y = kfold(x, y, 3, False)
+    expected_scores = [f1_score(labels, model.predict(features), average='macro')
+                       for features, labels in zip(fold_x, fold_y, strict=True)]
+    assert scan.data.loc[0, 'eval_f1score_mean'] == pytest.approx(np.mean(expected_scores))
+    assert scan.data.loc[0, 'eval_f1score_std'] == pytest.approx(np.std(expected_scores))
     assert Analyze(scan).rounds() == 1
     packaged = Deploy(scan, tmp_path / 'nested' / 'iris', 'val_loss', asc=True)
     restored = Restore(packaged.path)

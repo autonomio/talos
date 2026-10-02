@@ -22,7 +22,7 @@ These declarations describe checked-in policy. Live enforcement exists only afte
 
 PEP 8 is the Python style guide. The existing required lint workflow separately
 enforces the following selected style with zero findings, using the pinned Ruff
-version and the configuration in `pyproject.toml`:
+version and the strict configuration in `governance/ruff.toml`:
 
 ```sh
 python -m ruff check --config governance/ruff.toml --preview --select E,W,I,D200,D205,D415,RUF022 --ignore E501 talos governance tests tools scripts examples

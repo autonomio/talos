@@ -25,7 +25,7 @@ from control_docs import blocks
 
 PAGES = ['README.md', 'docs/Guides/Quickstart.md', 'docs/SFD_and_CLI.md',
          'docs/Migration.md', 'docs/Backends.md', 'docs/Install_Options.md',
-         'docs/Citing_Talos.md', 'CONTRIBUTING.md']
+         'docs/Citing_Talos.md', 'CONTRIBUTING.md', 'docs/Developer/Configuration.md']
 
 
 def checked(command, *, cwd=None, env=None, log=None):
@@ -261,7 +261,7 @@ def main():
                                     record['migration_source_sha256'] = report['fixtures']['migration_callback']['example_sha256']
                     elif language in ('sh', 'bash', 'shell'):
                         cwd = Path.cwd()
-                        if 'pip install -e' in source:
+                        if 'pip install -e' in source or page == 'docs/Developer/Configuration.md':
                             cwd = checkout
                             record['context'] = 'actual full development commands in complete temporary checkout'
                         if 'talos commit ' in source:

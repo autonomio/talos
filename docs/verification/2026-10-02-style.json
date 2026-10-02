@@ -3,7 +3,7 @@
   "recorded_at_utc": "2026-10-02T07:15:44.360395+00:00",
   "candidate_version": "2.0.4",
   "status": "local acceptance in progress; not released or merged",
-  "base_commit": "d6f191db12017f37ad22f8c235190b92c2d6dd20",
+  "base_commit": "1043f48f0a397b060e87b066083ca611dc46f7dc",
   "package_modules": 179,
   "package_file_sha256": {
     "talos/__init__.py": "138140fc97bde09c10f398fa05f3d048fcca9beb2d8071b69b9d879bea16757a",
@@ -64,7 +64,7 @@
     "talos/experiment/experiment_core.py": "cd12914b12392426970c8a6329b2f7639aa30805e84a7cb06db3f2093ab21569",
     "talos/experiment/feedback_controller.py": "5275f65219e8e59e4e3f88ee06d1adc4f1bc0c494d39fc17f5bdc2ca5a1e7ba0",
     "talos/experiment/log_projection.py": "d9c5a52c9050f51775540bc67376d608c4017b4589b56462e044e4025b95dc09",
-    "talos/experiment/manifest_core.py": "f47352cec845accb56f57b463039b5604edad5de3f69352f5f2cabbbd55d75f8",
+    "talos/experiment/manifest_core.py": "5790d5b5dad3dfbf510748071bf5127b047c478ca4370fbbf03e691013386a86",
     "talos/experiment/msq.py": "f0a25ce2440b223486c18aa9943848a69fcaf78420a5fa735562cf5e19448275",
     "talos/experiment/param_domain.py": "7601d58d2688753d73ff50219e68f4246c0e09cfdad794d6b76fddc42e121093",
     "talos/experiment/param_search/__init__.py": "f214f67028655f406fa83597d75353010ba76171d6dc6e9568fd4340441bbd07",
@@ -198,7 +198,8 @@
     "baseline_findings": 768,
     "baseline_report_sha256": "6700f681e4f427799874f4c0acbddf52598a8aa28bfaf08e4326dac6e9247da5",
     "candidate_findings": 0,
-    "meaningful_style_and_compiler_contracts_passed": 31
+    "meaningful_style_and_compiler_contracts_passed": 31,
+    "typed_mapping_caller_contracts_passed": 1
   },
   "compiler": {
     "command": "python -Werror -m compileall -q -f talos governance tests tools scripts examples",
@@ -227,7 +228,7 @@
   "regression_ledger": "docs/verification/2026-10-02-regression-ledger.json",
   "public_status_observed": {
     "passing_percent": 97,
-    "silver_percent": 75,
+    "silver_percent": 76,
     "scorecard_score": 8.3,
     "neither_best_practices_level_awarded": true
   },
@@ -236,5 +237,33 @@
     "No new suppression, Any, selected-rule exclusion or budget increase.",
     "No cross-version checkpoint equivalence or source-identity algorithm change.",
     "Actual public badge attainment requires integrated source, human facts, legacy advisory disposition and an executed signed release."
-  ]
+  ],
+  "superseded_candidate_checks": {
+    "source_commit": "51bfe22602a625ed2b53674a56a79ea91473c551",
+    "core_passed": 322,
+    "core_optional_skips": 34,
+    "core_runtime_seconds": 175.56319054198684,
+    "runtime_ceiling_seconds": 234,
+    "framework_passed": 356,
+    "framework_skips": 0,
+    "governance_passed": 428,
+    "combined_lint_passed": 750,
+    "combined_lint_optional_skips": 34,
+    "changed_line_coverage": {
+      "covered": 168,
+      "total": 212,
+      "percent": 79.24528301886792,
+      "status": "failed; historical alias acceptance added before final candidate"
+    },
+    "documentation": {
+      "fences": 135,
+      "examples": 12,
+      "notebook_code_cells": 52,
+      "inline_commands": 7,
+      "executor_failures": 0,
+      "missing_receipts": 1,
+      "status": "incomplete; Configuration shell fence subsequently registered"
+    },
+    "distribution_audits": "passed; final artifacts will be rebuilt after caller annotation fix"
+  }
 }
