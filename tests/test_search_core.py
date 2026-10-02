@@ -462,7 +462,26 @@ def _local_audit_alternate_iris_model(x_train, y_train, x_val, y_val, params):
     return SimpleNamespace(history={'val_loss': [loss]}), fitted
 
 
-def test_hot_edit_live_controls_are_audited_without_pending_queue_changes(tmp_path, monkeypatch):
+@pytest.fixture
+def local_audit_models(tmp_path, monkeypatch):
+    """Snapshot real caller models without the unrelated acceptance-test import graph."""
+    import importlib.util
+    import inspect
+    import sys
+    path = tmp_path / 'talos_audit_models.py'
+    source = 'from types import SimpleNamespace\n\n' + '\n'.join(
+        inspect.getsource(model) for model in (_local_audit_iris_model, _local_audit_alternate_iris_model))
+    path.write_text(source)
+    specification = importlib.util.spec_from_file_location('talos_audit_models', path)
+    assert specification is not None and specification.loader is not None
+    models = importlib.util.module_from_spec(specification)
+    monkeypatch.syspath_prepend(str(tmp_path))
+    monkeypatch.setitem(sys.modules, specification.name, models)
+    specification.loader.exec_module(models)
+    return models
+
+
+def test_hot_edit_live_controls_are_audited_without_pending_queue_changes(tmp_path, monkeypatch, local_audit_models):
     import hashlib
     import talos
     from sklearn.datasets import load_iris
@@ -472,7 +491,7 @@ def test_hot_edit_live_controls_are_audited_without_pending_queue_changes(tmp_pa
     x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=.3, random_state=17, stratify=y)
     path = tmp_path / 'talos_strategy.py'
     first = 'def talos_strategy(scan):\n    scan.reduction_threshold = .4\n    scan.annotation = 1\n    return scan\n'
-    second = ('from tests.test_search_core import _local_audit_alternate_iris_model\n'
+    second = ('from talos_audit_models import _local_audit_alternate_iris_model\n'
               'def talos_strategy(scan):\n    scan.reduction_threshold = .8\n'
               '    scan.model = _local_audit_alternate_iris_model\n'
               '    scan.annotation = getattr(scan, "annotation", 0) + 1\n    return scan\n')
@@ -480,12 +499,12 @@ def test_hot_edit_live_controls_are_audited_without_pending_queue_changes(tmp_pa
     def edit(event, result, params):
         if event == 'trial_completed' and len(result.data) == 1:
             path.write_text(second)
-    scan = talos.Scan(x_train, y_train, {'c': [.1, 1., 10.]}, _local_audit_iris_model, 'controlled',
+    scan = talos.Scan(x_train, y_train, {'c': [.1, 1., 10.]}, local_audit_models._local_audit_iris_model, 'controlled',
         x_val=x_val, y_val=y_val, reduction_method='local_strategy', disable_progress_bar=True,
         experiment_dir=tmp_path / 'run', save_models=False, save_weights=False,
         clear_session=False, event_callback=edit, reduction_metric='val_loss', minimize_loss=True)
     assert scan.data.c.tolist() == [.1, 1., 10.]
-    expected, _ = _local_audit_alternate_iris_model(x_train, y_train, x_val, y_val, {'c': 10.})
+    expected, _ = local_audit_models._local_audit_alternate_iris_model(x_train, y_train, x_val, y_val, {'c': 10.})
     assert scan.data.val_loss.iloc[-1] == expected.history['val_loss'][-1]
     entries = [json.loads(line) for line in (scan.run_dir / 'audit.jsonl').read_text().splitlines()]
     interventions = [item for entry in entries for item in entry['interventions']]
@@ -546,7 +565,7 @@ def test_gamify_absolute_experiment_path_writes_legacy_sibling_file(tmp_path):
 
 
 @pytest.mark.parametrize('inline_model', [False, True])
-def test_hot_edit_controls_model_and_source_survive_scan_pause_resume(tmp_path, monkeypatch, inline_model):
+def test_hot_edit_controls_model_and_source_survive_scan_pause_resume(tmp_path, monkeypatch, inline_model, local_audit_models):
     import talos
     from sklearn.datasets import load_iris
     from sklearn.model_selection import train_test_split
@@ -555,7 +574,7 @@ def test_hot_edit_controls_model_and_source_survive_scan_pause_resume(tmp_path, 
     x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=.3, random_state=17, stratify=y)
     path = tmp_path / 'talos_strategy.py'
     first = 'def talos_strategy(scan):\n    scan.reduction_threshold = .4\n    return scan\n'
-    second = ('from tests.test_search_core import _local_audit_alternate_iris_model\n'
+    second = ('from talos_audit_models import _local_audit_alternate_iris_model\n'
               'def talos_strategy(scan):\n    scan.reduction_threshold = .8\n'
               '    scan.model = _local_audit_alternate_iris_model\n    return scan\n')
     if inline_model:
@@ -567,7 +586,7 @@ def test_hot_edit_controls_model_and_source_survive_scan_pause_resume(tmp_path, 
         if event == 'trial_completed' and len(result.data) == 1:
             path.write_text(second)
     def execute(directory, **options):
-        return talos.Scan(x_train, y_train, {'c': [.1, 1., 10.]}, _local_audit_iris_model, 'controlled',
+        return talos.Scan(x_train, y_train, {'c': [.1, 1., 10.]}, local_audit_models._local_audit_iris_model, 'controlled',
             x_val=x_val, y_val=y_val, reduction_method='local_strategy', disable_progress_bar=True,
             experiment_dir=directory, save_models=False, save_weights=False, seed=17,
             clear_session=False, event_callback=edit, reduction_metric='val_loss', minimize_loss=True, **options)
@@ -590,7 +609,7 @@ def test_hot_edit_controls_model_and_source_survive_scan_pause_resume(tmp_path, 
     if inline_model:
         assert resumed.model.__name__ == uninterrupted.model.__name__ == 'replacement_model'
     else:
-        assert resumed.model is uninterrupted.model is _local_audit_alternate_iris_model
+        assert resumed.model is uninterrupted.model is local_audit_models._local_audit_alternate_iris_model
     assert resumed.data._trial_id.tolist() == uninterrupted.data._trial_id.tolist()
     assert resumed.round_history == uninterrupted.round_history
     np.testing.assert_array_equal(resumed.data.val_loss, uninterrupted.data.val_loss)
@@ -669,7 +688,7 @@ def test_external_entropy_fails_explicitly_if_unique_population_is_unavailable(m
 @pytest.mark.parametrize('initial_flags,change', [
     ({'save_models': False, 'save_weights': True}, 'scan.save_weights = False'),
     ({'save_models': False, 'save_weights': False}, 'scan.save_models = True')])
-def test_live_array_reassignment_and_save_flags_resume_exactly(tmp_path, monkeypatch, capsys, initial_flags, change):
+def test_live_array_reassignment_and_save_flags_resume_exactly(tmp_path, monkeypatch, capsys, initial_flags, change, local_audit_models):
     import talos
     from sklearn.datasets import load_iris
     from sklearn.model_selection import train_test_split
@@ -686,7 +705,7 @@ def test_live_array_reassignment_and_save_flags_resume_exactly(tmp_path, monkeyp
               '    return scan\n')
     (tmp_path / 'talos_strategy.py').write_text(source)
     def execute(directory, **options):
-        return talos.Scan(x_train, y_train, {'c': [.1, 1., 10.]}, _local_audit_iris_model, 'live_data',
+        return talos.Scan(x_train, y_train, {'c': [.1, 1., 10.]}, local_audit_models._local_audit_iris_model, 'live_data',
             x_val=x_val, y_val=y_val, reduction_method='local_strategy', disable_progress_bar=True,
             experiment_dir=directory, seed=17, reduction_metric='val_loss', minimize_loss=True,
             **initial_flags, **options)
@@ -708,7 +727,7 @@ def test_live_array_reassignment_and_save_flags_resume_exactly(tmp_path, monkeyp
     assert resumed._records[1]['split_identity'] == resumed._records[2]['split_identity']
     artifacts = [item['artifact'] is not None for item in resumed._records]
     assert artifacts == ([True, False, False] if initial_flags['save_weights'] else [False, True, True])
-    expected, _ = _local_audit_iris_model(x_train + 1, y_train, x_val, y_val, {'c': 10.})
+    expected, _ = local_audit_models._local_audit_iris_model(x_train + 1, y_train, x_val, y_val, {'c': 10.})
     assert resumed.data.val_loss.iloc[-1] == expected.history['val_loss'][-1]
     entries = [json.loads(line) for line in (resumed.run_dir / 'audit.jsonl').read_text().splitlines()]
     changes = [item for entry in entries for item in entry['interventions']

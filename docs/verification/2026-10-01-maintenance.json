@@ -259,5 +259,56 @@
     "openssf_passing_attained": false,
     "openssf_silver_attained": false,
     "release_executed": false
+  },
+  "review_follow_up": {
+    "recorded_at_utc": "2026-10-02T06:07:42.134214+00:00",
+    "base_commit": "400f453fce514da5328aa5d2a5ce3f937a8a6367",
+    "package_source_binding": "All 179 package-file hashes match the original complete-framework and coverage measurement. No package source changed in this follow-up. Original full-framework execution is retained as dated evidence.",
+    "source_sha256": {
+      ".github/workflows/docs_pages.yml": "c8b48d844c4c35d72e61dd9438de557c0cef666f277642d88a5fc038df7540e5",
+      "docs/Developer/OpenSSF.md": "da028b0733f378f17c6a23675e450b076a542a12c2ba19c7d3029cadf6cb251a",
+      "examples/Iris SFD and Manifest Recovery.ipynb": "ee636788fab05e8288a8469c49790c9a26039394ead65412e91c7a3ee26b359f",
+      "examples/keras_to_talos.py": "cbc195685f2cd4d8c22af1c129a9e247c8391d21a0635c928830a1c773b89af6",
+      "governance/tests/test_coverage_publication.py": "41ab5f6ac89b4ee94b48c7ff698e06bc9e865234662cfc80a6d215f834358cf9",
+      "tests/test_search_core.py": "985644001862e2a70046f08604490f99821e65ca406d214f36f89e8cc04b11b7",
+      "tools/coverage_badge.py": "12e9ce6190e1b009940a4c432213eb51d30704d56ecd512d22459cf0875b8711"
+    },
+    "governance": {
+      "passed": 397,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 49.444,
+      "junit_sha256": "ee162335817a3c38ffec2128063275e5a8798f1e85934a511c48ebeaf7f0c0ea"
+    },
+    "core_runtime_with_coverage": {
+      "passed": 322,
+      "skipped": 34,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 126.335,
+      "junit_sha256": "b000d6c0707c723ff5a9c36ae36ade46c89dd926c7fd501db0e33d09586a4b4e"
+    },
+    "runtime_profile_seconds": 126.35308512498159,
+    "runtime_ceiling_seconds": 234,
+    "runtime_gate": "passed; same CI coverage/profile command and unchanged ceiling",
+    "examples": {
+      "passed": 12,
+      "seconds": 116.39,
+      "notebook_code_cells": 52,
+      "aggregate_complete": true,
+      "manifest_sha256": "8b0b22a552072d177f606d658e4f98f48e5ba9a4aab0cdb4476aea447cfcd16a",
+      "scope": "Every current example rerun after install-prose changes; unchanged fence/code hashes retained and revalidated."
+    },
+    "site": {
+      "unit_tests": 49,
+      "external_links": 59,
+      "browser_tests": 28,
+      "routes": 83,
+      "status": "passed",
+      "scope": "Full lint, links, production build, routes, browser and WCAG checks after documentation changes."
+    },
+    "semantic_runtime_proof": "/tmp/talos-openssf/pr627-runtime/comparison.json",
+    "limits": "Local timing is not hosted timing. Hosted CI for the containing commit remains required. Neither signed release nor OpenSSF attainment is asserted."
   }
 }

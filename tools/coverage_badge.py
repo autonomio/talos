@@ -3,10 +3,11 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-from html import escape
 import json
-from pathlib import Path
+import os
 import re
+from html import escape
+from pathlib import Path
 
 from tools.check_statement_coverage import check_statement_coverage
 
@@ -67,6 +68,9 @@ def main() -> None:
     parser.add_argument('--commit', required=True)
     parser.add_argument('--run-url', required=True)
     args = parser.parse_args()
+    repository = os.environ.get('GITHUB_REPOSITORY')
+    if repository is not None and repository != 'autonomio/talos':
+        parser.exit(message=f'Skip Talos coverage publication outside autonomio/talos ({repository}).\n')
     print(json.dumps(publish(args.report, args.output, args.commit, args.run_url), indent=2))
 
 

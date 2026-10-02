@@ -1,7 +1,11 @@
 """Compare one Keras fit with a native Talos sweep on bundled Iris data.
 
-Install ``talos[keras,torch]`` for this example, then choose the backend before
-running this file: ``KERAS_BACKEND=torch python keras_to_talos.py``.
+Install the maintained generation for this example::
+
+    python -m pip install 'talos[keras,torch] @ git+https://github.com/autonomio/talos.git@master'
+
+Choose the backend before running this file:
+``KERAS_BACKEND=torch python examples/keras_to_talos.py``.
 Importing the module neither loads Keras nor trains a model. The validation
 split guides model selection; its accuracy is not a final test-set estimate.
 """

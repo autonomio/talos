@@ -7,11 +7,11 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: talos-pages
+  group: talos-pages-${{ github.event.workflow_run.head_sha }}
   cancel-in-progress: false
 jobs:
   publish:
-    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_repository.full_name == github.repository
+    if: github.repository == 'autonomio/talos' && github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_repository.full_name == github.repository
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -49,7 +49,22 @@ jobs:
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b  # v4.0.0
         with:
           path: site
-      - name: Deploy documentation and the measured coverage badge
+      - name: Recheck master immediately before deployment
         if: steps.current.outputs.publish == 'true'
+        id: deployable
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          CURRENT_SHA=$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/master" --jq .object.sha)
+          if [ "$SOURCE_SHA" = "$CURRENT_SHA" ]; then
+            echo 'publish=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'publish=false' >> "$GITHUB_OUTPUT"
+            echo 'Skip superseded documentation build; master has advanced.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Deploy documentation and the measured coverage badge
+        if: steps.deployable.outputs.publish == 'true'
         id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e  # v4.0.5
