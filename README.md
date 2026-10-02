@@ -46,7 +46,7 @@ The original notebook paths remain a good way to get to know Talos:
 
 For a native single-file definition, start with [Keras](examples/sfd/keras_sfd.py), [TensorFlow](examples/sfd/tensorflow_sfd.py) or [PyTorch](examples/sfd/torch_sfd.py). The [SFD and CLI guide](docs/SFD_and_CLI.md) takes the experiment from Python to a reproducible manifest.
 
-The original [short example](https://gist.github.com/mikkokotila/4c0d6298ff0a22dc561fb387a1b4b0bb) and [workflow illustration](https://github.com/autonomio/talos/wiki/Workflow) remain available. The [historical README](https://github.com/autonomio/talos/blob/715d2b6477c775d0444dbaa88a37624d4577e07b/README.md) preserves the original Field Report reference. Use the maintained notebooks and [User manual][Docs] for current behavior.
+The original [short example](https://gist.github.com/mikkokotila/4c0d6298ff0a22dc561fb387a1b4b0bb) and [workflow illustration](https://github.com/autonomio/talos/wiki/Workflow) remain available. The [historical README](https://raw.githubusercontent.com/autonomio/talos/715d2b6477c775d0444dbaa88a37624d4577e07b/README.md) preserves the original Field Report reference. Use the maintained notebooks and [User manual][Docs] for current behavior.
 
 ## Install
 
@@ -92,9 +92,9 @@ In the methods or supplementary material, retain the Talos and framework version
 
 The original citation remains available for earlier work:
 
-> Autonomio Talos [Computer software]. (2024). Retrieved from <http://github.com/autonomio/talos>.
+> Autonomio Talos [Computer software]. (2024). Retrieved from <https://github.com/autonomio/talos>.
 
-Earlier README citation versions: [2018](https://github.com/autonomio/talos/blob/a9fbe3550af3511ff53b51e3327ec9f090e46849/README.md#citations), [2019](https://github.com/autonomio/talos/blob/21452f07b281017c7035ac4a84a011b1b82b170e/README.md#loudspeaker-citations), [2020](https://github.com/autonomio/talos/blob/7da4983b47a3f7d0c464a5c6c8ed4828478155c5/README.md#loudspeaker-citations), [2024](https://github.com/autonomio/talos/blob/715d2b6477c775d0444dbaa88a37624d4577e07b/README.md#loudspeaker-citations).
+Earlier README citation versions: [2018](https://raw.githubusercontent.com/autonomio/talos/a9fbe3550af3511ff53b51e3327ec9f090e46849/README.md), [2019](https://raw.githubusercontent.com/autonomio/talos/21452f07b281017c7035ac4a84a011b1b82b170e/README.md), [2020](https://raw.githubusercontent.com/autonomio/talos/7da4983b47a3f7d0c464a5c6c8ed4828478155c5/README.md), [2024](https://raw.githubusercontent.com/autonomio/talos/715d2b6477c775d0444dbaa88a37624d4577e07b/README.md).
 
 [github issue tracker]: https://github.com/autonomio/talos/issues
 [docs]: https://autonomio.github.io/talos/

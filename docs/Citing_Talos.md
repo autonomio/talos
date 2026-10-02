@@ -107,10 +107,10 @@ matter to your analysis.
 ## Historical citation
 
 The established README at
-[commit 715d2b6](https://github.com/autonomio/talos/blob/715d2b6477c775d0444dbaa88a37624d4577e07b/README.md#loudspeaker-citations)
+[commit 715d2b6](https://raw.githubusercontent.com/autonomio/talos/715d2b6477c775d0444dbaa88a37624d4577e07b/README.md)
 requested this citation:
 
-> Autonomio Talos [Computer software]. (2024). Retrieved from <http://github.com/autonomio/talos>.
+> Autonomio Talos [Computer software]. (2024). Retrieved from <https://github.com/autonomio/talos>.
 
 That text remains available for earlier work. It contains a citation year;
 it does not identify an exact Talos release. [Talos 1.4](https://pypi.org/project/talos/1.4/)
@@ -119,9 +119,9 @@ was published on 21 April 2024 and corresponds to the
 Include the version actually used rather than assigning 1.4 to all work dated 2024.
 
 Earlier README citation variants used
-[2018](https://github.com/autonomio/talos/blob/a9fbe3550af3511ff53b51e3327ec9f090e46849/README.md#citations),
-[2019](https://github.com/autonomio/talos/blob/21452f07b281017c7035ac4a84a011b1b82b170e/README.md#loudspeaker-citations)
-and [2020](https://github.com/autonomio/talos/blob/7da4983b47a3f7d0c464a5c6c8ed4828478155c5/README.md#loudspeaker-citations).
+[2018](https://raw.githubusercontent.com/autonomio/talos/a9fbe3550af3511ff53b51e3327ec9f090e46849/README.md),
+[2019](https://raw.githubusercontent.com/autonomio/talos/21452f07b281017c7035ac4a84a011b1b82b170e/README.md)
+and [2020](https://raw.githubusercontent.com/autonomio/talos/7da4983b47a3f7d0c464a5c6c8ed4828478155c5/README.md).
 
 ## If citation details are missing
 
@@ -137,5 +137,5 @@ Inspect [Scan outputs](Scan.md), retain a reproducible
 [migration and recovery](Migration.md) before comparing results across versions.
 
 GitHub's [citation-file documentation](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-citation-files)
-and the [CFF schema guide](https://github.com/citation-file-format/citation-file-format/blob/main/schema-guide.md)
+and the [CFF schema guide](https://raw.githubusercontent.com/citation-file-format/citation-file-format/main/schema-guide.md)
 define the supported software citation formats and metadata fields.
