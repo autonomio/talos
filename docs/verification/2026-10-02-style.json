@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "recorded_at_utc": "2026-10-02T07:15:44.360395+00:00",
+  "recorded_at_utc": "2026-10-02T09:11:06.023614+00:00",
   "candidate_version": "2.0.4",
-  "status": "local acceptance in progress; not released or merged",
+  "status": "complete local acceptance; dependent parent CI passed; style hosted checks, master integration and release pending",
   "base_commit": "1043f48f0a397b060e87b066083ca611dc46f7dc",
   "package_modules": 179,
   "package_file_sha256": {
@@ -207,13 +207,11 @@
     "runtime_imports": false
   },
   "pending_proof": [
-    "frozen-source full governance",
-    "profiled core acceptance under unchanged ceiling",
-    "all three DL paths and recovery",
-    "complete documentation and notebooks",
-    "complete package coverage",
-    "built distributions and installed wheel",
-    "hosted required gates"
+    "hosted required gates for the style slice",
+    "protected-master integration",
+    "named developer expertise and one-week backup authority",
+    "legacy dependency advisory disposition",
+    "authorized signed release and consumer verification"
   ],
   "historical_master": {
     "commit": "06a635e06d13ff95a1c04632f89383740ffa57b1",
@@ -265,5 +263,221 @@
       "status": "incomplete; Configuration shell fence subsequently registered"
     },
     "distribution_audits": "passed; final artifacts will be rebuilt after caller annotation fix"
+  },
+  "tested_source_commit": "8fe72ced6ef6aa38cbf5844ade5097c3fa43e09f",
+  "local_acceptance": {
+    "timed_core": {
+      "tests": 356,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 34,
+      "passed": 322,
+      "seconds": 155.553,
+      "profiled_total_seconds": 155.56132979199174,
+      "runtime_ceiling_seconds": 234,
+      "runtime_gate": "passed",
+      "scope": "maintained tests in the core-only environment; framework cases explicitly skipped"
+    },
+    "full_framework": {
+      "tests": 356,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 356,
+      "seconds": 701.89,
+      "runtime_warnings": 49,
+      "warning_origin": "upstream Keras/NumPy array-copy and Dense input-shape APIs; warnings remain visible",
+      "versions": {
+        "talos": null,
+        "tensorflow": "2.21.0",
+        "keras": "3.15.1",
+        "torch": "2.14.1",
+        "numpy": "2.5.3",
+        "protobuf": "7.36.2",
+        "scikit-learn": "1.9.1"
+      },
+      "scope": "maintained full-framework suite including real Keras, TensorFlow and PyTorch training/archive recovery"
+    },
+    "required_lint_scope": {
+      "tests": 785,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 34,
+      "passed": 751,
+      "junit_seconds": 384.539,
+      "scope": "tests/test_*.py governance/tests; coverage --branch --source=talos; optional DL frameworks absent",
+      "junit": "combined-tests.xml; retained local evidence",
+      "partitions": {
+        "maintained": {
+          "tests": 356,
+          "passed": 322,
+          "skipped": 34,
+          "failed": 0,
+          "errors": 0
+        },
+        "governance": {
+          "tests": 429,
+          "passed": 429,
+          "skipped": 0,
+          "failed": 0,
+          "errors": 0
+        }
+      },
+      "terminal_seconds": 384.68
+    },
+    "governance_passed": 429,
+    "core_coverage": {
+      "covered_statements": 6324,
+      "total_statements": 8855,
+      "covered_branches": 1991,
+      "total_branches": 3238,
+      "statement_floor": 70,
+      "branch_floor": 59,
+      "status": "passed"
+    },
+    "changed_line_coverage": {
+      "covered": 174,
+      "total": 216,
+      "percent": 80.55555555555556,
+      "floor_percent": 80,
+      "status": "passed"
+    },
+    "complete_statement_coverage": {
+      "covered": 7239,
+      "total": 8855,
+      "percent": 81.75042348955392,
+      "package_modules": 179,
+      "excluded_lines": 106,
+      "floor_percent": 80,
+      "guard": "tools/check_statement_coverage.py",
+      "status": "passed; original package scope and all modules validated"
+    },
+    "documentation": {
+      "complete": true,
+      "counts": {
+        "fences": 135,
+        "examples": 12,
+        "notebook_code_cells": 52,
+        "inline_commands": 7
+      },
+      "missing_receipts": 0,
+      "errors": [],
+      "executors": {
+        "control": {
+          "returncode": 0,
+          "seconds": 130.715
+        },
+        "api": {
+          "returncode": 0,
+          "seconds": 475.667
+        },
+        "examples": {
+          "returncode": 0,
+          "seconds": 365.594
+        },
+        "site": {
+          "returncode": 0,
+          "seconds": 221.488
+        },
+        "root": {
+          "returncode": 0,
+          "seconds": 1228.804
+        }
+      },
+      "site_retry": "Initial second site fence failed only on the GitHub homepage returning HTTP 504. Original failure receipts/logs retained; both original site fences subsequently executed successfully with unchanged source/checks.",
+      "initial_site_failure_report_sha256": "9cdcba690e0842cbf1ba14adcabdbca73271b8810ee5bcbe67617bdbf35630e4",
+      "hardware_scope": "CPU training. NVIDIA power/command paths use an explicitly declared provider; physical hardware and remote entropy services are not verified."
+    },
+    "controls": {
+      "required_local_controls": "passed",
+      "quality_debt": 1636,
+      "strict_ruff_findings": 1624,
+      "vulture_findings": 12,
+      "pyright_errors": 9604,
+      "pyright_warnings": 39,
+      "pyright_warning_rule": "reportMissingModuleSource",
+      "pyright_tool_exit": 1,
+      "typing_ratchet_exit": 0,
+      "scope_note": "Inherited strict diagnostics remain measured; ratchet success is not diagnostic cleanliness. Current locked core audit does not clear legacy or optional framework advisories."
+    },
+    "verification_distributions": {
+      "source_commit": "8fe72ced6ef6aa38cbf5844ade5097c3fa43e09f",
+      "two_fixed_epoch_builds_identical": true,
+      "source_date_epoch": 1704067200,
+      "digests": {
+        "talos-2.0.4-py3-none-any.whl": "e7bb9050e8683e87998120148283872dab5b0ae7ee0837c1a6a87f7ce372c3e3",
+        "talos-2.0.4.tar.gz": "684040387684b1fefd581820bee4b8b8a964242da0c7f5cd03b41eda2fa2f9c4"
+      },
+      "package_files": 183,
+      "package_modules": 179,
+      "sdist_paths": 538,
+      "wheel_entries": 189,
+      "all_package_bytes_source_equal": true,
+      "fresh_installed_acceptance": {
+        "passed": 18,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 0,
+        "junit_seconds": 35.109,
+        "reported_seconds": 36.71,
+        "scope": [
+          "all 15 preparation/manifest acceptance tests on real Iris data",
+          "packaged native backend hints",
+          "cold legacy helper alias identity",
+          "real-data public commands and archive recovery"
+        ]
+      },
+      "cold_optional_imports": "passed without installed DL frameworks",
+      "native_template_compilation": "all three packaged templates passed; actual training is covered by the separate full-framework run",
+      "twine": "passed both artifacts",
+      "check_manifest": "passed",
+      "pyroma": 10,
+      "packaging_contracts_passed": 15,
+      "scope_note": "Unsigned local verification artifacts at the tested source before this evidence-only closeout. Closing this receipt changes the source-distribution documentation bytes; final builds have separate external receipts, avoiding a self-referential digest."
+    },
+    "source_integrity": {
+      "recorded_hashes": 316,
+      "hash_changes": [],
+      "frozen_head_unchanged": true,
+      "package_hashes_validated": 179,
+      "immutable_configurations_validated": 5,
+      "executable_source_changes_after_acceptance": false,
+      "head_at_acceptance": "8fe72ced6ef6aa38cbf5844ade5097c3fa43e09f",
+      "git_status_at_acceptance": "",
+      "snapshot_scope": "Historical completed acceptance at the tested source before the evidence-only JSON closeout; executable source, notebook/fence content and protected configurations remain unchanged."
+    },
+    "report_sha256": {
+      "final-core/tests.xml": "ccbd359ee1059b498c01fcad8b69f1273d51b908f2a3d3087072fcc5050d6a94",
+      "final-core/profile.json": "8839389639d465a3787ab829c16f4db275d4cdfcb1def3129fbbc219435766b1",
+      "final-frameworks/tests.xml": "ad9fdb802d8edac348d9063e72745ea36a4e4ba2354945cf4ac03c97bf187121",
+      "final-governance/verification-summary.json": "140d77be014638ac16776fe1a33d4aa69622fb08d86b1ec40dc6781c704491b0",
+      "final-governance/combined-coverage.json": "a69cc58588de051e11b7208193d5aa4a2b1f5bc3a4a234fbe88e85b47f5c842f",
+      "final-documentation/manifest.json": "204101836b085dc82f069b6dcc5c3d2c633d417ba1ccf1ba0688a41084a0d166",
+      "final-documentation/coverage.json": "81a9f5a1daeb932bad3337c1edd071a201d8c1d76e439915886cab84085cf678",
+      "final-distributions/receipt.json": "61bc2a088f99b3d5beaf46937d79f514db9c6838a28ebc29f0bfcea6f22c4dc4"
+    }
+  },
+  "parent_hosted_acceptance": {
+    "pull_request": 627,
+    "head": "1043f48f0a397b060e87b066083ca611dc46f7dc",
+    "run": 36981964289,
+    "documentation_job": 110758270825,
+    "all_eight_core_and_backend_lanes": "passed",
+    "full_framework_passed": 356,
+    "full_framework_skips": 0,
+    "documentation_counts": {
+      "fences": 134,
+      "examples": 12,
+      "notebook_code_cells": 52,
+      "inline_commands": 7
+    },
+    "complete_package_coverage": {
+      "covered": 7325,
+      "total": 8942,
+      "package_modules": 179
+    },
+    "scope_note": "Parent source and its GitHub test-merge; separate from the local style candidate.",
+    "all_ten_required_contexts": "passed; slice recheck run36981964186 attempt2 job110775976590",
+    "check_snapshot_sha256": "30a5f5a0a81c0b48ef3c0deb688740a4f658ad2c6e8e19044be37c5b89314d6e"
   }
 }
