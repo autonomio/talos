@@ -34,7 +34,7 @@
     "brace-expansion": "5.0.12",
     "fast-uri": "3.1.8",
     "js-yaml@^4": "4.3.2",
-    "markdown-it": "14.3.1",
+    "markdown-it": "15.0.2",
     "serialize-javascript": "7.0.5",
     "uuid": "11.1.1",
     "websocket-driver": "0.7.5",
@@ -55,7 +55,7 @@
     "@axe-core/playwright": "4.12.1",
     "@playwright/test": "1.61.1",
     "markdownlint-cli2": "0.18.1",
-    "markdown-it": "14.3.1"
+    "markdown-it": "15.0.2"
   },
   "license": "MIT"
 }
