@@ -49,6 +49,7 @@ def inventory(root):
 
 
 def verify(root, output, selected, execution):
+    from tools.verification.development_evidence import source_manifest
     expected = inventory(root)
     actual, example_records, providers = {}, {}, []
     errors = []
@@ -68,6 +69,8 @@ def verify(root, output, selected, execution):
             reuse = block.get('reused_execution')
             if reuse:
                 proof = reuse['proof']
+                if source_manifest(root) != proof['files']:
+                    errors.append('Stale reused development source inventory')
                 for path, digest in proof['files'].items():
                     if hashlib.sha256((root / path).read_bytes()).hexdigest() != digest:
                         errors.append('Stale reused development source: ' + path)

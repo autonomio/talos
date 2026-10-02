@@ -86,6 +86,7 @@ jobs:
           path: dist/*
   backends:
     needs: core
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     strategy:
@@ -170,6 +171,7 @@ jobs:
   documentation:
     name: Execute documentation and examples
     needs: backends
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:

@@ -62,19 +62,7 @@ jobs:
           python -m coverage json -o coverage.json
 
       - name: Enforce the suite runtime budget
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BASE_REF: ${{ github.base_ref || 'master' }}
-          PR_BODY: ${{ github.event.pull_request.body }}
-        run: |
-          set -euo pipefail
-          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
-          git -c "http.https://github.com/.extraheader=$AUTH" fetch origin "$BASE_REF" --depth=1
-          printf '%s' "$PR_BODY" > pr_body.txt
-          python governance/check_test_runtime.py \
-            --profile runtime-artifacts/profile.json --enforce \
-            --base-ref "origin/$BASE_REF" \
-            --pr-body-file pr_body.txt
+        run: python governance/check_test_runtime.py --profile runtime-artifacts/profile.json --enforce
 
       - name: Run governance contracts and complete coverage
         run: |
@@ -233,30 +221,6 @@ jobs:
           AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
           git -c "http.https://github.com/.extraheader=$AUTH" fetch origin "$BASE_REF"
           .venv-lint/bin/python governance/check_diff_coverage.py --base-ref "origin/$BASE_REF"
-
-      - name: Budget-raise ratchet gate
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          BASE_REF: ${{ github.base_ref || 'master' }}
-        run: |
-          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
-          git -c "http.https://github.com/.extraheader=$AUTH" fetch origin "$BASE_REF" --depth=1
-          .venv-lint/bin/python governance/check_budget_ratchet.py \
-            --base-ref "origin/$BASE_REF" \
-            --pr-number "$PR_NUMBER"
-
-      - name: Coverage ratchet gate
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-          BASE_REF: ${{ github.base_ref || 'master' }}
-        run: |
-          AUTH="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
-          git -c "http.https://github.com/.extraheader=$AUTH" fetch origin "$BASE_REF" --depth=1
-          .venv-lint/bin/python governance/check_coverage_ratchet.py \
-            --base-ref "origin/$BASE_REF" \
-            --pr-number "$PR_NUMBER"
 
   publish_coverage_comment:
     name: publish_coverage_comment

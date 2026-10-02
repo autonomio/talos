@@ -125,15 +125,15 @@ jobs:
             --head-changelog head_CHANGELOG.md \
             --pr-author "${{ github.event.pull_request.user.login }}"
 
-      - name: Recheck budget and coverage markers on metadata edits
+      - name: Recheck budget, coverage and runtime markers on metadata edits
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           BASE_REF: ${{ github.base_ref }}
           PR_BODY: ${{ github.event.pull_request.body }}
         run: |
-          git show "origin/$BASE_REF:.github/budgets.json" > base_budget.json
+          set -euo pipefail
+          python governance/check_budget_ratchet.py --base-ref "origin/$BASE_REF" --pr-number "$PR_NUMBER"
+          python governance/check_coverage_ratchet.py --base-ref "origin/$BASE_REF" --pr-number "$PR_NUMBER"
           printf '%s' "$PR_BODY" > pr_body.txt
-          python governance/check_budget_ratchet.py --base-file base_budget.json --pr-body-file pr_body.txt
-          python governance/check_coverage_ratchet.py --base-file base_budget.json --pr-body-file pr_body.txt
           python governance/check_test_runtime.py --check-ratchet-only --base-ref "origin/$BASE_REF" --pr-body-file pr_body.txt

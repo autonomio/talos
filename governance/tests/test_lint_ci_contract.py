@@ -172,9 +172,9 @@ def test_pr_checks_lint_runs_pinned_ruff_on_tools_and_tests_tools() -> None:
     assert 'governance/check_file_size_balance.py' in workflow
     assert 'governance/check_test_code_ratio.py' in workflow
     assert 'governance/check_coverage_floor.py' in workflow
-    assert 'governance/check_coverage_ratchet.py' in workflow
+    assert 'governance/check_coverage_ratchet.py' in (REPO_ROOT / '.github/workflows/pr_checks_version.yml').read_text()
     assert 'governance/check_dependency_vulnerabilities.py' in workflow
-    assert 'governance/check_budget_ratchet.py' in workflow
+    assert 'governance/check_budget_ratchet.py' in (REPO_ROOT / '.github/workflows/pr_checks_version.yml').read_text()
     assert 'uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38  # v6.5.0' in workflow
     assert 'npm --prefix docs-site ci' in workflow
     assert 'node docs-site/node_modules/playwright/cli.js install --with-deps chromium' in workflow

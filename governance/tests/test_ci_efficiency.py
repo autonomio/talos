@@ -65,6 +65,13 @@ def test_metadata_edits_recheck_markers_without_rerunning_scientific_suites() ->
     assert 'check_coverage_ratchet.py' in commands
     assert 'check_test_runtime.py --check-ratchet-only' in commands
     assert '-m pytest' not in commands
+    assert 'check_budget_ratchet.py' not in (WORKFLOWS / 'pr_checks_lint.yml').read_text()
+    assert 'check_coverage_ratchet.py' not in (WORKFLOWS / 'pr_checks_lint.yml').read_text()
+    assert 'PR_BODY' not in (WORKFLOWS / 'pr_checks_lint.yml').read_text()
+    tests = lint['jobs']['pr_checks_tests']['steps']
+    runtime = next(step for step in tests if step.get('name') == 'Enforce the suite runtime budget')
+    assert runtime['run'] == ('python governance/check_test_runtime.py '
+                              '--profile runtime-artifacts/profile.json --enforce')
 
 
 def test_dependency_bursts_are_grouped_and_scheduled_independently() -> None:

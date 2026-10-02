@@ -29,11 +29,16 @@ def environment(root: Path, python: str) -> dict[str, object]:
     return result
 
 
+def source_manifest(root: Path) -> dict[str, str]:
+    """Retain the complete tracked inventory, including newly added inputs."""
+    paths = subprocess.check_output(['git', 'ls-files', '-z'], cwd=root).decode().split('\0')
+    return {path: hashlib.sha256((root / path).read_bytes()).hexdigest()
+            for path in paths if path and (root / path).is_file()}
+
+
 def record(root: Path, output: Path) -> None:
     """Record only after the workflow's exact full-suite command succeeds."""
-    paths = subprocess.check_output(['git', 'ls-files', '-z'], cwd=root).decode().split('\0')
-    files = {path: hashlib.sha256((root / path).read_bytes()).hexdigest()
-             for path in paths if path and (root / path).is_file()}
+    files = source_manifest(root)
     receipt = {'command': COMMAND, 'files': files, 'runtime': environment(root, sys.executable),
                'source': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip(),
                'run_id': os.environ.get('GITHUB_RUN_ID'),
@@ -55,6 +60,18 @@ def verify(root: Path, python: str, receipt: Path) -> dict[str, object]:
         raise ValueError('development evidence belongs to another source revision')
     if not proof['files']:
         raise ValueError('development evidence has no source fingerprints')
+    source = Path(os.environ.get('TALOS_DOC_SOURCE_ROOT', root))
+    if source_manifest(source) != proof['files']:
+        raise ValueError('development evidence source changed: tracked inventory or file bytes')
+    expected = {path for path in proof['files'] if path.endswith('.py')}
+    excluded = {'__pycache__', '.git', 'node_modules', 'dist', 'build', 'verification-output'}
+    actual = set()
+    for folder, directories, files in os.walk(root):
+        directories[:] = [name for name in directories
+                          if name not in excluded and not name.startswith('.venv')]
+        actual.update(str((Path(folder) / name).relative_to(root)) for name in files if name.endswith('.py'))
+    if actual != expected:
+        raise ValueError('development fixture code inventory changed')
     for path, digest in proof['files'].items():
         if hashlib.sha256((root / path).read_bytes()).hexdigest() != digest:
             raise ValueError('development evidence source changed: ' + path)

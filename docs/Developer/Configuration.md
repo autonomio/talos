@@ -132,3 +132,9 @@ or documentation rendering. Dependabot groups each ecosystem's version and
 security updates separately, limits open version PRs to one per ecosystem,
 and staggers weekly version checks across Monday–Wednesday at 04:00 Helsinki
 time. Security updates retain their immediate advisory-driven behavior.
+
+All PR-body waiver decisions belong to the metadata-sensitive version job.
+Source-only tests enforce measured runtime; lint enforces measured coverage,
+quality and vulnerability checks. Adding or removing a waiver therefore clears
+or fails the required version status without leaving stale body-dependent
+failures on the required test or lint statuses.

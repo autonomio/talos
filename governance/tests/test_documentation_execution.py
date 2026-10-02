@@ -26,6 +26,9 @@ def development_proof(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[
     source.write_text('original model\n')
     proof = tmp_path / 'proof.json'
     import hashlib
+    subprocess.run(['git', 'init', '-q', str(tmp_path)], check=True)
+    subprocess.run(['git', '-C', str(tmp_path), 'add', 'test_model.py'], check=True)
+    monkeypatch.delenv('TALOS_DOC_SOURCE_ROOT', raising=False)
     proof.write_text(json.dumps({
         'command': EVIDENCE.COMMAND, 'returncode': 0, 'run_id': '1',
         'source': 'source', 'run_attempt': '1',
@@ -62,6 +65,29 @@ def test_changed_model_source_invalidates_development_reuse(development_proof: t
     root, proof = development_proof
     (root / 'test_model.py').write_text('changed model\n')
     with pytest.raises(ValueError, match='source changed'):
+        EVIDENCE.verify(root, sys.executable, proof)
+
+
+def test_new_tracked_source_invalidates_development_reuse(development_proof: tuple[Path, Path]) -> None:
+    root, proof = development_proof
+    (root / 'new_model.py').write_text('new source\n')
+    subprocess.run(['git', '-C', str(root), 'add', 'new_model.py'], check=True)
+    with pytest.raises(ValueError, match='tracked inventory'):
+        EVIDENCE.verify(root, sys.executable, proof)
+
+
+def test_untracked_fixture_test_cannot_reuse_smaller_suite(development_proof: tuple[Path, Path]) -> None:
+    root, proof = development_proof
+    (root / 'tests').mkdir()
+    (root / 'tests/test_new.py').write_text('def test_new():\n    assert True\n')
+    with pytest.raises(ValueError, match='fixture code inventory'):
+        EVIDENCE.verify(root, sys.executable, proof)
+
+
+def test_untracked_root_model_cannot_reuse_smaller_inputs(development_proof: tuple[Path, Path]) -> None:
+    root, proof = development_proof
+    (root / 'new_model.py').write_text('new source\n')
+    with pytest.raises(ValueError, match='fixture code inventory'):
         EVIDENCE.verify(root, sys.executable, proof)
 
 

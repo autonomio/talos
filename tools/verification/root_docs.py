@@ -165,12 +165,13 @@ def main():
                PIP_DISABLE_PIP_VERSION_CHECK='1', PYTHONUNBUFFERED='1')
     env.pop('VIRTUAL_ENV', None)
     env['TALOS_DEVELOPMENT_REUSE'] = str(work / 'development-reuse.json')
+    env['TALOS_DOC_SOURCE_ROOT'] = str(root)
     build_log = work / 'wheel-build.log'
     checked([sys.executable, '-m', 'build', '--wheel', '--no-isolation',
              '--outdir', str(wheels)], cwd=checkout, env=env, log=build_log)
     wheel = next(wheels.glob('talos-*.whl'))
     virtual = work / 'installer-venv'
-    checked([sys.executable, '-m', 'venv', '--system-site-packages', str(virtual)],
+    checked([sys.executable, '-m', 'venv', '--without-pip', '--system-site-packages', str(virtual)],
             env=env, log=work / 'installer-venv.log')
     fixture_sites = [value for value in sys.path if value.endswith('site-packages')]
     site_dir = next((virtual / 'lib').glob('python*/site-packages'))
