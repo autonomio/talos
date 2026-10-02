@@ -137,5 +137,5 @@ Inspect [Scan outputs](Scan.md), retain a reproducible
 [migration and recovery](Migration.md) before comparing results across versions.
 
 GitHub's [citation-file documentation](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-citation-files)
-and the [CFF schema guide](https://github.com/citation-file-format/citation-file-format/blob/main/schema-guide.md)
+and the [CFF schema guide](https://raw.githubusercontent.com/citation-file-format/citation-file-format/main/schema-guide.md)
 define the supported software citation formats and metadata fields.
