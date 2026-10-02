@@ -1,5 +1,6 @@
-from typing import Any
-from typing import Protocol
+"""Weight class-sensitive model metrics for imbalanced outcomes."""
+
+from typing import Any, Protocol
 
 import numpy as np
 import sklearn.metrics

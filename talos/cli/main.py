@@ -1,3 +1,5 @@
+"""Expose manifest, parameter-sweep and recovery commands through Click."""
+
 from pathlib import Path
 
 import click
@@ -174,8 +176,7 @@ def profile_cmd(yaml_file: Path) -> None:
               help='Resume from a checkpoint directory instead of starting fresh.')
 @click.option('--no-progress-bar', is_flag=True, default=False,
               help='Disable the experiment progress bar.')
-def run(target: str | None, dry_run: bool, resume: Path | None,
-        no_progress_bar: bool) -> None:
+def run(target: str | None, dry_run: bool, resume: Path | None, no_progress_bar: bool) -> None:
 
     '''
     Validate, compile, and run a YAML experiment file.
@@ -231,8 +232,7 @@ def run(target: str | None, dry_run: bool, resume: Path | None,
         yaml_path, manifest_id, results_base = _resolve_target(target)
         if yaml_path is None:
             raise SystemExit(1)
-        ok = run_experiment(yaml_path, dry_run=dry_run, manifest_id=manifest_id,
-                            results_base=results_base, progress_bar=not no_progress_bar)
+        ok = run_experiment(yaml_path, dry_run=dry_run, manifest_id=manifest_id, results_base=results_base, progress_bar=not no_progress_bar)
     else:
         click.secho('Provide a YAML file or --resume <results-dir>.', fg='red')
         raise SystemExit(1)
@@ -241,10 +241,12 @@ def run(target: str | None, dry_run: bool, resume: Path | None,
 
 
 def _resolve_target(target: str) -> tuple[Path | None, str | None, Path]:
-    from talos.yaml.store import MANIFEST_URI_SCHEME
-    from talos.yaml.store import SHA256_PREFIX
-    from talos.yaml.store import normalize_manifest_ref
-    from talos.yaml.store import resolve_manifest_uri
+    from talos.yaml.store import (
+        MANIFEST_URI_SCHEME,
+        SHA256_PREFIX,
+        normalize_manifest_ref,
+        resolve_manifest_uri,
+    )
 
     if target.startswith((MANIFEST_URI_SCHEME, SHA256_PREFIX)):
         uri = normalize_manifest_ref(target)
@@ -281,8 +283,7 @@ def list_templates() -> None:
 
 @cli.command()
 @click.argument('output', type=click.Path(path_type=Path))
-@click.option('--template', default=None,
-              help='Template name to scaffold from (e.g. tf_keras).')
+@click.option('--template', default=None, help='Template name to scaffold from (e.g. tf_keras).')
 def init(output: Path, template: str | None) -> None:
 
     '''

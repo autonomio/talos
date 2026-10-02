@@ -88,7 +88,6 @@ def test_module_budgets_covers_every_package_path() -> None:
     assert not stale, f'budget entries with no file: {sorted(stale)}'
 
 
-
 def _actual_package_paths() -> set[str]:
     root = REPO_ROOT / 'talos'
     return {

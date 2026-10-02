@@ -1,14 +1,13 @@
+"""Define checkpointed parameter search and feedback contracts."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Iterable
-from collections.abc import Iterator
-from typing import Any
-from typing import cast
+from collections.abc import Iterable, Iterator
+from typing import Any, cast
 
+from talos.experiment.param_domain import DomainObserver, ParamDomain
 from talos.experiment.serialization import content_hash
-from talos.experiment.param_domain import DomainObserver
-from talos.experiment.param_domain import ParamDomain
 
 
 class SearchStrategy(ABC):
@@ -41,11 +40,9 @@ class SearchStrategy(ABC):
         self._seen: set[str] = set()
         self._domain.add_observer(cast(DomainObserver, self))
 
-
     def __iter__(self) -> Iterator[dict[str, Any]]:
 
         return self
-
 
     @abstractmethod
     def __next__(self) -> dict[str, Any]:
@@ -54,56 +51,47 @@ class SearchStrategy(ABC):
 
         ...
 
-
     def on_domain_changed(
         self, _domain: ParamDomain, _changed_params: list[str],
     ) -> None:
 
-        '''
-        Called when ParamDomain is mutated. Override if strategy
-        maintains state dependent on the domain.
+        '''Called when ParamDomain is mutated.
 
+        Override if strategy maintains state dependent on the domain.
         '''
 
         return
-
 
     def update_from_feedback(
         self, _log: Any, _interventions: list[dict[str, Any]],
     ) -> None:
 
-        '''
-        Hook for strategies that adapt based on experiment feedback.
-        Default is no-op. Stateful strategies (e.g. TPE) override this.
+        '''Hook for strategies that adapt based on experiment feedback.
 
+        Default is no-op. Stateful strategies (e.g. TPE) override this.
         '''
 
         return
-
 
     @property
     def domain(self) -> ParamDomain:
 
         return self._domain
 
-
     @property
     def generated_count(self) -> int:
 
         return self._generated_count
 
-
     @property
     def is_finite(self) -> bool:
 
-        '''
-        Whether this strategy has a finite number of combinations.
-        Override to return True for exhaustive strategies (e.g. Grid).
+        '''Whether this strategy has a finite number of combinations.
 
+        Override to return True for exhaustive strategies (e.g. Grid).
         '''
 
         return False
-
 
     def compute_param_hash(self, combo: dict[str, Any]) -> str:
 
@@ -129,7 +117,6 @@ class SearchStrategy(ABC):
         clean = {k: v for k, v in combo.items() if k not in metadata}
         return content_hash(clean)
 
-
     def mark_seen(self, combo: dict[str, Any]) -> str:
 
         '''
@@ -148,7 +135,6 @@ class SearchStrategy(ABC):
         h = combo.get('_id') or self.compute_param_hash(combo)
         self._seen.add(h)
         return h
-
 
     def _is_unseen(self, combo: dict[str, Any]) -> bool:
 
@@ -173,12 +159,11 @@ class SearchStrategy(ABC):
         combo['_id'] = h
         return True
 
-
     def rebuild_seen_from_log(self, hashes: Iterable[str]) -> None:
 
-        '''
-        Populate _seen from an iterable of hashes. Used on resume
-        to reconstruct dedup state from the experiment log.
+        '''Populate _seen from an iterable of hashes.
+
+        Used on resume to reconstruct dedup state from the experiment log.
 
         Args:
             hashes (Iterable[str]): Hash strings from previous runs
@@ -186,14 +171,12 @@ class SearchStrategy(ABC):
 
         self._seen = set(hashes)
 
-
     @abstractmethod
     def get_state(self) -> dict[str, Any]:
 
         '''Export state for checkpointing.'''
 
         ...
-
 
     @abstractmethod
     def set_state(self, state: dict[str, Any]) -> None:

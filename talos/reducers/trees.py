@@ -1,4 +1,7 @@
+"""Rank parameter choices with caller-result decision trees."""
+
 import numpy as np
+
 from .reduce_utils import parameter_indicators
 
 
@@ -25,8 +28,7 @@ def _tree_reduce(self, forest=False, quantile=.8):
         if worse:
             unwanted.append((estimator.feature_importances_[index], index))
     if unwanted:
-        _, index = min(unwanted)
-        self.param_object.remove_is(*candidates[index])
+        self.param_object.remove_is(*candidates[min(unwanted)[1]])
     return self
 
 

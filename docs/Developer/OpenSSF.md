@@ -18,9 +18,9 @@ require the named maintainer's confirmation.
 | Observation | Scope and evidence |
 | --- | --- |
 | Scorecard 8.3/10 | Public API report dated 2 October 2026, 05:20:04 UTC; commit `06a635e06d13ff95a1c04632f89383740ffa57b1` |
-| Best Practices application | Passing 97%, Silver 67% after the 2 October evidence update; neither level awarded |
+| Best Practices application | Passing 97%, Silver 76% after the 2 October evidence update; neither level awarded |
 | Coverage and test policy | [PR 625](https://github.com/autonomio/talos/pull/625) merged at `06a635e`; its source tree equals the verified candidate `2388cec` |
-| Reviewed integration | [PR 608](https://github.com/autonomio/talos/pull/608), approved by `bit-mis`, merged at the same commit |
+| Reviewed integration | [PR 608](https://github.com/autonomio/talos/pull/608), approved by `bit-mis`, merged at `9783406`; PR 625 later merged at `06a635e` |
 | Live protection | Active ruleset `24306812`; [privileged audit](https://github.com/autonomio/talos/actions/runs/36893895454) passed with exact snapshot parity and no bypass actors |
 | Security analysis | [CodeQL on merged master](https://github.com/autonomio/talos/actions/runs/36893895563) passed; upload success alone does not certify absence of security defects |
 | Published Scorecard workflow | [Master run](https://github.com/autonomio/talos/actions/runs/36893895393) succeeded with public results enabled |
@@ -52,12 +52,22 @@ complete documentation corpus and examples; its 104 existing excluded lines
 were unchanged. The [dated verification receipt](../verification/2026-10-01-openssf.json)
 records local execution evidence. The complete coverage guard and all framework
 lanes also passed in [hosted candidate CI](https://github.com/autonomio/talos/actions/runs/36914568173).
-The post-merge execution has its own [master run](https://github.com/autonomio/talos/actions/runs/36968443428);
-its result must be checked before describing that run as successful. New regression
+The [post-merge master run](https://github.com/autonomio/talos/actions/runs/36968443428)
+also passed the framework matrix, executable corpus and complete coverage guard.
+Its retained original report measures 7,054 of 8,711 statements (80.98%) over
+all 176 modules; 215 maintained tests passed with no skips. This is distinct
+from the earlier local measurement. New regression
 cases exercise Pareto/diversity
 selection, causal scaling and the packaged Keras, TensorFlow and PyTorch SFD
 training and restoration paths. Use the selected source's executed report for its
 result; do not substitute a projected total or narrow the measured package.
+
+The [six-month fixed-bug ledger](../verification/2026-10-02-regression-ledger.json)
+inventories the merged public source from 2 April through 2 October 2026.
+Added regression assertions cover 16 of 25 independently identified fixed-defect
+groups (64%). Nine uncredited groups remain in the denominator; feature additions,
+open changes and unrepaired defects are excluded. The ledger binds every credited
+assertion to immutable merged source and states the historical audit limits.
 
 ## Release evidence
 
@@ -91,7 +101,8 @@ exception. Keep unsupported answers Unknown. In particular:
 - Resolve legacy dependency advisories individually without treating trusted
   model execution as proof that a dependency vulnerability is unexploitable.
 - Link an actual signed release and verify its artifacts from a consumer environment.
-- Reconcile the six-month fixed-bug ledger with regression-test evidence.
+- Refresh the fixed-bug ledger after later merges; its current 64% result applies
+  only to the recorded six-month public-source inventory.
 - Reassess input, certificate and credential validation after the reviewed
   maintenance changes are integrated; candidate tests alone do not establish
   the deployed state.

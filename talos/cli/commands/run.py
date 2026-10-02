@@ -1,8 +1,12 @@
+"""Compile and execute validated caller experiment manifests."""
+
 import math
 import shutil
 from datetime import datetime
 from pathlib import Path
+
 import click
+
 from talos.cli.commands._load_yaml import load_and_validate
 from talos.cli.commands.profile import format_space
 from talos.yaml.compiler import CompiledSFD, build_search_strategy
@@ -22,22 +26,23 @@ def run_experiment(yaml_path, dry_run=False, manifest_id=None,
         parameters = compiled.params()
         build_search_strategy(document, parameters)
         compiled.pruning_strategies()
+    # Caller imports and parameters may raise arbitrary exceptions; report them.
     except Exception as exc:
         click.secho(f'  Compilation failed: {exc}', fg='red')
         return False
     if dry_run:
         click.echo('  Dry run complete: SFD and parameter references resolved')
         return True
-    settings = document.get('uel', {})
     name = document['metadata']['name']
     development = document['metadata'].get('mode', 'development') == 'development'
-    output = _build_results_dir(settings, name, development, manifest_id, results_base)
+    output = _build_results_dir(document.get('uel', {}), name, development, manifest_id, results_base)
     output.mkdir(parents=True, exist_ok=True)
     click.echo(f"Running '{name}' — {format_space(math.prod(len(v) for v in parameters.values()))} combinations")
     click.echo(f'  Results → {output}')
     try:
-        result = compiled.execute(experiment_dir=output, progress_bar=progress_bar)
+        compiled.execute(experiment_dir=output, progress_bar=progress_bar)
         shutil.copy2(yaml_path, output / ('manifest.yaml' if manifest_id else Path(yaml_path).name))
+    # Caller execution failures are reported; interrupts and process exits propagate.
     except Exception as exc:
         click.secho(f'  Experiment failed: {exc}', fg='red')
         return False

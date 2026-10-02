@@ -102,6 +102,7 @@ def _invoke(function, data, params, emitted_warnings=None):
             return function(*args, **kwargs)
         with warnings.catch_warnings():
             previous = warnings.showwarning
+
             def capture(message, category, filename, lineno, file=None, line=None):
                 emitted_warnings.append({'message': str(message), 'category': category.__name__, 'filename': filename, 'line': lineno})
                 previous(message, category, filename, lineno, file=file, line=line)
@@ -386,8 +387,8 @@ def run(sfd, data=None, *, params=None, experiment_name='experiment', experiment
     model_identity, prep_identity = source_identity(source_model), source_identity(source_prep)
     if previous_sources is not None:
         recorded_bundle = previous_sources['source_bundle']
-        module_hashes = lambda bundle: {name: entry.get('sha256') for name, entry in bundle['modules'].items()}
-        if module_hashes(source_bundle) != module_hashes(recorded_bundle):
+        current_module_hashes = {name: entry.get('sha256') for name, entry in source_bundle['modules'].items()}
+        if current_module_hashes != {name: entry.get('sha256') for name, entry in recorded_bundle['modules'].items()}:
             raise ValueError('Caller source module graph changed since checkpoint')
         for key, current in (('model', model_identity), ('prep', prep_identity)):
             expected = previous_sources['identity'][key]
@@ -572,6 +573,7 @@ def run(sfd, data=None, *, params=None, experiment_name='experiment', experiment
             model = None
             start_clock = time.perf_counter()
             started = datetime.now(timezone.utc).isoformat()
+
             def rollback_trial():
                 nonlocal completed
                 domain.set_state(domain_state)

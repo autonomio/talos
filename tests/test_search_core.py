@@ -11,9 +11,9 @@ from talos.experiment.errors import NonPortableValueError
 from talos.experiment.msq import MSQ
 from talos.experiment.param_domain import ParamDomain
 from talos.experiment.param_search import GridStrategy, RandomStrategy
-from talos.experiment.serialization import encode, decode, dumps, content_hash
-from talos.parameters.ParamSpace import ParamSpace
+from talos.experiment.serialization import content_hash, decode, dumps, encode
 from talos.parameters.DistributeParamSpace import DistributeParamSpace
+from talos.parameters.ParamSpace import ParamSpace
 from talos.reducers.GamifyMap import GamifyMap
 from talos.reducers.local_strategy import local_strategy
 from talos.reducers.reduce_run import reduce_run
@@ -164,9 +164,11 @@ def test_reducer_cadence_means_completed_rounds():
 
 def test_categorical_correlation_honors_loss_direction():
     from sklearn.datasets import load_iris
+
     from talos.reducers.correlation import correlation
     iris = load_iris()
     frame = pd.DataFrame({'species': iris.target, 'sepal_length': iris.data[:, 0]})
+
     def context(minimize):
         return SimpleNamespace(result=frame, reduction_window=len(frame), reduction_metric='sepal_length',
             _param_dict_keys=['species'], minimize_loss=minimize, reduction_threshold=.2,
@@ -238,7 +240,14 @@ def test_native_domain_normalization_does_not_materialize_grid():
 def test_inherited_limen_reducers_keep_analysis_and_state_contract():
     import polars as pl
     from sklearn.datasets import load_iris
-    from talos.experiment.reducer import BudgetReducer, CorrelationReducer, FocusReducer, SanityReducer, SaturationReducer
+
+    from talos.experiment.reducer import (
+        BudgetReducer,
+        CorrelationReducer,
+        FocusReducer,
+        SanityReducer,
+        SaturationReducer,
+    )
     from talos.experiment.reducer.registry import REDUCER_REGISTRY
     assert set(REDUCER_REGISTRY) == {'budget', 'correlation', 'focus', 'sanity', 'saturation'}
     iris = load_iris()
@@ -262,8 +271,9 @@ def test_inherited_limen_reducers_keep_analysis_and_state_contract():
 @pytest.mark.parametrize('method', ['trees', 'forrest'])
 def test_legacy_tree_reducers_preserve_categorical_objective_direction(method):
     from sklearn.datasets import load_iris
-    from talos.reducers.trees import trees
+
     from talos.reducers.forrest import forrest
+    from talos.reducers.trees import trees
     iris = load_iris()
     frame = pd.DataFrame({'species': iris.target, 'sepal_length': iris.data[:, 0]})
     for minimize in [False, True]:
@@ -280,6 +290,7 @@ def test_legacy_tree_reducers_preserve_categorical_objective_direction(method):
 
 def test_runtime_callable_capture_stays_live_and_resume_is_explicitly_nonportable():
     state = object()
+
     def local_activation(value):
         return value if state is not None else None
     facade = ParamSpace({'activation': [local_activation]})
@@ -351,6 +362,7 @@ def test_named_filters_support_typed_numpy_candidates_after_checkpoint(tmp_path)
 def test_native_feedback_resolves_callable_and_array_categories_from_real_iris_log():
     import polars as pl
     from sklearn.datasets import load_iris
+
     from talos.experiment.feedback_controller import FeedbackController
     from talos.experiment.reducer.focus_reducer import FocusReducer
     iris = load_iris()
@@ -389,7 +401,8 @@ def test_feedback_resolves_scalar_combo_values_and_preserves_literal_strings():
 
 
 def test_scientific_numpy_scalar_and_structured_array_roundtrip():
-    from datetime import datetime, timezone, timedelta
+    from datetime import datetime, timedelta, timezone
+
     from sklearn.datasets import load_iris
     iris = load_iris()
     structured = np.array(list(zip(iris.data[:, 0], iris.target)), dtype=[('sepal_length', 'f8'), ('species', 'i4')])
@@ -416,9 +429,10 @@ def test_numpy_exported_callable_is_portable():
 @pytest.mark.parametrize('method', ['spearman', 'trees', 'forrest'])
 def test_legacy_reducers_keep_parameter_loss_distinct_from_objective_loss(method):
     from sklearn.datasets import load_iris
+
     from talos.reducers.correlation import correlation
-    from talos.reducers.trees import trees
     from talos.reducers.forrest import forrest
+    from talos.reducers.trees import trees
     iris = load_iris()
     candidates = ['setosa_loss', 'versicolor_loss', 'virginica_loss']
     frame = pd.DataFrame({'param__loss': [candidates[index] for index in iris.target], 'loss': iris.data[:, 0]})
@@ -483,9 +497,11 @@ def local_audit_models(tmp_path, monkeypatch):
 
 def test_hot_edit_live_controls_are_audited_without_pending_queue_changes(tmp_path, monkeypatch, local_audit_models):
     import hashlib
-    import talos
+
     from sklearn.datasets import load_iris
     from sklearn.model_selection import train_test_split
+
+    import talos
     monkeypatch.chdir(tmp_path)
     x, y = load_iris(return_X_y=True)
     x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=.3, random_state=17, stratify=y)
@@ -496,6 +512,7 @@ def test_hot_edit_live_controls_are_audited_without_pending_queue_changes(tmp_pa
               '    scan.model = _local_audit_alternate_iris_model\n'
               '    scan.annotation = getattr(scan, "annotation", 0) + 1\n    return scan\n')
     path.write_text(first)
+
     def edit(event, result, params):
         if event == 'trial_completed' and len(result.data) == 1:
             path.write_text(second)
@@ -566,9 +583,10 @@ def test_gamify_absolute_experiment_path_writes_legacy_sibling_file(tmp_path):
 
 @pytest.mark.parametrize('inline_model', [False, True])
 def test_hot_edit_controls_model_and_source_survive_scan_pause_resume(tmp_path, monkeypatch, inline_model, local_audit_models):
-    import talos
     from sklearn.datasets import load_iris
     from sklearn.model_selection import train_test_split
+
+    import talos
     monkeypatch.chdir(tmp_path)
     x, y = load_iris(return_X_y=True)
     x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=.3, random_state=17, stratify=y)
@@ -582,9 +600,11 @@ def test_hot_edit_controls_model_and_source_survive_scan_pause_resume(tmp_path, 
             'def replacement_model(*args):\n    return _local_audit_alternate_iris_model(*args)\n'
             'def talos_strategy(scan):').replace('scan.model = _local_audit_alternate_iris_model',
                                                  'scan.model = replacement_model')
+
     def edit(event, result, params):
         if event == 'trial_completed' and len(result.data) == 1:
             path.write_text(second)
+
     def execute(directory, **options):
         return talos.Scan(x_train, y_train, {'c': [.1, 1., 10.]}, local_audit_models._local_audit_iris_model, 'controlled',
             x_val=x_val, y_val=y_val, reduction_method='local_strategy', disable_progress_bar=True,
@@ -639,10 +659,11 @@ class FocusNullableIntegralIrisSFD(FocusNullableIrisSFD):
 @pytest.mark.parametrize('sfd,expected', [(FocusNullableIrisSFD, [.08, .12]),
                                         (FocusNullableIntegralIrisSFD, [2, 4])])
 def test_focus_resolves_nullable_numeric_categories_before_interpolation(tmp_path, sfd, expected):
-    from talos.experiment import run
-    from talos.experiment.reducer.focus_reducer import FocusReducer
     from sklearn.datasets import load_iris
     from sklearn.model_selection import train_test_split
+
+    from talos.experiment import run
+    from talos.experiment.reducer.focus_reducer import FocusReducer
     x, y = load_iris(return_X_y=True)
     a, b, c, d = train_test_split(x, y, test_size=.3, random_state=17, stratify=y)
     data = {'x_train': a, 'x_val': b, 'y_train': c, 'y_val': d}
@@ -661,6 +682,7 @@ def test_focus_resolves_nullable_numeric_categories_before_interpolation(tmp_pat
 def test_external_entropy_refills_duplicate_invalid_and_inclusive_indexes(method, monkeypatch):
     from talos.reducers import remote_entropy
     calls = []
+
     def provider(maximum, count, selected_method):
         assert selected_method == method
         calls.append((maximum, count))
@@ -675,6 +697,7 @@ def test_external_entropy_fails_explicitly_if_unique_population_is_unavailable(m
     from talos.reducers import remote_entropy
     from talos.utils.exceptions import TalosDataError
     calls = []
+
     def provider(maximum, count, selected_method):
         assert maximum == 31 and selected_method == method
         calls.append(count)
@@ -689,9 +712,10 @@ def test_external_entropy_fails_explicitly_if_unique_population_is_unavailable(m
     ({'save_models': False, 'save_weights': True}, 'scan.save_weights = False'),
     ({'save_models': False, 'save_weights': False}, 'scan.save_models = True')])
 def test_live_array_reassignment_and_save_flags_resume_exactly(tmp_path, monkeypatch, capsys, initial_flags, change, local_audit_models):
-    import talos
     from sklearn.datasets import load_iris
     from sklearn.model_selection import train_test_split
+
+    import talos
     from talos.experiment.provenance import fingerprint
     monkeypatch.chdir(tmp_path)
     x, y = load_iris(return_X_y=True)
@@ -704,6 +728,7 @@ def test_live_array_reassignment_and_save_flags_resume_exactly(tmp_path, monkeyp
               '        scan.clear_session = False\n'
               '    return scan\n')
     (tmp_path / 'talos_strategy.py').write_text(source)
+
     def execute(directory, **options):
         return talos.Scan(x_train, y_train, {'c': [.1, 1., 10.]}, local_audit_models._local_audit_iris_model, 'live_data',
             x_val=x_val, y_val=y_val, reduction_method='local_strategy', disable_progress_bar=True,
@@ -737,8 +762,13 @@ def test_live_array_reassignment_and_save_flags_resume_exactly(tmp_path, monkeyp
 
 
 def test_live_data_snapshots_nested_numpy_and_opaque_replacement(tmp_path):
-    from talos.reducers.local_strategy import _controls, capture_live_controls, restore_live_controls
     from sklearn.datasets import load_iris
+
+    from talos.reducers.local_strategy import (
+        _controls,
+        capture_live_controls,
+        restore_live_controls,
+    )
     iris = load_iris()
     original = [iris.data, {'labels': iris.target}]
     scan = SimpleNamespace(model=_local_audit_iris_model, x_train=original,
@@ -765,7 +795,12 @@ def test_live_data_snapshots_nested_numpy_and_opaque_replacement(tmp_path):
 def test_live_dense_torch_tensor_and_parameter_snapshot_preserves_type_dtype_and_grad(tmp_path):
     torch = pytest.importorskip('torch')
     from sklearn.datasets import load_iris
-    from talos.reducers.local_strategy import _controls, capture_live_controls, restore_live_controls
+
+    from talos.reducers.local_strategy import (
+        _controls,
+        capture_live_controls,
+        restore_live_controls,
+    )
     iris = load_iris()
     original = torch.tensor(iris.data, dtype=torch.float64)
     scan = SimpleNamespace(model=_local_audit_iris_model, x_train=original,
@@ -786,7 +821,12 @@ def test_live_dense_torch_tensor_and_parameter_snapshot_preserves_type_dtype_and
 def test_live_dense_tensorflow_tensor_and_variable_snapshot_preserves_type_and_dtype(tmp_path):
     tf = pytest.importorskip('tensorflow')
     from sklearn.datasets import load_iris
-    from talos.reducers.local_strategy import _controls, capture_live_controls, restore_live_controls
+
+    from talos.reducers.local_strategy import (
+        _controls,
+        capture_live_controls,
+        restore_live_controls,
+    )
     iris = load_iris()
     original = tf.convert_to_tensor(iris.data, dtype=tf.float64)
     scan = SimpleNamespace(model=_local_audit_iris_model, x_train=original,

@@ -1,8 +1,10 @@
+"""Resolve caller object references and shared experiment definitions."""
+
+import hashlib
+import sys
 from contextlib import contextmanager
 from importlib import import_module, util
 from pathlib import Path
-import hashlib
-import sys
 
 
 def load_sfd(reference, base_path=None):
@@ -42,8 +44,7 @@ def validate_sfd(module, reference='caller'):
     if all(callable(getattr(module, name, None)) for name in ('prep', 'model')):
         return module
     manifest = getattr(module, 'manifest', None)
-    if callable(manifest) or (manifest is not None and all(
-            callable(getattr(manifest, name, None)) for name in ('prepare_data', 'run_model'))):
+    if callable(manifest) or (manifest is not None and all(callable(getattr(manifest, name, None)) for name in ('prepare_data', 'run_model'))):
         return module
     raise TypeError(f'SFD {reference} must expose prep/model or a manifest factory/object')
 

@@ -4,9 +4,11 @@ import json
 import shutil
 import tempfile
 from pathlib import Path
+
 import numpy as np
+
 from talos.backends import backend_for
-from talos.utils.best_model import best_model, activate_model
+from talos.utils.best_model import activate_model, best_model
 
 
 def _json(value):
@@ -93,6 +95,7 @@ class Deploy:
             np.save(stage / 'params.npy', scan_object.params, allow_pickle=True)
             for name in ('x', 'y'):
                 value = getattr(scan_object, name, None)
+
                 def sample(data):
                     if isinstance(data, dict):
                         return {key: sample(item) for key, item in data.items()}

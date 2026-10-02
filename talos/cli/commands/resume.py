@@ -1,6 +1,10 @@
+"""Resume experiments from verified manifest and checkpoint records."""
+
 import json
 from pathlib import Path
+
 import click
+
 from talos.yaml.compiler import CompiledSFD
 from talos.yaml.store import canonical_manifest_id
 
@@ -9,12 +13,12 @@ def run_resume(results_dir, progress_bar=True):
     """Resume the recorded manifest and checkpoint without reconstructing data loaders."""
     results_dir = Path(results_dir)
     click.echo(f'Resuming from {results_dir} ...')
-    reference = _load_yaml_reference(results_dir)
-    if reference is None:
+    if _load_yaml_reference(results_dir) is None:
         return False
     try:
         compiled = CompiledSFD.from_run(results_dir)
         compiled.execute(resume=True, experiment_dir=results_dir, progress_bar=progress_bar)
+    # Report arbitrary caller recovery failures; process-control exceptions propagate.
     except Exception as exc:
         click.secho(f'  Resume failed: {exc}', fg='red')
         return False

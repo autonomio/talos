@@ -1,8 +1,12 @@
+"""Evaluate trained models on caller data with reproducible folds."""
+
 import numpy as np
 from sklearn.metrics import f1_score, mean_absolute_error
+
 from talos.backends import backend_for
-from talos.utils.best_model import best_model, activate_model
+from talos.utils.best_model import activate_model, best_model
 from talos.utils.validation_split import kfold
+
 from .predict import classes
 
 
@@ -75,8 +79,7 @@ def evaluate_models(scan_object, x_val, y_val, task, n_models=10, metric='val_ac
     scan_object.data[heading + '_std'] = np.nan
     evaluator = Evaluate(scan_object)
     for model_id in picks:
-        values = evaluator.evaluate(x_val, y_val, task, metric, model_id=model_id,
-                                    folds=folds, shuffle=shuffle, asc=asc, saved=saved,
+        values = evaluator.evaluate(x_val, y_val, task, metric, model_id=model_id, folds=folds, shuffle=shuffle, asc=asc, saved=saved,
                                     custom_objects=custom_objects, multi_input=multi_input,
                                     average=average, model_factory=model_factory, seed=seed)
         scan_object.data.loc[model_id, heading + '_mean'] = np.mean(values)

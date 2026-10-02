@@ -21,6 +21,6 @@ keywords:
 repository-code: "https://github.com/autonomio/talos"
 url: "https://autonomio.github.io/talos/"
 license: MIT
-version: "2.0.3"
+version: "2.0.4"
 # This is the unreleased source version. No release date, DOI or exact revision
 # is asserted here. Generated release citations can bind their resolved commit.

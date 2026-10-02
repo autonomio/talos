@@ -1,5 +1,6 @@
-import numpy as np
+"""Assemble model and training parameter choices for automatic scans."""
 
+import numpy as np
 
 loss = {'binary': ['binary_crossentropy', 'LogCosh'],
         'multi_class': ['sparse_categorical_crossentropy'],
@@ -22,7 +23,6 @@ class AutoParams:
                  network=True,
                  resample_params=4,
                  backend='tensorflow'):
-
 
         '''A facility for generating or appending params dictionary.
 
@@ -58,12 +58,10 @@ class AutoParams:
 
     def _automated(self, shapes='fixed'):
 
-        '''Automatically generate a comprehensive
-        parameter dict to be used in Scan()
+        '''Automatically generate a comprehensive parameter dict to be used in Scan().
 
         shapes : string
             Either 'fixed' or 'sloped'
-
         '''
 
         if shapes == 'fixed':
@@ -97,8 +95,7 @@ class AutoParams:
 
     def shapes_slope(self, min_slope=0, max_slope=.6, steps=.1):
 
-        '''Uses a single decimal float for values below 0.5 to
-        reduce the width of the following layer.'''
+        '''Uses a single decimal float for values below 0.5 to reduce the width of the following layer.'''
 
         self._append_params('shapes', np.arange(min_slope,
                                                 max_slope,
@@ -118,27 +115,27 @@ class AutoParams:
 
     def optimizers(self, optimizers='auto'):
 
-        '''If `optimizers='auto'` then optimizers will be picked based on
-        automatically. Otherwise input a list with one or
-        more optimizers will be used.
+        '''If `optimizers='auto'` then optimizers will be picked based on automatically.
+
+        Otherwise input a list with one or more optimizers will be used.
         '''
 
         if optimizers == 'auto':
             if self._backend in ('torch', 'pytorch'):
-                from torch.optim import Adam, Adagrad, SGD
+                from torch.optim import SGD, Adagrad, Adam
             elif self._backend in ('tensorflow', 'tf', 'tf.keras'):
-                from tensorflow.keras.optimizers import Adam, Adagrad, SGD
+                from tensorflow.keras.optimizers import SGD, Adagrad, Adam
             else:
-                from keras.optimizers import Adam, Adagrad, SGD
+                from keras.optimizers import SGD, Adagrad, Adam
             self._append_params('optimizer', [Adam, Adagrad, SGD])
         else:
             self._append_params('optimizer', optimizers)
 
     def activations(self, activations='auto'):
 
-        '''If `activations='auto'` then activations will be picked based on
-        automatically. Otherwise input a list with one or
-        more activations will be used.
+        '''If `activations='auto'` then activations will be picked based on automatically.
+
+        Otherwise input a list with one or more activations will be used.
         '''
 
         if activations == 'auto':
@@ -148,9 +145,9 @@ class AutoParams:
 
     def losses(self, losses='auto'):
 
-        '''If `losses='auto'` then losses will be picked based on
-        `AutoParam()` argument `task`. Otherwise input a list with one or
-        more losses will be used.
+        '''If `losses='auto'` then losses will be picked based on `AutoParam()` argument `task`.
+
+        Otherwise input a list with one or more losses will be used.
         '''
 
         if losses == 'auto':
@@ -160,8 +157,7 @@ class AutoParams:
 
     def neurons(self, min_neuron=8, max_neuron=None, steps=None):
 
-        '''`max` and `steps` has to be either `None` or
-        integer value at the same time.'''
+        '''`max` and `steps` has to be either `None` or integer value at the same time.'''
 
         if max_neuron is None and steps is None:
             values = [int(np.exp2(i)) for i in range(3, 11)]
@@ -172,8 +168,7 @@ class AutoParams:
 
     def batch_size(self, min_size=8, max_size=None, steps=None):
 
-        '''`max_size` and `steps` has to be either `None` or
-        integer value at the same time.'''
+        '''`max_size` and `steps` has to be either `None` or integer value at the same time.'''
 
         if max_size is None and steps is None:
             values = [int(np.exp2(i / 2)) for i in range(3, 15)]
@@ -184,8 +179,7 @@ class AutoParams:
 
     def epochs(self, min_epochs=50, max_epochs=None, steps=None):
 
-        '''`max_epochs` and `steps` has to be either `None` or
-        integer value at the same time.'''
+        '''`max_epochs` and `steps` has to be either `None` or integer value at the same time.'''
 
         if max_epochs is None and steps is None:
             values = [int(np.exp2(i / 2)) + 50 for i in range(3, 15)]
@@ -196,9 +190,7 @@ class AutoParams:
 
     def kernel_initializers(self, kernel_inits='auto'):
 
-        '''
-        kernel_inits | list | one or more kernel initializers
-        '''
+        '''kernel_inits | list | one or more kernel initializers.'''
 
         if kernel_inits == 'auto':
             self._append_params('kernel_initializer',
@@ -211,9 +203,9 @@ class AutoParams:
 
     def lr(self, learning_rates='auto'):
 
-        '''If `learning_rates='auto'` then a very wide range of learning rates
-        will be added. Otherwise a list with one or more learning rates
-        is used.
+        '''If `learning_rates='auto'` then a very wide range of learning rates will be added.
+
+        Otherwise a list with one or more learning rates is used.
 
         NOTE: talos.utils.lr_normalizer should be used if more than one optimizer
         is used in the experiment
@@ -233,9 +225,9 @@ class AutoParams:
 
     def networks(self, networks='auto'):
 
-        '''If `network='auto'` then dense, simplernn, lstm, conv1d, and
-        bidirectional_lstm are added. Otherwise a list with one or more
-        network architectures is used.
+        '''If `network='auto'` then dense, simplernn, lstm, conv1d, and bidirectional_lstm are added.
+
+        Otherwise a list with one or more network architectures is used.
         '''
 
         if networks == 'auto':
@@ -249,8 +241,8 @@ class AutoParams:
 
     def last_activations(self, last_activations='auto'):
 
-        '''If `last_activations='auto'` then activations will be picked
-        automatically based on `AutoParams` property `task`.
+        '''If `last_activations='auto'` then activations will be picked automatically based on `AutoParams` property `task`.
+
         Otherwise input a list with one or more activations will be used.
         '''
 
@@ -261,8 +253,7 @@ class AutoParams:
 
     def resample_params(self, n):
 
-        '''Resamples params dictionary so that `n` values are present for each
-        parameter.'''
+        '''Resamples params dictionary so that `n` values are present for each parameter.'''
 
         if not isinstance(n, int) or n < 1:
             raise ValueError('n must be a positive integer.')

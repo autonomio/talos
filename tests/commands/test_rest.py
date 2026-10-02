@@ -2,9 +2,9 @@ def test_rest(scan_object):
 
     print('\n >>> start testing the rest... \n')
 
-    import talos
-
     import random
+
+    import talos
 
     deploy_filename = 'test_' + str(random.randint(1, 20000000000))
 
@@ -37,8 +37,8 @@ def test_rest(scan_object):
                talos.utils.metrics.rmse,
                talos.utils.metrics.rmsle]
 
-    from tensorflow.keras.models import Sequential
     from tensorflow.keras.layers import Dense
+    from tensorflow.keras.models import Sequential
 
     print('\n ...callbacks and metrics... \n')
 

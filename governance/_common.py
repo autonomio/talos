@@ -337,6 +337,7 @@ def scan_surface_failures(
             f'layout.package_root changed from {base_root!r} (base) to {head_root!r} '
             f'(head). The scan surface cannot be narrowed by the PR it gates.'
         )
+
     def _merged(raw: dict[str, Any], layout: dict[str, Any]) -> set[str]:
         """The excludes one revision actually scans with: repo-wide plus per-gate."""
         entries = list(layout.get('excludes', []) or [])
@@ -391,7 +392,6 @@ def find_python_files(root: Path, excludes: list[str]) -> list[Path]:
         path for path in sorted([root] if root.is_file() else root.rglob('*.py'))
         if not _is_path_excluded(path.relative_to(REPO_ROOT), excludes)
     ]
-
 
 
 # Re-exported so call sites can catch a parse failure without importing the

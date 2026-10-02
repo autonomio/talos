@@ -1,15 +1,15 @@
 """Framework imports occur only when an adapter is used."""
+import copy
 import gc
+import hashlib
 import importlib
 import inspect
-import sys
-import copy
-import numbers
 import json
+import numbers
+import sys
 import tempfile
-import hashlib
-from pathlib import Path
 from collections.abc import Mapping
+from pathlib import Path
 
 
 def reference(value):
@@ -291,14 +291,15 @@ class TorchAdapter:
         return model
 
     def predict(self, model, x, **kwargs):
-        import torch
         import numpy as np
+        import torch
         if hasattr(model, 'predict'):
             return model.predict(x, **kwargs)
         try:
             device = next(model.parameters()).device
         except StopIteration:
             device = torch.device('cpu')
+
         def tensor(value):
             if isinstance(value, torch.Tensor):
                 return value.to(device)
@@ -313,6 +314,7 @@ class TorchAdapter:
             else:
                 result = model(tensor(x))
         model.train(training)
+
         def array(value):
             if isinstance(value, dict):
                 return {key: array(item) for key, item in value.items()}

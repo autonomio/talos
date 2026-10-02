@@ -1,6 +1,10 @@
+"""Select parameter cohorts using caller experiment metrics."""
+
 import inspect
 from pathlib import Path
+
 import numpy as np
+
 from talos.cohort.sfc import BUILTIN_SELECTORS
 
 
@@ -29,7 +33,9 @@ class Cohort:
         self.available_permutation_ids = [str(value) for value in table['id']]
         if permutation_ids is None:
             import polars as pl
+
             from talos.experiment.serialization import dumps
+
             def selection_value(value):
                 if isinstance(value, np.generic):
                     value = value.item()
@@ -79,8 +85,7 @@ class Cohort:
         if isinstance(predictions[0], tuple):
             if any(not isinstance(value, tuple) or len(value) != len(predictions[0]) for value in predictions):
                 raise ValueError('Cohort output tuples must have matching lengths')
-            return tuple(self._aggregate_outputs([value[index] for value in predictions])
-                         for index in range(len(predictions[0])))
+            return tuple(self._aggregate_outputs([value[index] for value in predictions]) for index in range(len(predictions[0])))
         predictions = [np.asarray(value) for value in predictions]
         if len({array.shape for array in predictions}) != 1:
             raise ValueError('Cohort prediction shapes must agree')

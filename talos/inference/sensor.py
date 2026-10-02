@@ -1,4 +1,7 @@
+"""Build inference inputs and select stored trained models."""
+
 from pathlib import Path
+
 from talos.inference.errors import ArtifactError
 
 
@@ -30,8 +33,7 @@ class Sensor:
     def model(self):
         if self._model is None:
             if self.permutation_id is None:
-                self._model = self.result.best_model(metric=self.metric, asc=self.asc,
-                                                       custom_objects=self.custom_objects, model_factory=self.model_factory)
+                self._model = self.result.best_model(metric=self.metric, asc=self.asc, custom_objects=self.custom_objects, model_factory=self.model_factory)
             else:
                 from talos.backends import backend_for
                 artifacts = self.result.artifacts

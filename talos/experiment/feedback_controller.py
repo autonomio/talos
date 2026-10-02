@@ -1,19 +1,18 @@
+"""Collect feedback and audit parameter-queue interventions."""
+
 import json
 import logging
 import traceback
-from datetime import datetime
-from datetime import timezone
-from pathlib import Path
 from collections.abc import Callable
-from typing import Any
-from typing import cast
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, cast
 
-from talos.experiment.serialization import dumps
 from talos.experiment.msq import MSQ
-from talos.experiment.reducer.filter_types import FILTER_BUILDERS
-from talos.experiment.reducer.pruning_strategy import ACTION_SUGGEST
-from talos.experiment.reducer.pruning_strategy import PruningStrategy
 from talos.experiment.param_search.search_strategy import SearchStrategy
+from talos.experiment.reducer.filter_types import FILTER_BUILDERS
+from talos.experiment.reducer.pruning_strategy import ACTION_SUGGEST, PruningStrategy
+from talos.experiment.serialization import dumps
 
 logger = logging.getLogger(__name__)
 
@@ -63,14 +62,11 @@ def _apply_set_filter(msq: MSQ, intervention: dict[str, Any]) -> None:
 
 class FeedbackController:
 
-    '''
-    Orchestrate feedback from all enabled sources and dispatch
-    interventions to the MSQ.
+    '''Orchestrate feedback from all enabled sources and dispatch interventions to the MSQ.
 
     Sources are checked in order: pruning strategies, intra callback,
     intervention file. Each source is isolated — failures in one
     source do not block others.
-
     '''
 
     def __init__(self,
@@ -110,13 +106,11 @@ class FeedbackController:
         self._intervention_last_mtime: float = 0.0
         self._trigger_count: int = 0
 
-
     def should_trigger(self, current_round: int) -> bool:
 
         '''Check whether feedback should fire at this round.'''
 
         return current_round > 0 and current_round % self._feedback_interval == 0
-
 
     def trigger(self,
                 log: Any,
@@ -170,7 +164,6 @@ class FeedbackController:
 
         return applied
 
-
     def _run_source(self,
                     name: str,
                     collector: Callable[[], list[dict[str, Any]]],
@@ -208,7 +201,6 @@ class FeedbackController:
                 'traceback': traceback.format_exc(),
             })
 
-
     def _collect_from_pruning(self,
                               log: Any,
                               msq: MSQ) -> list[dict[str, Any]]:
@@ -240,7 +232,6 @@ class FeedbackController:
 
         return interventions
 
-
     def _collect_from_intra(self,
                             log: Any,
                             msq: MSQ) -> list[dict[str, Any]]:
@@ -266,7 +257,6 @@ class FeedbackController:
 
         new_entries = msq.intervention_log[log_len_before:]
         return [{'source': 'intra_callback', **entry} for entry in new_entries]
-
 
     def _collect_from_file(self) -> list[dict[str, Any]]:
 
@@ -301,7 +291,6 @@ class FeedbackController:
                 item['source'] = 'intervention_file'
 
         return interventions
-
 
     @staticmethod
     def _apply_intervention(msq: MSQ,
@@ -356,7 +345,6 @@ class FeedbackController:
             raise ValueError(f"FeedbackController Unknown intervention op: '{op}'")
         _ = handler(intervention)
 
-
     def _write_audit_entry(self,
                            current_round: int,
                            interventions: list[dict[str, Any]],
@@ -390,7 +378,6 @@ class FeedbackController:
         except OSError as e:
             logger.warning('Failed to write audit log: %s', e)
 
-
     def get_state(self) -> dict[str, Any]:
 
         '''Export state for checkpointing.'''
@@ -399,7 +386,6 @@ class FeedbackController:
             'trigger_count': self._trigger_count,
             'intervention_last_mtime': self._intervention_last_mtime,
         }
-
 
     def set_state(self, state: dict[str, Any]) -> None:
 

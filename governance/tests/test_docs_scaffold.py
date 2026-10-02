@@ -22,7 +22,6 @@ def test_product_profile_has_one_portable_identity_boundary() -> None:
     assert profile['sourceBranch'] == 'master'
 
 
-
 def test_route_map_owns_five_sections_and_existing_unique_sources() -> None:
     docs_map = _json('docs-map.json')
     sections = docs_map['sections']

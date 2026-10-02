@@ -1,23 +1,16 @@
+"""Profile caller experiment search spaces and sampled training behavior."""
+
 import logging
 import math
 import random
 import re
 import time
-import warnings
-from dataclasses import dataclass
-from dataclasses import field
-from typing import TYPE_CHECKING
+from dataclasses import dataclass, field
 from typing import Any
 
 from typing_extensions import override
 
-from talos.yaml.schema import COMPLEXITY_HIGH_MAX
-from talos.yaml.schema import COMPLEXITY_LOW_MAX
-from talos.yaml.schema import COMPLEXITY_MEDIUM_MAX
-
-if TYPE_CHECKING:
-    from talos.yaml.compiler import CompiledSFD
-
+from talos.yaml.schema import COMPLEXITY_HIGH_MAX, COMPLEXITY_LOW_MAX, COMPLEXITY_MEDIUM_MAX
 
 _COMPLEXITY_THRESHOLDS = [
     (COMPLEXITY_LOW_MAX, 'low'),
@@ -64,7 +57,6 @@ def _complexity_rating(total: int) -> str:
         if total <= threshold:
             return label
     return 'extreme'
-
 
 
 def make_covering_array(params: dict[str, list[Any]], seed: int = 42) -> list[dict[str, Any]]:
@@ -140,6 +132,7 @@ def profile(compiled_sfd, data=None, *, runtime=True) -> ProfileResult:
             if model is not None:
                 from talos.backends import backend_for
                 backend_for(model).cleanup()
+        # Record arbitrary per-sample failures while profiling other permutations.
         except Exception as exc:
             result.errors.append(_classify_error(exc))
     result.sample_permutations_completed = len(elapsed)

@@ -1,17 +1,21 @@
+"""Record caller-observed power measurements during training."""
+
 import subprocess
 import time
+
 from .experiment_log import _callback_base
 
 
 class PowerDraw:
     def __new__(cls, device=0, backend='keras', provider=None):
         base = _callback_base(backend)
+
         def measure():
             if provider is not None:
                 return float(provider())
-            result = subprocess.run(['nvidia-smi', '-i', str(device), '--query-gpu=power.draw', '--format=csv,noheader,nounits'],
-                                    check=True, capture_output=True, text=True)
+            result = subprocess.run(['nvidia-smi', '-i', str(device), '--query-gpu=power.draw', '--format=csv,noheader,nounits'], check=True, capture_output=True, text=True)
             return float(result.stdout.strip())
+
         class PowerCallback(base):
             def __init__(self):
                 super().__init__()

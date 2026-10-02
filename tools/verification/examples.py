@@ -3,11 +3,11 @@ import argparse
 import hashlib
 import json
 import os
-from pathlib import Path
 import subprocess
 import sys
 import tempfile
 import time
+from pathlib import Path
 
 
 def main():
@@ -22,19 +22,19 @@ def main():
     env['PYTHONPATH'] = os.pathsep.join(filter(None, (str(root), env.get('PYTHONPATH'))))
     records = []
     with tempfile.TemporaryDirectory(prefix='talos-examples-') as temporary:
-        for index, path in enumerate(sorted((root/'examples').rglob('*'))):
+        for index, path in enumerate(sorted((root / 'examples').rglob('*'))):
             if path.suffix not in ('.py', '.ipynb'):
                 continue
             record = {'path': str(path.relative_to(root)), 'whole_file_sha256': hashlib.sha256(path.read_bytes()).hexdigest()}
-            receipt = output.parent/f'example-{index}.json'
-            log = output.parent/f'example-{index}.log'
+            receipt = output.parent / f'example-{index}.json'
+            log = output.parent / f'example-{index}.log'
             record['log'] = str(log)
             if path.suffix == '.ipynb':
                 kind = 'notebook'
-                command = [sys.executable, str(helpers/'notebooks.py'), str(path), str(receipt)]
+                command = [sys.executable, str(helpers / 'notebooks.py'), str(path), str(receipt)]
             elif path.parent.name == 'sfd':
                 kind = 'sfd'
-                command = [sys.executable, str(helpers/'sfd_examples.py'), str(path), str(receipt)]
+                command = [sys.executable, str(helpers / 'sfd_examples.py'), str(path), str(receipt)]
             else:
                 kind = 'script'
                 command = [sys.executable, str(path)]
@@ -53,9 +53,9 @@ def main():
                         record['status'] = 'failed'
             except subprocess.TimeoutExpired:
                 record.update(status='failed', error='300-second timeout')
-            record['seconds'] = round(time.monotonic()-started, 3)
+            record['seconds'] = round(time.monotonic() - started, 3)
             records.append(record)
-            output.write_text(json.dumps({'examples': records}, indent=2)+'\n')
+            output.write_text(json.dumps({'examples': records}, indent=2) + '\n')
             print(record['path'], record['status'], flush=True)
     return int(any(record['status'] != 'passed' for record in records))
 

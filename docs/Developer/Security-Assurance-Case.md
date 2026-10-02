@@ -21,6 +21,30 @@ Talos is a local scientific parameter-sweep library and CLI. It executes user-se
 
 A manifest establishes recorded identities and execution evidence. It does not certify arbitrary training code or sanitize a hostile archive.
 
+The protected assets are caller data and source, trained weights, experiment
+records and their identities, provider credentials, and files reachable with
+the local user's permissions. Relevant adversaries can alter a copied manifest
+or archive, supply malformed declarative values, tamper with a network response,
+or introduce a compromised dependency or CI contribution. Arbitrary model and
+local strategy code remains trusted executable input; it runs with the caller's
+permissions. Talos provides no isolation boundary for that code.
+
+| Additional boundary | Control and evidence | Residual responsibility |
+| --- | --- | --- |
+| Remote entropy provider | `talos/reducers/remote_entropy.py` uses a default verified TLS context with TLS 1.2 minimum; rejects redirects and oversized or malformed responses; the sampler retains unique legal indexes. `tests/test_remote_entropy.py` exercises actual loopback certificate rejection before private headers or body, credential rotation and redirect refusal. | The caller selects a provider and supplies an authorized key; controlled tests do not prove live-provider service or physical entropy quality. |
+| Provider key file | A caller-owned key file is read for each request; key rotation requires no code change. Keys are not embedded in model source or persisted by the provider client. | Restrict the file's permissions and keep keys out of source, logs and experiment exports. Trusted caller code can still read any file accessible to the process. |
+| Declarative manifest and control files | Safe YAML parsing and field validation precede caller imports; committed content is rehashed before resolution, fork, recommit and reindex. `tests/test_manifest_validation.py` checks changed committed bytes and invalid objective/boolean controls before source hydration. | A valid SFD still names executable code. A matching digest establishes integrity against retained records, not an independent publisher's identity. |
+
+These controls counter network impersonation, credential-bearing redirects,
+malformed provider responses, path traversal and changed declarative records.
+No private application data is transmitted before transport authentication in
+the inspected key-bearing client path. Dataset HTTPS requests and Git backups
+use their platform verification defaults. This assumes caller-owned operating
+system trust stores and Git configuration retain certificate verification.
+Network availability, certificate authorities, trusted dependencies and caller
+credential hygiene remain external
+assumptions. Legacy framework advisories remain unresolved as recorded below.
+
 ## Reviewed integration
 
 The checked-in `master` snapshot requires green checks, eligible non-author approval, enforcement-surface code-owner review, resolved threads and an up-to-date branch, and blocks force pushes/deletion. Native CodeQL code-scanning protection blocks new security findings at every severity. A successful analysis/upload job alone does not establish an alert-free change. Copilot review requests run automatically; the ruleset separately requires an eligible non-author approval. The live ruleset gate detects drift; the privileged post-merge audit also inspects bypass actors.

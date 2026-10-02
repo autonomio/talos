@@ -8,6 +8,7 @@ def log_frame(result):
     """Typed parameter categories in a portable Polars view, without Arrow."""
     import numpy as np
     import polars as pl
+
     from .serialization import dumps
 
     def family(value):
@@ -77,11 +78,13 @@ class LogQueueView:
             for candidate in self.queue._domain.values_for(original):
                 if dumps(candidate) == encoded:
                     return candidate
-            from .serialization import decode
             import json
+
+            from .serialization import decode
             return decode(json.loads(encoded))
-        from .param_domain import values_equal
         import numpy as np
+
+        from .param_domain import values_equal
         candidates = self.queue._domain.values_for(original)
         matching = [candidate for candidate in candidates if values_equal(candidate, value)]
         if not matching:

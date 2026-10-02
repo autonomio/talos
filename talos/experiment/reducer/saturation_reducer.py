@@ -1,3 +1,5 @@
+"""Thin parameter choices whose observed metric variation has saturated."""
+
 import logging
 from typing import Any
 
@@ -12,14 +14,11 @@ logger = logging.getLogger(__name__)
 
 class SaturationReducer(PruningStrategy):
 
-    '''
-    Detect parameter values whose metric variance has collapsed and
-    apply partial pruning via named filters.
+    '''Detect parameter values whose metric variance has collapsed and apply partial pruning via named filters.
 
     Uses Coefficient of Variation (CV = std / |mean|) over a rolling
     window of recent observations. Saturated values get a sample filter
     that retains retain_fraction of combinations for continued monitoring.
-
     '''
 
     def __init__(self,
@@ -72,7 +71,6 @@ class SaturationReducer(PruningStrategy):
         self._min_samples_per_value = min_samples_per_value
         self._retain_fraction = retain_fraction
         self._saturated: set[tuple[str, Any]] = set()
-
 
     @override
     def analyze_and_intervene(self,
@@ -155,7 +153,6 @@ class SaturationReducer(PruningStrategy):
 
         return interventions
 
-
     @override
     def get_state(self) -> dict[str, Any]:
 
@@ -164,7 +161,6 @@ class SaturationReducer(PruningStrategy):
         return {
             'saturated': list(self._saturated),
         }
-
 
     @override
     def set_state(self, state: dict[str, Any]) -> None:

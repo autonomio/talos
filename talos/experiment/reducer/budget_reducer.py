@@ -1,3 +1,5 @@
+"""Trim pending parameter combinations to projected resource budgets."""
+
 import logging
 import time
 from typing import Any
@@ -16,9 +18,7 @@ TRIM_WORST_FIRST = 'worst_first'
 
 class BudgetReducer(PruningStrategy):
 
-    '''
-    Trim the search queue when projected completion exceeds resource
-    budgets (walltime or permutation count).
+    '''Trim the search queue when projected completion exceeds resource budgets (walltime or permutation count).
 
     Purely resource-driven — no statistical analysis of results.
     Supports two trim strategies:
@@ -34,7 +34,6 @@ class BudgetReducer(PruningStrategy):
     further calls to analyze_and_intervene return empty. The
     check_after_pct gate prevents premature trimming when throughput
     estimates are unreliable early in the experiment.
-
     '''
 
     def __init__(self,
@@ -102,7 +101,6 @@ class BudgetReducer(PruningStrategy):
         self._maximize = maximize
         self._trimmed: bool = False
 
-
     @override
     def analyze_and_intervene(self,
                               log: pl.DataFrame,
@@ -144,7 +142,6 @@ class BudgetReducer(PruningStrategy):
         self._trimmed = True
 
         return interventions
-
 
     def _compute_target(self,
                         yielded: int) -> int | None:
@@ -188,7 +185,6 @@ class BudgetReducer(PruningStrategy):
 
         return min(candidates)
 
-
     def _trim_random(self, target_count: int) -> dict[str, Any]:
 
         '''Emit a trim intervention for random downsampling.'''
@@ -198,7 +194,6 @@ class BudgetReducer(PruningStrategy):
             'target_count': target_count,
             'reason': f"budget trim to {target_count} total permutations",
         }
-
 
     def _trim_worst_first(self,
                           log: pl.DataFrame,
@@ -275,7 +270,6 @@ class BudgetReducer(PruningStrategy):
 
         return interventions
 
-
     @override
     def get_state(self) -> dict[str, Any]:
 
@@ -285,7 +279,6 @@ class BudgetReducer(PruningStrategy):
             'start_time': self._start_time,
             'trimmed': self._trimmed,
         }
-
 
     @override
     def set_state(self, state: dict[str, Any]) -> None:

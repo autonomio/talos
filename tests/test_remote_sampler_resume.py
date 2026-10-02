@@ -73,6 +73,7 @@ def scan_options(tmp_path, caller):
 
 def pause_run(options, monkeypatch, caller, method='quantum'):
     calls = []
+
     def initial_provider(maximum, count, selected_method):
         calls.append((maximum, count, selected_method))
         return [2, 0]
@@ -92,6 +93,7 @@ def pause_run(options, monkeypatch, caller, method='quantum'):
 
 def no_repeat_provider(monkeypatch, mode='unavailable'):
     calls = []
+
     def changed_provider(maximum, count, method):
         calls.append((maximum, count, method))
         if mode == 'unavailable':
@@ -248,7 +250,6 @@ def test_changed_order_witness_cannot_bless_a_reordered_caller(scan_options, mon
         talos.Scan(**reordered, random_method='quantum', resume=True)
     assert calls == [] and caller.FIT_CALLS == trained
     assert artifact_bytes(paused.run_dir) == before
-
 
 
 def test_explicit_native_grid_strategy_retains_dictionary_scan_resume(scan_options, monkeypatch, caller):

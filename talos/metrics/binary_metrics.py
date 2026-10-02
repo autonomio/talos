@@ -1,6 +1,6 @@
-from typing import Any
-from typing import Protocol
-from typing import cast
+"""Compute binary classification metrics from caller predictions."""
+
+from typing import Any, Protocol, cast
 
 import numpy as np
 import numpy.typing as npt

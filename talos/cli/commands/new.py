@@ -1,12 +1,10 @@
+"""Create caller experiment files from packaged manifest templates."""
+
 from pathlib import Path
 
 import click
 
-from talos.cli.git_utils import git_clone
-from talos.cli.git_utils import run_git
-
-
-
+from talos.cli.git_utils import git_clone, run_git
 
 
 def run_new(project_name: str,

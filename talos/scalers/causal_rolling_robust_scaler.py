@@ -1,3 +1,5 @@
+"""Scale caller observations with causal rolling median and IQR statistics."""
+
 from typing import cast
 
 import polars as pl
@@ -71,14 +73,12 @@ class CausalRollingRobustScaler:
             self.medians[col] = cast(float, median)
             self.iqrs[col] = iqr if iqr != 0 else 1.0
 
-
     @property
     def context_rows(self) -> int:
 
         '''Number of raw preceding rows needed to produce a fully warm scaled output.'''
 
         return self.window
-
 
     def transform(self, df: pl.DataFrame) -> pl.DataFrame:
 
@@ -105,8 +105,7 @@ class CausalRollingRobustScaler:
             if col not in self.medians:
                 continue
 
-            center = (
-                pl.col(col)
+            center = (pl.col(col)
                 .rolling_median(window_size=self.window, min_samples=self.min_samples)
                 .shift(1)
                 .fill_null(self.medians[col])

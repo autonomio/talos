@@ -3,6 +3,7 @@ import csv
 import json
 import uuid
 from pathlib import Path
+
 from talos.experiment.context import get_trial_context
 
 
@@ -23,6 +24,7 @@ class ExperimentLog:
         folder = Path(context.get('run_dir', experiment_name))
         folder.mkdir(parents=True, exist_ok=True)
         trial = str(context.get('trial_id', uuid.uuid4().hex))
+
         class EpochLog(base):
             def __init__(self):
                 super().__init__()

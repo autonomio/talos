@@ -1,14 +1,14 @@
+"""Focus parameter exploration around observed metric breakthroughs."""
+
 import logging
-from math import ceil
-from math import floor
+from math import ceil, floor
 from numbers import Integral, Real
 from typing import Any
 
 import polars as pl
 from typing_extensions import override
 
-from talos.experiment.reducer.filter_types import FILTER_KEEP_BETWEEN
-from talos.experiment.reducer.filter_types import FILTER_KEEP_VALUES
+from talos.experiment.reducer.filter_types import FILTER_KEEP_BETWEEN, FILTER_KEEP_VALUES
 from talos.experiment.reducer.pruning_strategy import PruningStrategy
 
 logger = logging.getLogger(__name__)
@@ -16,9 +16,7 @@ logger = logging.getLogger(__name__)
 
 class FocusReducer(PruningStrategy):
 
-    '''
-    Detect breakthrough results and narrow the parameter space for
-    exploitation using reversible named filters.
+    '''Detect breakthrough results and narrow the parameter space for exploitation using reversible named filters.
 
     Monitors a target metric for values crossing a configurable
     threshold. On breakthrough, narrows each parameter around the
@@ -29,7 +27,6 @@ class FocusReducer(PruningStrategy):
     NOTE: Configuring multiple FocusReducer instances that operate on
     overlapping parameters may cause conflicting filters. Use one
     FocusReducer per experiment, or ensure parameter spaces are disjoint.
-
     '''
 
     def __init__(self,
@@ -96,7 +93,6 @@ class FocusReducer(PruningStrategy):
         self._rounds_since_improvement: int = 0
         self._focused_params: set[str] = set()
 
-
     @override
     def analyze_and_intervene(self,
                               log: pl.DataFrame,
@@ -134,7 +130,6 @@ class FocusReducer(PruningStrategy):
 
         return self._handle_on(best_value, best_combo, msq)
 
-
     def _handle_off(self,
                     best_value: float,
                     best_combo: dict[str, Any],
@@ -156,7 +151,6 @@ class FocusReducer(PruningStrategy):
         interventions.extend(self._build_injections(best_combo, msq))
 
         return interventions
-
 
     def _handle_on(self,
                    best_value: float,
@@ -186,7 +180,6 @@ class FocusReducer(PruningStrategy):
 
         return []
 
-
     def _snap_back(self) -> list[dict[str, Any]]:
 
         '''Revert to full exploration by clearing all focus filters.'''
@@ -206,7 +199,6 @@ class FocusReducer(PruningStrategy):
         self._focused_params = set()
 
         return interventions
-
 
     def _find_best_row(self,
                        df: pl.DataFrame,
@@ -244,7 +236,6 @@ class FocusReducer(PruningStrategy):
         combo = {k: row[k] for k in domain_keys if k in row}
 
         return metric_value, combo
-
 
     def _build_narrowing(self,
                          combo: dict[str, Any],
@@ -295,7 +286,6 @@ class FocusReducer(PruningStrategy):
 
         return interventions
 
-
     def _build_injections(self,
                           combo: dict[str, Any],
                           msq: Any) -> list[dict[str, Any]]:
@@ -343,7 +333,6 @@ class FocusReducer(PruningStrategy):
 
         return interventions
 
-
     def _focus_bounds(self, center: int | float) -> tuple[int | float, int | float]:
 
         '''
@@ -367,14 +356,12 @@ class FocusReducer(PruningStrategy):
 
         return lower, upper
 
-
     @staticmethod
     def _is_numeric(value: Any) -> bool:
 
         '''Check if a value is numeric (int or float, excluding bool).'''
 
         return isinstance(value, Real) and not isinstance(value, bool)
-
 
     @override
     def get_state(self) -> dict[str, Any]:
@@ -388,7 +375,6 @@ class FocusReducer(PruningStrategy):
             'rounds_since_improvement': self._rounds_since_improvement,
             'focused_params': list(self._focused_params),
         }
-
 
     @override
     def set_state(self, state: dict[str, Any]) -> None:

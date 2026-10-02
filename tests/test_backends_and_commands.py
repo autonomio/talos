@@ -79,6 +79,8 @@ def test_real_classification_score_encodings():
 
 
 def test_commands_and_new_archive(tmp_path):
+    from talos.scan.scan_addon import func_best_model, func_evaluate
+
     x, y = load_iris(return_X_y=True)
     model = LogisticRegression(max_iter=500).fit(x, y)
     scan = SimpleNamespace(data=pd.DataFrame({'val_loss': [float(-model.score(x, y))]}),
@@ -86,6 +88,15 @@ def test_commands_and_new_archive(tmp_path):
                            details=pd.Series({'experiment_name': 'iris'}), round_history=[], x=x, y=y)
     predicted = Predict(scan).predict(x, 'val_loss', True)
     np.testing.assert_array_equal(predicted, model.predict(x))
+    selected = func_best_model(scan, metric='val_loss', asc=True)
+    assert selected is model
+    np.testing.assert_array_equal(backend_for(selected).predict(selected, x), predicted)
+    func_evaluate(scan, x, y, 'multi_class', metric='val_loss', folds=3, shuffle=False, asc=True)
+    fold_x, fold_y = kfold(x, y, 3, False)
+    expected_scores = [f1_score(labels, model.predict(features), average='macro')
+                       for features, labels in zip(fold_x, fold_y, strict=True)]
+    assert scan.data.loc[0, 'eval_f1score_mean'] == pytest.approx(np.mean(expected_scores))
+    assert scan.data.loc[0, 'eval_f1score_std'] == pytest.approx(np.std(expected_scores))
     assert Analyze(scan).rounds() == 1
     packaged = Deploy(scan, tmp_path / 'nested' / 'iris', 'val_loss', asc=True)
     restored = Restore(packaged.path)
@@ -96,7 +107,7 @@ def test_commands_and_new_archive(tmp_path):
 
 def test_generator_and_stopping_presets():
     pytest.importorskip('tensorflow')
-    from talos.utils import SequenceGenerator, generator, early_stopper
+    from talos.utils import SequenceGenerator, early_stopper, generator
     x, y = load_iris(return_X_y=True)
     sequence = SequenceGenerator(x=x, y=y, batch_size=64)
     assert [len(sequence[i][0]) for i in range(len(sequence))] == [64, 64, 22]
@@ -165,11 +176,13 @@ def test_native_framework_artifact_fresh_process(tmp_path, backend, request):
 def test_torch_legacy_return_and_factory_requirement():
     torch = pytest.importorskip('torch')
     from talos.utils import TorchHistory
+
     class Model(torch.nn.Module, TorchHistory):
         def __init__(self):
             super().__init__()
             self.layer = torch.nn.Linear(4, 3)
             self.init_history()
+
         def forward(self, x):
             return self.layer(x)
     net = Model()
@@ -234,9 +247,11 @@ def test_torch_container_requires_reconstruction_factory(tmp_path):
 
 def test_recover_model_preserves_loss_parameter_and_numeric_metric(tmp_path):
     from sklearn.metrics import log_loss
+
     from talos import Scan
     from talos.utils.recover_best_model import recover_best_model
     seen = []
+
     def train(x_train, y_train, x_val, y_val, params):
         assert set(params) == {'loss', 'C'}
         assert params['loss'] == 'log_loss'
@@ -261,6 +276,7 @@ def test_recover_model_preserves_loss_parameter_and_numeric_metric(tmp_path):
 def test_archive_verified_source_bundle_resolves_deleted_helpers(tmp_path):
     pytest.importorskip('torch')
     from zipfile import ZipFile
+
     from talos import RunResult, run
     from talos.experiment.runner import load_sfd
     helper = tmp_path / 'talos_archive_user_helpers.py'
@@ -304,6 +320,7 @@ def test_analyze_bivariate_kde_real_iris_density(monkeypatch):
     figure, axes = plt.subplots()
     captured = {}
     contourf = axes.contourf
+
     def contours(grid_x, grid_y, density, **kwargs):
         captured.update(x=grid_x, y=grid_y, density=density)
         captured['artist'] = contourf(grid_x, grid_y, density, **kwargs)
@@ -364,6 +381,7 @@ def binary_iris_data():
 def test_binary_metrics_compiled_integer_label_fit_matches_sklearn(keras_cpu_backend):
     keras = keras_cpu_backend
     from sklearn.metrics import matthews_corrcoef, precision_score, recall_score
+
     from talos.metrics.keras_metrics import classification_metric
     x_train, x_val, y_train, y_val = binary_iris_data()
     keras.utils.set_random_seed(17)
@@ -387,6 +405,7 @@ def test_binary_metrics_compiled_integer_label_fit_matches_sklearn(keras_cpu_bac
 def test_stateless_fbeta_compiled_repeated_batches_and_scientific_score(label_dtype, keras_cpu_backend):
     keras = keras_cpu_backend
     from sklearn.metrics import fbeta_score
+
     from talos.metrics.keras_metrics import fbeta
     x_train, x_val, y_train, y_val = binary_iris_data()
     model = keras.Sequential([keras.layers.Input((4,)), keras.layers.Dense(1, activation='sigmoid')])
@@ -408,8 +427,8 @@ def test_stateless_fbeta_compiled_repeated_batches_and_scientific_score(label_dt
 
 def test_titanic_callback_accepts_matching_optimizer_parameter():
     pytest.importorskip('tensorflow')
-    from talos.templates import models, params
     from talos.model import lr_normalizer
+    from talos.templates import models, params
     x_train, x_val, y_train, y_val = binary_iris_data()
     candidates = params.titanic(debug=True)
     values = {name: choices[0] for name, choices in candidates.items()}
@@ -431,7 +450,13 @@ def test_packaged_sfd_templates_expose_lazy_backend_hints():
 def test_continuous_helpers_compiled_diabetes_labels_and_shape_match_sklearn(label_dtype, keras_cpu_backend):
     keras = keras_cpu_backend
     from sklearn.datasets import load_diabetes
-    from sklearn.metrics import mean_absolute_error, mean_absolute_percentage_error, mean_squared_error, mean_squared_log_error
+    from sklearn.metrics import (
+        mean_absolute_error,
+        mean_absolute_percentage_error,
+        mean_squared_error,
+        mean_squared_log_error,
+    )
+
     from talos.metrics import keras_metrics
     x, y = load_diabetes(return_X_y=True)
     x, y = x[:40], y[:40].astype(label_dtype)
@@ -461,10 +486,14 @@ def test_continuous_helpers_compiled_diabetes_labels_and_shape_match_sklearn(lab
 def test_normalise_history_validates_all_points_and_framework_scalars(framework):
     if framework == 'tensorflow':
         tf = pytest.importorskip('tensorflow')
-        scalar = lambda value: tf.constant(value, dtype=tf.float64)
+
+        def scalar(value):
+            return tf.constant(value, dtype=tf.float64)
     elif framework == 'torch':
         torch = pytest.importorskip('torch')
-        scalar = lambda value: torch.tensor(value, dtype=torch.float64)
+
+        def scalar(value):
+            return torch.tensor(value, dtype=torch.float64)
     else:
         scalar = np.float64
     from sklearn.metrics import log_loss

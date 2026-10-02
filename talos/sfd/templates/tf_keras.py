@@ -1,7 +1,7 @@
 """Supply context with x_train/y_train and optional x_val/y_val; edit freely."""
-backend = 'tensorflow'
-
 import numpy as np
+
+backend = 'tensorflow'
 
 
 def params():

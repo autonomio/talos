@@ -1,11 +1,13 @@
+"""Construct task-aware Keras models for automatic parameter scans."""
+
+
 class AutoModel:
 
     def __init__(self, task, experiment_name, metric=None, backend='tensorflow'):
 
-        '''
+        '''Creates an input model for Scan().
 
-        Creates an input model for Scan(). Optimized for being used together
-        with Params(). For example:
+        Optimized for being used together with Params(). For example:
 
         p = talos.AutoParams().params
         model = talos.AutoModel(task='binary').model
@@ -47,8 +49,7 @@ class AutoModel:
 
     def _set_metric(self):
 
-        """Sets the metric for the model based on the experiment type
-        or a list of metrics from user."""
+        """Sets the metric for the model based on the experiment type or a list of metrics from user."""
 
         import talos as ta
 

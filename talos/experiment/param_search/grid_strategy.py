@@ -1,3 +1,5 @@
+"""Enumerate parameter combinations in deterministic permuted order."""
+
 from __future__ import annotations
 
 import math
@@ -26,8 +28,7 @@ class GridStrategy(SearchStrategy):
     '''
 
     def __init__(self,
-                 domain: ParamDomain,
-                 *,
+                 domain: ParamDomain, *,
                  seed: int | None = None,
                  shuffle: bool = False) -> None:
 
@@ -35,13 +36,11 @@ class GridStrategy(SearchStrategy):
         self._shuffle = shuffle
         self._rebuild()
 
-
     @property
     @override
     def is_finite(self) -> bool:
 
         return True
-
 
     def _rebuild(self) -> None:
 
@@ -60,7 +59,6 @@ class GridStrategy(SearchStrategy):
                 self._total, self._seed,
             )
 
-
     def _permute_index(self, logical_index: int) -> int:
 
         if not self._shuffle:
@@ -70,7 +68,6 @@ class GridStrategy(SearchStrategy):
             logical_index, self._total,
             self._lcg_multiplier, self._lcg_increment,
         )
-
 
     def _index_to_combo(self, index: int) -> dict[str, Any]:
 
@@ -82,7 +79,6 @@ class GridStrategy(SearchStrategy):
             combo[key] = self._values[i][remaining % self._sizes[i]]
             remaining //= self._sizes[i]
         return combo
-
 
     @override
     def __next__(self) -> dict[str, Any]:
@@ -97,14 +93,12 @@ class GridStrategy(SearchStrategy):
 
         raise StopIteration
 
-
     @override
     def on_domain_changed(
         self, _domain: ParamDomain, _changed_params: list[str],
     ) -> None:
 
         self._rebuild()
-
 
     @override
     def get_state(self) -> dict[str, Any]:
@@ -115,7 +109,6 @@ class GridStrategy(SearchStrategy):
             'shuffle': self._shuffle,
             'seed': self._seed,
         }
-
 
     @override
     def set_state(self, state: dict[str, Any]) -> None:

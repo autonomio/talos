@@ -1,8 +1,9 @@
+"""Define the analysis and intervention contract for feedback reducers."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import Any
-
 
 ACTION_SUGGEST = 'suggest'
 
@@ -14,8 +15,7 @@ class PruningStrategy(ABC):
 
     Reducers are pure analysis components. They receive an experiment log
     and an MSQ reference (for observability only), analyze the data, and
-    return a list of interventions communicated to MSQ for modifying the
-    param space.
+    return a list of interventions communicated to MSQ for modifying the param space.
 
     '''
 
@@ -33,7 +33,6 @@ class PruningStrategy(ABC):
         super().__init__()
 
         self._active = active
-
 
     @abstractmethod
     def analyze_and_intervene(self,
@@ -55,14 +54,12 @@ class PruningStrategy(ABC):
 
         ...
 
-
     @abstractmethod
     def get_state(self) -> dict[str, Any]:
 
         '''Export state for checkpointing.'''
 
         ...
-
 
     @abstractmethod
     def set_state(self, state: dict[str, Any]) -> None:
@@ -71,12 +68,10 @@ class PruningStrategy(ABC):
 
         ...
 
-
     @property
     def active(self) -> bool:
 
         return self._active
-
 
     @active.setter
     def active(self, value: bool) -> None:

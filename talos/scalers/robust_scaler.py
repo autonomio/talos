@@ -1,3 +1,5 @@
+"""Fit and reverse median and interquartile-range scaling on caller data."""
+
 from typing import cast
 
 import polars as pl
@@ -7,8 +9,7 @@ class RobustScaler:
 
     '''Median and IQR scaling, resilient to outliers.'''
 
-    def __init__(self,
-                 x_train: pl.DataFrame,
+    def __init__(self, x_train: pl.DataFrame,
                  quantile_range: tuple[float, float] = (0.25, 0.75)) -> None:
 
         '''
@@ -46,7 +47,6 @@ class RobustScaler:
 
             self.medians[col] = cast(float, median)
             self.iqrs[col] = iqr if iqr != 0 else 1.0
-
 
     def transform(self, df: pl.DataFrame) -> pl.DataFrame:
 

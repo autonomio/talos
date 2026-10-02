@@ -2,14 +2,14 @@ def test_scan():
 
     print("\n >>> start Scan()...")
 
-    import talos
     import tensorflow as tf
-
-    from tensorflow.keras.losses import binary_crossentropy
-    from tensorflow.keras.optimizers.legacy import Adam
-    from tensorflow.keras.activations import relu, elu
+    from tensorflow.keras.activations import elu, relu
     from tensorflow.keras.layers import Dense
+    from tensorflow.keras.losses import binary_crossentropy
     from tensorflow.keras.models import Sequential
+    from tensorflow.keras.optimizers.legacy import Adam
+
+    import talos
 
     p = {'activation': [relu, elu],
          'optimizer': ['Adagrad', Adam],

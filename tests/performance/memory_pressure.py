@@ -1,9 +1,8 @@
+from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten
+from tensorflow.keras.models import Sequential
+
 import talos
 from talos.utils import SequenceGenerator
-
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Flatten
-from tensorflow.keras.layers import Conv2D
 
 p = {'activation': ['relu'],
      'optimizer': ['Adam'],
@@ -13,6 +12,7 @@ p = {'activation': ['relu'],
      'epochs': [1, 1, 1, 1, 1]}
 
 x_train, y_train, x_val, y_val = talos.templates.datasets.mnist()
+
 
 @profile
 def talos_version():
@@ -48,7 +48,7 @@ def talos_version():
                              params=p,
                              model=mnist_model,
                              experiment_name='mnist',
-			                 save_weights=False)
+                             save_weights=False)
 
 
 if __name__ == "__main__":

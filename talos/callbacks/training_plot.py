@@ -1,10 +1,11 @@
+"""Plot training history through a lazily loaded Keras callback."""
+
 from .experiment_log import _callback_base
 
 
 class TrainingPlot:
     def __new__(cls, backend='keras', **kwargs):
-        base = _callback_base(backend)
-        class PlotCallback(base):
+        class PlotCallback(_callback_base(backend)):
             def __init__(self):
                 super().__init__()
                 self.history = {}

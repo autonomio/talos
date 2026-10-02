@@ -1,5 +1,8 @@
+"""Construct variable-depth hidden layers from caller scan parameters."""
+
+
 def hidden_layers(model, params, last_neuron):
-    '''HIDDEN LAYER Generator
+    '''HIDDEN LAYER Generator.
 
     NOTE: 'shapes', 'first_neuron', 'dropout', and 'hidden_layers' need
     to be present in the params dictionary.
@@ -7,7 +10,8 @@ def hidden_layers(model, params, last_neuron):
     Hidden layer generation for the cases where number
     of layers is used as a variable in the optimization process.
     Handles things in a way where any number of layers can be tried
-    with matching hyperparameters.'''
+    with matching hyperparameters.
+    '''
 
     # check for the params that are required for hidden_layers
 
@@ -17,8 +21,8 @@ def hidden_layers(model, params, last_neuron):
         from tensorflow.keras.layers import Dense, Dropout
     else:
         from keras.layers import Dense, Dropout
-    from .network_shape import network_shape
     from ..utils.exceptions import TalosParamsError
+    from .network_shape import network_shape
 
     required = ['shapes', 'first_neuron', 'dropout', 'hidden_layers', 'activation']
     for param in required:
@@ -29,9 +33,7 @@ def hidden_layers(model, params, last_neuron):
     layer_neurons = network_shape(params, last_neuron)
 
     for i in range(params['hidden_layers']):
-        model.add(Dense(
-            layer_neurons[i],
-            kernel_initializer=params.get(
+        model.add(Dense(layer_neurons[i], kernel_initializer=params.get(
                 'kernel_initializer',
                 'glorot_uniform'
             ),

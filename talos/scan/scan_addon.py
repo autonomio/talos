@@ -1,5 +1,9 @@
+"""Retain historical model evaluation and best-model activation exports."""
+
 from talos.commands.evaluate import evaluate_models as func_evaluate
-from talos.utils.best_model import best_model, activate_model
+from talos.utils.best_model import activate_model, best_model
+
+__all__ = ['activate_model', 'best_model', 'func_best_model', 'func_evaluate']
 
 
 def func_best_model(scan_object, metric='val_acc', asc=False, saved=False, custom_objects=None):

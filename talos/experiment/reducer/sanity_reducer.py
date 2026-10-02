@@ -1,17 +1,16 @@
+"""Flag trial failures and prune parameter values with missing metrics."""
+
 from typing import Any
 
 import polars as pl
 from typing_extensions import override
 
-from talos.experiment.reducer.pruning_strategy import ACTION_SUGGEST
-from talos.experiment.reducer.pruning_strategy import PruningStrategy
+from talos.experiment.reducer.pruning_strategy import ACTION_SUGGEST, PruningStrategy
 
 
 class SanityReducer(PruningStrategy):
 
-    '''
-    Remove parameter values whose trials produce null or NaN in the
-    target metric above a configurable threshold.
+    '''Remove parameter values whose trials produce null or NaN in the target metric above a configurable threshold.
 
     Counts both null and NaN (for float columns) in the metric column.
     Values are pruned when missing_count / total > nan_threshold and
@@ -19,7 +18,6 @@ class SanityReducer(PruningStrategy):
 
     Optionally emits suggestion interventions (logged but not dispatched)
     for zero-metric, execution timeout, and warning rate signals.
-
     '''
 
     def __init__(self,
@@ -92,7 +90,6 @@ class SanityReducer(PruningStrategy):
         self._warning_threshold = warning_threshold
         self._removed: set[tuple[str, Any]] = set()
         self._suggested: set[tuple[str, Any, str]] = set()
-
 
     @override
     def analyze_and_intervene(self,
@@ -179,7 +176,6 @@ class SanityReducer(PruningStrategy):
 
         return interventions
 
-
     def _rate_suggestion(self,
                          row: dict[str, Any],
                          param: str,
@@ -209,7 +205,6 @@ class SanityReducer(PruningStrategy):
 
         return []
 
-
     @override
     def get_state(self) -> dict[str, Any]:
 
@@ -219,7 +214,6 @@ class SanityReducer(PruningStrategy):
             'removed': list(self._removed),
             'suggested': list(self._suggested),
         }
-
 
     @override
     def set_state(self, state: dict[str, Any]) -> None:

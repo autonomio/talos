@@ -164,6 +164,7 @@ def test_redirect_cannot_send_credentials_to_plain_http(method, status, certific
 def test_credentials_rotate_without_code_change(method, variable, certificate, tmp_path, monkeypatch):
     credentials(tmp_path, monkeypatch)
     monkeypatch.setenv('SSL_CERT_FILE', str(certificate[0]))
+
     def response(observations):
         if method == 'quantum':
             return json_response({'type': 'uint16', 'length': 1024, 'success': True, 'data': [0] * 1024})
@@ -315,6 +316,7 @@ def test_ambience_batches_with_provider_limits_and_reloads_credential(certificat
     credentials(tmp_path, monkeypatch)
     monkeypatch.setenv('SSL_CERT_FILE', str(certificate[0]))
     replacement = '00000000-0000-0000-0000-000000000002'
+
     def response(observations):
         if len(observations) == 1:
             values = list(range(10000))

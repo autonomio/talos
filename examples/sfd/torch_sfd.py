@@ -1,6 +1,7 @@
 """PyTorch template with an importable reconstruction factory and native weights."""
 backend = 'torch'
 
+
 def params():
     return {'neurons': [8, 16], 'learning_rate': [.01, .03], 'epochs': [3], 'batch_size': [16]}
 
@@ -26,6 +27,7 @@ def make_model(neurons=8):
 
 def model(data, round_params):
     import torch
+
     from talos.utils import TorchHistory
     network = make_model(round_params['neurons'])
     optimizer = torch.optim.Adam(network.parameters(), lr=round_params['learning_rate'])

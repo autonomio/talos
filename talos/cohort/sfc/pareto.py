@@ -1,5 +1,6 @@
-from typing import Any, cast
-from typing import TypeGuard
+"""Select nondominated parameter cohorts across caller objectives."""
+
+from typing import Any, TypeGuard, cast
 
 import numpy as np
 import numpy.typing as npt

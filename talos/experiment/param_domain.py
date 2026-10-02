@@ -1,7 +1,9 @@
+"""Represent mutable parameter choices with portable checkpoint state."""
+
 from __future__ import annotations
 
-from typing import Any
-from typing import Protocol
+from typing import Any, Protocol
+
 from talos.experiment.serialization import content_hash
 
 
@@ -49,7 +51,6 @@ class ParamDomain:
         self._observers: list[DomainObserver] = []
         self._version: int = 0
 
-
     @property
     def params(self) -> dict[str, list[Any]]:
 
@@ -57,23 +58,19 @@ class ParamDomain:
 
         return {k: list(v) for k, v in self._params.items()}
 
-
     @property
     def version(self) -> int:
         return self._version
 
-
     @property
     def keys(self) -> list[str]:
         return list(self._params.keys())
-
 
     def values_for(self, param: str) -> list[Any]:
 
         '''Return current legal values for a parameter.'''
 
         return list(self._params[param])
-
 
     @property
     def total_combinations(self) -> int:
@@ -85,21 +82,17 @@ class ParamDomain:
             result *= len(v)
         return result
 
-
     def add_observer(self, observer: DomainObserver) -> None:
         if observer not in self._observers:
             self._observers.append(observer)
 
-
     def remove_observer(self, observer: DomainObserver) -> None:
         self._observers.remove(observer)
-
 
     def _notify(self, changed_params: list[str]) -> None:
         self._version += 1
         for obs in self._observers:
             obs.on_domain_changed(self, changed_params)
-
 
     def remove_value(self, param: str, value: Any) -> bool:
 
@@ -123,7 +116,6 @@ class ParamDomain:
         values[:] = [item for item in values if not values_equal(item, value)]
         self._notify([param])
         return True
-
 
     def remove_values_ge(self, param: str, threshold: Any) -> int:
 
@@ -151,7 +143,6 @@ class ParamDomain:
             self._notify([param])
         return removed_count
 
-
     def remove_values_le(self, param: str, threshold: Any) -> int:
 
         '''
@@ -178,7 +169,6 @@ class ParamDomain:
             self._notify([param])
         return removed_count
 
-
     def keep_values(self, param: str, values: list[Any]) -> int:
 
         '''
@@ -198,7 +188,6 @@ class ParamDomain:
             self._params[param] = kept
             self._notify([param])
         return removed_count
-
 
     def keep_between(self, param: str, lower: Any, upper: Any) -> int:
 
@@ -226,7 +215,6 @@ class ParamDomain:
             self._notify([param])
         return removed_count
 
-
     def inject_value(self, param: str, value: Any) -> bool:
 
         '''
@@ -243,7 +231,6 @@ class ParamDomain:
         self._notify([param])
         return True
 
-
     def is_valid_combination(self, combo: dict[str, Any]) -> bool:
 
         '''Check whether a combination only uses currently-legal values.'''
@@ -253,13 +240,11 @@ class ParamDomain:
                 return False
         return True
 
-
     def get_state(self) -> dict[str, list[Any]]:
 
         '''Export state for checkpointing.'''
 
         return {k: list(v) for k, v in self._params.items()}
-
 
     def set_state(self, state: dict[str, Any]) -> None:
 

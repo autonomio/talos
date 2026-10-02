@@ -37,6 +37,18 @@ After a successful `deploy.yml` run, the GitHub release receives the wheel, sour
 
 The separate attachment job downloads the build artifacts without checking out or executing Talos. It checks the distribution hashes against `SHA256SUMS`, then verifies each distribution and the checksum file against the bundle before uploading any asset. Only the wheel and source distribution enter the `release-dist` artifact used by PyPI.
 
+The Sigstore bundle carries the signing certificate and its public verification
+key. GitHub OIDC binds the short-lived certificate to the declared workflow
+identity. The signing action creates an ephemeral private key on the hosted
+runner, uses it for the attestation, and discards it; the artifact distribution
+site receives no private signing key. Verification checks that identity and
+the signed artifact digest rather than trusting a key downloaded without its
+certificate chain.
+
+The signed source artifact is the attached source distribution. GitHub
+automatically generated source ZIP and tar archives are not subjects of this
+attestation and must not be represented as signed distributions.
+
 Consumers can use `gh attestation verify ARTIFACT --repo autonomio/talos`, or supply the downloaded bundle with `--bundle`. Match the signer workflow to `autonomio/talos/.github/workflows/deploy.yml`, the source digest/ref to the recorded release run, and require a GitHub-hosted runner. Verify the checksum file's attestation before checking its listed distribution hashes. A digest alone does not establish the producer's identity.
 
 Actual GitHub OIDC signing and release attachment remain unproven until an authorized Talos release completes this path and its assets verify. Source configuration and local contract tests do not establish release execution. Historical releases gain no provenance from this change. A CycloneDX SBOM is not produced.

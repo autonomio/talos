@@ -6,18 +6,18 @@ import warnings
 from datetime import datetime, timezone
 from io import StringIO
 from pathlib import Path
-from typing import Any
-from typing import TypeGuard
+from typing import Any, TypeGuard
 
 from ruamel.yaml.error import YAMLError
 
-from talos.yaml.config import STORE_RELATIVE
-from talos.yaml.config import RoundTripYAML
-from talos.yaml.config import find_project_root
-from talos.yaml.config import is_list
-from talos.yaml.config import is_mapping
-from talos.yaml.config import round_trip_yaml
-
+from talos.yaml.config import (
+    STORE_RELATIVE,
+    RoundTripYAML,
+    find_project_root,
+    is_list,
+    is_mapping,
+    round_trip_yaml,
+)
 
 SHA256_PREFIX = 'sha256:'
 MANIFEST_URI_SCHEME = 'manifest://'

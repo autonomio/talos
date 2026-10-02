@@ -1,12 +1,11 @@
+"""Exchange parameter-selection state through legacy local JSON controls."""
+
+
 class GamifyMap:
 
     def __init__(self, scan_object):
 
-        '''GamifyMap handles the management of the
-        dictionary that contains the information about
-        hyperparameters, which is exchanged in and out
-        during the `Scan()` experiment.
-        '''
+        '''GamifyMap handles the management of the dictionary that contains the information about hyperparameters, which is exchanged in and out during the `Scan()` experiment.'''
 
         self.params = scan_object.param_object.p
         self.scan_object = scan_object
@@ -57,12 +56,12 @@ class GamifyMap:
 
     def generate_gamify_dict(self):
 
-        '''This is done once at the beginning
-        of the experiment.
+        '''This is done once at the beginning of the experiment.
 
         NOTE: This will be all stringified, so an index
         mapping system will be used to convert back to
-        actual forms later.'''
+        actual forms later.
+        '''
 
         gamify_dict = {}
 
@@ -77,7 +76,6 @@ class GamifyMap:
     def export_json(self):
 
         import json
-
         from pathlib import Path
         path = Path(self._filename + '.json')
         path.parent.mkdir(parents=True, exist_ok=True)

@@ -1,17 +1,18 @@
+"""Map caller observations to Gaussian ranks with reversible fitted quantiles."""
+
+from statistics import NormalDist
 from typing import Any
 
 import numpy as np
 import numpy.typing as npt
 import polars as pl
-from statistics import NormalDist
 
 
 class RankGaussScaler:
 
     '''Rank transformation to Gaussian distribution via inverse normal CDF.'''
 
-    def __init__(self,
-                 x_train: pl.DataFrame,
+    def __init__(self, x_train: pl.DataFrame,
                  n_quantiles: int = 1000) -> None:
 
         '''
@@ -48,7 +49,6 @@ class RankGaussScaler:
                 continue
 
             self.quantiles[col] = quantiles
-
 
     def transform(self, df: pl.DataFrame) -> pl.DataFrame:
 

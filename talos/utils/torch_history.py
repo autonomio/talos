@@ -1,8 +1,9 @@
+"""Adapt PyTorch metric history to the legacy callback return contract."""
+
+
 class TorchHistory:
 
-    '''This is a helper for replicating the history object
-    behavior of Keras to make Talos Scan() API consistent between
-    the two backends.'''
+    '''This is a helper for replicating the history object behavior of Keras to make Talos Scan() API consistent between the two backends.'''
 
     def __init__(self):
 

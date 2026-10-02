@@ -1,8 +1,9 @@
 if __name__ == '__main__':
 
+    import os
+
     import numpy as np
     import pandas as pd
-    import os
 
     print('\n Memory Pressure Test Starts...\n')
 

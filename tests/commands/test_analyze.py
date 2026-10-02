@@ -10,9 +10,9 @@ def test_analyze(scan_object):
     r = talos.Reporting(scan_object)
 
     # read from file
-    #list_of_files = glob.glob('./test_latest/' + '/*.csv')
+    # Locate saved experiments with glob.glob('./test_latest/' + '/*.csv').
 
-    #r = talos.Reporting(list_of_files[-1])
+    # Read the selected file with talos.Reporting(list_of_files[-1]).
 
     # and then from scan object
     r = talos.Analyze(scan_object)

@@ -1,11 +1,11 @@
+"""Locate project roots and configure the experiment manifest store."""
+
 from __future__ import annotations
 
 import sys
 from io import StringIO
 from pathlib import Path
-from typing import Any
-from typing import Protocol
-from typing import TypeGuard
+from typing import Any, Protocol, TypeGuard
 
 from ruamel.yaml import YAML
 

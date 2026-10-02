@@ -237,6 +237,7 @@ def _newest_index(lines: list[str], header_re: re.Pattern[str]) -> int | None:
         return None
     return idx[0] if _newest_first() else idx[-1]
 
+
 # Changelog writing conventions, the mechanizable subset: entries are
 # imperative ("Add", not "Added"), and carry no leftover template
 # placeholders. Only the new top section is checked, so old entries are
@@ -264,6 +265,7 @@ def first_version_header(changelog_text: str) -> str | None:
     match = header_re.match(lines[i])
     return match.group(1) if match else None
 
+
 def top_section_is_empty(changelog_text: str) -> bool:
     """True if the newest entry's section carries no content line -- i.e.
     nothing between its header and the adjacent header or the end of file."""
@@ -281,6 +283,7 @@ def top_section_is_empty(changelog_text: str) -> bool:
             return False
     return True  # reached the end without finding content
 
+
 def top_section_lines(changelog_text: str) -> list[str]:
     """The newest entry's content lines, up to the adjacent header or the end
     of file. Used to check the new entry's writing conventions without
@@ -296,6 +299,7 @@ def top_section_lines(changelog_text: str) -> list[str]:
             break
         out.append(line)
     return out
+
 
 def gate(
     pr_title: str,
