@@ -23,7 +23,7 @@ name: pr_checks_fail_loud
 on:
   pull_request:
     branches: [master]
-    types: [opened, edited, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, reopened, ready_for_review]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

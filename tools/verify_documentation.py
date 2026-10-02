@@ -5,6 +5,7 @@ import hashlib
 import importlib.metadata
 import json
 import os
+import signal
 import subprocess
 import sys
 import time
@@ -64,6 +65,12 @@ def verify(root, output, selected, execution):
             if archive.get('status') != 'passed' or archive.get('source_code_sha256') != expected_archive['code_sha256']:
                 errors.append('Missing, failed or stale guarded Torch archive check')
         for block in report.get('blocks', []):
+            reuse = block.get('reused_execution')
+            if reuse:
+                proof = reuse['proof']
+                for path, digest in proof['files'].items():
+                    if hashlib.sha256((root / path).read_bytes()).hexdigest() != digest:
+                        errors.append('Stale reused development source: ' + path)
             key = (block['path'], block['start_line'])
             if key in actual:
                 errors.append(f'Duplicate receipt: {key}')
@@ -120,14 +127,38 @@ def verify(root, output, selected, execution):
     return int(bool(errors or (missing and len(selected) == 5)))
 
 
+def execute_component(command, root, env, log, deadline):
+    """Use the shared deadline and kill the entire executor process group on expiry."""
+    start = time.monotonic()
+    remaining = deadline - start
+    if remaining <= 0:
+        raise TimeoutError('Documentation total deadline expired before component launch')
+    with log.open('w') as stream:
+        with subprocess.Popen(command, env=env, cwd=root, stdout=stream,
+                              stderr=subprocess.STDOUT, start_new_session=True) as process:
+            try:
+                process.wait(timeout=remaining)
+            except subprocess.TimeoutExpired:
+                os.killpg(process.pid, signal.SIGKILL)
+                process.wait()
+                raise TimeoutError('Documentation total deadline expired during component execution')
+    return {'returncode': process.returncode, 'seconds': round(time.monotonic() - start, 3), 'log': str(log)}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument('--output-dir', type=Path, default=Path('verification-output'))
     parser.add_argument('--components', nargs='+', choices=['api', 'control', 'root', 'examples', 'site'],
                         default=['api', 'control', 'root', 'examples', 'site'])
+    parser.add_argument('--timeout-seconds', type=int, default=1800,
+                        help='total deadline for all queued and running component processes')
+    parser.add_argument('--development-evidence', type=Path,
+                        help='same-run successful full framework suite receipt')
     parser.add_argument('--verify-only', action='store_true', help='Verify current hashes against previously generated receipts.')
     args = parser.parse_args()
+    if args.timeout_seconds <= 0:
+        parser.error('--timeout-seconds must be positive')
     root, output = args.root.resolve(), args.output_dir.resolve()
     sys.path.insert(0, str(root))
     output.mkdir(parents=True, exist_ok=True)
@@ -145,6 +176,9 @@ def main():
         'examples': [sys.executable, str(helpers / 'examples.py'), '--root', str(root), '--output', str(output / 'examples.json')],
         'site': [sys.executable, str(helpers / 'site_docs.py'), '--root', str(root), '--output', str(output / 'site.json')],
     }
+    if args.development_evidence:
+        env['TALOS_DEVELOPMENT_EVIDENCE'] = str(args.development_evidence.resolve())
+    deadline = time.monotonic() + args.timeout_seconds
     prior = output / 'manifest.json'
     execution = json.loads(prior.read_text()).get('executors', {}) if prior.exists() else {}
 
@@ -152,12 +186,7 @@ def main():
         receipt = output / f'{name}.json'
         if receipt.exists():
             receipt.unlink()
-        log = output / f'{name}.log'
-        start = time.monotonic()
-        with log.open('w') as stream:
-            process = subprocess.run(commands[name], env=env, cwd=root, stdout=stream,
-                                     stderr=subprocess.STDOUT, timeout=2400)
-        return {'returncode': process.returncode, 'seconds': round(time.monotonic() - start, 3), 'log': str(log)}
+        return execute_component(commands[name], root, env, output / f'{name}.log', deadline)
     if not args.verify_only:
         print('Running ' + ', '.join(args.components) + '; logs: ' + str(output), flush=True)
         with ThreadPoolExecutor(max_workers=3) as pool:

@@ -3,12 +3,20 @@ on:
   push:
     branches: [master]
   pull_request:
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 jobs:
   core:
+    name: pr_checks_package_install (${{ matrix.python }})
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     strategy:
+      max-parallel: 2
       fail-fast: false
       matrix:
         include:
@@ -29,6 +37,20 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: python -m pip install --require-hashes -r requirements/ci/${{ matrix.lock }}
       - run: python -m pip install --no-build-isolation --no-deps -e .
+      - name: Bind installed locked dependencies to upstream advisory identities
+        if: matrix.python == '3.10'
+        run: python scripts/prepare_dependency_audit.py --lock requirements/ci/${{ matrix.lock }} --requirements audit-requirements.txt --identities audit-identities.json
+      - name: Audit every supported locked dependency
+        if: matrix.python == '3.10'
+        run: pip-audit --strict --disable-pip --no-deps -r audit-requirements.txt --format json --output audit.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        if: ${{ always() && (matrix.python == '3.10') }}
+        with:
+          name: dependency-audit-core
+          path: |
+            audit.json
+            audit-identities.json
+            audit-requirements.txt
       - name: Verify versioned software citations
         run: python -m tools.citation --check
       - run: ruff check talos tests/test_*.py
@@ -45,7 +67,16 @@ jobs:
           cp examples/sfd/*.py /tmp/talos-wheel-tests/examples/sfd/
           cp talos/sfd/templates/keras.py talos/sfd/templates/tf_keras.py talos/sfd/templates/pytorch.py /tmp/talos-wheel-tests/talos/sfd/templates/
           cd /tmp
-          /tmp/talos-wheel/bin/python -c 'import sys,talos; from talos.experiment import run; assert not {"tensorflow","keras","torch","matplotlib","pyarrow"}.intersection(sys.modules)'
+          /tmp/talos-wheel/bin/python - <<'PYTHON'
+          import importlib.metadata as md
+          import sys
+          import talos
+          from talos.experiment import run
+          assert not {'tensorflow','keras','torch','matplotlib','pyarrow'}.intersection(sys.modules)
+          assert talos.__version__ == md.version('talos')
+          assert 'site-packages' in talos.__file__, talos.__file__
+          PYTHON
+          /tmp/talos-wheel/bin/python -m pip check
           /tmp/talos-wheel/bin/talos --help
           cd /tmp/talos-wheel-tests
           /tmp/talos-wheel/bin/python -m pytest -q --import-mode=importlib tests
@@ -54,8 +85,11 @@ jobs:
           name: distribution-${{ matrix.python }}
           path: dist/*
   backends:
+    needs: core
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     strategy:
+      max-parallel: 2
       fail-fast: false
       matrix:
         include:
@@ -78,6 +112,7 @@ jobs:
       TF_NUM_INTRAOP_THREADS: '1'
       TF_NUM_INTEROP_THREADS: '1'
       OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
       MPLBACKEND: Agg
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
@@ -88,6 +123,44 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install the declared framework lane
         run: python -m pip install --require-hashes -r requirements/ci/${{ matrix.lock }}
+      - name: Bind installed locked dependencies to upstream advisory identities
+        if: matrix.lock == 'minimum-3.11.txt'
+        run: python scripts/prepare_dependency_audit.py --lock requirements/ci/${{ matrix.lock }} --requirements audit-requirements.txt --identities audit-identities.json
+      - name: Audit every supported locked dependency
+        if: matrix.lock == 'minimum-3.11.txt'
+        run: pip-audit --strict --disable-pip --no-deps -r audit-requirements.txt --format json --output audit.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        if: ${{ always() && (matrix.lock == 'minimum-3.11.txt') }}
+        with:
+          name: dependency-audit-minimum-frameworks
+          path: |
+            audit.json
+            audit-identities.json
+            audit-requirements.txt
+      - name: Record legacy upstream advisories
+        if: matrix.lock == 'legacy-3.11.txt'
+        continue-on-error: true
+        run: pip-audit --strict --require-hashes -r requirements/ci/legacy-3.11.txt --format json --output legacy-audit.json
+      - name: Summarize compatibility-only findings
+        if: ${{ always() && matrix.lock == 'legacy-3.11.txt' }}
+        run: |
+          python - <<'PY'
+          import json, os
+          report = json.load(open('legacy-audit.json'))
+          findings = [item for item in report['dependencies'] if item.get('vulns')]
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write('Legacy TensorFlow is a compatibility lane; its upstream advisories are reported separately from the supported dependency gate.\n\n')
+              for item in findings:
+                  summary.write(f"- {item['name']} {item['version']}: {len(item['vulns'])} advisory entries\n")
+              if not findings:
+                  summary.write('No known vulnerabilities found in this resolved legacy environment.\n')
+          PY
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        if: ${{ always() && matrix.lock == 'legacy-3.11.txt' }}
+        with:
+          name: dependency-audit-legacy-compatibility
+          path: legacy-audit.json
+
       - name: Verify the declared CPU PyTorch build
         if: matrix.lock == 'minimum-3.11.txt' || matrix.lock == 'torch-keras-3.12.txt'
         run: python -c 'import torch; assert torch.version.cuda is None, torch.__version__; print(torch.__version__)'
@@ -96,7 +169,9 @@ jobs:
 
   documentation:
     name: Execute documentation and examples
+    needs: backends
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     env:
       TALOS_COVERAGE_ROOT: ${{ github.workspace }}
       COVERAGE_RCFILE: ${{ github.workspace }}/.github/coverage-full.toml
@@ -107,6 +182,7 @@ jobs:
       TF_NUM_INTRAOP_THREADS: '1'
       TF_NUM_INTEROP_THREADS: '1'
       OMP_NUM_THREADS: '1'
+      OPENBLAS_NUM_THREADS: '1'
       MPLBACKEND: Agg
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
@@ -116,6 +192,18 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install --require-hashes -r requirements/ci/documentation-3.12.txt
+      - name: Bind installed locked dependencies to upstream advisory identities
+        run: python scripts/prepare_dependency_audit.py --lock requirements/ci/documentation-3.12.txt --requirements audit-requirements.txt --identities audit-identities.json
+      - name: Audit every supported locked dependency
+        run: pip-audit --strict --disable-pip --no-deps -r audit-requirements.txt --format json --output audit.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        if: always()
+        with:
+          name: dependency-audit-current-frameworks
+          path: |
+            audit.json
+            audit-identities.json
+            audit-requirements.txt
       - name: Verify the declared CPU PyTorch build
         run: python -c 'import torch; assert torch.version.cuda is None, torch.__version__; print(torch.__version__)'
       - run: python -m pip install --no-build-isolation --no-deps -e .
@@ -127,8 +215,11 @@ jobs:
       - run: npm --prefix docs-site ci
       - run: node docs-site/node_modules/playwright/cli.js install --with-deps chromium
       - name: Measure the complete framework acceptance suite
-        run: python -m coverage run -m pytest -q
-      - run: python -m coverage run tools/verify_documentation.py --output-dir verification-output
+        run: |
+          python -m coverage run -m pytest -q
+          python -m coverage combine --append --keep
+          python tools/verification/development_evidence.py --output verification-output/development-tests.json
+      - run: python -m coverage run tools/verify_documentation.py --output-dir verification-output --timeout-seconds 1800 --development-evidence verification-output/development-tests.json
       - name: Require complete package statement coverage
         run: |
           python -m coverage combine --append --keep

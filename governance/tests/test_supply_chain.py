@@ -264,14 +264,30 @@ def test_matrix_hash_locks_exist_for_every_selected_lane() -> None:
 
 
 def test_supported_security_audits_retain_strict_full_graph_lookup() -> None:
-    workflow = yaml.safe_load((WORKFLOWS_DIR / 'security.yml').read_text(encoding='utf-8'))
-    steps = workflow['jobs']['supported']['steps']
-    commands = [step['run'] for step in steps if 'run' in step]
-    assert commands[0] == 'python -m pip install --require-hashes -r requirements/ci/${{ matrix.lock }}'
-    assert commands[1] == ('python scripts/prepare_dependency_audit.py --lock requirements/ci/${{ matrix.lock }} '
-                           '--requirements audit-requirements.txt --identities audit-identities.json')
-    assert commands[2] == ('pip-audit --strict --disable-pip --no-deps -r audit-requirements.txt '
-                           '--format json --output audit.json')
-    assert not any(step.get('continue-on-error') for step in steps)
-    assert 'audit-identities.json' in steps[-1]['with']['path']
-    assert 'audit-requirements.txt' in steps[-1]['with']['path']
+    workflow = yaml.safe_load((WORKFLOWS_DIR / 'ci.yml').read_text(encoding='utf-8'))
+    for job, condition, lock in (
+        ('core', "matrix.python == '3.10'", '${{ matrix.lock }}'),
+        ('backends', "matrix.lock == 'minimum-3.11.txt'", '${{ matrix.lock }}'),
+        ('documentation', None, 'documentation-3.12.txt'),
+    ):
+        steps = workflow['jobs'][job]['steps']
+        bind = next(step for step in steps if step.get('name') ==
+                    'Bind installed locked dependencies to upstream advisory identities')
+        audit = next(step for step in steps if step.get('name') ==
+                     'Audit every supported locked dependency')
+        assert bind.get('if') == condition
+        assert audit.get('if') == condition
+        assert bind['run'] == (f'python scripts/prepare_dependency_audit.py --lock requirements/ci/{lock} '
+                               '--requirements audit-requirements.txt --identities audit-identities.json')
+        assert audit['run'] == ('pip-audit --strict --disable-pip --no-deps -r audit-requirements.txt '
+                                '--format json --output audit.json')
+        assert not bind.get('continue-on-error')
+        assert not audit.get('continue-on-error')
+        upload = next(step for step in steps if step.get('with', {}).get('name', '').startswith('dependency-audit-')
+                      and 'audit-identities.json' in step.get('with', {}).get('path', ''))
+        assert 'audit-requirements.txt' in upload['with']['path']
+        assert 'always()' in upload['if']
+    core = workflow['jobs']['core']['strategy']['matrix']['include']
+    assert {'python': '3.10', 'lock': 'core-3.10.txt'} in core
+    minimum = workflow['jobs']['backends']['strategy']['matrix']['include']
+    assert {'python': '3.11', 'lock': 'minimum-3.11.txt', 'keras_backend': 'tensorflow'} in minimum

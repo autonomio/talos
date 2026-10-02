@@ -285,7 +285,8 @@
     "governance/comparison_ref.py": 12,
     "talos/yaml/_validation.py": 63,
     "talos/reducers/remote_entropy.py": 136,
-    "talos/parameters/_resume.py": 84
+    "talos/parameters/_resume.py": 84,
+    "governance/coverage_evidence.py": 54
   },
   "coverage": {
     "line": 70,

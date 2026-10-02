@@ -462,3 +462,23 @@ and quality behavior remains intact.
 Successful protected-master runs of the Test and build workflow retain the verified static site. The Pages publisher deploys that artifact after the complete run succeeds and skips superseded master assessments. Pull-request code is never executed by the publisher. The deployed statement coverage badge links its complete-package report, source commit and originating CI run; the initial static placeholder makes no measured claim. Repository-owned documentation links resolve against mapped source pages or checked-in static assets before deployment, while external destinations still require successful HTTP responses.
 
 The Pages publishing source must use GitHub Actions. [Setup](../../SETUP.md) owns repository activation; building the site locally does not establish publication.
+
+## Bounded executable verification
+
+The documentation runner applies one 30-minute deadline to all queued and
+running components. Expiry kills the component's entire process group and
+records a failed executor; it cannot become successful documentation evidence.
+The host job also has a 45-minute total timeout, including installation and
+framework acceptance.
+
+CI executes the full framework suite once. The identical contributor test
+command may reuse that successful execution only when every tracked source
+file, the interpreter, every locked documentation dependency and the CPU
+runtime environment match. The receipt also binds the workflow run and
+attempt. Root reports retain the original proof and mark the reused command;
+other development commands execute normally. Standalone local verification
+executes the contributor suite unless an explicit matching receipt is supplied.
+Identical site command fences reuse one successful local execution only while
+all tracked inputs remain unchanged. Reports distinguish execution from reuse.
+All fences, notebook cells, model examples, archive and recovery checks remain
+in the inventory; reuse neither removes them nor invents execution counts.

@@ -106,3 +106,29 @@ Change the reader, configuration, workflow mirror, law or snapshot and its tests
 - [Technical debt](Technical-Debt.md)
 - [Security assurance case](Security-Assurance-Case.md)
 - [Developer home](README.md)
+
+## CI runner allocation
+
+`pr_checks_lint.yml` owns the separate required `pr_checks_tests` and
+`pr_checks_lint` jobs. Product tests retain their runtime profile and ceiling;
+governance contracts append coverage afterward. Lint consumes the successful
+producer's immutable artifact ID from the same workflow run. Its receipt binds
+the tested commit, run, attempt, lockfiles and coverage bytes; absent or changed
+evidence fails the lint gate. Rerun the entire workflow to regenerate evidence
+for a new attempt. The comment publisher has a separate write token and never
+checks out or executes pull-request source.
+
+Source checks cancel superseded heads and have total job timeouts. Core and
+framework matrices each use at most two simultaneous runners. Installed-wheel
+metadata, optional-backend imports, dependency consistency and acceptance run
+in the existing core matrix. Strict supported dependency audits run inside the
+already installed core, current and minimum lanes; legacy advisories remain
+separately reported. Packaging still proves byte-identical builds and audits
+both distribution types.
+
+Title/body edits recheck Conventional Commits, slice acceptance, version and
+budget, coverage and runtime waiver markers. They do not restart model tests
+or documentation rendering. Dependabot groups each ecosystem's version and
+security updates separately, limits open version PRs to one per ecosystem,
+and staggers weekly version checks across Monday–Wednesday at 04:00 Helsinki
+time. Security updates retain their immediate advisory-driven behavior.

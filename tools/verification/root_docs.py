@@ -2,7 +2,8 @@
 """Execute root documentation fences in retained, local-only fixture projects.
 
 Installer examples use the unpublished wheel and preinstalled dependency matrix.
-Every development command still executes; no remote repository is contacted.
+An identical same-run framework suite may supply a validated execution receipt.
+Other development commands execute; no remote repository is contacted.
 """
 import argparse
 import contextlib
@@ -22,6 +23,7 @@ import types
 from pathlib import Path
 
 from control_docs import blocks
+from development_evidence import COMMAND, verify
 
 PAGES = ['README.md', 'docs/Guides/Quickstart.md', 'docs/SFD_and_CLI.md',
          'docs/Migration.md', 'docs/Backends.md', 'docs/Install_Options.md',
@@ -77,6 +79,13 @@ def dispatch(kind, arguments):
         command = [python, '-m', 'talos', *arguments]
     else:
         raise ValueError('Unassigned dispatcher: ' + kind)
+    evidence = os.environ.get('TALOS_DEVELOPMENT_EVIDENCE')
+    if evidence and kind == 'python' and list(arguments) == COMMAND:
+        proof = verify(Path.cwd(), python, Path(evidence))
+        print('Reused successful full acceptance suite: ' + str(proof['source']), flush=True)
+        reuse = Path(os.environ['TALOS_DEVELOPMENT_REUSE'])
+        reuse.write_text(json.dumps({'receipt': evidence, 'proof': proof}, indent=2) + '\n')
+        return 0
     capture = kind == 'talos' and arguments and arguments[0] == 'commit'
     result = subprocess.run(command, text=True, stdout=subprocess.PIPE if capture else None,
                             stderr=subprocess.STDOUT)
@@ -155,6 +164,7 @@ def main():
                GIT_COMMITTER_EMAIL='docs-fixture@example.invalid',
                PIP_DISABLE_PIP_VERSION_CHECK='1', PYTHONUNBUFFERED='1')
     env.pop('VIRTUAL_ENV', None)
+    env['TALOS_DEVELOPMENT_REUSE'] = str(work / 'development-reuse.json')
     build_log = work / 'wheel-build.log'
     checked([sys.executable, '-m', 'build', '--wheel', '--no-isolation',
              '--outdir', str(wheels)], cwd=checkout, env=env, log=build_log)
@@ -187,7 +197,7 @@ def main():
                            'wheel': str(wheel), 'wheel_sha256': hashlib.sha256(wheel.read_bytes()).hexdigest(),
                            'installer_venv': str(virtual), 'build_log': str(build_log),
                            'editable_build_dependency_log': str(work / 'editable-build-dependency.log'),
-                           'development': 'complete temporary checkout; every pytest/lint/coverage/build fence executes',
+                           'development': 'complete temporary checkout; commands execute or retain an identical same-run suite receipt',
                            'training': 'real bundled Iris and breast cancer; TensorFlow CPU',
                            'backup': 'temporary local bare Git only; no real remote',
                            'versions': {'talos': talos.__version__, 'numpy': np.__version__,
@@ -288,6 +298,10 @@ def main():
                         executable.write_text(script)
                         record['executed_source_file'] = str(executable)
                         checked(['/bin/bash', str(executable)], cwd=cwd, env=env, log=log)
+                        reuse = Path(env['TALOS_DEVELOPMENT_REUSE'])
+                        if reuse.exists():
+                            record['reused_execution'] = json.loads(reuse.read_text())
+                            reuse.unlink()
                         if 'talos new my-study' in source:
                             os.chdir(cwd / 'my-study')
                             sys.path.insert(0, str(Path.cwd()))

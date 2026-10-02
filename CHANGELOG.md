@@ -1,5 +1,10 @@
 # Changelog
 
+# v2.0.5
+
+- Consolidate CI coverage, installed-wheel checks and dependency audits while preserving scientific acceptance and required check names.
+- Cancel superseded source checks, bound documentation execution and group and stagger dependency updates.
+
 # v2.0.4
 
 - Enforce the documented Python style with zero findings across maintained source, tools, tests and examples, retaining existing quality and typing ratchets.

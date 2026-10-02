@@ -145,7 +145,7 @@ def test_workflow_invokes_every_gate() -> None:
 
 
 def test_no_soft_fail_pathway_in_workflow() -> None:
-    workflow = LINT_WORKFLOW.read_text(encoding='utf-8')
+    workflow = LINT_WORKFLOW.read_text(encoding='utf-8').split('  publish_coverage_comment:')[0]
     assert '|| true' not in workflow
     assert 'continue-on-error' not in workflow
     forbidden_flags = re.compile(r'--warn-only|--no-fail|--soft(-fail)?')

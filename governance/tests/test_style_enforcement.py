@@ -48,7 +48,7 @@ def _codes(result: subprocess.CompletedProcess[str]) -> set[str]:
 
 def test_style_workflow_keeps_the_required_context_and_exact_scope() -> None:
     workflow = yaml.safe_load((ROOT / '.github/workflows/pr_checks_lint.yml').read_text())
-    assert set(workflow['jobs']) == {'pr_checks_lint'}
+    assert set(workflow['jobs']) == {'pr_checks_lint', 'pr_checks_tests', 'publish_coverage_comment'}
     assert workflow['jobs']['pr_checks_lint']['name'] == 'pr_checks_lint'
     steps = workflow['jobs']['pr_checks_lint']['steps']
     matches = [item for item in steps if item['name'] == 'Enforce selected Python style with zero findings']
