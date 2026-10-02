@@ -1,5 +1,6 @@
-from typing import Any
-from typing import Protocol
+"""Fit scikit-learn probability calibration from caller validation data."""
+
+from typing import Any, Protocol
 
 import numpy.typing as npt
 import polars as pl

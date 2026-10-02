@@ -101,6 +101,7 @@ def test_resume_exact_ids_metrics_histories_and_selection(tmp_path, iris):
 
 def test_first_trial_interrupt_and_exception_are_resumable(tmp_path):
     state = {'fail': True}
+
     def model(data, round_params):
         if state['fail']:
             raise KeyboardInterrupt
@@ -112,6 +113,7 @@ def test_first_trial_interrupt_and_exception_are_resumable(tmp_path):
     state['fail'] = False
     resumed = run(sfd, experiment_dir=paused.run_dir, resume=True, progress_bar=False)
     assert resumed.data.n.tolist() == [1, 2]
+
     def failing(data, round_params):
         raise RuntimeError('caller failure')
     sfd.model = failing
@@ -139,6 +141,7 @@ def test_native_grid_is_lazy_and_pause_control(tmp_path):
                           model=lambda data, round_params: {'score': 1.})
     result = run(sfd, experiment_dir=tmp_path / 'large', round_limit=1, progress_bar=False)
     assert len(result.data) == 1 and result.domain.total_combinations == 10 ** 15
+
     def completed(event, result, params):
         if event == 'trial_completed':
             result.request_pause()
@@ -186,6 +189,7 @@ def test_sigterm_checkpoints_pending_first_trial(tmp_path):
 
 def test_changed_prepared_data_without_supplied_observations_is_rejected(tmp_path):
     state = {'shift': 0}
+
     def prep(data, round_params):
         x, y = load_iris(return_X_y=True)
         return x + state['shift'], y
@@ -206,6 +210,7 @@ def test_unseeded_random_resume_and_budget_configuration(tmp_path):
     from talos.experiment.param_search import RandomStrategy
     from talos.experiment.reducer import BudgetReducer
     sfd = SimpleNamespace(params=lambda: {'n': [1, 2, 3]}, model=lambda data, round_params: {'score': 1})
+
     def execute(path, **kwargs):
         return run(sfd, experiment_dir=path, search_strategy=RandomStrategy(ParamDomain(sfd.params())),
                    pruning_strategies=[BudgetReducer(max_permutations=2)], feedback_interval=1,
@@ -233,6 +238,7 @@ def test_local_strategy_controls_running_scan_and_audit(tmp_path, monkeypatch, i
 
 def test_gamify_annotation_and_disable_in_running_scan(tmp_path, monkeypatch, iris):
     monkeypatch.chdir(tmp_path)
+
     def edit(event, result, params):
         if event == 'trial_completed' and len(result.data) == 1:
             control = tmp_path / 'gamify' / (result.run_dir.name + '.json')
@@ -290,8 +296,10 @@ def test_load_rejects_truncated_completed_records(tmp_path):
 
 
 def test_mixed_typed_categories_are_pruned_without_string_collision(tmp_path):
-    from talos.experiment.reducer import SanityReducer
     import polars as pl
+
+    from talos.experiment.reducer import SanityReducer
+
     def model(data, round_params):
         return {'score': float('nan') if type(round_params['choice']) is int else 1.0}
     sfd = SimpleNamespace(params=lambda: {'choice': [1, '1'], 'replica': [0, 1]}, model=model)
@@ -307,7 +315,9 @@ def test_mixed_typed_categories_are_pruned_without_string_collision(tmp_path):
 
 def test_caller_warnings_reach_sanity_suggestions_without_changing_candidates(tmp_path):
     import warnings
+
     from talos.experiment.reducer import SanityReducer
+
     def model(data, round_params):
         if round_params['n'] == 1:
             warnings.warn('scientific warning probe', RuntimeWarning)
@@ -346,6 +356,7 @@ def test_python_parquet_resume_updates_summary_and_committed_parameter_aliases(t
 
 def test_every_history_epoch_is_validated_before_commit_and_pending_trial_survives(tmp_path):
     state = {'bad': True}
+
     def model(data, round_params):
         return {'score': round_params['units'], 'history': {'loss': ['bad' if state['bad'] else 1., 1.]}}
     sfd = SimpleNamespace(params=lambda: {'units': [1, 2]}, model=model)
@@ -366,6 +377,7 @@ def test_every_history_epoch_is_validated_before_commit_and_pending_trial_surviv
 def test_failure_during_result_projection_rolls_back_staged_record_queue_and_aliases(tmp_path, monkeypatch):
     original = RunResult._refresh
     state = {'fail': True}
+
     def fail_once(result):
         if state['fail'] and len(result._records) == 1:
             state['fail'] = False
@@ -390,6 +402,7 @@ def test_failure_during_result_projection_rolls_back_staged_record_queue_and_ali
 @pytest.mark.parametrize('metric,threshold,minimize,expected', [('score', 2., False, [1, 2]), ('loss', 1., True, [1])])
 def test_native_performance_targets_stop_and_resume_without_extra_training(tmp_path, metric, threshold, minimize, expected):
     calls = []
+
     def model(data, round_params):
         calls.append(round_params['n'])
         return {'score': float(round_params['n']), 'loss': 1. / round_params['n']}
@@ -404,6 +417,7 @@ def test_native_performance_targets_stop_and_resume_without_extra_training(tmp_p
 
 def test_numpy_scalar_feedback_resolves_live_candidate_and_prunes_it(tmp_path):
     observed = []
+
     def feedback(log, queue):
         projected = log['width'][0]
         restored = queue.resolve_log_value('width', projected)
@@ -422,6 +436,7 @@ def test_bfloat16_torch_observations_are_passed_and_fingerprinted_without_numpy_
     torch = pytest.importorskip('torch')
     x, _ = load_iris(return_X_y=True)
     tensor = torch.as_tensor(x, dtype=torch.bfloat16)
+
     def model(data, round_params):
         assert data is tensor and data.dtype == torch.bfloat16
         return {'score': data.float().mean().item()}
@@ -454,9 +469,11 @@ def test_dynamic_legacy_callback_without_module_metadata(tmp_path, iris):
 def test_gamify_paused_edit_is_applied_before_resumed_pending_trial(tmp_path, monkeypatch, iris):
     monkeypatch.chdir(tmp_path)
     called = []
+
     def model(x_train, y_train, x_val, y_val, params):
         called.append(params['c'])
         return train(x_train, y_train, x_val, y_val, params)
+
     def execute(**options):
         return talos.Scan(iris['x_train'], iris['y_train'], {'c': [.1, 1.]}, model, 'gamify',
                           x_val=iris['x_val'], y_val=iris['y_val'], reduction_method='gamify',

@@ -1,5 +1,8 @@
+"""Resolve parameter indicators and candidate groups for legacy reducers."""
+
 import numpy as np
 import pandas as pd
+
 from talos.experiment.serialization import content_hash
 
 
@@ -37,13 +40,12 @@ def parameter_indicators(scan):
         identifiers = [content_hash(value) for value in values]
         seen = set()
         for value, identifier in zip(values, identifiers):
-            if identifier in seen:
-                continue
-            seen.add(identifier)
-            indicator = np.array([key == identifier for key in identifiers], dtype=float)
-            if len(set(indicator)) > 1:
-                columns.append(indicator)
-                candidates.append((label, value))
+            if identifier not in seen:
+                seen.add(identifier)
+                indicator = np.array([key == identifier for key in identifiers], dtype=float)
+                if len(set(indicator)) > 1:
+                    columns.append(indicator)
+                    candidates.append((label, value))
     matrix = np.column_stack(columns) if columns else np.empty((len(target), 0))
     return matrix, target, candidates
 

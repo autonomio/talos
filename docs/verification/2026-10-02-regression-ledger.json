@@ -1,0 +1,679 @@
+{
+  "schema_version": 1,
+  "audit_date": "2026-10-02",
+  "source_commit": "06a635e06d13ff95a1c04632f89383740ffa57b1",
+  "window": {
+    "from_utc": "2026-04-02T00:00:00Z",
+    "through_master_commit": "06a635e06d13ff95a1c04632f89383740ffa57b1",
+    "latest_merge_at_utc": "2026-10-02T05:19:47Z"
+  },
+  "counts": {
+    "observed_fixed_bug_groups": 25,
+    "groups_with_added_automated_regression": 16,
+    "ratio_percent": 64.0,
+    "by_scope": {
+      "product": {
+        "fixed_bug_groups": 14,
+        "with_regression": 12
+      },
+      "infrastructure": {
+        "fixed_bug_groups": 11,
+        "with_regression": 4
+      }
+    }
+  },
+  "method": "Audit all 15 GitHub default-branch commits in the six-calendar-month window, both merged PR bodies, issue inventory, source diffs, public corrected-behavior claims and newly added automated assertions. Count independently described defect groups once, not PRs, commits, parameterized test variants or test cases. Keep documented fixes with no specific regression in the denominator. New capabilities and tests of previously unbroken new functionality are excluded.",
+  "scope_limit": "This is an observed public-source fixed-defect ledger, not a claim to recover undocumented pre-commit editing history or an external bug tracker. Grouping is explicit and reviewable. Two documented runtime claims (shuffle and reducer window) are included conservatively although their exact historical failure was not reconstructed. Upstream vulnerability floors are grouped as one project configuration-policy repair; no exact count of repaired upstream CVEs is claimed.",
+  "regression_threshold": "https://www.bestpractices.dev/en/criteria/1?details=true#regression_tests_added50",
+  "bug_groups": [
+    {
+      "id": "P01",
+      "scope": "product",
+      "fixed_behavior": "Classification F1 depends on batch partition instead of accumulated confusion counts.",
+      "fix_commit": "593480643901b6fd9c51f22677c3bbb182bca4e7",
+      "merged_pr": 608,
+      "source_paths": [
+        "talos/metrics/keras_metrics.py"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/metrics/keras_metrics.py"
+      ],
+      "credited_regression": true,
+      "regression_nodes": [
+        "tests/test_backends_and_commands.py::test_stateful_f1_is_batch_partition_invariant"
+      ],
+      "regression_proof": "Real Iris sklearn reference; batches 1,7,150 agree. The replacement stateful metric is the covered remedy; no claim that arbitrary user-selected stateless batch F1 is an epoch metric.",
+      "identification_basis": "source diff and documented corrected behavior",
+      "regression_evidence": [
+        {
+          "node": "tests/test_backends_and_commands.py::test_stateful_f1_is_batch_partition_invariant",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/tests/test_backends_and_commands.py#L108"
+        }
+      ],
+      "fix_url": "https://github.com/autonomio/talos/commit/593480643901b6fd9c51f22677c3bbb182bca4e7"
+    },
+    {
+      "id": "P02",
+      "scope": "product",
+      "fixed_behavior": "Binary probability output shaped (n,1) was classified by argmax instead of thresholding in Evaluate.",
+      "fix_commit": "593480643901b6fd9c51f22677c3bbb182bca4e7",
+      "merged_pr": 608,
+      "source_paths": [
+        "talos/commands/evaluate.py",
+        "talos/commands/predict.py"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/commands/evaluate.py",
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/commands/predict.py"
+      ],
+      "credited_regression": true,
+      "regression_nodes": [
+        "tests/test_backends_and_commands.py::test_real_classification_score_encodings"
+      ],
+      "regression_proof": "Real breast-cancer (n,1) probabilities match sklearn binary F1.",
+      "identification_basis": "source diff and documented corrected behavior",
+      "regression_evidence": [
+        {
+          "node": "tests/test_backends_and_commands.py::test_real_classification_score_encodings",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/tests/test_backends_and_commands.py#L65"
+        }
+      ],
+      "fix_url": "https://github.com/autonomio/talos/commit/593480643901b6fd9c51f22677c3bbb182bca4e7"
+    },
+    {
+      "id": "P03",
+      "scope": "product",
+      "fixed_behavior": "Multiclass probability evaluation used incompatible class/averaging semantics.",
+      "fix_commit": "593480643901b6fd9c51f22677c3bbb182bca4e7",
+      "merged_pr": 608,
+      "source_paths": [
+        "talos/commands/evaluate.py",
+        "talos/commands/predict.py"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/commands/evaluate.py",
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/commands/predict.py"
+      ],
+      "credited_regression": true,
+      "regression_nodes": [
+        "tests/test_backends_and_commands.py::test_real_classification_score_encodings"
+      ],
+      "regression_proof": "Real Iris argmax and one-hot truth agree with sklearn macro F1.",
+      "identification_basis": "source diff and documented corrected behavior",
+      "regression_evidence": [
+        {
+          "node": "tests/test_backends_and_commands.py::test_real_classification_score_encodings",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/tests/test_backends_and_commands.py#L65"
+        }
+      ],
+      "fix_url": "https://github.com/autonomio/talos/commit/593480643901b6fd9c51f22677c3bbb182bca4e7"
+    },
+    {
+      "id": "P04",
+      "scope": "product",
+      "fixed_behavior": "Legacy reducers could prune the favorable parameter value because objective direction was not respected.",
+      "fix_commit": "593480643901b6fd9c51f22677c3bbb182bca4e7",
+      "merged_pr": 608,
+      "source_paths": [
+        "talos/reducers/correlation.py",
+        "talos/reducers/trees.py",
+        "talos/reducers/forrest.py"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/reducers/correlation.py",
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/reducers/trees.py",
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/reducers/forrest.py"
+      ],
+      "credited_regression": true,
+      "regression_nodes": [
+        "tests/test_search_core.py::test_categorical_correlation_honors_loss_direction",
+        "tests/test_search_core.py::test_legacy_tree_reducers_preserve_categorical_objective_direction"
+      ],
+      "regression_proof": "One externally observable defect family, checked for correlation/trees/forrest, minimize/maximize and real Iris categories; not counted once per parameterized variant.",
+      "identification_basis": "source diff and documented corrected behavior",
+      "regression_evidence": [
+        {
+          "node": "tests/test_search_core.py::test_categorical_correlation_honors_loss_direction",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/tests/test_search_core.py#L165"
+        },
+        {
+          "node": "tests/test_search_core.py::test_legacy_tree_reducers_preserve_categorical_objective_direction",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/tests/test_search_core.py#L263"
+        }
+      ],
+      "fix_url": "https://github.com/autonomio/talos/commit/593480643901b6fd9c51f22677c3bbb182bca4e7"
+    },
+    {
+      "id": "P05",
+      "scope": "product",
+      "fixed_behavior": "Evaluation fold division discarded remainder observations.",
+      "fix_commit": "593480643901b6fd9c51f22677c3bbb182bca4e7",
+      "merged_pr": 608,
+      "source_paths": [
+        "talos/utils/validation_split.py"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/utils/validation_split.py"
+      ],
+      "credited_regression": true,
+      "regression_nodes": [
+        "tests/test_backends_and_commands.py::test_nondivisible_folds_preserve_real_rows"
+      ],
+      "regression_proof": "All149 real Iris rows and labels survive seven folds in original order.",
+      "identification_basis": "source diff and documented corrected behavior",
+      "regression_evidence": [
+        {
+          "node": "tests/test_backends_and_commands.py::test_nondivisible_folds_preserve_real_rows",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/tests/test_backends_and_commands.py#L45"
+        }
+      ],
+      "fix_url": "https://github.com/autonomio/talos/commit/593480643901b6fd9c51f22677c3bbb182bca4e7"
+    },
+    {
+      "id": "P06",
+      "scope": "product",
+      "fixed_behavior": "Too many folds produced empty evaluation partitions.",
+      "fix_commit": "593480643901b6fd9c51f22677c3bbb182bca4e7",
+      "merged_pr": 608,
+      "source_paths": [
+        "talos/utils/validation_split.py"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/utils/validation_split.py"
+      ],
+      "credited_regression": true,
+      "regression_nodes": [
+        "tests/test_backends_and_commands.py::test_nondivisible_folds_preserve_real_rows"
+      ],
+      "regression_proof": "151 folds for 150 real observations raises ValueError. Separate input restriction from remainder-loss defect.",
+      "identification_basis": "source diff and documented corrected behavior",
+      "regression_evidence": [
+        {
+          "node": "tests/test_backends_and_commands.py::test_nondivisible_folds_preserve_real_rows",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/tests/test_backends_and_commands.py#L45"
+        }
+      ],
+      "fix_url": "https://github.com/autonomio/talos/commit/593480643901b6fd9c51f22677c3bbb182bca4e7"
+    },
+    {
+      "id": "P07",
+      "scope": "product",
+      "fixed_behavior": "Shuffled feature/label splitting did not preserve the documented alignment contract.",
+      "fix_commit": "593480643901b6fd9c51f22677c3bbb182bca4e7",
+      "merged_pr": 608,
+      "source_paths": [
+        "talos/utils/validation_split.py"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/utils/validation_split.py"
+      ],
+      "credited_regression": false,
+      "regression_nodes": [],
+      "regression_proof": "No direct shuffled row/label alignment assertion found in maintained tests. Kept in denominator from the public Corrected behavior declaration; not credited from incidental training.",
+      "identification_basis": "public docs/Migration.md Corrected behavior declaration; historical wrangle shuffle was not independently rerun",
+      "regression_evidence": [],
+      "fix_url": "https://github.com/autonomio/talos/commit/593480643901b6fd9c51f22677c3bbb182bca4e7"
+    },
+    {
+      "id": "P08",
+      "scope": "product",
+      "fixed_behavior": "Reducer window behavior was corrected during core adoption.",
+      "fix_commit": "593480643901b6fd9c51f22677c3bbb182bca4e7",
+      "merged_pr": 608,
+      "source_paths": [
+        "talos/reducers/reduce_utils.py"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/reducers/reduce_utils.py"
+      ],
+      "credited_regression": false,
+      "regression_nodes": [],
+      "regression_proof": "No shorter-window exclusion assertion found: reducer tests use full-size windows. Public claim included conservatively; no dedicated regression credit.",
+      "identification_basis": "public docs/Migration.md Corrected behavior declaration; exact historical failure not independently reconstructed",
+      "regression_evidence": [],
+      "fix_url": "https://github.com/autonomio/talos/commit/593480643901b6fd9c51f22677c3bbb182bca4e7"
+    },
+    {
+      "id": "P09",
+      "scope": "product",
+      "fixed_behavior": "Reducer cadence was offset from completed-round counts.",
+      "fix_commit": "593480643901b6fd9c51f22677c3bbb182bca4e7",
+      "merged_pr": 608,
+      "source_paths": [
+        "talos/reducers/reduce_run.py"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/reducers/reduce_run.py"
+      ],
+      "credited_regression": true,
+      "regression_nodes": [
+        "tests/test_search_core.py::test_reducer_cadence_means_completed_rounds"
+      ],
+      "regression_proof": "Interval3 fires after completed rounds3,6, not2,5.",
+      "identification_basis": "source diff and documented corrected behavior",
+      "regression_evidence": [
+        {
+          "node": "tests/test_search_core.py::test_reducer_cadence_means_completed_rounds",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/tests/test_search_core.py#L155"
+        }
+      ],
+      "fix_url": "https://github.com/autonomio/talos/commit/593480643901b6fd9c51f22677c3bbb182bca4e7"
+    },
+    {
+      "id": "P10",
+      "scope": "product",
+      "fixed_behavior": "Python live-file controls remained cached after source edits.",
+      "fix_commit": "593480643901b6fd9c51f22677c3bbb182bca4e7",
+      "merged_pr": 608,
+      "source_paths": [
+        "talos/reducers/local_strategy.py"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/reducers/local_strategy.py"
+      ],
+      "credited_regression": true,
+      "regression_nodes": [
+        "tests/test_search_core.py::test_hot_edit_local_strategy_applies_next_round"
+      ],
+      "regression_proof": "Same talos_strategy.py pathname changes result1 to2 on next invocation.",
+      "identification_basis": "source diff and documented corrected behavior",
+      "regression_evidence": [
+        {
+          "node": "tests/test_search_core.py::test_hot_edit_local_strategy_applies_next_round",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/tests/test_search_core.py#L129"
+        }
+      ],
+      "fix_url": "https://github.com/autonomio/talos/commit/593480643901b6fd9c51f22677c3bbb182bca4e7"
+    },
+    {
+      "id": "P11",
+      "scope": "product",
+      "fixed_behavior": "Changing a Gamify annotation accidentally pruned its parameter value.",
+      "fix_commit": "593480643901b6fd9c51f22677c3bbb182bca4e7",
+      "merged_pr": 608,
+      "source_paths": [
+        "talos/reducers/GamifyMap.py"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/reducers/GamifyMap.py"
+      ],
+      "credited_regression": true,
+      "regression_nodes": [
+        "tests/test_search_core.py::test_gamify_annotations_do_not_prune"
+      ],
+      "regression_proof": "Annotation edit retains both candidates; explicit disabled status removes only intended value.",
+      "identification_basis": "source diff and documented corrected behavior",
+      "regression_evidence": [
+        {
+          "node": "tests/test_search_core.py::test_gamify_annotations_do_not_prune",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/tests/test_search_core.py#L141"
+        }
+      ],
+      "fix_url": "https://github.com/autonomio/talos/commit/593480643901b6fd9c51f22677c3bbb182bca4e7"
+    },
+    {
+      "id": "P12",
+      "scope": "product",
+      "fixed_behavior": "Metrics appearing after the first trial were lost from the fixed CSV schema.",
+      "fix_commit": "593480643901b6fd9c51f22677c3bbb182bca4e7",
+      "merged_pr": 608,
+      "source_paths": [
+        "talos/experiment/log_projection.py",
+        "talos/experiment/runner.py"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/experiment/log_projection.py",
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/experiment/runner.py"
+      ],
+      "credited_regression": true,
+      "regression_nodes": [
+        "tests/test_execution.py::test_later_metrics_and_csv_quoting_are_not_lost"
+      ],
+      "regression_proof": "Second-trial metric persists in CSV and loaded result; quoting retains comma/newline parameter values.",
+      "identification_basis": "source diff and documented corrected behavior",
+      "regression_evidence": [
+        {
+          "node": "tests/test_execution.py::test_later_metrics_and_csv_quoting_are_not_lost",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/tests/test_execution.py#L123"
+        }
+      ],
+      "fix_url": "https://github.com/autonomio/talos/commit/593480643901b6fd9c51f22677c3bbb182bca4e7"
+    },
+    {
+      "id": "P13",
+      "scope": "product",
+      "fixed_behavior": "Cold imports of talos.model/normalizers triggered a circular import.",
+      "fix_commit": "c0db9eb0404b8b8f1181f0b8069f68fc45fffca5",
+      "merged_pr": 608,
+      "source_paths": [
+        "talos/model/normalizers.py"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/model/normalizers.py"
+      ],
+      "credited_regression": true,
+      "regression_nodes": [
+        "tests/test_backends_and_commands.py::test_legacy_helpers_are_lazy_in_fresh_process"
+      ],
+      "regression_proof": "Fresh subprocess imports each legacy entry point, verifies one shared normalizer and no DL import.",
+      "identification_basis": "source diff and documented corrected behavior",
+      "regression_evidence": [
+        {
+          "node": "tests/test_backends_and_commands.py::test_legacy_helpers_are_lazy_in_fresh_process",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/tests/test_backends_and_commands.py#L54"
+        }
+      ],
+      "fix_url": "https://github.com/autonomio/talos/commit/c0db9eb0404b8b8f1181f0b8069f68fc45fffca5"
+    },
+    {
+      "id": "P14",
+      "scope": "product",
+      "fixed_behavior": "Paused Gamify edits were applied only after the next pending trial had trained.",
+      "fix_commit": "c0db9eb0404b8b8f1181f0b8069f68fc45fffca5",
+      "merged_pr": 608,
+      "source_paths": [
+        "talos/experiment/runner.py"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/talos/experiment/runner.py"
+      ],
+      "credited_regression": true,
+      "regression_nodes": [
+        "tests/test_execution.py::test_gamify_paused_edit_is_applied_before_resumed_pending_trial"
+      ],
+      "regression_proof": "Disable pending candidate between pause/resume; callback remains called once and committed log is unchanged.",
+      "identification_basis": "source diff and documented corrected behavior",
+      "regression_evidence": [
+        {
+          "node": "tests/test_execution.py::test_gamify_paused_edit_is_applied_before_resumed_pending_trial",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/tests/test_execution.py#L454"
+        }
+      ],
+      "fix_url": "https://github.com/autonomio/talos/commit/c0db9eb0404b8b8f1181f0b8069f68fc45fffca5"
+    },
+    {
+      "id": "I01",
+      "scope": "infrastructure",
+      "fixed_behavior": "Platform-specific generated packaging lock omitted Linux conditional dependencies.",
+      "fix_commit": "41786a2f5708ea241f71b2fd1e8bd7b17fe9cba4",
+      "merged_pr": 608,
+      "source_paths": [
+        "requirements/ci/packaging-tools.txt"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/requirements/ci/packaging-tools.txt"
+      ],
+      "credited_regression": false,
+      "regression_nodes": [],
+      "regression_proof": "Universal hash lock and hosted installation fix are public. No added dedicated Linux dependency-closure regression test credited.",
+      "identification_basis": "actual lock diff plus CHANGELOG hosted Linux packaging repair",
+      "regression_evidence": [],
+      "fix_url": "https://github.com/autonomio/talos/commit/41786a2f5708ea241f71b2fd1e8bd7b17fe9cba4"
+    },
+    {
+      "id": "I02",
+      "scope": "infrastructure",
+      "fixed_behavior": "Hosted framework lane installed/selected GPU execution despite its CPU contract.",
+      "fix_commit": "41786a2f5708ea241f71b2fd1e8bd7b17fe9cba4",
+      "merged_pr": 608,
+      "source_paths": [
+        ".github/workflows/ci.yml",
+        "requirements/ci/minimum-3.11.txt",
+        "requirements/ci/torch-keras-3.12.txt"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/.github/workflows/ci.yml",
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/requirements/ci/minimum-3.11.txt",
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/requirements/ci/torch-keras-3.12.txt"
+      ],
+      "credited_regression": false,
+      "regression_nodes": [],
+      "regression_proof": "CPU wheel URLs, explicit CPU environment and real CI assertion torch.version.cuda is None were added. Conservative numerator excludes environment checks without a separate dedicated regression.",
+      "identification_basis": "actual workflow/lock diff plus hosted CPU repair statement",
+      "regression_evidence": [],
+      "fix_url": "https://github.com/autonomio/talos/commit/41786a2f5708ea241f71b2fd1e8bd7b17fe9cba4"
+    },
+    {
+      "id": "I03",
+      "scope": "infrastructure",
+      "fixed_behavior": "Release magnitude comparison used the quality-debt adoption epoch instead of protected base version.",
+      "fix_commit": "41786a2f5708ea241f71b2fd1e8bd7b17fe9cba4",
+      "merged_pr": 608,
+      "source_paths": [
+        ".github/workflows/pr_checks_version.yml"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/.github/workflows/pr_checks_version.yml"
+      ],
+      "credited_regression": true,
+      "regression_nodes": [
+        "governance/tests/test_version_gate.py::test_version_workflow_compares_protected_base_without_quality_epoch",
+        "governance/tests/test_version_gate.py::test_initial_legacy_version_is_accepted_only_at_base"
+      ],
+      "regression_proof": "Workflow retains actual origin/base; legacy version is only allowed at comparison base, not new source.",
+      "identification_basis": "source diff and newly added workflow/input negative tests",
+      "regression_evidence": [
+        {
+          "node": "governance/tests/test_version_gate.py::test_version_workflow_compares_protected_base_without_quality_epoch",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/governance/tests/test_version_gate.py#L151"
+        },
+        {
+          "node": "governance/tests/test_version_gate.py::test_initial_legacy_version_is_accepted_only_at_base",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/governance/tests/test_version_gate.py#L140"
+        }
+      ],
+      "fix_url": "https://github.com/autonomio/talos/commit/41786a2f5708ea241f71b2fd1e8bd7b17fe9cba4"
+    },
+    {
+      "id": "I04",
+      "scope": "infrastructure",
+      "fixed_behavior": "Documentation backup bare-repository fixture used a different initial branch from caller checkout.",
+      "fix_commit": "41786a2f5708ea241f71b2fd1e8bd7b17fe9cba4",
+      "merged_pr": 608,
+      "source_paths": [
+        "tools/verification/root_docs.py"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/tools/verification/root_docs.py"
+      ],
+      "credited_regression": false,
+      "regression_nodes": [],
+      "regression_proof": "Automated root corpus runs actual git backup against a local bare remote initialized with caller branch, but no added dedicated regression verifies branch mismatch. Fixture repair alone is not credited.",
+      "identification_basis": "source diff plus published complete executable documentation receipt",
+      "regression_evidence": [],
+      "fix_url": "https://github.com/autonomio/talos/commit/41786a2f5708ea241f71b2fd1e8bd7b17fe9cba4"
+    },
+    {
+      "id": "I05",
+      "scope": "infrastructure",
+      "fixed_behavior": "Strict advisory lookup could not resolve official hash-pinned Torch CPU local-version builds.",
+      "fix_commit": "da86aac63530bd32c26f744888b562a5c53b8ee7",
+      "merged_pr": 608,
+      "source_paths": [
+        "scripts/prepare_dependency_audit.py",
+        ".github/workflows/security.yml"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/scripts/prepare_dependency_audit.py",
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/.github/workflows/security.yml"
+      ],
+      "credited_regression": true,
+      "regression_nodes": [
+        "scripts/tests/test_dependency_audit.py::AdvisoryIdentityContract::test_full_locked_graph_and_cpu_binding_are_retained",
+        "scripts/tests/test_dependency_audit.py::AdvisoryIdentityContract::test_untrusted_or_other_wheel_builds_cannot_receive_aliases"
+      ],
+      "regression_proof": "All dependencies retained; exact official URL/hash/installed-version bound before public upstream advisory alias; spoofed URLs/alternate builds rejected.",
+      "identification_basis": "new adapter and exact positive/negative unit contract",
+      "regression_evidence": [
+        {
+          "node": "scripts/tests/test_dependency_audit.py::AdvisoryIdentityContract::test_full_locked_graph_and_cpu_binding_are_retained",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/scripts/tests/test_dependency_audit.py#L26"
+        },
+        {
+          "node": "scripts/tests/test_dependency_audit.py::AdvisoryIdentityContract::test_untrusted_or_other_wheel_builds_cannot_receive_aliases",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/scripts/tests/test_dependency_audit.py#L46"
+        }
+      ],
+      "fix_url": "https://github.com/autonomio/talos/commit/da86aac63530bd32c26f744888b562a5c53b8ee7"
+    },
+    {
+      "id": "I06",
+      "scope": "infrastructure",
+      "fixed_behavior": "Default external-link retries omitted documented backoff delays.",
+      "fix_commit": "da86aac63530bd32c26f744888b562a5c53b8ee7",
+      "merged_pr": 608,
+      "source_paths": [
+        "docs-site/scripts/check-external-links.mjs"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/docs-site/scripts/check-external-links.mjs"
+      ],
+      "credited_regression": true,
+      "regression_nodes": [
+        "docs-site/tests/check-external-links.test.mjs::default retries wait before retrying a gateway response",
+        "docs-site/tests/check-external-links.test.mjs::default retries wait before retrying a network failure"
+      ],
+      "regression_proof": "Fake clock verifies first retry waits500ms and second1000ms; does not replace link validation with unconditional retry.",
+      "identification_basis": "source diff and added default-behavior timing regression",
+      "regression_evidence": [
+        {
+          "node": "docs-site/tests/check-external-links.test.mjs::default retries wait before retrying a gateway response",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/docs-site/tests/check-external-links.test.mjs#L57"
+        },
+        {
+          "node": "docs-site/tests/check-external-links.test.mjs::default retries wait before retrying a network failure",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/docs-site/tests/check-external-links.test.mjs#L57"
+        }
+      ],
+      "fix_url": "https://github.com/autonomio/talos/commit/da86aac63530bd32c26f744888b562a5c53b8ee7"
+    },
+    {
+      "id": "I07",
+      "scope": "infrastructure",
+      "fixed_behavior": "Final coverage combine discarded data already merged by nested documentation reports.",
+      "fix_commit": "12e4858cef9e8b608c2b9065f4aa316d9ba8c17d",
+      "merged_pr": 625,
+      "source_paths": [
+        ".github/workflows/ci.yml"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/.github/workflows/ci.yml"
+      ],
+      "credited_regression": true,
+      "regression_nodes": [
+        "governance/tests/test_statement_coverage.py::test_ci_combine_preserves_data_after_nested_report"
+      ],
+      "regression_proof": "Real coverage execution demonstrates both phases retained 4/4 using actual CI combine command.",
+      "identification_basis": "source diff and executed causal regression",
+      "regression_evidence": [
+        {
+          "node": "governance/tests/test_statement_coverage.py::test_ci_combine_preserves_data_after_nested_report",
+          "public_url": "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/governance/tests/test_statement_coverage.py#L67"
+        }
+      ],
+      "fix_url": "https://github.com/autonomio/talos/commit/12e4858cef9e8b608c2b9065f4aa316d9ba8c17d"
+    },
+    {
+      "id": "I08",
+      "scope": "infrastructure",
+      "fixed_behavior": "Feature branches triggered duplicate push and pull-request CI builds.",
+      "fix_commit": "7545ad11cde6faa0954635509e9898223b515b10",
+      "merged_pr": 625,
+      "source_paths": [
+        ".github/workflows/ci.yml"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/.github/workflows/ci.yml"
+      ],
+      "credited_regression": false,
+      "regression_nodes": [],
+      "regression_proof": "Source trigger change is correct; no dedicated merged regression asserting feature-push exclusion and PR/master retention found. Not credited.",
+      "identification_basis": "exact trigger diff; no manufactured test node",
+      "regression_evidence": [],
+      "fix_url": "https://github.com/autonomio/talos/commit/7545ad11cde6faa0954635509e9898223b515b10"
+    },
+    {
+      "id": "I09",
+      "scope": "infrastructure",
+      "fixed_behavior": "New scale-invariance test fixture contained mathematically tied two-point medoids and failed supported sklearn.",
+      "fix_commit": "2388cec668e8e6e5b99d19d578a4f74a485f69fd",
+      "merged_pr": 625,
+      "source_paths": [
+        "tests/test_cohort_selectors.py"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/tests/test_cohort_selectors.py"
+      ],
+      "credited_regression": false,
+      "regression_nodes": [],
+      "regression_proof": "Corrected actual Iris clustering avoids the mathematical tie and retains existing assertions; recorded current/older/minimum runs passed. No added dedicated tie-defect regression exists, so repairing the fixture is not credited.",
+      "identification_basis": "PR625 final diff, public receipt and minimum-lane failure trace",
+      "regression_evidence": [],
+      "fix_url": "https://github.com/autonomio/talos/commit/2388cec668e8e6e5b99d19d578a4f74a485f69fd"
+    },
+    {
+      "id": "I10",
+      "scope": "infrastructure",
+      "fixed_behavior": "Documentation development dependency webpack-dev-middleware retained a known advisory.",
+      "fix_commit": "12e4858cef9e8b608c2b9065f4aa316d9ba8c17d",
+      "merged_pr": 625,
+      "source_paths": [
+        "docs-site/package.json",
+        "docs-site/package-lock.json"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/docs-site/package.json",
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/docs-site/package-lock.json"
+      ],
+      "credited_regression": false,
+      "regression_nodes": [],
+      "regression_proof": "Actual7.4.5 to7.4.6 override/lock update; dependency audit present. No project-authored exploit-specific regression credited.",
+      "identification_basis": "source diff and PR625 dependency-advisory repair statement",
+      "regression_evidence": [],
+      "fix_url": "https://github.com/autonomio/talos/commit/12e4858cef9e8b608c2b9065f4aa316d9ba8c17d"
+    },
+    {
+      "id": "I11",
+      "scope": "infrastructure",
+      "fixed_behavior": "Declared supported dependency floors permitted already known vulnerable versions.",
+      "fix_commit": "c0db9eb0404b8b8f1181f0b8069f68fc45fffca5",
+      "merged_pr": 608,
+      "source_paths": [
+        "pyproject.toml"
+      ],
+      "source_urls": [
+        "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/pyproject.toml"
+      ],
+      "credited_regression": false,
+      "regression_nodes": [],
+      "regression_proof": "Patched current/minimum floors and dated audits are public. No project-authored exploit regression for the upstream findings credited. This is a single package-policy repair group, not a claim that seven dependencies had only one upstream vulnerability.",
+      "identification_basis": "actual floor diff and docs/Maintenance.md dependency repair",
+      "regression_evidence": [],
+      "fix_url": "https://github.com/autonomio/talos/commit/c0db9eb0404b8b8f1181f0b8069f68fc45fffca5"
+    }
+  ],
+  "excluded": [
+    {
+      "item": "PR627/issue626 manifest, sampler, resume, citation and documentation corrections",
+      "reason": "Still open and unmerged at observed head d6f191db12017f37ad22f8c235190b92c2d6dd20; not fixed in assessed public master."
+    },
+    {
+      "item": "Issue605 Google Colab installation",
+      "reason": "Open; PyPI 1.4 remains distributed. Improved source installation does not prove the reported released-package defect is resolved."
+    },
+    {
+      "item": "New manifest/SFD/core/selector/scaler/governance capabilities and new tests of otherwise unmodified features",
+      "reason": "Feature work and increased coverage are not independently identified fixed bugs."
+    },
+    {
+      "item": "Generic marshal source-identity instability",
+      "reason": "Known remaining defect, not fixed in merged source."
+    }
+  ],
+  "execution_evidence": [
+    "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/docs/verification/2026-10-01.json",
+    "https://github.com/autonomio/talos/blob/06a635e06d13ff95a1c04632f89383740ffa57b1/docs/verification/2026-10-01-openssf.json"
+  ],
+  "assessment": "16 of 25 observed fixed-defect groups have added automated regression assertions (64%). Product behavior alone:12 of 14 (85.71%). Nine groups receive no regression credit. This is a reviewable group count, not a fixed-CVE count or recovery of undocumented pre-commit editing.",
+  "verification_scope": "Existing public-source assertions and published execution receipts inspected. No new acceptance or remote-provider execution is asserted."
+}

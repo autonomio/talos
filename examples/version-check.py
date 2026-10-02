@@ -1,6 +1,7 @@
 """Report installed versions without importing optional training frameworks."""
 import sys
 from importlib.metadata import PackageNotFoundError, version
+
 import talos
 
 print('Python %s' % sys.version.split()[0])

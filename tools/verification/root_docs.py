@@ -10,7 +10,6 @@ import hashlib
 import io
 import json
 import os
-from pathlib import Path
 import re
 import shlex
 import shutil
@@ -20,6 +19,7 @@ import tempfile
 import time
 import traceback
 import types
+from pathlib import Path
 
 from control_docs import blocks
 
@@ -176,8 +176,9 @@ def main():
                        if key.startswith(('TF_', 'KERAS_', 'CUDA_', 'OMP_', 'OPENBLAS_', 'MPL'))})
     sys.path.insert(0, str(root))
     import numpy as np
-    import talos
     import tensorflow as tf
+
+    import talos
     tf.config.set_visible_devices([], 'GPU')
     report = {'schema_version': 1, 'runner': str(Path(__file__).resolve()),
               'runner_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
@@ -318,10 +319,10 @@ def main():
                             record['saved_manifest'] = str(destination)
                             print(result)
                     elif language == 'json':
+                        from talos.experiment.feedback_controller import FeedbackController
+                        from talos.experiment.msq import MSQ
                         from talos.experiment.param_domain import ParamDomain
                         from talos.experiment.param_search import GridStrategy
-                        from talos.experiment.msq import MSQ
-                        from talos.experiment.feedback_controller import FeedbackController
                         document = json.loads(source)
                         assert document and document[0]['op'] == 'keep_between'
                         run_dir = max(Path('results/dev').glob('first_*'), key=lambda path: path.stat().st_mtime)

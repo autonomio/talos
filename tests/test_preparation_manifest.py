@@ -4,7 +4,7 @@ import pytest
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 
-from talos.experiment.manifest_core import MLManifest, MachineLearningManifest, Manifest
+from talos.experiment.manifest_core import MachineLearningManifest, Manifest, MLManifest
 from talos.scalers.robust_scaler import RobustScaler
 
 
@@ -51,9 +51,11 @@ def test_pca_state_is_train_only_and_reused_on_heldout():
 def test_fitted_transform_computation_receives_training_once():
     splits = iris_splits()
     calls = []
+
     def fit_mean(data):
         calls.append(data.height)
         return data['sepal_length'].mean()
+
     def center(data, mean):
         return data.with_columns((pl.col('sepal_length') - mean).alias('sepal_length'))
     manifest = MLManifest().set_target_column('species').add_fitted_transform(
@@ -67,11 +69,13 @@ def test_fitted_transform_computation_receives_training_once():
 def test_target_transform_is_fit_on_training_only():
     splits = iris_splits()
     calls = []
+
     class CenteredTarget:
         def __init__(self, train_data, target_name):
             calls.append(train_data.height)
             self.mean = train_data['species'].mean()
             self.target_name = target_name
+
         def transform(self, data):
             return data.with_columns((pl.col('species') - self.mean).alias(self.target_name)).drop('species')
     manifest = MLManifest().with_target_label('centered_species', CenteredTarget)
@@ -102,6 +106,7 @@ def test_resolution_splitter_and_deep_copy_preserve_source_manifest():
 
 def test_generic_transform_group_and_parameter_resolution():
     splits = iris_splits()
+
     def scale_column(data, column, factor):
         return data.with_columns((pl.col(column) * factor).alias(column))
     manifest = Manifest().set_target_column('species').add_transform(
@@ -115,9 +120,11 @@ def test_generic_transform_group_and_parameter_resolution():
 def test_calibration_builder_resolves_without_leaking_test_into_fit():
     splits = iris_splits()
     calls = []
+
     def calibrator(model, x_val, y_val, method):
         calls.append((len(x_val), method))
         return model
+
     def model(data, prediction_calibration_config):
         config = prediction_calibration_config
         config.calibration_func(None, data['x_val'], data['y_val'], **config.calibration_params)
@@ -178,6 +185,7 @@ def test_multioutput_targets_and_strict_finite_values():
 
 def test_configuration_records_pipeline_without_reconstructing_fitted_closures():
     import json
+
     from talos.experiment.serialization import content_hash, decode, dumps
     manifest = MLManifest().set_target_column('species').set_scaler(RobustScaler)
     config = manifest.configuration()
@@ -194,6 +202,7 @@ def test_configuration_records_pipeline_without_reconstructing_fitted_closures()
 def test_datetime_split_configuration_remains_canonical_data():
     import json
     from datetime import datetime
+
     from talos.experiment.serialization import decode, dumps
     manifest = MLManifest().set_split_dates(datetime(2020, 1, 1), datetime(2021, 1, 1),
         datetime(2021, 1, 1), datetime(2022, 1, 1), datetime(2022, 1, 1), datetime(2023, 1, 1))
@@ -221,7 +230,7 @@ class ManifestFactoryIrisSFD:
 
 
 def test_manifest_factory_only_sfd_runs_through_native_and_universal_executor(tmp_path):
-    from talos.experiment import run, UniversalExperimentLoop
+    from talos.experiment import UniversalExperimentLoop, run
     splits = iris_splits()
     native = run(ManifestFactoryIrisSFD, splits, seed=17, progress_bar=False,
                  experiment_dir=tmp_path / 'native', save_models=False, save_weights=False,

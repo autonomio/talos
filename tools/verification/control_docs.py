@@ -6,13 +6,13 @@ import hashlib
 import io
 import json
 import os
-from pathlib import Path
 import re
 import subprocess
 import sys
 import tempfile
 import time
 import traceback
+from pathlib import Path
 
 PAGES = ['Analyze', 'Predict', 'Evaluate', 'Deploy', 'Restore', 'Scan', 'Parallelism',
          'Custom_Reducers', 'Probabilistic_Reduction', 'Optimization_Strategies',
@@ -113,6 +113,7 @@ def main():
     os.environ['TF_NUM_INTRAOP_THREADS'] = '1'
     import keras
     import numpy as np
+
     import talos
     if args.backend == 'tensorflow':
         import tensorflow as tf
@@ -137,6 +138,7 @@ def main():
                            'hardware_provider': {'path': str(provider), 'physical_measurement': False},
                            'keras_backend': args.backend, 'device': 'CPU'},
               'versions': {'talos': talos.__version__, 'keras': keras.__version__, 'numpy': np.__version__}}
+
     def save():
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(report, indent=2))
@@ -246,6 +248,7 @@ def main():
         os.chdir(old_cwd)
     print(json.dumps(report['summary']), flush=True)
     return int(bool(failures))
+
 
 if __name__ == '__main__':
     raise SystemExit(main())

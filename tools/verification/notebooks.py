@@ -3,10 +3,10 @@ import argparse
 import hashlib
 import json
 import os
-from pathlib import Path
 import tempfile
 import time
 import traceback
+from pathlib import Path
 
 
 def run_notebook(path, report_path):
@@ -38,11 +38,11 @@ def run_notebook(path, report_path):
                     raise
                 finally:
                     entry['elapsed_seconds'] = time.monotonic() - started
-                    Path(report_path).write_text(json.dumps(report, indent=2)+'\n')
+                    Path(report_path).write_text(json.dumps(report, indent=2) + '\n')
             report['status'] = 'passed'
         finally:
             os.chdir(previous)
-            Path(report_path).write_text(json.dumps(report, indent=2)+'\n')
+            Path(report_path).write_text(json.dumps(report, indent=2) + '\n')
     return report
 
 

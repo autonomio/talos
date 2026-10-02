@@ -1,12 +1,12 @@
+"""Report experiment search-space and sampled runtime estimates."""
+
 from pathlib import Path
 
 import click
 
 from talos.cli.commands._load_yaml import load_and_validate
 from talos.yaml.compiler import CompiledSFD
-from talos.yaml.profiler import ProfileResult
-from talos.yaml.profiler import profile
-
+from talos.yaml.profiler import ProfileResult, profile
 
 _COMPLEXITY_COLOURS = {
     'low': 'green',

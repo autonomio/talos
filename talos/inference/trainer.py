@@ -1,6 +1,9 @@
-from pathlib import Path
+"""Train and recover inference models with caller data and manifests."""
+
 import inspect
 import numbers
+from pathlib import Path
+
 import numpy as np
 
 
@@ -46,8 +49,7 @@ class Trainer:
                 self.validation[str(identifier)] = mismatches
                 if validate_metrics and mismatches:
                     raise ValueError('Retrained metrics differ: ' + '; '.join(mismatches))
-                members.append(Sensor(model=self.model, backend=self.backend, permutation_id=str(identifier),
-                                      round_params=chosen))
+                members.append(Sensor(model=self.model, backend=self.backend, permutation_id=str(identifier), round_params=chosen))
             return members
         selected = params if params is not None else self.params
         if selected is None:

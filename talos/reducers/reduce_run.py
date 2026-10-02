@@ -1,9 +1,11 @@
+"""Dispatch legacy parameter reducers and preserve queue interventions."""
+
 from .correlation import correlation
 from .forrest import forrest
-from .trees import trees
 from .gamify import gamify
-from .local_strategy import local_strategy, _controls
 from .limit_by_metric import limit_by_metric
+from .local_strategy import _controls, local_strategy
+from .trees import trees
 
 _REDUCERS = {'trees': trees, 'forrest': forrest}
 
@@ -47,11 +49,10 @@ def reduce_run(self):
         else:
             raise ValueError(f'Unknown reduction_method: {method!r}')
     if method != 'local_strategy' and hasattr(self.param_object, '_msq'):
-        from talos.experiment.serialization import content_hash, callable_reference
+        from talos.experiment.serialization import callable_reference, content_hash
         after = _controls(self)
         changed = {name: {'before': controls_before.get(name), 'after': after.get(name)}
-                   for name in controls_before.keys() | after.keys()
-                   if content_hash(controls_before.get(name)) != content_hash(after.get(name))}
+                   for name in controls_before.keys() | after.keys() if content_hash(controls_before.get(name)) != content_hash(after.get(name))}
         if changed:
             self.param_object._msq._log_intervention('legacy_control_change',
                 source='legacy_reducer', changes=changed,

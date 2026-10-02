@@ -1,11 +1,13 @@
 """Current caller domains and original realized rows share one legacy search facade."""
-from datetime import datetime
 import math
+from datetime import datetime
+
 import numpy as np
 
 from talos.experiment.param_domain import ParamDomain, values_equal
-from talos.experiment.serialization import callable_reference
 from talos.experiment.param_search.legacy_strategy import LegacyStrategy
+from talos.experiment.serialization import callable_reference
+
 from ._resume import _BooleanLimit, _constructor_state, _row_state
 
 

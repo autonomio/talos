@@ -1,11 +1,13 @@
-import polars as pl
+"""Split caller DataFrames into consistent training, validation and test outputs."""
 
-from collections.abc import Sequence
-from datetime import date, datetime
-from itertools import accumulate
-from typing import Any
 import math
 import numbers
+from collections.abc import Sequence
+from datetime import date
+from itertools import accumulate
+from typing import Any
+
+import polars as pl
 
 
 def split_sequential(data: pl.DataFrame, ratios: Sequence[int]) -> list[pl.DataFrame]:
@@ -79,9 +81,7 @@ def split_by_dates(
     *, time_col: str = 'datetime',
 ) -> list[pl.DataFrame]:
 
-    '''
-    Split a datetime-indexed DataFrame into train/val/test by half-open
-    date windows `[start, end)`.
+    '''Split a datetime-indexed DataFrame into train/val/test by half-open date windows `[start, end)`.
 
     Each window selects its rows independently. No row from outside all
     three windows enters any split. Windows must be ordered and non-overlapping.
@@ -118,10 +118,9 @@ def split_by_dates(
         raise ValueError('Date windows must be ordered and non-overlapping')
     return [
         data.filter((pl.col(time_col) >= train_start) & (pl.col(time_col) < train_end)),
-        data.filter((pl.col(time_col) >= val_start)   & (pl.col(time_col) < val_end)),
-        data.filter((pl.col(time_col) >= test_start)  & (pl.col(time_col) < test_end)),
+        data.filter((pl.col(time_col) >= val_start) & (pl.col(time_col) < val_end)),
+        data.filter((pl.col(time_col) >= test_start) & (pl.col(time_col) < test_end)),
     ]
-
 
 
 def _validate_ratios(ratios):

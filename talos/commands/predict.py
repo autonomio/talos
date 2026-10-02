@@ -1,6 +1,9 @@
+"""Predict caller outcomes through the selected model backend."""
+
 import numpy as np
+
 from talos.backends import backend_for
-from talos.utils.best_model import best_model, activate_model
+from talos.utils.best_model import activate_model, best_model
 
 
 def classes(predictions, task):
@@ -24,8 +27,7 @@ class Predict:
         self.data = scan_object.data
 
     def predict(self, x, metric, asc, model_id=None, saved=False, custom_objects=None, model_factory=None, **kwargs):
-        if model_id is None:
-            model_id = best_model(self.scan_object, metric, asc)
+        model_id = best_model(self.scan_object, metric, asc) if model_id is None else model_id
         model = activate_model(self.scan_object, model_id, saved, custom_objects, model_factory)
         return backend_for(model).predict(model, x, **kwargs)
 

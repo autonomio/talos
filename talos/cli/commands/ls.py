@@ -1,14 +1,17 @@
+"""List committed experiment manifests and their identifiers."""
+
 from pathlib import Path
 
 import click
 
-from talos.yaml.config import find_project_root
-from talos.yaml.config import is_mapping
-from talos.yaml.store import MANIFEST_URI_SCHEME
-from talos.yaml.store import SHA256_PREFIX
-from talos.yaml.store import is_full_manifest_id
-from talos.yaml.store import load_index
-from talos.yaml.store import short_id
+from talos.yaml.config import find_project_root, is_mapping
+from talos.yaml.store import (
+    MANIFEST_URI_SCHEME,
+    SHA256_PREFIX,
+    is_full_manifest_id,
+    load_index,
+    short_id,
+)
 
 
 def run_ls(start: Path) -> bool:
@@ -45,9 +48,7 @@ def run_ls(start: Path) -> bool:
     click.echo(f"Committed manifests ({len(manifests)}):\n")
     for entry in manifests:
         entry_id = entry.get('id') if is_mapping(entry) else None
-        if (not is_mapping(entry)
-                or not _REQUIRED.issubset(entry)
-                or not is_full_manifest_id(entry_id)
+        if (not is_mapping(entry) or not _REQUIRED.issubset(entry) or not is_full_manifest_id(entry_id)
                 or not isinstance(entry.get('name'), str)
                 or not isinstance(entry.get('committed_at'), str)):
             click.secho('  ⚠ Skipping malformed entry in index.json.', fg='yellow')

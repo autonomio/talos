@@ -1,9 +1,10 @@
 """Compile validated caller models and recorded identities into executable SFDs."""
+import inspect
+import json
 from functools import wraps
 from importlib import import_module
-import json
 from pathlib import Path
-import inspect
+
 from talos.yaml.resolver import caller_imports, load_sfd, resolve_values, validate_sfd
 from talos.yaml.store import canonical_manifest_id
 from talos.yaml.validator import validate_or_raise
@@ -37,6 +38,7 @@ class CompiledSFD:
         self._resume_metadata = None
         self.__name__ = self._source.__name__
         self.__file__ = getattr(self._source, '__file__', None)
+
     @classmethod
     def from_run(cls, run_dir):
         """Compile the exact recorded manifest against verified saved caller sources."""
@@ -58,6 +60,7 @@ class CompiledSFD:
         if source is not None:
             compiled._resume_metadata = raw
         return compiled
+
     @_caller_scope
     def params(self):
         from talos.parameters.ParamSpace import normalize_domains
@@ -67,6 +70,7 @@ class CompiledSFD:
             if not isinstance(domain, (list, tuple, range)) or not len(domain):
                 raise ValueError(f'Parameter {key} needs a nonempty list, tuple or range')
         return resolve_values({key: list(domain) for key, domain in values.items()})
+
     @_caller_scope
     def prep(self, data=None, round_params=None):
         if data is None:
@@ -85,12 +89,15 @@ class CompiledSFD:
                 continue
             return function(*args, **kwargs)
         raise TypeError('Caller prep must accept context and optional round_params')
+
     @_caller_scope
     def model(self, prepared, round_params):
         return self._model_function(prepared, round_params)
+
     @_caller_scope
     def pruning_strategies(self):
         return build_pruning_strategies(self._yaml)
+
     @_caller_scope
     def execute(self, data=None, resume=False, experiment_dir=None, **options):
         from talos.experiment.runner import run

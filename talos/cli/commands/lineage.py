@@ -1,15 +1,18 @@
+"""Display committed manifest ancestry in root-first order."""
+
 from pathlib import Path
 from typing import Any
 
 import click
 
-from talos.yaml.config import find_project_root
-from talos.yaml.config import is_mapping
-from talos.yaml.store import SHA256_PREFIX
-from talos.yaml.store import load_index
-from talos.yaml.store import normalize_manifest_ref
-from talos.yaml.store import resolve_manifest_uri
-from talos.yaml.store import short_id
+from talos.yaml.config import find_project_root, is_mapping
+from talos.yaml.store import (
+    SHA256_PREFIX,
+    load_index,
+    normalize_manifest_ref,
+    resolve_manifest_uri,
+    short_id,
+)
 
 
 def run_lineage(ref: str, start: Path) -> bool:
@@ -48,10 +51,8 @@ def run_lineage(ref: str, start: Path) -> bool:
         click.secho(f"  ✗ {exc}", fg='red')
         return False
 
-    by_id: dict[str, dict[str, Any]] = {
-        m['id']: m for m in index['manifests']
-        if is_mapping(m) and isinstance(m.get('id'), str)
-    }
+    by_id: dict[str, dict[str, Any]] = {m['id']: m for m in index['manifests']
+        if is_mapping(m) and isinstance(m.get('id'), str)}
 
     chain: list[tuple[str, dict[str, Any] | None]] = []
     seen: set[str] = set()

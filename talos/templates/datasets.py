@@ -1,8 +1,11 @@
+"""Load historical example datasets from remote CSV and framework sources."""
+
+
 def telco_churn(quantile=.5):
 
-    '''Returns dataset in format x, [y1, y2]. This dataset
-    is useful for demonstrating multi-output model or for
-    experimenting with reduction strategy creation.
+    '''Returns dataset in format x, [y1, y2].
+
+    This dataset is useful for demonstrating multi-output model or for experimenting with reduction strategy creation.
 
     The data is from hyperparameter optimization experiment with
     Kaggle telco churn dataset.
@@ -13,7 +16,8 @@ def telco_churn(quantile=.5):
 
     quantile is for transforming the otherwise continuous y variables into
     labels so that higher value is stronger. If set to 0 then original
-    continuous will be returned.'''
+    continuous will be returned.
+    '''
 
     import pandas as pd
 
@@ -70,10 +74,8 @@ def titanic():
     cols = ['class', 'embark_town', 'who', 'deck', 'sex']
 
     for col in cols:
-        x = pd.merge(x,
-                     pd.get_dummies(df[col]),
-                     left_index=True,
-                     right_index=True)
+        x = pd.merge(x, pd.get_dummies(df[col]),
+                     left_index=True, right_index=True)
 
     x = x.values
 
@@ -84,8 +86,9 @@ def titanic():
 
 def iris():
 
-    import pandas as pd
     import numpy as np
+    import pandas as pd
+
     def to_categorical(labels):
         return np.eye(int(np.max(labels)) + 1)[labels]
 
@@ -148,12 +151,13 @@ def breast_cancer():
 
 def mnist():
 
-    '''Note that this dataset, unlike other Talos datasets,returns:
+    '''Note that this dataset, unlike other Talos datasets,returns.
 
-    x_train, y_train, x_val, y_val'''
+    x_train, y_train, x_val, y_val
+    '''
 
-    import tensorflow as tf
     import numpy as np
+    import tensorflow as tf
 
     # the data, split between train and test sets
     (x_train, y_train), (x_val, y_val) = tf.keras.datasets.mnist.load_data()

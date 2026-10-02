@@ -1,12 +1,14 @@
+"""Append round metrics and parameter values to legacy scan results."""
+
+
 def run_round_results(self, out):
 
-    '''Called from logging/logging_run.py
+    '''Called from logging/logging_run.py.
 
     THE MAIN FUNCTION FOR CREATING RESULTS FOR EACH ROUNDself.
     Takes in the history object from model.fit() and handles it.
 
     NOTE: The epoch level data will be dropped here each round.
-
     '''
 
     self._round_epochs = len(list(out.history.values())[0])
@@ -26,19 +28,18 @@ def run_round_results(self, out):
 
 def save_result(self):
 
-    '''SAVES THE RESULTS/PARAMETERS TO A CSV SPECIFIC TO THE EXPERIMENT'''
+    '''SAVES THE RESULTS/PARAMETERS TO A CSV SPECIFIC TO THE EXPERIMENT.'''
 
     import numpy as np
 
-    np.savetxt(self._experiment_log,
-               self.result,
+    np.savetxt(self._experiment_log, self.result,
                fmt='%s',
                delimiter=',')
 
 
 def result_todf(self):
 
-    '''ADDS A DATAFRAME VERSION OF THE RESULTS TO THE CLASS OBJECT'''
+    '''ADDS A DATAFRAME VERSION OF THE RESULTS TO THE CLASS OBJECT.'''
 
     import pandas as pd
 

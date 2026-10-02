@@ -1,13 +1,14 @@
+"""Schedule parameter combinations with filters and checkpointed interventions."""
+
 from __future__ import annotations
 
 from collections import deque
 from collections.abc import Callable
-from typing import Any
-from typing import cast
+from typing import Any, cast
 
-from talos.experiment.serialization import content_hash, decode, dumps
 from talos.experiment.param_domain import ParamDomain, values_equal
 from talos.experiment.param_search.search_strategy import SearchStrategy
+from talos.experiment.serialization import content_hash, decode, dumps
 
 
 class FilterExhaustedError(Exception):
@@ -69,11 +70,9 @@ class MSQ:
         if hasattr(strategy, "facade"):
             strategy.facade._msq = self
 
-
     def __iter__(self) -> MSQ:
 
         return self
-
 
     def __next__(self) -> dict[str, Any]:
 
@@ -111,7 +110,6 @@ class MSQ:
                 return self._yield_combo(combo, injected=False)
         raise StopIteration
 
-
     def _yield_combo(
         self, combo: dict[str, Any], *, injected: bool,
     ) -> dict[str, Any]:
@@ -135,7 +133,6 @@ class MSQ:
 
         return combo
 
-
     def _passes_filters(self, combo: dict[str, Any]) -> bool:
 
         '''Return True if no filter wants to remove this combo.'''
@@ -143,7 +140,6 @@ class MSQ:
         if any(f(combo) for f in self._custom_filters):
             return False
         return not any(f(combo) for f in self._named_filters.values())
-
 
     def resolve_log_value(self, param: str, value: Any) -> Any:
         """Resolve a canonical log category to its live domain object.
@@ -168,7 +164,6 @@ class MSQ:
             return decoded
         return value
 
-
     def remove_is(self, param: str, value: Any) -> bool:
 
         '''Remove a specific value from a parameter's domain.'''
@@ -176,7 +171,6 @@ class MSQ:
         self._log_intervention('remove_is', param=param, value=value)
 
         return self._domain.remove_value(param, value)
-
 
     def remove_ge(self, param: str, threshold: Any) -> int:
 
@@ -186,7 +180,6 @@ class MSQ:
 
         return self._domain.remove_values_ge(param, threshold)
 
-
     def remove_le(self, param: str, threshold: Any) -> int:
 
         '''Remove all values <= threshold from a parameter's domain.'''
@@ -194,7 +187,6 @@ class MSQ:
         self._log_intervention('remove_le', param=param, threshold=threshold)
 
         return self._domain.remove_values_le(param, threshold)
-
 
     def remove_custom(
         self, condition: Callable[[dict[str, Any]], bool],
@@ -211,7 +203,6 @@ class MSQ:
 
         self._log_intervention('remove_custom', condition=condition)
         self._custom_filters.append(condition)
-
 
     def set_filter(self,
                    key: str,
@@ -251,7 +242,6 @@ class MSQ:
         elif key in self._named_filter_descriptors:
             del self._named_filter_descriptors[key]
 
-
     def clear_filter(self, key: str) -> None:
 
         '''
@@ -267,7 +257,6 @@ class MSQ:
             del self._named_filters[key]
             _ = self._named_filter_descriptors.pop(key, None)
 
-
     def trim(self, target_count: int) -> None:
 
         '''
@@ -282,7 +271,6 @@ class MSQ:
         remaining = max(target_count - self._yielded_count, 0)
         self._trim_budget = remaining
 
-
     def keep_is(self, param: str, value: Any) -> int:
 
         '''Keep only a specific value for a parameter, removing all others.'''
@@ -290,7 +278,6 @@ class MSQ:
         self._log_intervention('keep_is', param=param, value=value)
 
         return self._domain.keep_values(param, [value])
-
 
     def keep_between(self, param: str, lower: Any, upper: Any) -> int:
 
@@ -301,7 +288,6 @@ class MSQ:
         )
 
         return self._domain.keep_between(param, lower, upper)
-
 
     def inject(
         self, combo: dict[str, Any], *, prioritize: bool = False,
@@ -335,7 +321,6 @@ class MSQ:
         else:
             self._priority_queue.append(combo)
 
-
     def inject_value(self, param: str, value: Any) -> bool:
 
         '''Inject a new value into a parameter's domain (expands param space).'''
@@ -343,7 +328,6 @@ class MSQ:
         self._log_intervention('inject_value', param=param, value=value)
 
         return self._domain.inject_value(param, value)
-
 
     def remaining_count(self) -> int | None:
 
@@ -377,7 +361,6 @@ class MSQ:
             return remaining + queue_size
 
         return None
-
 
     def distribution(self, param: str | None = None) -> dict[Any, int] | dict[str, dict[Any, int]]:
 
@@ -420,7 +403,6 @@ class MSQ:
 
         return result
 
-
     @staticmethod
     def _value_distribution(values, count):
         result = {}
@@ -433,30 +415,25 @@ class MSQ:
             result[key] = count
         return result
 
-
     @property
     def priority_queue_size(self) -> int:
 
         return len(self._priority_queue)
-
 
     @property
     def yielded_count(self) -> int:
 
         return self._yielded_count
 
-
     @property
     def intervention_log(self) -> list[dict[str, Any]]:
 
         return list(self._intervention_log)
 
-
     @property
     def domain_keys(self) -> list[str]:
 
         return self._domain.keys
-
 
     def get_state(self) -> dict[str, Any]:
 
@@ -484,7 +461,6 @@ class MSQ:
             'strategy_state': self._strategy.get_state(),
             'seen_hashes': sorted(self._strategy._seen),
         }
-
 
     def set_state(self, state: dict[str, Any]) -> None:
 
@@ -528,7 +504,6 @@ class MSQ:
         custom_count = state.get('custom_filters_count', 0)
         if custom_count != len(self._custom_filters) or lost_named:
             raise ValueError('Checkpoint filter state is incomplete; refusing to resume without all predicates.')
-
 
     def _log_intervention(self, operation: str, **kwargs: Any) -> None:
         self._intervention_log.append({

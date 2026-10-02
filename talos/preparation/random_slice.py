@@ -1,9 +1,11 @@
-import polars as pl
+"""Select bounded contiguous slices from caller DataFrames."""
+
 import numpy as np
+import polars as pl
+
 
 def random_slice(df: pl.DataFrame,
-                 rows: int,
-                 *,
+                 rows: int, *,
                  safe_range_low: float = 0.25,
                  safe_range_high: float = 0.75,
                  seed: int | None = None) -> pl.DataFrame:
@@ -32,7 +34,7 @@ def random_slice(df: pl.DataFrame,
     hi = int(n * safe_range_high) - rows  # highest valid start
 
     if hi < lo:
-        raise ValueError(f'random_slice slice size ({rows}) too large for chosen safe range ({safe_range_low*100:.0f}%-{safe_range_high*100:.0f}%)')
+        raise ValueError(f'random_slice slice size ({rows}) too large for chosen safe range ({safe_range_low * 100:.0f}%-{safe_range_high * 100:.0f}%)')
 
     rng = np.random.default_rng(seed)
     start = int(rng.integers(lo, hi + 1))

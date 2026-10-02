@@ -14,6 +14,7 @@ def _framework():
     if hasattr(keras, 'ops'):
         return keras, keras.ops
     import tensorflow as tf
+
     class Ops:
         abs = staticmethod(tf.abs)
         square = staticmethod(tf.square)
@@ -97,6 +98,7 @@ def classification_metric(kind='f1score', beta=1, num_classes=None, name=None):
     if beta < 0:
         raise ValueError('beta must be nonnegative.')
     framework, ops = _framework()
+
     class ClassificationMetric(framework.metrics.Metric):
         def __init__(self):
             super().__init__(name=name or kind)
@@ -154,9 +156,11 @@ def classification_metric(kind='f1score', beta=1, num_classes=None, name=None):
     if kind == 'matthews':
         original_build = ClassificationMetric._build
         original_update = ClassificationMetric.update_state
+
         def build(self, count):
             original_build(self, count)
             self.tn = self.add_weight(name='tn', shape=(), initializer='zeros')
+
         def update(self, y_true, y_pred, sample_weight=None):
             original_update(self, y_true, y_pred, sample_weight)
             if self.class_count == 1:
@@ -189,4 +193,4 @@ def __getattr__(name):
     raise AttributeError(name)
 
 
-__all__ = ['mae', 'mse', 'rmae', 'rmse', 'mape', 'msle', 'rmsle', 'matthews', 'precision', 'recall', 'fbeta', 'f1score', 'classification_metric']
+__all__ = ['classification_metric', 'f1score', 'fbeta', 'mae', 'mape', 'matthews', 'mse', 'msle', 'precision', 'recall', 'rmae', 'rmse', 'rmsle']

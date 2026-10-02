@@ -87,6 +87,12 @@ jobs:
               print(f'{key}={str(value).lower()}')
           PY
 
+      - name: Reject Python compiler warnings
+        run: .venv-lint/bin/python -Werror -m compileall -q -f talos governance tests tools scripts examples
+
+      - name: Enforce selected Python style with zero findings
+        run: .venv-lint/bin/python -m ruff check --config governance/ruff.toml --preview --select E,W,I,D200,D205,D415,RUF022 --ignore E501 talos governance tests tools scripts examples
+
       - name: Ratchet Ruff and dead-code findings against the source baseline
         env:
           BASE_REF: ${{ github.base_ref }}

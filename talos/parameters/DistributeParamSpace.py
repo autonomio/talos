@@ -1,7 +1,12 @@
+"""Partition parameter occurrences into stable distributed scan shards."""
+
 import random
+
 import numpy as np
-from .ParamSpace import ParamSpace
+
 from talos.experiment.serialization import content_hash
+
+from .ParamSpace import ParamSpace
 
 
 class DistributeParamSpace:
@@ -10,8 +15,7 @@ class DistributeParamSpace:
                  boolean_limit=None, machines=2, seed=None):
         if not isinstance(machines, int) or machines < 1:
             raise ValueError('machines must be a positive integer.')
-        self._params = ParamSpace(params, param_keys, random_method, fraction_limit,
-                                  round_limit, time_limit, boolean_limit, seed)
+        self._params = ParamSpace(params, param_keys, random_method, fraction_limit, round_limit, time_limit, boolean_limit, seed)
         self.machines = machines
         self.param_spaces = self._split_param_space()
 

@@ -36,7 +36,7 @@ See [installation](Install_Options.md) for supported environments,
 3. For development code, include the full source commit and a permalink to that
    commit. Record changes made after checkout alongside the source you used.
 
-The current source version is 2.0.3 and is unreleased. Its citation metadata
+The current source version is 2.0.4 and is unreleased. Its citation metadata
 contains no release date or DOI. A later release must update the version and
 actual release metadata together. Use the version in the recorded experiment,
 even if your current environment has since been upgraded.

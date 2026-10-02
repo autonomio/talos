@@ -1,6 +1,9 @@
+"""Provide parameter-space examples for legacy model callbacks."""
+
+
 def titanic(debug=False):
 
-    from tensorflow.keras.optimizers import Adam, Adagrad
+    from tensorflow.keras.optimizers import Adagrad, Adam
 
     # here use a standard 2d dictionary for inputting the param boundaries
     p = {'lr': (0.5, 5, 10),
@@ -16,9 +19,8 @@ def titanic(debug=False):
          'last_activation': ['sigmoid']}
 
     if debug:
-         
-        p = {'lr': [0.1, 0.2],
-             'first_neuron': [4, 8],
+
+        p = {'lr': [0.1, 0.2], 'first_neuron': [4, 8],
              'batch_size': [20, 30],
              'dropout': [0.2, 0.3],
              'optimizer': [Adam, Adagrad],
@@ -34,8 +36,8 @@ def titanic(debug=False):
 
 def iris():
 
-    from tensorflow.keras.optimizers import Adam, Adagrad
-    from tensorflow.keras.activations import relu, elu, softmax
+    from tensorflow.keras.activations import elu, relu, softmax
+    from tensorflow.keras.optimizers import Adagrad, Adam
 
     # here use a standard 2d dictionary for inputting the param boundaries
     p = {'lr': (0.5, 5, 10),
@@ -57,8 +59,8 @@ def iris():
 
 def breast_cancer():
 
-    from tensorflow.keras.optimizers import Adam, Adagrad, RMSprop
-    from tensorflow.keras.activations import relu, elu, sigmoid
+    from tensorflow.keras.activations import elu, relu, sigmoid
+    from tensorflow.keras.optimizers import Adagrad, Adam, RMSprop
 
     # then we can go ahead and set the parameter space
     p = {'lr': (0.5, 5, 10),

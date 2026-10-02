@@ -1,7 +1,10 @@
+"""Initialize legacy scan result files and model artifact directories."""
+
+
 def initialize_log(self):
 
-    import time
     import os
+    import time
 
     # create the experiment folder (unless one is already there)
     try:
@@ -19,8 +22,7 @@ def initialize_log(self):
         file_path = path + '/' + self._saved_models_path
         os.mkdir(file_path)
 
-    _file_name = self._experiment_id + '.csv'
-    _experiment_log = './' + self.experiment_name + '/' + _file_name
+    _experiment_log = './' + self.experiment_name + '/' + self._experiment_id + '.csv'
 
     f = open(_experiment_log, 'w')
     f.write('')

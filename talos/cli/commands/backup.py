@@ -1,13 +1,12 @@
-from datetime import datetime
-from datetime import timezone
+"""Archive and recover a project manifest store."""
+
+from datetime import datetime, timezone
 from pathlib import Path
 
 import click
 
-from talos.cli.git_utils import git_push
-from talos.cli.git_utils import git_snapshot
-from talos.yaml.config import find_project_root
-from talos.yaml.config import read_talos_toml
+from talos.cli.git_utils import git_push, git_snapshot
+from talos.yaml.config import find_project_root, read_talos_toml
 
 
 def run_backup(start: Path) -> bool:

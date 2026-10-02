@@ -1,7 +1,7 @@
 def test_predict():
 
     print("\n >>> start Predict()...")
-    
+
     import talos
 
     x, y = talos.templates.datasets.iris()

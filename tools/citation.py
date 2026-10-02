@@ -3,12 +3,12 @@ from __future__ import annotations
 
 import argparse
 import ast
-from pathlib import Path
 import re
+from pathlib import Path
 
 from ruamel.yaml import YAML
 
-__all__ = ['render_bibtex', 'main']
+__all__ = ['main', 'render_bibtex']
 
 
 def _text(record: dict[str, object], key: str) -> str:

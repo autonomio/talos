@@ -1,10 +1,11 @@
+"""Read and write structured experiment manifests with ruamel.yaml."""
+
 from pathlib import Path
 from typing import Any
 
 from ruamel.yaml.constructor import DuplicateKeyError
 
-from talos.yaml.config import is_mapping
-from talos.yaml.config import round_trip_yaml
+from talos.yaml.config import is_mapping, round_trip_yaml
 from talos.yaml.errors import YAMLError
 
 

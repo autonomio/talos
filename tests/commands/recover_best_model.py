@@ -2,11 +2,12 @@ def recover_best_model():
 
     import os
 
-    from talos.utils import recover_best_model
-    import talos
     import tensorflow
 
-    experiment_log = 'test_q/' + os.listdir('test_q')[0]   
+    import talos
+    from talos.utils import recover_best_model
+
+    experiment_log = 'test_q/' + os.listdir('test_q')[0]
 
     x, y = talos.templates.datasets.iris()
     input_model = talos.templates.models.iris
@@ -17,8 +18,8 @@ def recover_best_model():
     # define the input model
     def iris_model(x_train, y_train, x_val, y_val, params):
 
-        from tensorflow.keras.models import Sequential
         from tensorflow.keras.layers import Dense
+        from tensorflow.keras.models import Sequential
 
         model = Sequential()
         model.add(Dense(params['first_neuron'], input_dim=4, activation=params['activation']))

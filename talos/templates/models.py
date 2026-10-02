@@ -1,10 +1,13 @@
+"""Provide legacy model callback examples with lazy framework imports."""
+
+
 def breast_cancer(x_train, y_train, x_val, y_val, params):
 
+    from tensorflow.keras.layers import Dense, Dropout
     from tensorflow.keras.models import Sequential
-    from tensorflow.keras.layers import Dropout, Dense
-    from talos.model import lr_normalizer, early_stopper, hidden_layers
 
-    from talos.metrics.keras_metrics import matthews, precision, recall, f1score
+    from talos.metrics.keras_metrics import f1score, matthews, precision, recall
+    from talos.model import early_stopper, hidden_layers, lr_normalizer
 
     model = Sequential()
     model.add(Dense(params['first_neuron'],
@@ -22,8 +25,7 @@ def breast_cancer(x_train, y_train, x_val, y_val, params):
                                     params['optimizer'])),
                   loss=params['losses'],
                   metrics=['acc',
-                           f1score,
-                           recall,
+                           f1score, recall,
                            precision,
                            matthews])
 
@@ -41,11 +43,11 @@ def breast_cancer(x_train, y_train, x_val, y_val, params):
 
 def cervical_cancer(x_train, y_train, x_val, y_val, params):
 
+    from tensorflow.keras.layers import Dense, Dropout
     from tensorflow.keras.models import Sequential
-    from tensorflow.keras.layers import Dropout, Dense
-    from talos.model import lr_normalizer, early_stopper, hidden_layers
 
-    from talos.metrics.keras_metrics import matthews, precision, recall, f1score
+    from talos.metrics.keras_metrics import f1score, matthews, precision, recall
+    from talos.model import early_stopper, hidden_layers, lr_normalizer
 
     model = Sequential()
     model.add(Dense(params['first_neuron'],
@@ -82,8 +84,9 @@ def cervical_cancer(x_train, y_train, x_val, y_val, params):
 
 def titanic(x_train, y_train, x_val, y_val, params):
 
+    from tensorflow.keras.layers import Dense, Dropout
     from tensorflow.keras.models import Sequential
-    from tensorflow.keras.layers import Dropout, Dense
+
     from talos.model import lr_normalizer
 
     # note how instead of passing the value, we pass a dictionary entry
@@ -120,9 +123,10 @@ def titanic(x_train, y_train, x_val, y_val, params):
 
 def iris(x_train, y_train, x_val, y_val, params):
 
+    from tensorflow.keras.layers import Dense, Dropout
     from tensorflow.keras.models import Sequential
-    from tensorflow.keras.layers import Dropout, Dense
-    from talos.model import lr_normalizer, early_stopper, hidden_layers
+
+    from talos.model import early_stopper, hidden_layers, lr_normalizer
 
     # note how instead of passing the value, we pass a dictionary entry
     model = Sequential()

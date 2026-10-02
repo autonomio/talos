@@ -1,8 +1,9 @@
 """Run a small Iris sweep: python examples/iris.py (install Talos with TensorFlow)."""
 import numpy as np
 from sklearn.datasets import load_iris
-from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Input, Normalization
+from tensorflow.keras.models import Sequential
+
 import talos
 
 # Real bundled observations; no remote dataset is required.

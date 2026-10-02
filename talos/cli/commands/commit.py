@@ -1,3 +1,5 @@
+"""Validate and commit experiment manifests with content identities."""
+
 from pathlib import Path
 
 import click
@@ -5,12 +7,14 @@ import click
 from talos.cli.commands._load_yaml import load_and_validate
 from talos.cli.git_utils import git_add_and_commit
 from talos.yaml.config import find_project_root
-from talos.yaml.store import SHA256_PREFIX
-from talos.yaml.store import lineage_block
-from talos.yaml.store import commit_manifest
-from talos.yaml.store import is_full_manifest_id
-from talos.yaml.store import manifest_name
-from talos.yaml.store import short_id
+from talos.yaml.store import (
+    SHA256_PREFIX,
+    commit_manifest,
+    is_full_manifest_id,
+    lineage_block,
+    manifest_name,
+    short_id,
+)
 
 
 def run_commit(yaml_path: Path, parent_id: str | None, message: str | None) -> bool:
@@ -32,8 +36,7 @@ def run_commit(yaml_path: Path, parent_id: str | None, message: str | None) -> b
     if project_root is None:
         click.secho(
             '  ✗ No talos project found. The YAML file must be inside a Talos project directory (containing talos.toml).',
-            fg='red',
-        )
+            fg='red', )
         return False
 
     click.echo(f"Validating {yaml_path.name} ...")
@@ -49,16 +52,14 @@ def run_commit(yaml_path: Path, parent_id: str | None, message: str | None) -> b
     if parent_id is not None and not is_full_manifest_id(parent_id):
         click.secho(
             f"  ✗ Invalid parent ID: '{parent_id}'\n    Expected sha256:<64-hex-chars>.",
-            fg='red',
-        )
+            fg='red', )
         return False
 
     mode = yaml_dict.get('metadata', {}).get('mode', 'development')
     if mode != 'production':
         click.secho(
             '  ✗ Cannot commit a development-mode manifest.\n    Set metadata.mode: production before committing.',
-            fg='red',
-        )
+            fg='red', )
         return False
 
     manifest_id, already_existed = commit_manifest(yaml_path, project_root, parent_id)

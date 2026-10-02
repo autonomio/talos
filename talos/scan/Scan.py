@@ -1,5 +1,6 @@
 """Legacy training callbacks use the shared executor and preserve checkpointed row selection."""
 from types import SimpleNamespace
+
 from talos.experiment.runner import RunResult
 
 
@@ -11,10 +12,10 @@ class Scan(RunResult):
                  reduction_window=20, reduction_threshold=.2, reduction_metric='val_acc',
                  minimize_loss=False, disable_progress_bar=False, print_params=False,
                  clear_session=True, save_weights=True, save_models=False, **options):
-        from talos.parameters.ParamSpace import ParamSpace
-        from talos.parameters._resume import _resume_initial_state
-        from talos.utils.validation_split import validation_split
         from talos.experiment.runner import run
+        from talos.parameters._resume import _resume_initial_state
+        from talos.parameters.ParamSpace import ParamSpace
+        from talos.utils.validation_split import validation_split
 
         if not callable(model):
             raise TypeError('model must be a callable training function')

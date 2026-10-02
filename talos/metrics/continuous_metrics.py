@@ -1,5 +1,6 @@
-from typing import Any
-from typing import Protocol
+"""Compute regression metrics from caller predictions."""
+
+from typing import Any, Protocol
 
 import numpy as np
 import numpy.typing as npt

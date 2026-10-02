@@ -6,9 +6,10 @@ def test_latest():
 
     print('\n >>> start Latest Features... \n')
 
-    import talos
-    from tensorflow.keras.models import Sequential
     from tensorflow.keras.layers import Dense
+    from tensorflow.keras.models import Sequential
+
+    import talos
 
     x, y = talos.templates.datasets.iris()
 

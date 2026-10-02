@@ -1,5 +1,9 @@
+"""Adapt legacy parameter selection to the checkpointed search queue."""
+
 import itertools
+
 from talos.experiment.serialization import content_hash
+
 from .search_strategy import SearchStrategy
 
 
@@ -33,8 +37,7 @@ class LegacyStrategy(SearchStrategy):
         raise StopIteration
 
     def remaining_count(self):
-        return sum(self.domain.is_valid_combination(self.facade._round_parameters_todict(self.facade.param_space[index]))
-                   for index in self.facade.param_index)
+        return sum(self.domain.is_valid_combination(self.facade._round_parameters_todict(self.facade.param_space[index])) for index in self.facade.param_index)
 
     def get_state(self):
         return {'pending': list(self.facade.param_index),

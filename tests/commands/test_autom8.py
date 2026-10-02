@@ -1,9 +1,9 @@
 def test_autom8():
 
-    import talos
     import wrangle
-
     from tensorflow.keras.optimizers.legacy import Adam
+
+    import talos
 
     print('\n >>> start AutoParams()... \n')
 

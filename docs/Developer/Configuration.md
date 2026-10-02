@@ -18,6 +18,48 @@ The configuration declares the approving authority `mikkokotila`, the `slice` is
 
 These declarations describe checked-in policy. Live enforcement exists only after an administrator installs it. A missing live ruleset or unreadable audit target fails its remote check rather than silently declaring success.
 
+## Selected Python style
+
+PEP 8 is the Python style guide. The existing required lint workflow separately
+enforces the following selected style with zero findings, using the pinned Ruff
+version and the configuration in `pyproject.toml`:
+
+```sh
+python -m ruff check --config governance/ruff.toml --preview --select E,W,I,D200,D205,D415,RUF022 --ignore E501 talos governance tests tools scripts examples
+```
+
+`E/W` checks pycodestyle conventions, `I` checks import ordering, `D200/D205/D415`
+checks selected docstring conventions and `RUF022` checks `__all__` ordering.
+Preview enables the selected whitespace checks. The existing `E501` exclusion
+remains: the configured 100-character line length is not a hard limit in this
+check. Legacy public API names remain compatibility contracts; naming rules
+are not part of this selected command.
+
+The existing per-file configuration leaves `D200/D205/D415` out of
+`tests/**/*.py`, `governance/tests/**/*.py`, `governance/*.py` and `scripts/*.py`.
+Whitespace and import ordering still apply there. Governance test fixtures
+remain excluded by the existing repository configuration.
+
+Any additional local style exception must be rare, justified in the source
+at its location and reviewed. A measured debt allowance does not authorize a
+style exception; the constitution still forbids new suppression comments.
+The style check does not resolve annotation, complexity, dead-code or Pyright
+findings. Those remain visible under their separate measured ratchets.
+
+## Practical warning controls
+
+The same required lint job compiles all six source scopes with `-Werror`;
+compiler warnings fail before any training code is executed. Contract tests
+place an invalid escape in each scope, verify rejection, then verify its raw
+string correction. Runtime test warnings remain visible under pytest’s default
+warning plugin, including deprecation and pending-deprecation warnings.
+
+The existing strict Ruff selector and Pyright strict mode remain enabled.
+Their diagnostics and error/warning ratchets expose inherited annotation,
+complexity and optional-framework source-resolution limits; compiler-warning
+cleanliness is not a claim that those separate inventories are empty.
+No new warning suppression, selected-rule exclusion or debt allowance is added.
+
 ## Measured debt
 
 Talos is an established scientific package. The initial strict-quality, typing, fallback, docstring, size, ratio, coverage and runtime measurements form the baseline. Existing debt remains visible in the budget file and reports; new work may not silently increase it. A basic Ruff invocation retains the existing low-level error check, while the strict profile in `governance/ruff.toml` is enforced through `check_quality_debt.py`.

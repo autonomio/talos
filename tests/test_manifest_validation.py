@@ -120,6 +120,7 @@ def test_cli_recommit_verifies_changed_stored_source_before_git(committed_projec
     original_index = index.read_bytes()
     original_files = set(committed.parent.glob('*.yaml'))
     git_attempts = []
+
     def record_git_attempt(*args):
         git_attempts.append(args)
         return False
@@ -273,6 +274,7 @@ def test_saved_invalid_manifest_is_rejected_before_source_hydration(committed_pr
     raw = {'yaml_reference': {'content': document, 'manifest_id': canonical_manifest_id(document),
                               'source_path': str(draft)}, 'sfd': {'module': 'caller'}}
     (run_dir / 'metadata.json').write_text(json.dumps(raw))
+
     def source_operation(*args, **kwargs):
         raise AssertionError('Invalid manifest reached saved-source verification or hydration')
     monkeypatch.setattr('talos.experiment.source_snapshot.verify_sources', source_operation)
@@ -315,6 +317,7 @@ def test_saved_content_hash_mismatch_stops_before_source_verification(committed_
     run_dir.mkdir()
     reference = {'content': document, 'manifest_id': identifier, 'source_path': str(draft)}
     (run_dir / 'metadata.json').write_text(json.dumps({'yaml_reference': reference}))
+
     def source_operation(*args, **kwargs):
         raise AssertionError('Changed manifest reached saved-source verification')
     monkeypatch.setattr('talos.experiment.source_snapshot.verify_sources', source_operation)

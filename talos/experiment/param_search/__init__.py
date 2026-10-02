@@ -1,5 +1,7 @@
-from talos.experiment.param_search.legacy_strategy import LegacyStrategy
+"""Expose exhaustive, random and legacy parameter search strategies."""
+
 from talos.experiment.param_search.grid_strategy import GridStrategy
+from talos.experiment.param_search.legacy_strategy import LegacyStrategy
 from talos.experiment.param_search.random_strategy import RandomStrategy
 from talos.experiment.param_search.registry import STRATEGY_REGISTRY
 from talos.experiment.param_search.search_strategy import SearchStrategy
@@ -9,5 +11,4 @@ __all__ = [
     'GridStrategy',
     'LegacyStrategy',
     'RandomStrategy',
-    'SearchStrategy',
-]
+    'SearchStrategy', ]

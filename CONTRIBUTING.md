@@ -9,15 +9,18 @@ test whenever the defect can be reproduced automatically. Reviewers verify the
 observable behavior and affected framework/archive contracts before accepting
 a change. Update the corresponding documentation with each interface change.
 
-Follow PEP 8 and the pinned Ruff rules. Required CI enforces the basic error
-rules and the strict measured-debt ratchet; a change must not add a warning or
-increase inherited debt. A passing ratchet does not mean the historical code
-has no style or typing findings. [Configuration](docs/Developer/Configuration.md)
-records those measured limits.
+Follow PEP 8 and the selected Python style defined in
+[Configuration](docs/Developer/Configuration.md#selected-python-style).
+Required CI rejects any finding from that pinned Ruff style command, with the
+existing line-length exclusion, public API names and per-file docstring
+boundaries documented there. Separate strict-quality and typing ratchets keep
+inherited findings visible and prevent new debt; passing the style check does
+not establish that those other findings are resolved.
 
 ```sh
 pip install -e '.[test,plots,samplers,tensorflow,torch]'
 ruff check talos tools tests/test_*.py
+python -m ruff check --config governance/ruff.toml --preview --select E,W,I,D200,D205,D415,RUF022 --ignore E501 talos governance tests tools scripts examples
 coverage run -m pytest -q
 coverage report
 python -m build

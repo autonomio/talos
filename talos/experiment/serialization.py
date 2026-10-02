@@ -1,18 +1,18 @@
 """Canonical scientific records; live Python objects never become repr strings."""
 import base64
-from datetime import date, datetime, time, timedelta
 import hashlib
 import importlib
 import inspect
 import json
-import math
 import marshal
+import math
+from datetime import date, datetime, time, timedelta
 from pathlib import Path
 
 from .errors import NonPortableValueError
 
 _TAG = '__talos_type__'
-__all__ = ['encode', 'decode', 'dumps', 'content_hash', 'callable_reference']
+__all__ = ['callable_reference', 'content_hash', 'decode', 'dumps', 'encode']
 
 
 def _resolve(module, qualname):
@@ -98,7 +98,6 @@ def _capture(value, seen):
     except (NonPortableValueError, RecursionError):
         return {_TAG: 'nonportable_state', 'module': type(value).__module__,
                 'qualname': type(value).__qualname__, 'portable': False}
-
 
 
 def encode(value, *, _seen=None):

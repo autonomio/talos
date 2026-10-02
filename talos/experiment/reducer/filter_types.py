@@ -1,22 +1,22 @@
-'''
-Declarative filter type constants and builders for named filters.
+"""Define named parameter-filter semantics for queue interventions."""
 
-Each constant defines a filter_type string used in intervention dicts.
-FILTER_BUILDERS maps these to factory functions that create filter callables
-from filter_params dicts. Keys are extracted eagerly so missing params
-fail at filter creation time, not during MSQ iteration.
-
-All builders return a callable with signature (combo: dict) -> bool.
-True means REMOVE the combo, False means keep it. This matches
-MSQ._passes_filters which treats True as a rejection.
-
-'''
+# Declarative filter type constants and builders for named filters.
+#
+# Each constant defines a filter_type string used in intervention dicts.
+# FILTER_BUILDERS maps these to factory functions that create filter callables
+# from filter_params dicts. Keys are extracted eagerly so missing params
+# fail at filter creation time, not during MSQ iteration.
+#
+# All builders return a callable with signature (combo: dict) -> bool.
+# True means REMOVE the combo, False means keep it. This matches
+# MSQ._passes_filters which treats True as a rejection.
 
 import hashlib
-from talos.experiment.serialization import dumps
-from talos.experiment.param_domain import values_equal
 from collections.abc import Callable
 from typing import Any
+
+from talos.experiment.param_domain import values_equal
+from talos.experiment.serialization import dumps
 
 FILTER_EXCLUDE_VALUE = 'exclude_value'
 FILTER_KEEP_VALUES = 'keep_values'
@@ -39,6 +39,7 @@ def _build_keep_values(fp: dict[str, Any]) -> Callable[[dict[str, Any]], bool]:
 def _build_keep_between(fp: dict[str, Any]) -> Callable[[dict[str, Any]], bool]:
 
     param, lower, upper = fp['param'], fp['lower'], fp['upper']
+
     def outside(c):
         try:
             return not bool(lower <= c[param] <= upper)

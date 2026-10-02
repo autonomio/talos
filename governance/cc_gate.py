@@ -86,6 +86,7 @@ def cc_types() -> frozenset[str]:
         section_setting('commits', 'types', sorted(DEFAULT_CC_TYPES), BANNER)
     )
 
+
 # AI/LLM attribution scan. Commit metadata in this org never names an
 # AI/LLM assistant, so the PR title and every non-merge commit message
 # must be free of these markers. Legitimate topical references are scrubbed

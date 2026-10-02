@@ -1,19 +1,21 @@
-from collections.abc import Callable
+"""Select binary prediction thresholds from validation metrics."""
+
 import math
 import numbers
+from collections.abc import Callable
 from typing import Any
 
 import numpy as np
 import numpy.typing as npt
 import polars as pl
 
+
 def balanced_metric(y_true, y_pred):
     from talos.metrics.balanced_metric import balanced_metric as metric
     return metric(y_true, y_pred)
 
 
-def _validate_threshold_grid(threshold_min: float,
-                             threshold_max: float,
+def _validate_threshold_grid(threshold_min: float, threshold_max: float,
                              threshold_step: float) -> None:
     values = {
         'threshold_min': threshold_min,

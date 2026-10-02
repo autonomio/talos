@@ -1,16 +1,17 @@
+"""Persist and validate parameter queues and experiment recovery state."""
+
 import json
 import logging
-from datetime import datetime
-from datetime import timezone
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
-from typing import cast
+from typing import Any, cast
 
-from talos.experiment.serialization import encode, decode, content_hash as canonical_hash
 from talos.experiment.feedback_controller import FeedbackController
 from talos.experiment.msq import MSQ
 from talos.experiment.param_domain import ParamDomain
 from talos.experiment.reducer.pruning_strategy import PruningStrategy
+from talos.experiment.serialization import content_hash as canonical_hash
+from talos.experiment.serialization import decode, encode
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +38,6 @@ class CheckpointManager:
             )
         self._checkpoint_interval = checkpoint_interval
 
-
     def should_checkpoint(self, current_round: int) -> bool:
 
         '''
@@ -52,7 +52,6 @@ class CheckpointManager:
         '''
 
         return current_round > 0 and current_round % self._checkpoint_interval == 0
-
 
     @staticmethod
     def compute_content_hash(content: dict[str, Any]) -> str:
@@ -69,7 +68,6 @@ class CheckpointManager:
         '''
 
         return canonical_hash(content)
-
 
     def initialize_fresh(self, checkpoint_dir: Path) -> Path:
 
@@ -88,7 +86,6 @@ class CheckpointManager:
         path.mkdir(parents=True, exist_ok=True)
         logger.info('Initialized checkpoint directory: %s', path)
         return path
-
 
     def save(self,
              checkpoint_dir: Path,
@@ -152,7 +149,6 @@ class CheckpointManager:
 
         logger.info('Checkpoint saved at round %d → %s', current_round, checkpoint_dir)
 
-
     def load(self, checkpoint_dir: Path) -> dict[str, Any]:
 
         '''
@@ -187,7 +183,6 @@ class CheckpointManager:
             )
 
         return cast(dict[str, Any], data)
-
 
     def validate(self,
                  checkpoint_dir: Path,
@@ -231,7 +226,6 @@ class CheckpointManager:
             )
 
         return data
-
 
     @staticmethod
     def _validate_structure(data: Any, checkpoint_dir: Path) -> None:
@@ -278,7 +272,6 @@ class CheckpointManager:
                     f"Invalid checkpoint format in '{checkpoint_dir}': '{key}' must be an object, got {type(data[key]).__name__}."
                 )
 
-
     @staticmethod
     def _write_json(path: Path, data: dict[str, Any]) -> None:
 
@@ -291,7 +284,6 @@ class CheckpointManager:
             if tmp.exists():
                 tmp.unlink()
             raise
-
 
     @staticmethod
     def _read_json(path: Path) -> Any:

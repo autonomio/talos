@@ -3,8 +3,10 @@ import json
 import tempfile
 from pathlib import Path
 from zipfile import ZipFile
+
 import numpy as np
 import pandas as pd
+
 from talos.backends import backend_for
 
 

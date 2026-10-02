@@ -12,6 +12,7 @@ class SequenceGenerator:
             from tensorflow.keras.utils import Sequence
         else:
             from keras.utils import Sequence
+
         class Batches(Sequence):
             def __init__(self):
                 super().__init__()

@@ -1,4 +1,7 @@
+"""Analyze experiment tables and caller-supplied prediction diagnostics."""
+
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
@@ -36,11 +39,15 @@ class Log:
 
     def permutation_prediction_performance(self, permutation_id=None, *, predictions=None,
                                            targets=None, task='classification', threshold=0.5):
-        from sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, r2_score
+        from sklearn.metrics import (
+            accuracy_score,
+            mean_absolute_error,
+            mean_squared_error,
+            r2_score,
+        )
         prediction, target = self._prediction_pair(permutation_id, predictions, targets)
         if task == 'regression':
-            return {'mae': mean_absolute_error(target, prediction),
-                    'mse': mean_squared_error(target, prediction), 'r2': r2_score(target, prediction)}
+            return {'mae': mean_absolute_error(target, prediction), 'mse': mean_squared_error(target, prediction), 'r2': r2_score(target, prediction)}
         if task == 'multilabel':
             labels = (prediction >= threshold).astype(int) if np.issubdtype(prediction.dtype, np.floating) else prediction
         elif prediction.ndim > 1 and prediction.shape[-1] > 1:
@@ -55,7 +62,7 @@ class Log:
 
     def permutation_confusion_metrics(self, permutation_id=None, *, predictions=None,
                                      targets=None, labels=None, threshold=0.5, task='classification'):
-        from sklearn.metrics import confusion_matrix, classification_report
+        from sklearn.metrics import classification_report, confusion_matrix
         prediction, target = self._prediction_pair(permutation_id, predictions, targets)
         if task == 'multilabel':
             from sklearn.metrics import multilabel_confusion_matrix
@@ -69,8 +76,7 @@ class Log:
         if target.ndim > 1 and target.shape[-1] > 1:
             target = target.argmax(axis=-1)
         return {'confusion_matrix': confusion_matrix(target.reshape(-1), prediction.reshape(-1), labels=labels),
-                'report': classification_report(target.reshape(-1), prediction.reshape(-1), labels=labels,
-                                                output_dict=True, zero_division=0)}
+                'report': classification_report(target.reshape(-1), prediction.reshape(-1), labels=labels, output_dict=True, zero_division=0)}
 
     def experiment_confusion_metrics(self, **kwargs):
         if not isinstance(self.predictions, dict):
@@ -88,7 +94,6 @@ class Log:
             raise ValueError('Supply caller predictions and targets explicitly')
         return np.asarray(prediction), np.asarray(target)
 
-
     def data_quality(self, data=None):
         """Inspect caller tables/arrays for missing values, infinities and constant columns."""
         value = self.experiment_log if data is None else data
@@ -97,9 +102,7 @@ class Log:
         array = np.asarray(value)
         frame = pd.DataFrame(array if array.ndim > 1 else array.reshape(-1, 1))
         numeric = frame.select_dtypes(include=[np.number])
-        return {'rows': len(frame), 'columns': len(frame.columns),
-                'missing': int(frame.isna().sum().sum()),
-                'infinite': int(np.isinf(numeric.to_numpy()).sum()),
+        return {'rows': len(frame), 'columns': len(frame.columns), 'missing': int(frame.isna().sum().sum()), 'infinite': int(np.isinf(numeric.to_numpy()).sum()),
                 'constant_columns': [str(column) for column in frame if frame[column].nunique(dropna=True) <= 1]}
 
     def confusion_value_diagnostics(self, values, *, predictions=None, targets=None,
@@ -119,22 +122,19 @@ class Log:
         rows = []
         for label in np.unique(target):
             truth, positive = target.reshape(-1) == label, prediction.reshape(-1) == label
-            groups = {'tp': value[truth & positive], 'fp': value[~truth & positive],
-                      'tn': value[~truth & ~positive], 'fn': value[truth & ~positive]}
+            groups = {'tp': value[truth & positive], 'fp': value[~truth & positive], 'tn': value[~truth & ~positive], 'fn': value[truth & ~positive]}
             row = {'class': label}
             for name, values in groups.items():
                 finite = values[np.isfinite(values)]
-                row.update({name + '_count': len(finite),
-                            name + '_mean': float(finite.mean()) if len(finite) else np.nan,
+                row.update({name + '_count': len(finite), name + '_mean': float(finite.mean()) if len(finite) else np.nan,
                             name + '_median': float(np.median(finite)) if len(finite) else np.nan})
             a, b = groups['tp'], groups['fp']
             a, b = a[np.isfinite(a)], b[np.isfinite(b)]
-            pooled = np.sqrt(((len(a)-1)*a.var(ddof=1) + (len(b)-1)*b.var(ddof=1)) / (len(a)+len(b)-2)) if len(a)>1 and len(b)>1 else np.nan
-            row['tp_fp_cohen_d'] = float((a.mean()-b.mean())/pooled) if pooled > 0 else np.nan
-            row['tp_fp_ks'] = float(ks_2samp(a,b).statistic) if len(a) and len(b) else np.nan
+            pooled = np.sqrt(((len(a) - 1) * a.var(ddof=1) + (len(b) - 1) * b.var(ddof=1)) / (len(a) + len(b) - 2)) if len(a) > 1 and len(b) > 1 else np.nan
+            row['tp_fp_cohen_d'] = float((a.mean() - b.mean()) / pooled) if pooled > 0 else np.nan
+            row['tp_fp_ks'] = float(ks_2samp(a, b).statistic) if len(a) and len(b) else np.nan
             rows.append(row)
         return pd.DataFrame(rows)
-
 
     def prediction_table(self, permutation_id=None, *, predictions=None, targets=None,
                          observations=None, task='classification', threshold=0.5):

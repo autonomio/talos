@@ -1,18 +1,20 @@
+"""Create editable development manifests from committed experiments."""
+
 import re
 from pathlib import Path
 
 import click
 from ruamel.yaml.error import YAMLError
 
-from talos.yaml.config import find_project_root
-from talos.yaml.config import is_mapping
-from talos.yaml.config import round_trip_yaml
-from talos.yaml.store import SHA256_PREFIX
-from talos.yaml.store import fork_manifest
-from talos.yaml.store import manifest_name
-from talos.yaml.store import normalize_manifest_ref
-from talos.yaml.store import resolve_manifest_uri
-from talos.yaml.store import short_id
+from talos.yaml.config import find_project_root, is_mapping, round_trip_yaml
+from talos.yaml.store import (
+    SHA256_PREFIX,
+    fork_manifest,
+    manifest_name,
+    normalize_manifest_ref,
+    resolve_manifest_uri,
+    short_id,
+)
 
 _NAME_SLUG_RE = re.compile(r'^[A-Za-z0-9_-]+$')
 _VERSION_SUFFIX_RE = re.compile(r'_v\d+$')
@@ -54,8 +56,7 @@ def run_fork(ref: str, name: str | None, start: Path) -> bool:
     if not _NAME_SLUG_RE.match(name):
         click.secho(
             f"  ✗ '{name}' is not a valid name. Use only letters, digits, underscores, or hyphens.",
-            fg='red',
-        )
+            fg='red', )
         return False
 
     dest = manifests_dir / f'{name}.yaml'

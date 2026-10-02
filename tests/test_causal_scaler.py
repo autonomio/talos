@@ -39,6 +39,7 @@ def test_current_observation_cannot_change_its_own_scaling_reference():
     scaler = CausalRollingRobustScaler(data.head(100), window=8, min_samples=3, clip=1e6)
     baseline = scaler.transform(heldout)
     row = 20
+
     def alter(amount):
         return heldout.with_columns(pl.when(pl.int_range(pl.len()) == row)
                                     .then(pl.col('sepal_length') + amount)

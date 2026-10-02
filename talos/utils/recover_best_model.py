@@ -1,6 +1,10 @@
+"""Retrain selected parameter candidates and evaluate shuffled folds."""
+
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
+
 from talos.backends import backend_for, normalise_result
 from talos.commands.evaluate import score
 from talos.utils.validation_split import kfold
@@ -15,8 +19,8 @@ def recover_best_model(x_train, y_train, x_val, y_val, experiment_log, input_mod
     parameter_keys = None
     run_dir = Path(experiment_log).resolve().parent
     if (run_dir / 'metadata.json').is_file() and (run_dir / 'round_data.jsonl').is_file():
-        from talos.experiment.runner import RunResult
         from talos.experiment.artifacts import read_rounds
+        from talos.experiment.runner import RunResult
         logged = RunResult.load(run_dir)
         parameter_columns = getattr(logged, 'parameter_columns', {})
         parameter_keys = list(logged.params)
@@ -41,8 +45,7 @@ def recover_best_model(x_train, y_train, x_val, y_val, experiment_log, input_mod
             params = {key: row[parameter_columns.get(key, key)] for key in parameter_keys}
         else:
             params = row.drop(metric).to_dict()
-        if param_resolver:
-            params = param_resolver(params)
+        params = param_resolver(params) if param_resolver else params
         result = normalise_result(input_model(x_train, y_train, x_val, y_val, params))
         model = result['model']
         adapter = backend_for(model, result['backend'])

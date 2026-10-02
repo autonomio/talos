@@ -1,5 +1,6 @@
 """Caller-owned preparation and training manifests, forked from Limen."""
 from __future__ import annotations
+
 import copy
 import inspect
 import logging
@@ -13,13 +14,19 @@ import polars as pl
 from sklearn.decomposition import PCA
 
 from talos.calibration.pipeline import CalibratorProtocol, ThresholdOptimizerProtocol
-from talos.preparation import split_sequential, split_random, split_by_dates, split_data_to_prep_output
-from talos.scalers.registry import SCALER_REGISTRY
 from talos.experiment.serialization import encode
+from talos.preparation import (
+    split_by_dates,
+    split_data_to_prep_output,
+    split_random,
+    split_sequential,
+)
+from talos.scalers.registry import SCALER_REGISTRY
 
 logger = logging.getLogger(__name__)
 ParamValue = Any
 FittedTransformEntry = tuple
+
 
 @dataclass
 class TransformEntry:
@@ -28,10 +35,12 @@ class TransformEntry:
     group: str | None = None
     include_if: str | None = None
 
+
 @dataclass
 class AblationConfig:
     drop_count_key: str
     seed_key: str
+
 
 @dataclass
 class PCACompressionConfig:
@@ -40,11 +49,13 @@ class PCACompressionConfig:
     scaler_param_name: str
     component_prefix: str
 
+
 @dataclass
 class TargetClassConfig:
     target_class: type
     fit_params: dict[str, ParamValue] = field(default_factory=dict[str, ParamValue])
     transform_params: dict[str, ParamValue] = field(default_factory=dict[str, ParamValue])
+
 
 @dataclass
 class CalibrationConfig:
@@ -55,6 +66,7 @@ class CalibrationConfig:
 
     def resolve(self, round_params: dict[str, Any]) -> 'CalibrationConfig':
         return CalibrationConfig(calibration_func=self.calibration_func, calibration_params=_resolve_params(self.calibration_params, round_params), threshold_func=self.threshold_func, threshold_params=_resolve_params(self.threshold_params, round_params))
+
 
 class CalibrationBuilder:
 
@@ -84,8 +96,10 @@ class CalibrationBuilder:
         self._manifest.prediction_calibration_config = CalibrationConfig(calibration_func=self._calibration_func, calibration_params=dict(self._calibration_params), threshold_func=self._threshold_func, threshold_params=dict(self._threshold_params))
         return self._manifest
 
+
 def _apply_fitted_transform(data: pl.DataFrame, fitted_transform: Any) -> pl.DataFrame:
     return fitted_transform.transform(data)
+
 
 def _split_extra_params(extra_params: dict[str, Any] | None) -> tuple[dict[str, Any], dict[str, Any]]:
     _extra = dict(extra_params or {})
@@ -93,12 +107,14 @@ def _split_extra_params(extra_params: dict[str, Any] | None) -> tuple[dict[str, 
     _dynamic = {k: v for k, v in _extra.items() if isinstance(v, str)}
     return (_static, _dynamic)
 
-def make_fitted_scaler(param_name: str, transform_class: Any, extra_params: dict[str, Any] | None=None) -> FittedTransformEntry:
+
+def make_fitted_scaler(param_name: str, transform_class: Callable[..., object], extra_params: dict[str, object] | None = None) -> FittedTransformEntry:
     _static, _dynamic = _split_extra_params(extra_params)
 
-    def _factory(data: 'pl.DataFrame', _cls: Any=transform_class, _p: dict[str, Any]=_static, **dyn: Any) -> Any:
+    def _factory(data: pl.DataFrame, _cls: Callable[..., object] = transform_class, _p: dict[str, object] = _static, **dyn: object) -> object:
         return _cls(data, **_p, **dyn)
     return ([(param_name, _factory, _dynamic)], _apply_fitted_transform, {'fitted_transform': param_name})
+
 
 def _resolve_params(params: dict[str, Any], round_params: dict[str, Any]) -> dict[str, Any]:
     resolved: dict[str, Any] = {}
@@ -120,6 +136,7 @@ def _resolve_params(params: dict[str, Any], round_params: dict[str, Any]) -> dic
             resolved[key] = value
     return resolved
 
+
 def _should_include_transform(entry: TransformEntry, round_params: dict[str, Any]) -> bool:
     if entry.include_if is not None:
         if entry.include_if not in round_params:
@@ -133,6 +150,7 @@ def _should_include_transform(entry: TransformEntry, round_params: dict[str, Any
         return True
     return _is_group_active(entry.group, round_params)
 
+
 def _is_group_active(group: str, round_params: dict[str, Any]) -> bool:
     feature_groups = round_params.get('feature_groups')
     if feature_groups is None or feature_groups == 'all':
@@ -140,6 +158,7 @@ def _is_group_active(group: str, round_params: dict[str, Any]) -> bool:
     if not isinstance(feature_groups, str):
         raise TypeError(f"round_params['feature_groups'] must be a string, got {type(feature_groups).__name__}")
     return group in feature_groups.split('|')
+
 
 def _apply_fitted_transforms(transform_entries: list[FittedTransformEntry], data: pl.DataFrame, round_params: dict[str, Any], all_fitted_params: dict[str, Any], is_training: bool) -> tuple[pl.DataFrame, dict[str, Any]]:
     for fitted_param_computations, func, base_params in transform_entries:
@@ -152,6 +171,7 @@ def _apply_fitted_transforms(transform_entries: list[FittedTransformEntry], data
         resolved = _resolve_params(base_params, combined_round_params)
         data = func(data, **resolved)
     return (data, all_fitted_params)
+
 
 def _apply_class_based_target(manifest: Manifest, data: pl.DataFrame, round_params: dict[str, Any], all_fitted_params: dict[str, Any], is_training: bool) -> tuple[pl.DataFrame, dict[str, Any]]:
     config = manifest.target_class_config
@@ -170,7 +190,6 @@ def _apply_class_based_target(manifest: Manifest, data: pl.DataFrame, round_para
     resolved_transform = _resolve_params(config.transform_params, round_params)
     data = instance.transform(data, **resolved_transform)
     return (data, all_fitted_params)
-
 
 
 @dataclass
@@ -199,6 +218,7 @@ class Manifest:
     def source_functions(self):
         """Live pipeline callables for verified caller-module snapshots."""
         functions, seen = [], set()
+
         def visit(value):
             if id(value) in seen:
                 return
@@ -254,8 +274,7 @@ class Manifest:
 
     def set_split_dates(self, train_start, train_end, val_start, val_end, test_start, test_end, *, time_col='datetime'):
         return self.set_splitter(split_by_dates, train_start=train_start, train_end=train_end,
-                                val_start=val_start, val_end=val_end, test_start=test_start,
-                                test_end=test_end, time_col=time_col)
+                                val_start=val_start, val_end=val_end, test_start=test_start, test_end=test_end, time_col=time_col)
 
     def set_target_column(self, name):
         self.target_column = name
@@ -357,6 +376,7 @@ class MLManifest(Manifest):
 
     def set_scaler_from_params(self, param_name='scaler_type', extra_params=None):
         static, dynamic = _split_extra_params(extra_params)
+
         def factory(data, scaler_type, **kwargs):
             if scaler_type not in SCALER_REGISTRY:
                 raise ValueError(f'Unknown scaler {scaler_type!r}; choose {sorted(SCALER_REGISTRY)}.')
@@ -377,11 +397,9 @@ class MLManifest(Manifest):
 
     def set_pca_compression(self, enabled_param='auto_pca', n_components_param='pca_k',
                             scaler_param_name='_scaler', component_prefix='pc_'):
-        if any(not isinstance(value, str) or not value for value in
-               (enabled_param, n_components_param, scaler_param_name, component_prefix)):
+        if any(not isinstance(value, str) or not value for value in (enabled_param, n_components_param, scaler_param_name, component_prefix)):
             raise TypeError('PCA parameter keys and component prefix must be non-empty strings.')
-        self.pca_compression_config = PCACompressionConfig(enabled_param, n_components_param,
-                                                          scaler_param_name, component_prefix)
+        self.pca_compression_config = PCACompressionConfig(enabled_param, n_components_param, scaler_param_name, component_prefix)
         return self
 
     def add_to_data_dict(self, function):
@@ -416,8 +434,7 @@ MachineLearningManifest = MLManifest
 
 def _configuration_value(value):
     if is_dataclass(value) and not isinstance(value, type):
-        return {'type': type(value), 'fields': {item.name: _configuration_value(getattr(value, item.name))
-                                             for item in fields(value)}}
+        return {'type': type(value), 'fields': {item.name: _configuration_value(getattr(value, item.name)) for item in fields(value)}}
     if isinstance(value, dict):
         return {key: _configuration_value(item) for key, item in value.items()}
     if isinstance(value, list):
@@ -516,11 +533,10 @@ def _compress_pca(manifest, splits, round_params, fitted, targets):
         if targets:
             result = result.hstack(split.select(targets))
         transformed.append(result)
-    fitted.update({'_pca': pca, '_pca_input_feature_names': features,
-                   '_pca_feature_names': names, '_pca_n_components': count})
+    fitted.update({'_pca': pca, '_pca_input_feature_names': features, '_pca_feature_names': names, '_pca_n_components': count})
     return transformed, fitted
 
 
-__all__ = ['Manifest', 'MLManifest', 'MachineLearningManifest', 'TransformEntry',
-           'TargetClassConfig', 'CalibrationConfig', 'CalibrationBuilder', 'PCACompressionConfig',
-           'AblationConfig', 'make_fitted_scaler']
+__all__ = ['AblationConfig', 'CalibrationBuilder',
+    'CalibrationConfig', 'MLManifest', 'MachineLearningManifest', 'Manifest', 'PCACompressionConfig',
+    'TargetClassConfig', 'TransformEntry', 'make_fitted_scaler', ]

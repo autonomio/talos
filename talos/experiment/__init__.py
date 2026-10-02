@@ -1,6 +1,8 @@
+"""Expose parameter-sweep execution, results and prepared-data manifests."""
+
 from .runner import RunResult, load_sfd, run
 
-__all__ = ['RunResult', 'load_sfd', 'run', 'UniversalExperimentLoop']
+__all__ = ['RunResult', 'UniversalExperimentLoop', 'load_sfd', 'run']
 
 
 def __getattr__(name):

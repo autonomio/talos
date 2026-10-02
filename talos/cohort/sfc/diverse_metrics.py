@@ -1,6 +1,6 @@
-from typing import Any
-from typing import Protocol
-from typing import TypeGuard
+"""Select parameter cohorts with diverse metric performance."""
+
+from typing import Any, Protocol, TypeGuard
 
 import numpy as np
 import numpy.typing as npt

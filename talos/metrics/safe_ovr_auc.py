@@ -1,6 +1,6 @@
-from typing import Any
-from typing import Protocol
-from typing import cast
+"""Compute one-versus-rest AUC while handling unavailable class comparisons."""
+
+from typing import Any, Protocol, cast
 
 import numpy as np
 import numpy.typing as npt

@@ -2,10 +2,9 @@
 import ast
 import hashlib
 import importlib
-import importlib.util
 import importlib.machinery
 import importlib.metadata
-import inspect
+import importlib.util
 import sys
 import sysconfig
 from pathlib import Path

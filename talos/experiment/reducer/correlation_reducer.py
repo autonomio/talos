@@ -1,12 +1,13 @@
+"""Prune parameter choices from metric correlations in experiment results."""
+
 import logging
 from typing import Any, Literal
 
 import polars as pl
 from typing_extensions import override
 
-from talos.experiment.reducer.pruning_strategy import ACTION_SUGGEST
-from talos.experiment.reducer.pruning_strategy import PruningStrategy
 from talos.experiment.reducer.correlation_analysis import experiment_parameter_correlation
+from talos.experiment.reducer.pruning_strategy import ACTION_SUGGEST, PruningStrategy
 
 _CorrelationMethod = Literal['pearson', 'kendall', 'spearman']
 
@@ -117,7 +118,6 @@ class CorrelationReducer(PruningStrategy):
         self._applied: set[tuple[str, Any]] = set()
         self._suggested: set[str] = set()
 
-
     @override
     def analyze_and_intervene(self,
                               log: pl.DataFrame,
@@ -181,7 +181,6 @@ class CorrelationReducer(PruningStrategy):
 
         return interventions
 
-
     def _compute_correlations(self,
                               df: pl.DataFrame,
                               domain_keys: list[str]) -> pl.DataFrame:
@@ -216,7 +215,6 @@ class CorrelationReducer(PruningStrategy):
 
         return pl.DataFrame(result.reset_index().to_dict(orient='list'))
 
-
     def _check_wrong_direction(self,
                                param: str,
                                corr_med: float,
@@ -249,7 +247,6 @@ class CorrelationReducer(PruningStrategy):
             'reason': f"wrong-direction ({direction}) correlation {corr_med:.3f} for {param}",
         }]
 
-
     def _check_low_impact(self,
                           param: str,
                           corr_med: float,
@@ -277,7 +274,6 @@ class CorrelationReducer(PruningStrategy):
             'reason': f"low-impact correlation {corr_med:.3f} for {param}",
         }]
 
-
     def _filter_valid_metric(self, df: pl.DataFrame) -> pl.DataFrame:
 
         '''Filter rows with valid (non-null, non-NaN) metric values.'''
@@ -287,7 +283,6 @@ class CorrelationReducer(PruningStrategy):
         if df[self._metric].dtype.is_float():
             filter_expr = filter_expr & col.is_not_nan()
         return df.filter(filter_expr)
-
 
     def _value_means(self,
                      filtered: pl.DataFrame,
@@ -309,7 +304,6 @@ class CorrelationReducer(PruningStrategy):
             for row in stats.iter_rows(named=True)
         }
 
-
     @override
     def get_state(self) -> dict[str, Any]:
 
@@ -319,7 +313,6 @@ class CorrelationReducer(PruningStrategy):
             'applied': list(self._applied),
             'suggested': list(self._suggested),
         }
-
 
     @override
     def set_state(self, state: dict[str, Any]) -> None:

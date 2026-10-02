@@ -16,6 +16,8 @@ RULESET_SNAPSHOT: Final[Path] = REPO_ROOT / '.github/rulesets/master.json'
 DEV_ENV_IN: Final[Path] = REPO_ROOT / 'requirements/ci/dev-env.in'
 DEV_ENV_TXT: Final[Path] = REPO_ROOT / 'requirements/ci/dev-env.txt'
 BAD_FIXTURE: Final[Path] = REPO_ROOT / 'governance/tests/fixtures/lint/bad_imports.py'
+
+
 def _pinned_dev_tool(package: str) -> str:
     """The version `pyproject.toml` pins for one dev tool.
 

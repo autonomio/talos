@@ -2,7 +2,6 @@
 backend = 'torch'
 
 
-
 def params():
     return {'units': [16, 32], 'epochs': [5], 'learning_rate': [0.001]}
 
@@ -20,8 +19,8 @@ def build_model(input_size, units, outputs):
 
 
 def model(prepared, round_params):
-    import torch
     import numpy as np
+    import torch
     x = torch.as_tensor(np.asarray(prepared['x_train']), dtype=torch.float32)
     y = torch.as_tensor(np.asarray(prepared['y_train']))
     task = prepared.get('task', 'regression')

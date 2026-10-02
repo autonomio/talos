@@ -1,10 +1,12 @@
 """Caller SFD/CLI persistence contracts; parameter-only probes and real Iris data."""
 import json
-from pathlib import Path
 import subprocess
+from pathlib import Path
+
 import numpy as np
 import pytest
 from click.testing import CliRunner
+
 from talos.cli.main import cli
 from talos.yaml.compiler import CompiledSFD
 from talos.yaml.config import round_trip_yaml
@@ -102,8 +104,8 @@ def test_financial_schema_rejected_and_explicit_callable_values(project):
 
 
 def test_sensor_and_cohort_restore_real_iris(tmp_path):
-    from talos.inference import Sensor
     from talos.cohort import Cohort
+    from talos.inference import Sensor
     source = tmp_path / 'iris_sfd.py'
     source.write_text(
         "from sklearn.datasets import load_iris\n"
@@ -132,6 +134,7 @@ def test_sensor_and_cohort_restore_real_iris(tmp_path):
 def test_general_scalers_work_without_financial_column_names():
     import polars as pl
     from sklearn.datasets import load_iris
+
     from talos.scalers import LinearScaler, LogRegScaler, RankGaussScaler
     from talos.scalers.linear_scaler import inverse_transform
     frame = pl.DataFrame(load_iris().data, schema=['sepal_length', 'sepal_width', 'petal_length', 'petal_width'])
@@ -179,6 +182,7 @@ def test_local_git_backup_and_restore(tmp_path, monkeypatch):
 
 def test_generic_log_multiclass_and_regression_real_iris(tmp_path):
     from sklearn.datasets import load_iris
+
     from talos.log import Log
     x, y = load_iris(return_X_y=True)
     artifact = tmp_path / 'results.csv'
@@ -223,10 +227,16 @@ def test_pytorch_project_template_fresh_process_artifact_restore(tmp_path):
 
 def test_held_out_iris_calibration_multiclass_and_binary():
     from types import SimpleNamespace
+
     from sklearn.datasets import load_iris
     from sklearn.linear_model import LogisticRegression
     from sklearn.model_selection import train_test_split
-    from talos.calibration import apply_calibrated_predict, grid_threshold_optimizer, sklearn_probability_calibrator
+
+    from talos.calibration import (
+        apply_calibrated_predict,
+        grid_threshold_optimizer,
+        sklearn_probability_calibrator,
+    )
     x, y = load_iris(return_X_y=True)
     train_x, held_x, train_y, held_y = train_test_split(x, y, test_size=0.4, random_state=42, stratify=y)
     val_x, test_x, val_y, test_y = train_test_split(held_x, held_y, test_size=0.5, random_state=43, stratify=held_y)
@@ -250,7 +260,8 @@ def test_held_out_iris_calibration_multiclass_and_binary():
 def test_preparation_preserves_actual_iris_rows_with_and_without_seed():
     import polars as pl
     from sklearn.datasets import load_iris
-    from talos.preparation import split_random, split_sequential, split_data_to_prep_output
+
+    from talos.preparation import split_data_to_prep_output, split_random, split_sequential
     iris = load_iris()
     frame = pl.DataFrame(iris.data, schema=['sepal_length', 'sepal_width', 'petal_length', 'petal_width'])
     frame = frame.with_columns(pl.Series('species', iris.target)).with_row_index('_row')
@@ -271,6 +282,7 @@ def test_preparation_preserves_actual_iris_rows_with_and_without_seed():
 
 def test_trainer_retrain_validation_and_generic_prediction_diagnostics(tmp_path):
     from sklearn.datasets import load_iris
+
     from talos.inference import Trainer
     from talos.log import Log
     source = tmp_path / 'iris_retrain.py'
@@ -301,7 +313,6 @@ def test_trainer_retrain_validation_and_generic_prediction_diagnostics(tmp_path)
     assert len(diagnostics) == 3 and 'tp_fp_ks' in diagnostics
 
 
-
 def test_parquet_artifact_and_invalid_pruning_dry_run(project, monkeypatch):
     from talos.log import Log
     root, path = project
@@ -322,17 +333,21 @@ def test_parquet_artifact_and_invalid_pruning_dry_run(project, monkeypatch):
 
 def test_cohort_structured_multioutput_and_custom_aggregation_real_iris():
     from types import SimpleNamespace
+
     import pandas as pd
     from sklearn.datasets import load_iris
+
     from talos.cohort import Cohort
     x, _ = load_iris(return_X_y=True)
     result = SimpleNamespace(data=pd.DataFrame({'_trial_id': ['a', 'b']}),
                              details=pd.Series({'identity_hash': 'iris'}), run_dir=None,
                              metadata={}, round_history=[])
     cohort = Cohort(result=result, aggregation=lambda arrays: arrays.mean(axis=0))
+
     class Member:
         def __init__(self, identifier):
             self.permutation_id = identifier
+
         def predict(self, inputs):
             return {'features': inputs, 'measurements': (inputs[:, 0], inputs[:, 1])}
     cohort.set_members([Member('a'), Member('b')])
@@ -343,8 +358,9 @@ def test_cohort_structured_multioutput_and_custom_aggregation_real_iris():
 
 def test_source_bundle_preserves_local_packages_and_callable_candidates(tmp_path):
     import sys
-    from talos.experiment.source_snapshot import snapshot_sources, hydrate_sources
-    from talos.experiment.serialization import dumps, decode
+
+    from talos.experiment.serialization import decode, dumps
+    from talos.experiment.source_snapshot import hydrate_sources, snapshot_sources
     from talos.yaml.resolver import load_sfd
     package = tmp_path / 'owned_support'
     package.mkdir()
@@ -387,7 +403,7 @@ def test_source_bundle_preserves_local_packages_and_callable_candidates(tmp_path
 
 
 def test_source_bundle_namespace_package_and_static_lazy_import(tmp_path, monkeypatch):
-    from talos.experiment.source_snapshot import snapshot_sources, hydrate_sources
+    from talos.experiment.source_snapshot import hydrate_sources, snapshot_sources
     from talos.yaml.resolver import load_sfd
     namespace = tmp_path / 'owned_namespace'
     namespace.mkdir()
@@ -414,6 +430,7 @@ def test_source_bundle_namespace_package_and_static_lazy_import(tmp_path, monkey
 
 def test_saved_result_source_bundle_restore_without_original_main_or_helpers(tmp_path):
     import sys
+
     from talos.experiment.runner import run
     support = tmp_path / 'saved_support'
     support.mkdir()
@@ -443,8 +460,8 @@ def test_saved_result_source_bundle_restore_without_original_main_or_helpers(tmp
 
 
 def test_sensor_and_trainer_original_params_survive_metric_and_timestamp_aliases(tmp_path):
-    from talos.inference import Sensor, Trainer
     from talos.experiment.runner import RunResult
+    from talos.inference import Sensor, Trainer
     source = tmp_path / 'aliased_iris.py'
     source.write_text(
         "from sklearn.datasets import load_iris\n"
@@ -474,7 +491,8 @@ def test_sensor_and_trainer_original_params_survive_metric_and_timestamp_aliases
 def test_source_hydration_preserves_identical_callables_and_unbundled_package_modules(tmp_path, monkeypatch):
     import importlib
     import sys
-    from talos.experiment.source_snapshot import snapshot_sources, hydrate_sources
+
+    from talos.experiment.source_snapshot import hydrate_sources, snapshot_sources
     package = tmp_path / 'caller_cache'
     package.mkdir()
     (package / '__init__.py').write_text('')
@@ -550,6 +568,7 @@ def test_fresh_cli_resume_deleted_sources_preserves_completed_models_and_parquet
     import hashlib
     import os
     import sys
+
     import polars as pl
     project = tmp_path / 'portable_project'
     project.mkdir()
@@ -729,7 +748,8 @@ def test_same_iris_sfd_tuple_ranges_native_manifest_and_resume(tmp_path):
 
 def test_source_bundle_excludes_target_installed_distribution(tmp_path, monkeypatch):
     import importlib
-    from talos.experiment.source_snapshot import snapshot_sources, hydrate_sources
+
+    from talos.experiment.source_snapshot import hydrate_sources, snapshot_sources
     from talos.yaml.resolver import load_sfd
     target = tmp_path / 'alternate_dependencies'
     package = target / 'alternate_dependency'
@@ -768,7 +788,8 @@ def test_source_bundle_excludes_target_installed_distribution(tmp_path, monkeypa
 
 def test_source_bundle_resolves_full_module_namespace_without_leaf_alias(tmp_path, monkeypatch):
     import importlib
-    from talos.experiment.source_snapshot import snapshot_sources, hydrate_sources
+
+    from talos.experiment.source_snapshot import hydrate_sources, snapshot_sources
     package = tmp_path / 'qualified_caller'
     package.mkdir()
     (package / '__init__.py').write_text('')

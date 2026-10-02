@@ -113,6 +113,7 @@ def main(output_dir):
     import json
 
     import numpy as np
+
     import talos
 
     my_splits = prepare_data()

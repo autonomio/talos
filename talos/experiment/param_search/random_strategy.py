@@ -1,8 +1,9 @@
+"""Sample unique parameter combinations with reproducible state."""
+
 from __future__ import annotations
 
 import random
-from typing import Any
-from typing import cast
+from typing import Any, cast
 
 from typing_extensions import override
 
@@ -29,7 +30,6 @@ class RandomStrategy(SearchStrategy):
         self._rng = random.Random(seed)
         self._refresh_cache()
 
-
     def _refresh_cache(self) -> None:
 
         '''Snapshot sorted keys and values from domain to avoid repeated defensive copies.'''
@@ -38,14 +38,12 @@ class RandomStrategy(SearchStrategy):
         self._stable_keys = sorted(params)
         self._cached_values = {k: params[k] for k in self._stable_keys}
 
-
     @override
     def on_domain_changed(
         self, _domain: ParamDomain, _changed_params: list[str],
     ) -> None:
 
         self._refresh_cache()
-
 
     @override
     def __next__(self) -> dict[str, Any]:
@@ -67,7 +65,6 @@ class RandomStrategy(SearchStrategy):
                 return combo
         raise StopIteration
 
-
     @override
     def get_state(self) -> dict[str, Any]:
 
@@ -75,7 +72,6 @@ class RandomStrategy(SearchStrategy):
             'rng_state': self._rng.getstate(),
             'generated_count': self._generated_count,
         }
-
 
     @override
     def set_state(self, state: dict[str, Any]) -> None:

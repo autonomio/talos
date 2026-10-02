@@ -1,5 +1,12 @@
 # Changelog
 
+# v2.0.4
+
+- Enforce the documented Python style with zero findings across maintained source, tools, tests and examples, retaining existing quality and typing ratchets.
+- Preserve scientific and archive behavior while correcting import ordering, whitespace, docstrings and explicit export lists.
+- Record the six-month regression ledger, verified master coverage and network and credential trust boundaries for the OpenSSF assessment.
+- Explain Sigstore verification and signing-key custody for consumers of future authorized release artifacts.
+
 # v2.0.3
 
 - Restore familiar README navigation and notebook introductions, preserve historical citations and systemize version-specific software and experiment references.

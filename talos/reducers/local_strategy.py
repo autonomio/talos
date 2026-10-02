@@ -1,9 +1,11 @@
-import hashlib
-from pathlib import Path
-import types
-import sys
+"""Audit and recover live model, data and local-file strategy changes."""
 
-from talos.experiment.serialization import encode, decode, content_hash, callable_reference
+import hashlib
+import sys
+import types
+from pathlib import Path
+
+from talos.experiment.serialization import callable_reference, content_hash, decode, encode
 
 _CONTROL_FIELDS = ('model', 'reduction_method', 'reduction_interval', 'reduction_window',
                    'reduction_threshold', 'reduction_metric', 'minimize_loss', 'performance_target',
@@ -124,8 +126,7 @@ def capture_live_controls(scan, source_model):
     run_dir = Path(scan._experiment_log).parent
     strategy = getattr(scan, '_local_strategy_function', None)
     model = scan.model if model_changed else None
-    bundle = snapshot_sources(model, strategy,
-                              [getattr(scan, name) for name in controls], run_dir)
+    bundle = snapshot_sources(model, strategy, [getattr(scan, name) for name in controls], run_dir)
     return {'controls': controls, 'data': data,
             'model_reference': callable_reference(model) if model_changed else None,
             'model_sources': bundle,
@@ -137,7 +138,7 @@ def restore_live_controls(scan, state):
     """Restore saved controls after code/configuration identity validation."""
     if state is None:
         return
-    from talos.experiment.source_snapshot import verify_sources, hydrate_sources
+    from talos.experiment.source_snapshot import hydrate_sources, verify_sources
     run_dir = Path(scan._experiment_log).parent
     bundle = state.get('model_sources')
     if bundle:

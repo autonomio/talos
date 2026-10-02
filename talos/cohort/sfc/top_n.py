@@ -1,5 +1,6 @@
-from typing import Any
-from typing import TypeGuard
+"""Rank parameter cohorts by caller-selected objective metrics."""
+
+from typing import Any, TypeGuard
 
 import numpy as np
 import polars as pl
