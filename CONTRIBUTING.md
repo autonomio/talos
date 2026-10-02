@@ -4,6 +4,17 @@ Read [CLAUDE.md](CLAUDE.md) and [Talos repository specifics](TALOS_REPO_SPECIFIC
 
 ## Verification
 
+New features must include automated tests, and fixes must include a regression
+test whenever the defect can be reproduced automatically. Reviewers verify the
+observable behavior and affected framework/archive contracts before accepting
+a change. Update the corresponding documentation with each interface change.
+
+Follow PEP 8 and the pinned Ruff rules. Required CI enforces the basic error
+rules and the strict measured-debt ratchet; a change must not add a warning or
+increase inherited debt. A passing ratchet does not mean the historical code
+has no style or typing findings. [Configuration](docs/Developer/Configuration.md)
+records those measured limits.
+
 ```sh
 pip install -e '.[test,plots,samplers,tensorflow,torch]'
 ruff check talos tools tests/test_*.py

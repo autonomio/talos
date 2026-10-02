@@ -30,6 +30,24 @@ Annual compatibility and recovery maintenance verifies the declared Python/backe
 
 The executable procedure and accepted evidence belong in [maintenance verification](Maintenance.md). This page supplies direction rather than duplicating its commands or claiming tests that have not run.
 
+## October 2026 to October 2027
+
+This planning horizon runs from October 1, 2026 through October 1, 2027.
+Maintainers review it when dependency support or scientific behavior changes.
+Dates identify planned review periods, not promised releases.
+
+| Period | Planned work | Acceptance evidence |
+|---|---|---|
+| October–December 2026 | Verify the adopted default-branch controls, full-framework coverage and the next authorized release's signatures | Required CI, complete-package statement coverage, scoped ruleset audit and verified release assets |
+| January–March 2027 | Review Python, Keras, TensorFlow and PyTorch compatibility and upstream deprecations | Current/minimum resolver audits and framework training/archive tests |
+| April–June 2027 | Review historical archive readers, custom objects and interrupted recovery | Fresh-process restoration, source/data mismatch rejection and resumed-run equivalence |
+| July–September 2027 | Review metric direction, cohort selection, causal transforms and runnable documentation | Scientific behavior tests and the complete documentation execution manifest |
+| By October 1, 2027 | Complete the annual maintenance procedure and revise this horizon | The retained maintenance verification record for the selected candidate |
+
+Finance-specific indicators, backtesting, built-in data acquisition and hosted
+model execution remain outside this plan. The focus is parameter sweeps,
+scientific correctness, framework compatibility and reproducible recovery.
+
 ## Contribute
 
 You can contribute by using Talos, writing or teaching about it, creating examples, recommending it, testing it, contributing code or regression checks, making feature requests, and improving the documentation.

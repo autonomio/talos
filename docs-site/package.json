@@ -48,7 +48,8 @@
     "qs": "6.16.0",
     "svgo": "3.3.5",
     "undici": "7.30.0",
-    "image-size": "2.0.4"
+    "image-size": "2.0.4",
+    "webpack-dev-middleware": "7.4.6"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.12.1",

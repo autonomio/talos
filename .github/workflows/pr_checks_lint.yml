@@ -39,7 +39,7 @@ jobs:
         run: npm --prefix docs-site ci
 
       - name: Install documentation browser
-        run: npm --prefix docs-site exec -- playwright install --with-deps chromium
+        run: node docs-site/node_modules/playwright/cli.js install --with-deps chromium
 
       - name: Audit documentation dependencies
         run: npm --prefix docs-site run security:audit

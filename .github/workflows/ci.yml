@@ -1,5 +1,8 @@
 name: Test and build
-on: [push, pull_request]
+on:
+  push:
+    branches: [master]
+  pull_request:
 permissions:
   contents: read
 jobs:
@@ -93,6 +96,9 @@ jobs:
     name: Execute documentation and examples
     runs-on: ubuntu-latest
     env:
+      TALOS_COVERAGE_ROOT: ${{ github.workspace }}
+      COVERAGE_RCFILE: ${{ github.workspace }}/.github/coverage-full.toml
+      COVERAGE_FILE: ${{ github.workspace }}/.coverage-full
       KERAS_BACKEND: tensorflow
       KERAS_TORCH_DEVICE: cpu
       CUDA_VISIBLE_DEVICES: '-1'
@@ -117,8 +123,15 @@ jobs:
           cache: npm
           cache-dependency-path: docs-site/package-lock.json
       - run: npm --prefix docs-site ci
-      - run: npm --prefix docs-site exec -- playwright install --with-deps chromium
-      - run: python tools/verify_documentation.py --output-dir verification-output
+      - run: node docs-site/node_modules/playwright/cli.js install --with-deps chromium
+      - name: Measure the complete framework acceptance suite
+        run: python -m coverage run -m pytest -q
+      - run: python -m coverage run tools/verify_documentation.py --output-dir verification-output
+      - name: Require complete package statement coverage
+        run: |
+          python -m coverage combine --append --keep
+          python -m coverage json -o verification-output/coverage.json
+          python tools/check_statement_coverage.py verification-output/coverage.json
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         if: always()
         with:

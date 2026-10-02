@@ -285,8 +285,8 @@
     "governance/comparison_ref.py": 12
   },
   "coverage": {
-    "line": 67,
-    "branch": 56
+    "line": 70,
+    "branch": 59
   },
   "runtime": {
     "max_total_seconds": 234,

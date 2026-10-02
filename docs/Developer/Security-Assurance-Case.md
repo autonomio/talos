@@ -25,7 +25,39 @@ A manifest establishes recorded identities and execution evidence. It does not c
 
 The checked-in `master` snapshot requires green checks, eligible non-author approval, enforcement-surface code-owner review, resolved threads and an up-to-date branch, and blocks force pushes/deletion. Native CodeQL code-scanning protection blocks new security findings at every severity. A successful analysis/upload job alone does not establish an alert-free change. Copilot review requests run automatically; the ruleset separately requires an eligible non-author approval. The live ruleset gate detects drift; the privileged post-merge audit also inspects bypass actors.
 
-At adoption the complete check/review ruleset is a target control. Existing classic protection already covers administrators, force pushes and up-to-date branches, but supplies no required checks or reviews. Without an installed ruleset, `RULESET_ID` and the audit credential, local contract tests cannot prove reviewed integration is enforced on GitHub.
+Live ruleset `24306812` was active with exact snapshot parity and no bypass
+actors when [PR 608](https://github.com/autonomio/talos/pull/608) merged on
+1 October 2026. `bit-mis` supplied the eligible non-author approval. The
+[post-merge privileged audit](https://github.com/autonomio/talos/actions/runs/36893895454)
+passed with the scoped organization token, including bypass-actor inspection.
+The [master CodeQL analysis](https://github.com/autonomio/talos/actions/runs/36893895563)
+also passed. These observations apply to merge commit
+`9783406eafd0c9d72d00010aeffb379a534a5349`; future settings and changes need
+their own evidence.
+
+## Secure design and common weaknesses
+
+The controls below apply to local execution and repository integration. They
+explain the implementation choices; they do not attest to a maintainer's
+personal security knowledge or make hostile user code safe.
+
+| Principle or weakness | Talos control and limit |
+| --- | --- |
+| Least privilege | PR workflows declare read permissions; release attachment has a separate write job without checkout or training execution |
+| Complete mediation and fail-safe defaults | Issue parsers reject invalid contracts; release validation rejects source, signature and digest mismatches before attachment |
+| Open design and economy of mechanism | Public source, documented interfaces and one executor serve Python, SFD and CLI callers |
+| Separation of privilege | Protected integration requires an eligible non-author approval; PyPI publication has its own environment and enablement |
+| Least common mechanism | Optional frameworks load through their declared backend; no shared hosted account or multitenant execution service exists |
+| Psychological acceptability | Trust requirements are stated at archive/model entry points; invalid identities fail visibly |
+| Limited attack surface and input validation | No finance service or hosted arbitrary-code endpoint; CLI/schema validation and containment checks guard recorded inputs |
+| Defense in depth and unnecessary risk | Hash pins, dependency audits, CodeQL, reviewed integration and artifact verification cover different failure modes |
+| Injection and untrusted deserialization | User callbacks, SFD Python and serialized framework objects require trusted origins; Talos does not advertise a sandbox |
+| Path traversal and integrity | Archive extraction in `talos/commands/restore.py` validates destination containment; `talos/experiment/source_snapshot.py` checks source-bundle containment and recorded digests |
+| Authentication and credential exposure | Talos has no account/password store; Actions credentials stay in declared jobs and are not persisted by checkout |
+
+Scientific correctness is a separate boundary: causal preprocessing, metric
+direction, seed semantics and recovery identity need behavioral tests even
+when a security analyzer reports no findings.
 
 ## Law/configuration agreement
 
@@ -52,7 +84,7 @@ Property tests feed arbitrary strings to issue-body parsers and assert determini
 - Model/SFD code and archive serialization require trusted origins.
 - Legacy framework support can retain upstream advisories; current-lane success does not erase them.
 - Static analysis and generated parser inputs cannot prove scientific validity or all runtime behavior.
-- Live branch protection, credential scopes, release environment and publisher must be verified externally.
+- Live branch protection and audit credentials have dated external proof; release execution, release environment and PyPI publisher still need verification.
 - Continuity depends on eligible maintainers and reviewers in [MAINTAINERS.md](../../MAINTAINERS.md).
 
 ## Verify a claim
@@ -63,6 +95,7 @@ Record candidate hashes and distinguish source, local execution, CI and live con
 
 ## Read next
 
+- [OpenSSF evidence](OpenSSF.md)
 - [Release policy](Release-Policy.md)
 - [Packaging](Packaging.md)
 - [Configuration](Configuration.md)

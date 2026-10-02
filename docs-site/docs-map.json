@@ -698,6 +698,13 @@
       "slug": "/developer/writing-docstrings",
       "sidebarPosition": 75,
       "sidebarLabel": "Writing Docstrings"
+    },
+    {
+      "source": "docs/Developer/OpenSSF.md",
+      "dest": "developer/openssf.md",
+      "slug": "/developer/openssf",
+      "sidebarPosition": 76,
+      "sidebarLabel": "OpenSSF evidence"
     }
   ]
 }

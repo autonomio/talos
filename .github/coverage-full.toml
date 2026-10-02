@@ -1,0 +1,9 @@
+[tool.coverage.run]
+source = ["${TALOS_COVERAGE_ROOT?}/talos"]
+branch = true
+parallel = true
+patch = ["subprocess"]
+
+[tool.coverage.report]
+include = ["${TALOS_COVERAGE_ROOT?}/talos/*"]
+show_missing = true
