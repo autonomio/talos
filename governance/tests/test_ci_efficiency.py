@@ -28,6 +28,9 @@ def test_required_test_and_lint_names_share_same_run_successful_coverage() -> No
     runs = '\n'.join(step.get('run', '') for step in producer)
     assert '-m pytest governance/tests/ -q' in runs
     assert 'coverage_evidence.py --write' in runs
+    assert jobs['pr_checks_tests']['outputs']['coverage_attempt'] == '${{ steps.evidence.outputs.attempt }}'
+    evidence = next(step for step in producer if step.get('id') == 'evidence')
+    assert 'attempt=$GITHUB_RUN_ATTEMPT' in evidence['run']
     assert producer.index(upload) > next(index for index, step in enumerate(producer)
                                          if step.get('name') == 'Enforce the suite runtime budget')
     steps = lint['steps']
@@ -35,6 +38,8 @@ def test_required_test_and_lint_names_share_same_run_successful_coverage() -> No
     download = next(step for step in steps if 'download-artifact@' in step.get('uses', ''))
     assert download['with'] == {'artifact-ids': '${{ needs.pr_checks_tests.outputs.coverage_artifact }}'}
     assert 'continue-on-error' not in download
+    verify = next(step for step in steps if 'coverage_evidence.py --verify' in step.get('run', ''))
+    assert verify['env']['TEST_PRODUCER_ATTEMPT'] == '${{ needs.pr_checks_tests.outputs.coverage_attempt }}'
     assert not any('-m pytest' in step.get('run', '') for step in steps)
     publisher = jobs['publish_coverage_comment']
     assert publisher['permissions']['pull-requests'] == 'write'

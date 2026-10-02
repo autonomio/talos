@@ -28,6 +28,7 @@ def evidence(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setenv('GITHUB_SHA', source)
     monkeypatch.setenv('GITHUB_RUN_ID', '123')
     monkeypatch.setenv('GITHUB_RUN_ATTEMPT', '1')
+    monkeypatch.setenv('TEST_PRODUCER_ATTEMPT', '1')
     coverage_evidence.RECEIPT.write_text(json.dumps(coverage_evidence.binding()))
     return tmp_path
 
@@ -36,7 +37,7 @@ def test_successful_same_source_and_run_evidence(evidence: Path) -> None:
     coverage_evidence.verify()
 
 
-@pytest.mark.parametrize('name', ['GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT', 'GITHUB_SHA'])
+@pytest.mark.parametrize('name', ['GITHUB_RUN_ID', 'TEST_PRODUCER_ATTEMPT', 'GITHUB_SHA'])
 def test_foreign_run_attempt_or_source_is_rejected(
     evidence: Path, monkeypatch: pytest.MonkeyPatch, name: str,
 ) -> None:
@@ -56,3 +57,10 @@ def test_missing_producer_receipt_is_rejected(evidence: Path) -> None:
     coverage_evidence.RECEIPT.unlink()
     with pytest.raises(FileNotFoundError):
         coverage_evidence.verify()
+
+
+def test_consumer_retry_reuses_the_exact_successful_producer_attempt(
+    evidence: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv('GITHUB_RUN_ATTEMPT', '2')
+    coverage_evidence.verify()

@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 RECEIPT = ROOT / 'coverage-evidence.json'
 
 
-def binding() -> dict[str, str]:
+def binding(attempt: str | None = None) -> dict[str, str]:
     """Compute the exact producer/consumer identity; absent evidence fails loudly."""
     source = subprocess.check_output(
         ['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True,
@@ -23,6 +23,8 @@ def binding() -> dict[str, str]:
     ).hexdigest()}
     for name in ('GITHUB_SHA', 'GITHUB_RUN_ID', 'GITHUB_RUN_ATTEMPT'):
         result[name] = os.environ[name]
+    if attempt is not None:
+        result['GITHUB_RUN_ATTEMPT'] = attempt
     if source != result['GITHUB_SHA']:
         raise ValueError('coverage checkout differs from the workflow source')
     for name in ('dev-env.txt', 'runtime-env.txt', 'build-tools.txt'):
@@ -32,7 +34,7 @@ def binding() -> dict[str, str]:
 
 def verify() -> None:
     """Reject stale, tampered, missing or foreign test-run coverage."""
-    if json.loads(RECEIPT.read_text(encoding='utf-8')) != binding():
+    if json.loads(RECEIPT.read_text(encoding='utf-8')) != binding(os.environ['TEST_PRODUCER_ATTEMPT']):
         raise ValueError('coverage evidence differs from this source, run, attempt or lock set')
 
 

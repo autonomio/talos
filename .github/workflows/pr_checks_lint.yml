@@ -22,6 +22,7 @@ jobs:
     timeout-minutes: 20
     outputs:
       coverage_artifact: ${{ steps.coverage.outputs.artifact-id }}
+      coverage_attempt: ${{ steps.evidence.outputs.attempt }}
 
     steps:
       - name: Checkout
@@ -65,10 +66,12 @@ jobs:
         run: python governance/check_test_runtime.py --profile runtime-artifacts/profile.json --enforce
 
       - name: Run governance contracts and complete coverage
+        id: evidence
         run: |
           python -m coverage run --append --branch --source="${{ steps.package.outputs.coverage_source }}" -m pytest governance/tests/ -q
           python -m coverage json -o coverage.json
           python governance/coverage_evidence.py --write
+          echo "attempt=$GITHUB_RUN_ATTEMPT" >> "$GITHUB_OUTPUT"
 
       - name: Upload coverage artifact
         id: coverage
@@ -209,6 +212,8 @@ jobs:
           artifact-ids: ${{ needs.pr_checks_tests.outputs.coverage_artifact }}
 
       - name: Verify test evidence and enforce coverage floor
+        env:
+          TEST_PRODUCER_ATTEMPT: ${{ needs.pr_checks_tests.outputs.coverage_attempt }}
         run: |
           .venv-lint/bin/python governance/coverage_evidence.py --verify
           .venv-lint/bin/python governance/check_coverage_floor.py

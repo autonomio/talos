@@ -114,8 +114,8 @@ Change the reader, configuration, workflow mirror, law or snapshot and its tests
 governance contracts append coverage afterward. Lint consumes the successful
 producer's immutable artifact ID from the same workflow run. Its receipt binds
 the tested commit, run, attempt, lockfiles and coverage bytes; absent or changed
-evidence fails the lint gate. Rerun the entire workflow to regenerate evidence
-for a new attempt. The comment publisher has a separate write token and never
+evidence fails the lint gate. A failed consumer can rerun against the original successful producer attempt
+and immutable artifact ID. The comment publisher has a separate write token and never
 checks out or executes pull-request source.
 
 Source checks cancel superseded heads and have total job timeouts. Core and
