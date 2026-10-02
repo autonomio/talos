@@ -107,7 +107,7 @@ matter to your analysis.
 ## Historical citation
 
 The established README at
-[commit 715d2b6](https://github.com/autonomio/talos/blob/715d2b6477c775d0444dbaa88a37624d4577e07b/README.md#loudspeaker-citations)
+[commit 715d2b6](https://raw.githubusercontent.com/autonomio/talos/715d2b6477c775d0444dbaa88a37624d4577e07b/README.md)
 requested this citation:
 
 > Autonomio Talos [Computer software]. (2024). Retrieved from <http://github.com/autonomio/talos>.
@@ -119,9 +119,9 @@ was published on 21 April 2024 and corresponds to the
 Include the version actually used rather than assigning 1.4 to all work dated 2024.
 
 Earlier README citation variants used
-[2018](https://github.com/autonomio/talos/blob/a9fbe3550af3511ff53b51e3327ec9f090e46849/README.md#citations),
-[2019](https://github.com/autonomio/talos/blob/21452f07b281017c7035ac4a84a011b1b82b170e/README.md#loudspeaker-citations)
-and [2020](https://github.com/autonomio/talos/blob/7da4983b47a3f7d0c464a5c6c8ed4828478155c5/README.md#loudspeaker-citations).
+[2018](https://raw.githubusercontent.com/autonomio/talos/a9fbe3550af3511ff53b51e3327ec9f090e46849/README.md),
+[2019](https://raw.githubusercontent.com/autonomio/talos/21452f07b281017c7035ac4a84a011b1b82b170e/README.md)
+and [2020](https://raw.githubusercontent.com/autonomio/talos/7da4983b47a3f7d0c464a5c6c8ed4828478155c5/README.md).
 
 ## If citation details are missing
 
