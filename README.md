@@ -92,7 +92,7 @@ In the methods or supplementary material, retain the Talos and framework version
 
 The original citation remains available for earlier work:
 
-> Autonomio Talos [Computer software]. (2024). Retrieved from <http://github.com/autonomio/talos>.
+> Autonomio Talos [Computer software]. (2024). Retrieved from <https://github.com/autonomio/talos>.
 
 Earlier README citation versions: [2018](https://raw.githubusercontent.com/autonomio/talos/a9fbe3550af3511ff53b51e3327ec9f090e46849/README.md), [2019](https://raw.githubusercontent.com/autonomio/talos/21452f07b281017c7035ac4a84a011b1b82b170e/README.md), [2020](https://raw.githubusercontent.com/autonomio/talos/7da4983b47a3f7d0c464a5c6c8ed4828478155c5/README.md), [2024](https://raw.githubusercontent.com/autonomio/talos/715d2b6477c775d0444dbaa88a37624d4577e07b/README.md).
 

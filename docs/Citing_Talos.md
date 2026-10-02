@@ -110,7 +110,7 @@ The established README at
 [commit 715d2b6](https://raw.githubusercontent.com/autonomio/talos/715d2b6477c775d0444dbaa88a37624d4577e07b/README.md)
 requested this citation:
 
-> Autonomio Talos [Computer software]. (2024). Retrieved from <http://github.com/autonomio/talos>.
+> Autonomio Talos [Computer software]. (2024). Retrieved from <https://github.com/autonomio/talos>.
 
 That text remains available for earlier work. It contains a citation year;
 it does not identify an exact Talos release. [Talos 1.4](https://pypi.org/project/talos/1.4/)
