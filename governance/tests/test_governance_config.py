@@ -68,7 +68,8 @@ def _required_status_contexts() -> list[str]:
 
 
 # The packaging gate builds on the pinned interpreter and then proves the
-# wheel installs on every supported one. Every other workflow pins.
+# wheel installs on every supported one. The owned legacy monitor pins its
+# required Python 3.11 lane; other workflows pin the governance interpreter.
 MULTI_INTERPRETER_WORKFLOWS: frozenset[str] = frozenset({'pr_checks_packaging.yml', 'ci.yml', 'security.yml'})
 
 
@@ -231,6 +232,10 @@ def test_workflow_runtime_and_tooling_match_config() -> None:
 
     assert _setup_python_versions()
     for workflow_name, versions in _setup_python_versions().items():
+        if workflow_name == 'dependency_monitor.yml':
+            # TensorFlow 2.14 cannot install on the governance Python 3.12.
+            assert versions == ['3.11'], workflow_name
+            continue
         if workflow_name in MULTI_INTERPRETER_WORKFLOWS:
             # The install matrix exists to prove the wheel imports on every
             # supported interpreter, so it cannot pin one. Matrix expressions

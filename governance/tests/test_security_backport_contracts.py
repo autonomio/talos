@@ -116,6 +116,7 @@ def test_owned_dependency_monitor_is_periodic_bounded_and_not_a_pr_burst():
     assert list(data['jobs']) == ['monitor_dependencies']
     job = data['jobs']['monitor_dependencies']
     assert job['timeout-minutes'] == 15
+    assert job['steps'][1]['with']['python-version'] == '3.11'
     commands = '\n'.join(step.get('run', '') for step in job['steps'])
     assert 'pip install --require-hashes -r requirements/ci/legacy-3.11.txt' in commands
     assert 'tools.security.legacy_audit --execute' in commands
