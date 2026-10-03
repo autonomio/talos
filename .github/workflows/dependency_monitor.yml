@@ -1,0 +1,51 @@
+name: Monitor dependency security
+on:
+  schedule:
+    - cron: '20 2 * * 4'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: dependency-security-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  monitor_dependencies:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: '3.11'
+      - name: Reconstruct the reviewed owned legacy wheels
+        run: python -m tools.security.wheels --cache legacy-wheel-cache --output dist
+      - name: Install the exact legacy dependency graph
+        run: python -m pip install --require-hashes -r requirements/ci/legacy-3.11.txt
+      - name: Check dependency consistency
+        run: python -m pip check
+      - name: Audit original upstream identities and require verified dispositions
+        run: |
+          python -m tools.security.legacy_audit --lock requirements/ci/legacy-3.11.txt --requirements legacy-audit-requirements.txt --identities legacy-audit-identities.json
+          python -m tools.security.legacy_audit --execute --requirements legacy-audit-requirements.txt --audit legacy-audit.json --identities legacy-audit-identities.json --output legacy-advisory-dispositions.json
+      - if: ${{ !cancelled() }}
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38  # v6.5.0
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: docs-site/package-lock.json
+      - if: ${{ !cancelled() }}
+        run: npm --prefix docs-site ci
+      - if: ${{ !cancelled() }}
+        run: npm --prefix docs-site run security:audit
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        if: always()
+        with:
+          name: dependency-security-monitor
+          path: |
+            legacy-audit.json
+            legacy-audit-identities.json
+            legacy-audit-requirements.txt
+            legacy-advisory-dispositions.json
+            dist/receipts.json

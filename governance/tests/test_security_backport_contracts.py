@@ -6,8 +6,10 @@ import json
 import subprocess
 import sys
 import zipfile
+from pathlib import Path
 
 import pytest
+import yaml
 
 from tools.security.legacy_audit import dispositions
 from tools.security.patches import apply_patch, digest
@@ -102,3 +104,23 @@ def test_auditor_execution_error_cannot_accept_a_stale_report(tmp_path, monkeypa
     with pytest.raises(ValueError, match='auditor failed: exit 2'):
         main()
     assert not output.exists()
+
+
+def test_owned_dependency_monitor_is_periodic_bounded_and_not_a_pr_burst():
+    workflow = Path(__file__).resolve().parents[2] / '.github/workflows/dependency_monitor.yml'
+    data = yaml.safe_load(workflow.read_text())
+    triggers = data.get('on', data.get(True))
+    assert set(triggers) == {'schedule', 'workflow_dispatch'}
+    assert triggers['schedule'] == [{'cron': '20 2 * * 4'}]
+    assert data['permissions'] == {'contents': 'read'}
+    assert list(data['jobs']) == ['monitor_dependencies']
+    job = data['jobs']['monitor_dependencies']
+    assert job['timeout-minutes'] == 15
+    commands = '\n'.join(step.get('run', '') for step in job['steps'])
+    assert 'pip install --require-hashes -r requirements/ci/legacy-3.11.txt' in commands
+    assert 'tools.security.legacy_audit --execute' in commands
+    assert 'npm --prefix docs-site run security:audit' in commands
+    assert not any(step.get('continue-on-error') for step in job['steps'])
+    retention = job['steps'][-1]
+    assert retention['if'] == 'always()'
+    assert 'legacy-advisory-dispositions.json' in retention['with']['path']

@@ -58,6 +58,10 @@ lookup identities and dispositions. `tools/security/legacy-advisories.json`
 binds each known finding to repair tests or absent Keras 3-only modules.
 New IDs, missing dependencies, altered sources and auditor errors fail.
 No package rename or broad vulnerability ignore removes advisory evidence.
+The single-job `dependency_monitor.yml` repeats the legacy upstream lookup and
+documentation audit every Thursday at 02:20 UTC, after the three staggered
+Dependabot update days. It has a 15-minute timeout and no pull-request trigger.
+Failures retain audit evidence; new fixes require a reviewed PR.
 
 The documentation toolchain applies source-bound patches to every installed
 `braces` 3.0.3 and `http-cache-semantics` 4.2.0 copy during `npm ci`. Tests reject

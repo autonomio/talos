@@ -4,6 +4,7 @@
 
 - Backport reviewed legacy framework and documentation dependency security fixes while preserving original model predictions and explicit trusted deserialization.
 - Require hash-pinned owned Keras/Protobuf wheels in the legacy extra and CI; retain upstream findings and reject unproved advisory dispositions.
+- Monitor owned dependency upstream identities and documentation advisories in one bounded weekly job without increasing PR fan-out.
 - Include the owned dependency wheels in signed GitHub release artifacts, keeping the Talos-only PyPI upload separate.
 
 # v2.0.6
