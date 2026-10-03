@@ -26,7 +26,7 @@ dependencies = [
   "numpy>=1.26,<3", "pandas>=2.2,<3", "polars>=1.30,<2",
   "scikit-learn>=1.5,<2", "scipy>=1.11,<2",
   "click>=8.3.3,<9", "ruamel.yaml>=0.18,<0.19", "tqdm>=4.66.3,<5",
-  "requests>=2.33,<3", "typing_extensions>=4.12,<5",
+  "requests>=2.33,<3", "typing_extensions>=4.16.0,<5",
   "tomli>=2,<3; python_version < '3.11'",
 ]
 
