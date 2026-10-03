@@ -10,4 +10,4 @@ pip-audit>=2.7,<3
 build>=1.2,<2
 twine>=5,<7
 check-manifest>=0.50,<1
-pyroma>=4,<6
+pyroma>=5.0.1,<6
