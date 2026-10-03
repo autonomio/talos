@@ -9,5 +9,5 @@ vulture>=2.14,<3
 pip-audit>=2.7,<3
 build>=1.2,<2
 twine>=5,<7
-check-manifest>=0.50,<1
+check-manifest>=0.51,<1
 pyroma>=4,<6
