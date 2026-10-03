@@ -23,26 +23,26 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 dependencies = [
-  "numpy>=1.26,<3", "pandas>=2.2,<3", "polars>=1.30,<2",
-  "scikit-learn>=1.5,<2", "scipy>=1.11,<2",
-  "click>=8.3.3,<9", "ruamel.yaml>=0.18,<0.19", "tqdm>=4.66.3,<5",
-  "requests>=2.33,<3", "typing_extensions>=4.12,<5",
+  "numpy>=2.2.6,<3", "pandas>=2.3.3,<3", "polars>=1.44.2,<2",
+  "scikit-learn>=1.7.2,<2", "scipy>=1.15.3,<2",
+  "click>=8.5.0,<9", "ruamel.yaml>=0.19.1,<0.20", "tqdm>=4.70.1,<5",
+  "requests>=2.34.2,<3", "typing_extensions>=4.16.0,<5",
   "tomli>=2,<3; python_version < '3.11'",
 ]
 
 [project.optional-dependencies]
 dev = [
-  "pytest>=8,<10", "hypothesis>=6.100,<7", "ruff==0.16.1", "pyright==1.1.408",
-  "vulture>=2.14,<3", "coverage[toml]>=7.6,<8", "pyyaml>=6.0,<7",
-  "pip-audit>=2.7,<3", "build>=1.2,<2", "hatchling==1.32.4", "editables>=0.5,<1",
+  "pytest>=9.1.1,<10", "hypothesis>=6.168.3,<7", "ruff==0.16.9", "pyright==1.1.414",
+  "vulture>=2.16,<3", "coverage[toml]>=7.16.2,<8", "pyyaml>=6.0.3,<7",
+  "pip-audit>=2.10.1,<3", "build>=1.6.1,<2", "hatchling==1.32.4", "editables>=0.6,<1",
 ]
 keras = ["keras>=3.15,<4"]
-tensorflow = ["tensorflow>=2.20,<3", "keras>=3.15,<4", "protobuf>=6.33.5,<8"]
-torch = ["torch>=2.13,<3"]
-legacy-tensorflow = ["tensorflow==2.14.1", "keras==2.14.0", "numpy>=1.26,<2"]
-plots = ["matplotlib>=3.8,<4"]
+tensorflow = ["tensorflow>=2.21.0,<3", "keras>=3.15,<4", "protobuf>=7.36.2,<8"]
+torch = ["torch>=2.14.0,<3"]
+legacy-tensorflow = ["tensorflow==2.21.0", "keras==2.14.0", "numpy>=2.2.6,<3"]
+plots = ["matplotlib>=3.10.9,<4"]
 samplers = []
-test = ["pytest>=8,<10", "coverage>=7,<8", "build>=1.2,<2", "hatchling==1.32.4,<2", "editables>=0.5,<1", "ruff==0.16.1"]
+test = ["pytest>=9.1.1,<10", "coverage>=7.16.2,<8", "build>=1.6.1,<2", "hatchling==1.32.4,<2", "editables>=0.6,<1", "ruff==0.16.9"]
 
 [project.scripts]
 talos = "talos.cli.main:cli"
