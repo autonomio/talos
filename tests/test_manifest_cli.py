@@ -775,12 +775,13 @@ def test_source_bundle_excludes_target_installed_distribution(tmp_path, monkeypa
             'alternate_dependency/integration.py,,\n'
             f'{metadata.name}/METADATA,,\n'
             f'{metadata.name}/RECORD,,\n')
-    elif metadata_kind == 'egg-sources':
+    else:
+        # Older Python reads SOURCES; newer Python prefers installed-files.
         (metadata / 'SOURCES.txt').write_text(
             'alternate_dependency/__init__.py\nalternate_dependency/integration.py\n')
-    else:
-        (metadata / 'installed-files.txt').write_text(
-            '../alternate_dependency/__init__.py\n../alternate_dependency/integration.py\n')
+        if metadata_kind == 'egg-installed':
+            (metadata / 'installed-files.txt').write_text(
+                '../alternate_dependency/__init__.py\n../alternate_dependency/integration.py\n')
     monkeypatch.syspath_prepend(str(target))
     importlib.invalidate_caches()
     source = tmp_path / 'caller_target_dependency.py'
