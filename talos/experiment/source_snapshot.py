@@ -1,5 +1,6 @@
 """Verified snapshots of caller Python modules, excluding installed dependencies."""
 import ast
+import csv
 import hashlib
 import importlib
 import importlib.machinery
@@ -22,9 +23,12 @@ def _distribution_paths():
     directories, files = set(), set()
     for distribution in importlib.metadata.distributions():
         top_levels = set((distribution.read_text('top_level.txt') or '').split())
-        for entry in distribution.files or ():
+        # Only one existing record is needed to establish each owned root.
+        # Distribution.files materializes hashes and stats every wheel member.
+        record = distribution.read_text('RECORD')
+        for entry in (Path(row[0]) for row in csv.reader(record.splitlines())) if record else distribution.files or ():
             parts = entry.parts
-            if parts and parts[0] not in ('.', '..'):
+            if parts and parts[0] not in top_levels | {'.', '..'} and Path(distribution.locate_file(entry)).exists():
                 top_levels.add(parts[0])
         for name in top_levels:
             if name.endswith(('.dist-info', '.egg-info')):
@@ -72,8 +76,7 @@ def _local_path(path, distributions=None):
 
 
 def _local_source(path, distributions=None):
-    path = _local_path(path, distributions)
-    return path if path is not None and path.suffix == '.py' and path.is_file() else None
+    return path if (path := _local_path(path, distributions)) is not None and path.suffix == '.py' and path.is_file() else None
 
 
 def _valid_name(name):
