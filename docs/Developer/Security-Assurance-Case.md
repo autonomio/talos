@@ -89,7 +89,7 @@ The honesty suite compares required contexts in `governance.yml`, the ten annota
 
 ## Dependencies and credentials
 
-Python dependency audits cover supported core/current/minimum lanes; legacy upstream advisories remain visible. Exceptions name an advisory, reason and expiry. Documentation rejects known advisories at every severity. Dependabot supplies update pressure; a green audit is evidence at its recorded time.
+Python dependency audits cover supported core/current/minimum lanes; legacy upstream advisories remain visible. Exceptions name an advisory, reason and expiry. Documentation rejects every advisory severity subject to [exact-version, expiring maintainer approvals](Documentation-System.md#documentation-dependency-exceptions); its original findings remain visible. Dependabot supplies update pressure; a green audit is evidence at its recorded time.
 
 Actions are pinned to full commits, toolchains to hashes, workflow tokens to declared permissions and checkout credentials disabled except where a declared release operation needs them. PR-controlled code must not execute in a privileged target event. Supply-chain contract tests establish these source properties; live secret scope still needs administrator verification.
 

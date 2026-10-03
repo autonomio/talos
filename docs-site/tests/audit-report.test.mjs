@@ -6,8 +6,6 @@ import {fileURLToPath} from 'node:url';
 
 import {
   DEFAULT_FLOOR,
-  RELAXED_FLOOR,
-  RELAXED_ROOTS,
   auditFailure,
 } from '../scripts/audit-report.mjs';
 import {productionRoots, rootsFrom} from '../scripts/audit-scope.mjs';
@@ -36,7 +34,7 @@ test('a severity npm does not define fails loud rather than passing', () => {
   );
 });
 
-test('high outside the relaxed scope blocks', () => {
+test('high in every production root blocks', () => {
   assert.match(
     auditFailure(report('high'), reached('victim', 'react')),
     /victim \(high, floor info, via react\)/
@@ -54,7 +52,7 @@ test('Docusaurus high advisories block without a blanket exemption', () => {
   );
 });
 
-test('critical in the relaxed scope still blocks', () => {
+test('critical in every production root blocks', () => {
   assert.match(
     auditFailure(report('critical'), reached('victim', '@docusaurus/core')),
     /victim \(critical, floor info, via @docusaurus\/core\)/
@@ -62,8 +60,7 @@ test('critical in the relaxed scope still blocks', () => {
 });
 
 test('a package reached by a strict root stays strict', () => {
-  // Shared between docusaurus and react: one relaxed parent must not lower the
-  // floor for the path that arrives through react.
+  // Root attribution never grants an advisory exception.
   assert.match(
     auditFailure(report('high'), reached('victim', '@docusaurus/core', 'react')),
     /victim \(high, floor info, via @docusaurus\/core, react\)/
@@ -77,10 +74,11 @@ test('a package the lockfile walk cannot place keeps the default floor', () => {
   );
 });
 
-test('all production roots use the same zero-advisory policy', () => {
+test('all production roots use the same advisory severity floor', () => {
   assert.equal(DEFAULT_FLOOR, 'info');
-  assert.equal(RELAXED_FLOOR, 'info');
-  assert.deepEqual(RELAXED_ROOTS, []);
+  for (const severity of ['info', 'low', 'moderate', 'high', 'critical']) {
+    assert.match(auditFailure(report(severity), NO_ROOTS), /victim/);
+  }
 });
 
 test('rootsFrom follows npm nesting rather than assuming a flat tree', () => {
@@ -112,8 +110,7 @@ test('a severity colliding with Object.prototype fails loud', () => {
 });
 
 test('rootsFrom refuses a production root the lockfile cannot place', () => {
-  // Silently dropping it would relax: packages shared with the docusaurus stack
-  // would keep docusaurus-only attribution and fall to the critical floor.
+  // Every declared root must remain represented in the retained graph.
   assert.throws(
     () => rootsFrom({'node_modules/present': {}}, ['present', 'absent']),
     /production dependency 'absent'.*no entry in package-lock\.json/s
@@ -148,12 +145,6 @@ test('productionRoots places transitive packages, not just the roots themselves'
   // be attributed to nothing.
   const transitive = [...roots.keys()].filter((name) => !direct.includes(name));
   assert.ok(transitive.length > 100, `only ${transitive.length} transitive packages placed`);
-
-  // At least one package must be owned by a root outside the relaxed set. If no
-  // strict root ever resolves, every shared package silently relaxes.
-  const strictlyOwned = [...roots.values()]
-    .filter((owners) => [...owners].some((owner) => !RELAXED_ROOTS.includes(owner)));
-  assert.ok(strictlyOwned.length > 0, 'no package is attributed to a strict root');
 
   // Every recorded owner must be a declared production dependency.
   for (const [name, owners] of roots) {

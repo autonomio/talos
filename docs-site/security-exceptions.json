@@ -1,0 +1,22 @@
+[
+  {
+    "id": "GHSA-vfj7-8cjw-p6xm",
+    "package": "braces",
+    "version": "3.0.3",
+    "severity": "high",
+    "approved_by": "mikkokotila",
+    "approved_on": "2026-10-03",
+    "expires": "2026-11-02",
+    "reason": "Maintainer-approved temporary documentation-build risk acceptance while no upstream patch is published. Docusaurus reaches braces through repository-controlled glob configuration; recursive compile/expand denial of service reproduces on Node 22. Existing build deadlines bound runner occupation but do not repair the defect. Retire this exception when a patched release is available."
+  },
+  {
+    "id": "GHSA-ch52-4w7c-c8xp",
+    "package": "http-cache-semantics",
+    "version": "4.2.0",
+    "severity": "high",
+    "approved_by": "mikkokotila",
+    "approved_on": "2026-10-03",
+    "expires": "2026-11-02",
+    "reason": "Maintainer-approved temporary documentation-build risk acceptance while no upstream patch is published. Docusaurus reaches this package through update-notifier/package-json/got. The notifier is disabled in CI and package-json does not enable the got cache. The shared-cache max-stale defect reproduces directly; this exception does not claim the package is repaired or generally unexploitable. Retire when a patched release is available."
+  }
+]

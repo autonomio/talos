@@ -482,3 +482,31 @@ Identical site command fences reuse one successful local execution only while
 all tracked inputs remain unchanged. Reports distinguish execution from reuse.
 All fences, notebook cells, model examples, archive and recovery checks remain
 in the inventory; reuse neither removes them nor invents execution counts.
+
+## Documentation dependency exceptions
+
+`security:audit` rejects reported production advisories at every severity,
+including info and low. Dependency-root attribution grants no exemption.
+Maintainer-approved exceptions live in
+[`docs-site/security-exceptions.json`](../../docs-site/security-exceptions.json)
+and bind one advisory ID to its package, exact installed/locked version,
+severity, approving owner, reason and review dates. Reviews last at most
+30 days; expiry takes effect at the start of the recorded date in UTC.
+
+The October 3, 2026 approval covers only
+[braces 3.0.3](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) and
+[http-cache-semantics 4.2.0](https://github.com/advisories/GHSA-ch52-4w7c-c8xp)
+until November 2, 2026. Both remain known high-severity vulnerabilities in the
+documentation build/development toolchain. Acceptance does not repair them or
+claim general non-exploitability. Replace them with patched upstream releases
+and remove their exceptions when those releases become available; extensions
+require another maintainer decision.
+
+The command retains npm's original report in its log and lists each accepted
+advisory explicitly. It accepts a propagated package finding only when every
+cause resolves to a reviewed advisory. New advisories on the same package,
+changed or tampered versions, unknown severities, incomplete dependency chains,
+expired approval and audit execution errors block. A passing audit means no
+**unaccepted** production advisories at the recorded time; it does not mean
+zero known vulnerabilities. The Python dependency audit uses its separate
+repository exception file.
