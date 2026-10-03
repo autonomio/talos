@@ -165,6 +165,12 @@ test('every installed copy must match the locked exception version and identity'
   };
   for (const entry of entries) install(`node_modules/${entry.package}`, entry.package, entry.version);
   assert.doesNotThrow(() => verifyInstalledExceptions(site, packages, review()));
+  const alias = 'node_modules/npm-alias';
+  install(alias, 'braces', '3.0.2');
+  assert.throws(() => verifyInstalledExceptions(site, packages, review()), /version mismatch/);
+  delete packages[alias];
+  assert.throws(() => verifyInstalledExceptions(site, packages, review()), /absent from lockfile/);
+  rmSync(path.join(site, alias), {recursive: true});
   const nested = 'node_modules/tool/node_modules/braces';
   install(nested, 'braces', '3.0.2');
   delete packages[nested];

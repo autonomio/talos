@@ -1,4 +1,4 @@
-import {readFileSync, readdirSync, realpathSync, statSync} from 'node:fs';
+import {existsSync, readFileSync, readdirSync, realpathSync, statSync} from 'node:fs';
 import path from 'node:path';
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -46,12 +46,18 @@ export function reviewedExceptions(entries, now = new Date()) {
 }
 
 function installedLocations(siteRoot, names) {
-  const locations = new Set();
+  const locations = new Map();
   const pending = [{directory: path.join(siteRoot, 'node_modules'), ancestors: new Set()}];
   while (pending.length > 0) {
     const {directory, ancestors} = pending.pop();
     const location = path.relative(siteRoot, directory).split(path.sep).join('/');
-    if (names.has(packageName(location))) locations.add(location);
+    const name = packageName(location);
+    if (names.has(name)) locations.set(location, name);
+    const metadata = path.join(directory, 'package.json');
+    if ((!name.includes('/') || /^@[^/]+\/[^/]+$/.test(name)) && existsSync(metadata)) {
+      const installed = JSON.parse(readFileSync(metadata, 'utf8'));
+      if (names.has(installed.name)) locations.set(location, installed.name);
+    }
     const real = realpathSync(directory);
     if (ancestors.has(real)) throw new Error(`Cyclic documentation dependency directory: ${location}`);
     const parents = new Set([...ancestors, real]);
@@ -69,11 +75,13 @@ function installedLocations(siteRoot, names) {
 export function verifyInstalledExceptions(siteRoot, packages, reviewed) {
   const installed = installedLocations(siteRoot, new Set([...reviewed.values()].map((entry) => entry.package)));
   for (const entry of reviewed.values()) {
-    const locations = Object.keys(packages).filter((location) => packageName(location) === entry.package);
-    if (locations.length === 0) {
+    const locations = new Set(Object.keys(packages).filter((location) => packageName(location) === entry.package));
+    for (const [location, name] of installed) if (name === entry.package) locations.add(location);
+    if (locations.size === 0) {
       throw new Error(`Excepted package is absent from lockfile: ${entry.package}; remove its exception`);
     }
     for (const location of locations) {
+      if (!Object.hasOwn(packages, location)) throw new Error(`Excepted installed package is absent from lockfile: ${location}`);
       if (!location.startsWith('node_modules/') || location.split('/').some((part) => ['.', '..', ''].includes(part))) {
         throw new Error(`Invalid locked package location: ${location}`);
       }
@@ -83,9 +91,6 @@ export function verifyInstalledExceptions(siteRoot, packages, reviewed) {
         throw new Error(`Documentation exception version mismatch: ${entry.package} at ${location}`);
       }
     }
-  }
-  for (const location of installed) {
-    if (!Object.hasOwn(packages, location)) throw new Error(`Excepted installed package is absent from lockfile: ${location}`);
   }
 }
 
