@@ -84,6 +84,27 @@ Talos 2 corrects confirmed defects: stateful F1 is invariant to batch partitioni
 
 Core imports no DL or plotting backend. Python 3.10–3.13, modern optional frameworks and a separate TensorFlow 2.14 / NumPy 1.26 lane replace the obsolete Python 2/3.5 metadata. See [installation](Install_Options.md) and [SFD/CLI usage](SFD_and_CLI.md).
 
+## Legacy security backports
+
+The [owned legacy wheels](Developer/Security-Backports.md) retain TensorFlow 2.14.1,
+the five-argument callback and legacy optimizers. Safe loading now rejects Lambda
+bytecode by default, external vocabulary paths, HDF5 links/external or virtual
+storage, oversized dataset allocation, archive traversal and archive links.
+NPZ object arrays require an explicit trusted loading scope. Ordinary model
+weights, vocabulary assets and registered/custom objects remain supported.
+
+For a trusted native artifact requiring historical Lambda or NPZ behavior, use
+Keras's explicit `safe_mode=False` or `serialization_lib.SafeModeScope(False)`;
+these choices permit executable content and are not suitable for untrusted
+models. Prefer named registered functions and embedded vocabulary assets.
+The backports do not turn model factories, custom objects or Talos archives
+into sandboxed inputs. An upstream Keras 2.14 native-format limitation with
+compiled legacy Adam remains; HDF5 retains its optimizer continuation path.
+
+Changing the framework distribution identity changes the recorded environment.
+Preserve the old run, then start a fresh experiment or an explicit fork; do not
+force an existing checkpoint to accept different dependencies.
+
 ## Validation baseline — 1 October 2026
 
 | Environment | Result |

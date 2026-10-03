@@ -711,6 +711,13 @@
       "slug": "/overview/citing-talos",
       "sidebarPosition": 18,
       "sidebarLabel": "Citing Talos"
+    },
+    {
+      "source": "docs/Developer/Security-Backports.md",
+      "dest": "developer/security-backports.md",
+      "slug": "/developer/security-backports",
+      "sidebarPosition": 77,
+      "sidebarLabel": "Security backports"
     }
   ]
 }

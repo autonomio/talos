@@ -1,0 +1,10 @@
+--- a/braces/lib/expand.js
++++ b/braces/lib/expand.js
+@@ -31,6 +31,7 @@
+ };
+ 
+ const expand = (ast, options = {}) => {
++  require('./validate')(ast);
+   const rangeLimit = options.rangeLimit === undefined ? 1000 : options.rangeLimit;
+ 
+   const walk = (node, parent = {}) => {

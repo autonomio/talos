@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {spawnSync} from 'node:child_process';
-import {copyFileSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
+import {copyFileSync, cpSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -10,9 +10,11 @@ function fixture(t) {
   t.after(() => rmSync(root, {recursive: true, force: true}));
   mkdirSync(path.join(root, 'scripts'));
   mkdirSync(path.join(root, 'bin'));
-  for (const name of ['audit-security.mjs', 'audit-report.mjs', 'audit-exceptions.mjs', 'audit-scope.mjs']) {
+  for (const name of ['audit-security.mjs', 'audit-report.mjs', 'audit-exceptions.mjs', 'audit-scope.mjs', 'apply-security-patches.mjs']) {
     copyFileSync(new URL(`../scripts/${name}`, import.meta.url), path.join(root, 'scripts', name));
   }
+  cpSync(new URL('../security-patches', import.meta.url), path.join(root, 'security-patches'), {recursive: true});
+  const patches = JSON.parse(readFileSync(new URL('../security-patches/manifest.json', import.meta.url), 'utf8'));
   const entries = JSON.parse(readFileSync(new URL('../security-exceptions.json', import.meta.url), 'utf8'));
   const now = Date.now();
   for (const entry of entries) {
@@ -28,6 +30,11 @@ function fixture(t) {
     packages[location] = {version: entry.version};
     mkdirSync(path.join(root, location), {recursive: true});
     writeFileSync(path.join(root, location, 'package.json'), JSON.stringify({name: entry.package, version: entry.version}));
+    for (const file of patches.find((item) => item.package === entry.package).files) {
+      const target = path.join(root, location, file.path);
+      mkdirSync(path.dirname(target), {recursive: true});
+      copyFileSync(new URL(`../node_modules/${entry.package}/${file.path}`, import.meta.url), target);
+    }
     vulnerabilities[entry.package] = {name: entry.package, severity: entry.severity, nodes: [location], via: [{
       name: entry.package, dependency: entry.package, severity: entry.severity,
       url: `https://github.com/advisories/${entry.id}`,
@@ -113,6 +120,16 @@ test('a failing audit drains its complete original report before exiting', (t) =
     url: 'https://github.com/advisories/GHSA-abcd-abcd-abcd', title: 'large advisory '.repeat(30000)});
   const result = run(report);
   assert.equal(result.status, 1, result.stderr);
+  assert.equal(result.stdout, `${JSON.stringify(report, null, 2)}\n`);
+  assert.doesNotMatch(result.stdout, /No unaccepted/);
+});
+
+test('valid advisory approval cannot bypass absent or tampered repaired source', (t) => {
+  const {root, run, report} = fixture(t);
+  writeFileSync(path.join(root, 'node_modules/braces/lib/parse.js'), 'unrepaired source');
+  const result = run();
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /Security patch upstream source hash mismatch/);
   assert.equal(result.stdout, `${JSON.stringify(report, null, 2)}\n`);
   assert.doesNotMatch(result.stdout, /No unaccepted/);
 });

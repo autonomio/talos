@@ -1,0 +1,91 @@
+[
+  {
+    "name": "keras",
+    "upstream_version": "2.14.0",
+    "patched_version": "2.14.0+autonomio.1",
+    "wheel": "keras-2.14.0-py3-none-any.whl",
+    "url": "https://files.pythonhosted.org/packages/fe/58/34d4d8f1aa11120c2d36d7ad27d0526164b1a8ae45990a2fede31d0e59bf/keras-2.14.0-py3-none-any.whl",
+    "sha256": "d7429d1d2131cc7eb1f2ea2ec330227c7d9d38dab3dfdf2e78defee4ecc43fcd",
+    "patches": [
+      {
+        "path": "keras/src/layers/core/lambda_layer.py",
+        "before_sha256": "7058272a083eabe8e9b74cdb2deb3ca62eda9df8d4964f32b7dc09d98356f2b9",
+        "after_sha256": "aafa8095a0a453014edcd3d9e1f4935920292b33a1ca3ff1e7ce35b773672437",
+        "added": 2,
+        "patch": "keras_src_layers_core_lambda_layer.py.patch"
+      },
+      {
+        "path": "keras/src/layers/preprocessing/index_lookup.py",
+        "before_sha256": "d18342c5123cfd219e8b56267f59959c1db475585d93b1f97d61554bcc553acd",
+        "after_sha256": "490daade426816d068c1c07bf0d32f2d9a8fd7727ef97e06653981409db5191d",
+        "added": 5,
+        "patch": "keras_src_layers_preprocessing_index_lookup.py.patch"
+      },
+      {
+        "path": "keras/src/saving/legacy/hdf5_format.py",
+        "before_sha256": "0e3cdec2c9ad248d283238da79a8c84baca91f17e419213b2526326865e208a4",
+        "after_sha256": "3d68b88d20e29ce6c1a3f43c427a4fdf85aa7e7ddf2c1a08adac5ddc90e4b550",
+        "added": 5,
+        "patch": "keras_src_saving_legacy_hdf5_format.py.patch"
+      },
+      {
+        "path": "keras/src/saving/saving_lib.py",
+        "before_sha256": "c86671a267c3f76462524823c9ef9040c87028b6cab0ad8c25ac85767f9d341f",
+        "after_sha256": "ba0ad4db4cdc726701b9e780cab17baf5849707b718977d042ec25f17ed99e20",
+        "added": 16,
+        "patch": "keras_src_saving_saving_lib.py.patch"
+      },
+      {
+        "path": "keras/src/saving/security.py",
+        "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_sha256": "89211af7b67caae60d7bbc96923136436412228f8ba97ae137f0ec76f9ab08ca",
+        "added": 54,
+        "patch": "keras_src_saving_security.py.patch"
+      },
+      {
+        "path": "keras/src/saving/serialization_lib.py",
+        "before_sha256": "e987ed35b4192eae2eedcef3e0f779ded25363be31792135faa3183a99ae7287",
+        "after_sha256": "82f47279aebbda35ff08ef8a58c682211de6f0330ea158ac7fa87158b29dd42e",
+        "added": 25,
+        "patch": "keras_src_saving_serialization_lib.py.patch"
+      },
+      {
+        "path": "keras/src/utils/data_utils.py",
+        "before_sha256": "f7641c7cb41ad4298e2ed44ae770195e54c347763a8610dba0ae0a626a5e6df6",
+        "after_sha256": "c4c15e89bbdd8f4075fbf5337cd2c86c5abec6e175bcf5e9f501b28b70ca519c",
+        "added": 17,
+        "patch": "keras_src_utils_data_utils.py.patch"
+      }
+    ],
+    "license": {
+      "path": "licenses/keras-LICENSE.txt",
+      "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+      "url": "https://raw.githubusercontent.com/keras-team/keras/68f9af408a1734704746f7e6fa9cfede0d6879d8/LICENSE"
+    },
+    "output_sha256": "8a595be108b478d914043f3c8ffe3a1d1eeadd9b4974498cec84fb1126a7a899",
+    "installed_tree_sha256": "19af4519d7c7dbf1a2cf4ffefac4fe633542d0b3471a15d9ba4590adc2c6a0bd"
+  },
+  {
+    "name": "protobuf",
+    "upstream_version": "4.25.9",
+    "patched_version": "4.25.9+autonomio.1",
+    "wheel": "protobuf-4.25.9-py3-none-any.whl",
+    "url": "https://files.pythonhosted.org/packages/16/28/d5065b212685875d3924bcdb3201cbf467cb4d58a18aa19a8dfd99ea80a9/protobuf-4.25.9-py3-none-any.whl",
+    "sha256": "d49b615e7c935194ac161f0965699ac84df6112c378e05ec53da65d2e4cbb6d4",
+    "patches": [
+      {
+        "path": "google/protobuf/json_format.py",
+        "before_sha256": "01795eef8361486af4a29f0df8eace5e82f42d0fc286c2e4c6249bc31405a339",
+        "after_sha256": "e94034f2bddfb69a69f114da2836288e8a607195af4bc61c3e95a4a154ce18ed",
+        "added": 2,
+        "patch": "google_protobuf_json_format.py.patch"
+      }
+    ],
+    "license": {
+      "path": "licenses/protobuf-LICENSE.txt",
+      "sha256": "6e5e117324afd944dcf67f36cf329843bc1a92229a8cd9bb573d7a83130fea7d"
+    },
+    "output_sha256": "166a01e93b271c61bff40678f999e2b7147edea4fd4a58fab2a2baa318768737",
+    "installed_tree_sha256": "5ed556d1dc1e86c98a8b412ef8258dd4c4cf6e2ed51a634e1063ccc04f9c179b"
+  }
+]

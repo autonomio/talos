@@ -1,0 +1,10 @@
+--- a/braces/lib/stringify.js
++++ b/braces/lib/stringify.js
+@@ -3,6 +3,7 @@
+ const utils = require('./utils');
+ 
+ module.exports = (ast, options = {}) => {
++  require('./validate')(ast);
+   const stringify = (node, parent = {}) => {
+     const invalidBlock = options.escapeInvalid && utils.isInvalidBrace(parent);
+     const invalidNode = node.invalid === true && options.escapeInvalid === true;

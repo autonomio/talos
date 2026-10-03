@@ -1,5 +1,11 @@
 # Changelog
 
+# v2.0.7
+
+- Backport reviewed legacy framework and documentation dependency security fixes while preserving original model predictions and explicit trusted deserialization.
+- Require hash-pinned owned Keras/Protobuf wheels in the legacy extra and CI; retain upstream findings and reject unproved advisory dispositions.
+- Include the owned dependency wheels in signed GitHub release artifacts, keeping the Talos-only PyPI upload separate.
+
 # v2.0.6
 
 - Avoid repeated per-file wheel metadata work during source snapshots while preserving dependency ownership and fresh resume checks.

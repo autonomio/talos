@@ -1,0 +1,10 @@
+--- a/braces/lib/compile.js
++++ b/braces/lib/compile.js
+@@ -4,6 +4,7 @@
+ const utils = require('./utils');
+ 
+ const compile = (ast, options = {}) => {
++  require('./validate')(ast);
+   const walk = (node, parent = {}) => {
+     const invalidBlock = utils.isInvalidBrace(parent);
+     const invalidNode = node.invalid === true && options.escapeInvalid === true;

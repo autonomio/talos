@@ -7,7 +7,7 @@
     "approved_by": "mikkokotila",
     "approved_on": "2026-10-03",
     "expires": "2026-11-02",
-    "reason": "Maintainer-approved temporary documentation-build risk acceptance while no upstream patch is published. Docusaurus reaches braces through repository-controlled glob configuration; recursive compile/expand denial of service reproduces on Node 22. Existing build deadlines bound runner occupation but do not repair the defect. Retire this exception when a patched release is available."
+    "reason": "Existing maintainer-approved temporary documentation-build exception, with its original scope and expiry retained. Acceptance additionally requires the exact reviewed owned source backport and its installed-copy inventory. Bound compile/expand/stringify AST traversal and parser nesting; adversarial depth fails before recursive stack exhaustion. Retain the original upstream finding. Replace the backport and retire this exception when a compatible patched upstream release is available."
   },
   {
     "id": "GHSA-ch52-4w7c-c8xp",
@@ -17,6 +17,6 @@
     "approved_by": "mikkokotila",
     "approved_on": "2026-10-03",
     "expires": "2026-11-02",
-    "reason": "Maintainer-approved temporary documentation-build risk acceptance while no upstream patch is published. Docusaurus reaches this package through update-notifier/package-json/got. The notifier is disabled in CI and package-json does not enable the got cache. The shared-cache max-stale defect reproduces directly; this exception does not claim the package is repaired or generally unexploitable. Retire when a patched release is available."
+    "reason": "Existing maintainer-approved temporary documentation-build exception, with its original scope and expiry retained. Acceptance additionally requires the exact reviewed owned source backport and its installed-copy inventory. Reject non-storable/no-cache and shared private/cookie responses before max-stale can grant a cache hit; preserve explicitly public and private-cache behavior. Retain the original upstream finding. Replace the backport and retire this exception when a compatible patched upstream release is available."
   }
 ]

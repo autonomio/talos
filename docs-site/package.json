@@ -17,7 +17,9 @@
     "check": "npm run lint && npm run test:unit && npm run check:external-links && npm run prepare-docs && docusaurus build --no-minify && npm run verify:build && npm run test:browser",
     "start": "npm run prepare-docs && docusaurus start --host 0.0.0.0",
     "serve": "docusaurus serve --dir build --host 127.0.0.1 --port 3100 --no-open",
-    "clear": "docusaurus clear"
+    "clear": "docusaurus clear",
+    "security:patch": "node ./scripts/apply-security-patches.mjs",
+    "postinstall": "npm run security:patch"
   },
   "dependencies": {
     "@docusaurus/core": "3.10.2",

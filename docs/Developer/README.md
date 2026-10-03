@@ -16,6 +16,7 @@ checkout and test commands. Documentation-site work additionally needs Node.js
 | Task | Canonical route | Expected proof |
 | --- | --- | --- |
 | Change library behavior | [Contributing](../../CONTRIBUTING.md) | Focused regression coverage, relevant framework lane and distribution checks |
+| Maintain owned dependency patches | [Security backports](Security-Backports.md) | Exact upstream/source identities, real exploit regressions and original-model compatibility |
 | Update frameworks or archive contracts | [Maintenance](../Maintenance.md) | Current, minimum and legacy compatibility; fresh-process recovery |
 | Author or restructure documentation | [Documentation system](Documentation-System.md) | Source-backed prose, exhaustive routes, runnable examples and full site checks |
 | Change visual treatment | [Documentation style](Documentation-Style.md) | Measured desktop/mobile previews, keyboard access, light/dark contrast |
