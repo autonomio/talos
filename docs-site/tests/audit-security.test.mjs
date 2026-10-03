@@ -88,6 +88,13 @@ test('the audit CLI rejects expired approval and installed-package tampering', (
   assert.equal(changed.status, 1);
   assert.match(changed.stderr, /version mismatch/);
   writeFileSync(metadata, JSON.stringify({name: 'braces', version: '3.0.3'}));
+  const unlisted = path.join(root, 'node_modules/root/node_modules/braces');
+  mkdirSync(unlisted, {recursive: true});
+  writeFileSync(path.join(unlisted, 'package.json'), JSON.stringify({name: 'braces', version: '3.0.2'}));
+  const extra = run();
+  assert.equal(extra.status, 1);
+  assert.match(extra.stderr, /absent from lockfile/);
+  rmSync(unlisted, {recursive: true});
   for (const entry of entries) {
     entry.approved_on = new Date(Date.now() - 5 * 86400000).toISOString().slice(0, 10);
     entry.expires = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
@@ -97,4 +104,15 @@ test('the audit CLI rejects expired approval and installed-package tampering', (
   assert.equal(expired.status, 1);
   assert.match(expired.stderr, /expired/);
   assert.ok(expired.stdout.includes(entries[0].id), 'original advisory disappeared');
+});
+
+
+test('a failing audit drains its complete original report before exiting', (t) => {
+  const {run, report} = fixture(t);
+  report.vulnerabilities.braces.via.push({...report.vulnerabilities.braces.via[0],
+    url: 'https://github.com/advisories/GHSA-abcd-abcd-abcd', title: 'large advisory '.repeat(30000)});
+  const result = run(report);
+  assert.equal(result.status, 1, result.stderr);
+  assert.equal(result.stdout, `${JSON.stringify(report, null, 2)}\n`);
+  assert.doesNotMatch(result.stdout, /No unaccepted/);
 });

@@ -3,7 +3,7 @@
 # v2.0.6
 
 - Avoid repeated per-file wheel metadata work during source snapshots while preserving dependency ownership and fresh resume checks.
-- Record two maintainer-approved, exact-version documentation audit exceptions through November 2, 2026; retain all findings and block every other advisory.
+- Record two maintainer-approved, exact-version documentation audit exceptions through November 1, 2026, expiring at 00:00 UTC on November 2; retain all findings and block every other advisory.
 
 # v2.0.5
 

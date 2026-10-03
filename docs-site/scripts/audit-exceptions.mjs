@@ -1,4 +1,4 @@
-import {readFileSync} from 'node:fs';
+import {readFileSync, readdirSync, realpathSync, statSync} from 'node:fs';
 import path from 'node:path';
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -45,8 +45,29 @@ export function reviewedExceptions(entries, now = new Date()) {
   return reviewed;
 }
 
+function installedLocations(siteRoot, names) {
+  const locations = new Set();
+  const pending = [{directory: path.join(siteRoot, 'node_modules'), ancestors: new Set()}];
+  while (pending.length > 0) {
+    const {directory, ancestors} = pending.pop();
+    const location = path.relative(siteRoot, directory).split(path.sep).join('/');
+    if (names.has(packageName(location))) locations.add(location);
+    const real = realpathSync(directory);
+    if (ancestors.has(real)) throw new Error(`Cyclic documentation dependency directory: ${location}`);
+    const parents = new Set([...ancestors, real]);
+    for (const entry of readdirSync(directory, {withFileTypes: true})) {
+      const child = path.join(directory, entry.name);
+      if (entry.isDirectory() || (entry.isSymbolicLink() && statSync(child).isDirectory())) {
+        pending.push({directory: child, ancestors: parents});
+      }
+    }
+  }
+  return locations;
+}
+
 /** Bind every installed copy of an excepted package to its exact lockfile version. */
 export function verifyInstalledExceptions(siteRoot, packages, reviewed) {
+  const installed = installedLocations(siteRoot, new Set([...reviewed.values()].map((entry) => entry.package)));
   for (const entry of reviewed.values()) {
     const locations = Object.keys(packages).filter((location) => packageName(location) === entry.package);
     if (locations.length === 0) {
@@ -62,6 +83,9 @@ export function verifyInstalledExceptions(siteRoot, packages, reviewed) {
         throw new Error(`Documentation exception version mismatch: ${entry.package} at ${location}`);
       }
     }
+  }
+  for (const location of installed) {
+    if (!Object.hasOwn(packages, location)) throw new Error(`Excepted installed package is absent from lockfile: ${location}`);
   }
 }
 

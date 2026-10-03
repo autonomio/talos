@@ -18,7 +18,7 @@ if (!result.stdout) {
 }
 const report = JSON.parse(result.stdout);
 // Preserve npm's original findings in the retained command log, including exceptions.
-process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
+await new Promise((resolve) => process.stdout.write(`${JSON.stringify(report, null, 2)}\n`, resolve));
 const exceptions = JSON.parse(readFileSync(path.join(siteRoot, 'security-exceptions.json'), 'utf8'));
 const reviewed = reviewedExceptions(exceptions);
 const packages = JSON.parse(readFileSync(path.join(siteRoot, 'package-lock.json'), 'utf8')).packages;
