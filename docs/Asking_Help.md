@@ -10,7 +10,7 @@ Use the documentation to isolate a failure, then use the Talos issue tracker for
 | Troubleshoot resume or restoration | [SFD and CLI](SFD_and_CLI.md) and [Restore](Restore.md) |
 | Report a reproducible bug | [Talos issues](https://github.com/autonomio/talos/issues) |
 | Suggest a feature or discuss an implementation | [Talos issues](https://github.com/autonomio/talos/issues) and [contribution guidance](../CONTRIBUTING.md) |
-| Find an existing community answer | [Talos answers on Stack Overflow](https://stackoverflow.com/search?q=talos) |
+| Find an existing community answer | [Talos issue archive](https://github.com/autonomio/talos/issues?q=is%3Aissue) |
 
 The previous support page also pointed to a wiki and Spectrum chat. The maintained documentation and repository issue tracker are the canonical routes here.
 
@@ -25,6 +25,9 @@ No special tooling is required beyond the environment that reproduces the issue.
 5. Open an issue with that reproduction. If the behavior depends on a physical device or external provider, state the device, driver or provider boundary explicitly.
 
 A useful report lets a maintainer run the same failing path and determine whether the defect belongs to Talos, the callback or an optional service. A result metric alone does not establish a software defect; include the training setup and intended metric semantics.
+
+Historical community discussions also appear on Stack Overflow. Search for
+`autonomio talos` alongside the framework name.
 
 ## Read next
 
