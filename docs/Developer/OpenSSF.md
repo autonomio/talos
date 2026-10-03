@@ -2,9 +2,9 @@
 
 Talos has an [OpenSSF Best Practices application](https://www.bestpractices.dev/en/projects/15140)
 and a [public Scorecard report](https://scorecard.dev/viewer/?uri=github.com/autonomio/talos).
-The Best Practices application is in progress. Silver is a Best Practices level;
+Passing is awarded; the Silver application is 95% complete as of 3 October 2026. Silver is a Best Practices level;
 Scorecard reports a separate score from zero to ten. This page records evidence
-and outstanding work without claiming either badge attainment or future results.
+and outstanding work without claiming Silver attainment or future results.
 
 ## Prerequisites
 
@@ -17,8 +17,8 @@ require the named maintainer's confirmation.
 
 | Observation | Scope and evidence |
 | --- | --- |
-| Scorecard 8.3/10 | Public API report dated 2 October 2026, 05:20:04 UTC; commit `06a635e06d13ff95a1c04632f89383740ffa57b1` |
-| Best Practices application | Passing 97%, Silver 76% after the 2 October evidence update; neither level awarded |
+| Scorecard 8.9/10 | Public API report dated 3 October 2026, 07:04:32 UTC; commit `19aba6539913d0e7cf0b9b52fefad8985dba58f9` |
+| Best Practices application | Passing awarded at 100%; Silver 95% after the 3 October maintainer confirmation |
 | Coverage and test policy | [PR 625](https://github.com/autonomio/talos/pull/625) merged at `06a635e`; its source tree equals the verified candidate `2388cec` |
 | Reviewed integration | [PR 608](https://github.com/autonomio/talos/pull/608), approved by `bit-mis`, merged at `9783406`; PR 625 later merged at `06a635e` |
 | Live protection | Active ruleset `24306812`; [privileged audit](https://github.com/autonomio/talos/actions/runs/36893895454) passed with exact snapshot parity and no bypass actors |
@@ -82,20 +82,24 @@ A successful reviewed release execution is still needed for the signed-release
 criterion. PyPI enablement is a separate decision; the presence of organization
 credentials does not establish a trusted publisher or release approval.
 
-## Application review and remaining facts
+## Application review and remaining work
 
 Use the official [passing](https://www.bestpractices.dev/en/criteria/0?details=true)
 and [Silver criteria](https://www.bestpractices.dev/en/criteria/1?details=true).
 Each answer must link to current public evidence or state a justified permitted
 exception. Keep unsupported answers Unknown. In particular:
 
-- Name a primary developer who confirms secure-design and common-vulnerability
-  knowledge; policies and generated prose cannot establish that expertise.
-- Retain the maintainer's supplied vulnerability-history attestation and the
-  bounded project advisory inventories; legacy dependency advisories remain
-  a separate unresolved obligation.
-- Name an independent backup maintainer and confirm their ability, credentials
-  and legal authority to continue development and issue a fix within one week.
+Mikko Kotila confirmed practical secure-design and common-vulnerability
+knowledge. The maintainer also confirmed that zero-bang and bit-mis have the
+capability, access and legal authority to continue development and issue a fix
+within one week. The vulnerability-history attestation remains recorded in
+the public application.
+
+The two incomplete mandatory Silver criteria are dependency monitoring and
+signed releases. The [owned backports](Security-Backports.md) require public
+integration and verified CI; signed releases require an actual successful
+release and consumer verification. Continue to:
+
 - Review substantive static diagnostics. An inherited-debt ratchet is not a
   claim that every warning is fixed or every style exception is rare and local.
 - Resolve legacy dependency advisories individually without treating trusted

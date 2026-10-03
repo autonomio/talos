@@ -33,9 +33,9 @@ The build and GitHub asset attachment run without `PYPI_PUBLISH_ENABLED`. PyPI p
 
 ## Deliverables
 
-After a successful `deploy.yml` run, the GitHub release receives the wheel, source distribution, `SHA256SUMS` and `talos-vMAJOR.MINOR.PATCH.sigstore.json`, with the concrete release version in the bundle filename. The pinned attestation action signs the distributions and checksum file together. The bundle is copied directly from its `bundle-path` output and retains the authentic JSON Sigstore format.
+After a successful `deploy.yml` run, the GitHub release receives the Talos wheel, source distribution, the two owned legacy security wheels, `SHA256SUMS` and `talos-vMAJOR.MINOR.PATCH.sigstore.json`, with the concrete release version in the bundle filename. The pinned attestation action signs all four distributions and the checksum file together. The bundle is copied directly from its `bundle-path` output and retains the authentic JSON Sigstore format.
 
-The separate attachment job downloads the build artifacts without checking out or executing Talos. It checks the distribution hashes against `SHA256SUMS`, then verifies each distribution and the checksum file against the bundle before uploading any asset. Only the wheel and source distribution enter the `release-dist` artifact used by PyPI.
+The separate attachment job downloads the build artifacts without checking out or executing Talos. It checks the distribution hashes against `SHA256SUMS`, then verifies each distribution and the checksum file against the bundle before uploading any asset. Only the Talos wheel and source distribution enter the `release-dist` artifact used by PyPI.
 
 The Sigstore bundle carries the signing certificate and its public verification
 key. GitHub OIDC binds the short-lived certificate to the declared workflow

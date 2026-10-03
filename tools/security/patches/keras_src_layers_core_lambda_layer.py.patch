@@ -1,0 +1,16 @@
+--- a/keras/src/layers/core/lambda_layer.py
++++ b/keras/src/layers/core/lambda_layer.py
+@@ -1,3 +1,4 @@
++# Modified by Autonomio for the owned legacy security backport; see AUTONOMIO_PATCHES.json.
+ # Copyright 2015 The TensorFlow Authors. All Rights Reserved.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+@@ -390,7 +391,7 @@
+                 printable_module_name="function in Lambda layer",
+             )
+         elif function_type == "lambda":
+-            if serialization_lib.in_safe_mode():
++            if serialization_lib.in_safe_mode() is not False:
+                 raise ValueError(
+                     "Requested the deserialization of a Lambda layer with a "
+                     "Python `lambda` inside it. "

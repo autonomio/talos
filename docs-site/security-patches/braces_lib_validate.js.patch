@@ -1,0 +1,16 @@
+--- a/braces/lib/validate.js
++++ b/braces/lib/validate.js
+@@ -0,0 +1,13 @@
++'use strict';
++
++// The upstream walkers are recursive; validate caller-provided ASTs iteratively.
++module.exports = ast => {
++  const pending = [[ast, 0]];
++  while (pending.length) {
++    const [node, depth] = pending.pop();
++    if (depth > 128) throw new SyntaxError('Brace pattern nesting exceeds 128 levels');
++    if (node.nodes) {
++      for (const child of node.nodes) pending.push([child, depth + 1]);
++    }
++  }
++};

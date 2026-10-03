@@ -54,3 +54,10 @@ venv/
 uv.lock
 .hypothesis/
 !/requirements.txt
+
+# Reviewed dependency identities, licenses and original-model regression fixture.
+!tools/security/*.json
+!tools/security/licenses/*.txt
+!docs-site/security-patches/manifest.json
+!docs-site/security-patches/licenses/*.txt
+!governance/tests/fixtures/keras214/genuine-keras214-native.keras

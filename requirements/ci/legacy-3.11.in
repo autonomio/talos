@@ -1,2 +1,3 @@
-# Maintained framework lane compiled against its supported Linux Python version.
+# Owned security wheels are built from reviewed source before resolution.
+--find-links ./dist
 .[dev,plots,samplers,legacy-tensorflow]

@@ -6,7 +6,7 @@ This page covers framework selection and normalized callback results. [Installat
 
 ## TensorFlow
 
-Install `talos[tensorflow]` on Python 3.11 or newer (TensorFlow 2.20+, Keras 3.15+). Existing five-argument callbacks returning `(history, model)` work unchanged. The separate `legacy-tensorflow` lane preserves TensorFlow 2.14 / Keras 2.14 applications on Python 3.10–3.11. This compatibility lane retains known upstream advisories; modern extras are the default for new work.
+Install `talos[tensorflow]` on Python 3.11 or newer (TensorFlow 2.20+, Keras 3.15+). Existing five-argument callbacks returning `(history, model)` work unchanged. The separate `legacy-tensorflow` lane preserves TensorFlow 2.14 / Keras 2.14 applications on Python 3.10–3.11. Install the [owned security backports](Developer/Security-Backports.md) before this compatibility extra. Original upstream advisories remain in the audit with exact repair or absence evidence; modern extras are the default for new work.
 
 ## Keras
 

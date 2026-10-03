@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {mkdtempSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync} from 'node:fs';
+import {mkdtempSync, mkdirSync, readFileSync, rmSync, symlinkSync, unlinkSync, writeFileSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -184,12 +184,12 @@ test('every installed copy must match the locked exception version and identity'
   install(nested, 'braces', '3.0.3');
   symlinkSync(path.join(site, 'node_modules/tool'), path.join(site, 'node_modules/alias'));
   assert.throws(() => verifyInstalledExceptions(site, packages, review()), /absent from lockfile/);
-  rmSync(path.join(site, 'node_modules/alias'));
+  unlinkSync(path.join(site, 'node_modules/alias'));
   rmSync(path.join(site, 'node_modules/tool'), {recursive: true});
   delete packages[nested];
   symlinkSync(path.join(site, 'node_modules'), path.join(site, 'node_modules/cycle'));
   assert.throws(() => verifyInstalledExceptions(site, packages, review()), /Cyclic/);
-  rmSync(path.join(site, 'node_modules/cycle'));
+  unlinkSync(path.join(site, 'node_modules/cycle'));
   delete packages['node_modules/braces'];
   assert.throws(() => verifyInstalledExceptions(site, packages, review()), /absent from lockfile/);
   packages['node_modules/braces'] = {version: '3.0.3'};

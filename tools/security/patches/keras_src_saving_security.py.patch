@@ -1,0 +1,57 @@
+--- a/keras/src/saving/security.py
++++ b/keras/src/saving/security.py
+@@ -0,0 +1,54 @@
++# Modified by Autonomio for the owned legacy security backport; see AUTONOMIO_PATCHES.json.
++"""Security guards backported for the Talos legacy framework distribution."""
++import math
++from pathlib import Path
++
++import h5py
++
++
++def validate_h5(root):
++    pending = [root]
++    seen = set()
++    while pending:
++        group = pending.pop()
++        identity = h5py.h5o.get_info(group.id).addr
++        if identity in seen:
++            continue
++        seen.add(identity)
++        for name in group.keys():
++            link = group.get(name, getlink=True)
++            if not isinstance(link, h5py.HardLink):
++                raise ValueError("External and soft HDF5 links are not supported.")
++            value = group[name]
++            if isinstance(value, h5py.Group):
++                pending.append(value)
++            elif isinstance(value, h5py.Dataset):
++                if value.external or value.is_virtual:
++                    raise ValueError("External and virtual HDF5 datasets are not supported.")
++                size = math.prod(value.shape) * value.dtype.itemsize
++                if size > (1 << 32) and size > 1000 * value.id.get_storage_size():
++                    raise ValueError("HDF5 shape/decompression bomb rejected before allocation.")
++
++
++def asset_path(root, path):
++    path = str(path).replace("\\", "/")
++    if path.startswith("/") or ":" in path or ".." in path.split("/"):
++        raise ValueError("Asset path escapes the model asset directory.")
++    if "://" in root:
++        return root.rstrip("/") + "/" + path
++    base = Path(root).resolve()
++    target = (base / path).resolve()
++    if not target.is_relative_to(base):
++        raise ValueError("Asset path escapes the model asset directory.")
++    return str(target)
++
++
++def validate_zip(archive, destination=None):
++    for entry in archive.infolist():
++        normalized = entry.filename.replace("\\", "/")
++        if normalized.startswith("/") or ":" in normalized or ".." in normalized.split("/"):
++            raise ValueError("ZIP member escapes the extraction directory.")
++        if destination is not None:
++            asset_path(str(destination), entry.filename)
++        if entry.file_size > (1 << 32) and entry.file_size > 100 * entry.compress_size:
++            raise ValueError("ZIP decompression bomb rejected before allocation.")

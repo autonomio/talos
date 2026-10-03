@@ -496,9 +496,10 @@ severity, approving owner, reason and review dates. Reviews last at most
 The October 3, 2026 approval covers only
 [braces 3.0.3](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) and
 [http-cache-semantics 4.2.0](https://github.com/advisories/GHSA-ch52-4w7c-c8xp)
-until November 2, 2026. Both remain known high-severity vulnerabilities in the
-documentation build/development toolchain. Acceptance does not repair them or
-claim general non-exploitability. Replace them with patched upstream releases
+until November 2, 2026. Original upstream lookups retain both high-severity findings. The owned
+source backports now repair the reproduced defects and the audit requires
+exact installed source hashes before accepting a finding. This is not a
+general claim that the packages are safe for every use. Replace them with patched upstream releases
 and remove their exceptions when those releases become available; extensions
 require another maintainer decision.
 
@@ -506,7 +507,8 @@ The command retains npm's original report in its log and lists each accepted
 advisory explicitly. It accepts a propagated package finding only when every
 cause resolves to a reviewed advisory. New advisories on the same package,
 changed or tampered versions, unknown severities, incomplete dependency chains,
-expired approval and audit execution errors block. A passing audit means no
+missing or altered security backports, expired approval and audit execution errors block. A passing audit means no
 **unaccepted** production advisories at the recorded time; it does not mean
-zero known vulnerabilities. The Python dependency audit uses its separate
-repository exception file.
+zero known vulnerabilities. The [backport maintenance contract](Security-Backports.md) records source
+identities, exploit regressions and upstream replacement. Python audits use
+their separate dependency identity and disposition contracts.

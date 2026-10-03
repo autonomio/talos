@@ -41,7 +41,7 @@ Python 3.10 reaches upstream end of life in October 2026; keep its tested Talos 
 | tqdm | 4.66.3 |
 | Requests | 2.33.0 |
 
-The dependency audit gates core, current and minimum environments. TensorFlow 2.14 / Keras 2.14 remains a compatibility lane with upstream advisories, reported separately. Combining the legacy and modern extras is unsupported. Audit the exact resolved environment with `pip-audit --strict --format json --output audit.json`; retain its package versions and findings rather than treating successful installation as security evidence.
+The dependency audit gates core, current, minimum and legacy environments. The legacy lane builds hash-pinned owned Keras/Protobuf wheels, verifies the complete installed source tree and records each upstream advisory with its exact repair or absence proof. Unknown advisories, source drift, incomplete graphs and auditor errors fail. [Security backports](Developer/Security-Backports.md) owns patch maintenance and compatibility boundaries. Combining the legacy and modern extras is unsupported. Audit the exact resolved environment with `pip-audit --strict --format json --output audit.json`; retain its package versions and findings rather than treating successful installation as security evidence.
 
 ## Verification — 1 October 2026
 
@@ -63,7 +63,7 @@ Documentation updates retain the human-authored workflows while correcting obsol
 1. Reassess upstream Python lifecycle and the supported framework matrix. Record
    a date, resolved versions and decisions about minimum and legacy lanes.
 2. Audit resolved dependencies, update necessary floors and rerun the affected
-   compatibility suites. Report unresolved legacy advisories separately.
+   compatibility suites. Retain upstream findings and validate every owned backport; fail on unproved findings.
 3. Exercise completed-trial resume, source/data mismatch rejection and
    fresh-process archive restoration, including caller-source deletion.
 4. Execute the documented models, notebooks and CLI workflows; retain receipts

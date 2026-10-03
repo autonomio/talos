@@ -5,6 +5,7 @@ import {fileURLToPath} from 'node:url';
 
 import {acceptedPackages, auditExecutionFailure, reviewedExceptions, verifyInstalledExceptions} from './audit-exceptions.mjs';
 import {auditFailure} from './audit-report.mjs';
+import {verifySecurityPatches} from './apply-security-patches.mjs';
 import {productionRoots} from './audit-scope.mjs';
 
 const siteRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -23,6 +24,7 @@ const exceptions = JSON.parse(readFileSync(path.join(siteRoot, 'security-excepti
 const reviewed = reviewedExceptions(exceptions);
 const packages = JSON.parse(readFileSync(path.join(siteRoot, 'package-lock.json'), 'utf8')).packages;
 verifyInstalledExceptions(siteRoot, packages, reviewed);
+verifySecurityPatches(siteRoot);
 const accepted = acceptedPackages(report, packages, reviewed);
 const failure = auditExecutionFailure(result, report, auditFailure(report, productionRoots(siteRoot), accepted));
 if (failure) {

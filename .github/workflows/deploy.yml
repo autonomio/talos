@@ -118,11 +118,14 @@ jobs:
           python -m build --no-isolation
           python scripts/package_audit.py
           python -m twine check dist/*
+      - name: Build reproducible owned legacy security wheels
+        run: python -m tools.security.wheels --cache build/legacy-wheel-cache --output build/legacy-security
       - name: Record artifact digests
         run: |
           set -euo pipefail
           mkdir release-evidence
           (cd dist && sha256sum -- *.whl *.tar.gz) > release-evidence/SHA256SUMS
+          (cd build/legacy-security && sha256sum -- *.whl) >> release-evidence/SHA256SUMS
           {
             echo '### Artifact SHA-256'
             echo
@@ -137,6 +140,7 @@ jobs:
           subject-path: |
             dist/*.whl
             dist/*.tar.gz
+            build/legacy-security/*.whl
             release-evidence/SHA256SUMS
       - name: Retain the authentic Sigstore bundle
         env:
@@ -157,6 +161,11 @@ jobs:
             release-evidence/SHA256SUMS
             release-evidence/*.sigstore.json
           if-no-files-found: error
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: legacy-security-wheels
+          path: build/legacy-security/*.whl
+          if-no-files-found: error
   release_assets:
     needs: build
     runs-on: ubuntu-latest
@@ -171,6 +180,10 @@ jobs:
         with:
           name: release-evidence
           path: release-evidence
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53  # v6.0.0
+        with:
+          name: legacy-security-wheels
+          path: dist
       - name: Verify and attach immutable release assets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

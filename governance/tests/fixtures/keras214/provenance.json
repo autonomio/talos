@@ -1,0 +1,22 @@
+{
+  "created": "2026-10-01",
+  "frameworks": {
+    "keras": "2.14.0",
+    "tensorflow": "2.14.1",
+    "talos": "2.0.2"
+  },
+  "data": "sklearn.datasets.load_iris bundled real Fisher Iris observations",
+  "split": "stratified train_test_split(test_size=.2,random_state=17); StandardScaler.fit(x_train), float32 validation rows",
+  "model": "Original unpatched Keras Sequential Dense(4,relu) / Dense(3,softmax); Scan units [4,8], legacy.Adam(lr=.01,decay=.001), 3 epochs, best val_loss=.7930310368537903; native archive has compile_config=None",
+  "assertion": "Restored predictions match retained original predictions, rtol=1e-5,atol=1e-6",
+  "files": [
+    {
+      "path": "genuine-keras214-native.keras",
+      "sha256": "173f80fe889a66ffe61e3c52e3f2e57b7a306aee0aa5ef10af62cdbbd8672dfd"
+    },
+    {
+      "path": "expected.npz",
+      "sha256": "b23e915738514cd8eb7ea9ddc3df82f77dc1a105cc5a0a21729091a0c353e721"
+    }
+  ]
+}
