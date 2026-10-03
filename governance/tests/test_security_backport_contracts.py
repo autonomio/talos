@@ -92,7 +92,8 @@ def test_legacy_audit_refuses_incomplete_or_unproved_findings(mutation):
         dispositions(report, identities)
 
 
-def test_auditor_execution_error_cannot_accept_a_stale_report(tmp_path, monkeypatch):
+@pytest.mark.parametrize('exit_code', [1, 2])
+def test_auditor_execution_error_cannot_accept_a_stale_report(tmp_path, monkeypatch, exit_code):
     from tools.security.legacy_audit import main
 
     report = tmp_path / 'audit.json'
@@ -100,9 +101,11 @@ def test_auditor_execution_error_cannot_accept_a_stale_report(tmp_path, monkeypa
     output = tmp_path / 'dispositions.json'
     monkeypatch.setattr(sys, 'argv', ['legacy_audit', '--execute', '--requirements', str(tmp_path / 'requirements'),
                         '--audit', str(report), '--identities', str(tmp_path / 'identities'), '--output', str(output)])
-    monkeypatch.setattr(subprocess, 'run', lambda *args, **kwargs: subprocess.CompletedProcess(args, 2))
-    with pytest.raises(ValueError, match='auditor failed: exit 2'):
+    monkeypatch.setattr(subprocess, 'run', lambda *args, **kwargs: subprocess.CompletedProcess(args, exit_code))
+    expected = 'fresh report' if exit_code == 1 else 'auditor failed: exit 2'
+    with pytest.raises(ValueError, match=expected):
         main()
+    assert not report.exists()
     assert not output.exists()
 
 

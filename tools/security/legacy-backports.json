@@ -17,8 +17,8 @@
       {
         "path": "keras/src/layers/preprocessing/index_lookup.py",
         "before_sha256": "d18342c5123cfd219e8b56267f59959c1db475585d93b1f97d61554bcc553acd",
-        "after_sha256": "490daade426816d068c1c07bf0d32f2d9a8fd7727ef97e06653981409db5191d",
-        "added": 5,
+        "after_sha256": "206dbec2a5eb1a15fac1bc5a853ffa2556215938e560459c1a599c04d352f1bb",
+        "added": 12,
         "patch": "keras_src_layers_preprocessing_index_lookup.py.patch"
       },
       {
@@ -62,8 +62,8 @@
       "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
       "url": "https://raw.githubusercontent.com/keras-team/keras/68f9af408a1734704746f7e6fa9cfede0d6879d8/LICENSE"
     },
-    "output_sha256": "8a595be108b478d914043f3c8ffe3a1d1eeadd9b4974498cec84fb1126a7a899",
-    "installed_tree_sha256": "19af4519d7c7dbf1a2cf4ffefac4fe633542d0b3471a15d9ba4590adc2c6a0bd"
+    "output_sha256": "49a287e766add678836843c6d6708dfd852d0bc45e2296dff188f7d2a68524f9",
+    "installed_tree_sha256": "e5680a8322841e8932ccc27e36be144a26c026f1df94e87a614c47b0fbb62fd9"
   },
   {
     "name": "protobuf",

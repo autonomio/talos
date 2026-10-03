@@ -36,7 +36,7 @@ are not signed releases.
 | Surface | Repair and verification |
 | --- | --- |
 | Keras deserialization | Safe Lambda defaults; safe scope covers config; restrict implicit imports and function reexports; retain explicit custom objects |
-| Vocabulary assets | Reject external vocabulary reads while loading; save embedded assets and restore after original deletion |
+| Vocabulary assets | Default config deserialization to a safe scope; retain authored construction and explicitly trusted loading; save embedded assets and restore after original deletion |
 | HDF5 | Reject links, virtual/external datasets and excessive allocations before data reads |
 | ZIP and tar | Contain paths and extraction; bound expansion; reject archive links without deleting existing destinations |
 | NPZ | Disable object-array pickle in safe mode; retain explicit trusted loading |

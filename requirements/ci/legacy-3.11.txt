@@ -891,7 +891,7 @@ joblib==1.6.0 \
     --hash=sha256:3dbbf9f6e4b592a2357b854608e980fe6390d131d7a82f011a377ef2ebef7aba
     # via scikit-learn
 keras==2.14.0+autonomio.1 \
-    --hash=sha256:8a595be108b478d914043f3c8ffe3a1d1eeadd9b4974498cec84fb1126a7a899
+    --hash=sha256:49a287e766add678836843c6d6708dfd852d0bc45e2296dff188f7d2a68524f9
     # via
     #   talos
     #   tensorflow

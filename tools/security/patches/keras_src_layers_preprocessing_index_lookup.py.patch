@@ -22,7 +22,21 @@
          self.input_idf_weights = idf_weights
          # VocabularySavedModelSaver will clear the config vocabulary to restore
          # the lookup table ops directly. We persist this hidden option to
-@@ -481,6 +483,8 @@
+@@ -417,6 +419,13 @@
+         logging.warning("vocab_size is deprecated, please use vocabulary_size.")
+         return self.vocabulary_size()
+ 
++    @classmethod
++    def from_config(cls, config):
++        with serialization_lib.SafeModeScope(
++            serialization_lib.in_safe_mode() is not False
++        ):
++            return super().from_config(config)
++
+     def get_config(self):
+         config = {
+             "invert": self.invert,
+@@ -481,6 +490,8 @@
              )
  
          if isinstance(vocabulary, str):

@@ -87,11 +87,15 @@ def main() -> int:
         if args.execute:
             if args.requirements is None:
                 raise ValueError('Executing legacy audit requires --requirements')
+            args.audit.unlink(missing_ok=True)
+            args.output.unlink(missing_ok=True)
             result = subprocess.run([sys.executable, '-m', 'pip_audit', '--strict', '--disable-pip',
                 '--no-deps', '-r', str(args.requirements), '--format', 'json', '--output', str(args.audit)],
                 check=False)
             if result.returncode not in (0, 1):
                 raise ValueError(f'Legacy dependency auditor failed: exit {result.returncode}')
+            if not args.audit.is_file():
+                raise ValueError('Legacy dependency auditor did not produce a fresh report')
         rows = dispositions(json.loads(args.audit.read_text()), json.loads(args.identities.read_text()))
         args.output.write_text(json.dumps(rows, indent=2) + '\n')
         sys.stdout.write(f'{len(rows)} retained upstream legacy findings have exact verified dispositions\n')

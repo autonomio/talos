@@ -3,6 +3,7 @@
 # v2.0.7
 
 - Backport reviewed legacy framework and documentation dependency security fixes while preserving original model predictions and explicit trusted deserialization.
+- Reject vocabulary config reads when safe mode is unset; require a fresh report for each executed upstream audit.
 - Require hash-pinned owned Keras/Protobuf wheels in the legacy extra and CI; retain upstream findings and reject unproved advisory dispositions.
 - Monitor owned dependency upstream identities and documentation advisories in one bounded weekly job without increasing PR fan-out.
 - Include the owned dependency wheels in signed GitHub release artifacts, keeping the Talos-only PyPI upload separate.

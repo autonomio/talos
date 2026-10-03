@@ -51,13 +51,24 @@ def test_serialized_config_cannot_disable_safe_mode(module):
     assert serialization_lib.in_safe_mode() is not False
 
 
-def test_external_vocabulary_rejected_in_safe_mode(tmp_path):
+@pytest.mark.parametrize('safe_mode', [True, None])
+def test_external_vocabulary_rejected_in_safe_mode(tmp_path, safe_mode):
     source = tmp_path / 'private.txt'
     source.write_text('private-token\n')
     config = keras.layers.StringLookup(vocabulary=['a']).get_config()
     config['vocabulary'] = str(source)
-    with serialization_lib.SafeModeScope(True), pytest.raises(TypeError, match='external vocabulary'):
+    with serialization_lib.SafeModeScope(safe_mode), pytest.raises(TypeError, match='external vocabulary'):
         keras.layers.StringLookup.from_config(config)
+
+
+def test_external_vocabulary_explicit_trusted_deserialization_remains_available(tmp_path):
+    source = tmp_path / 'trusted.txt'
+    source.write_text('authored-token\n')
+    config = keras.layers.StringLookup(vocabulary=['a']).get_config()
+    config['vocabulary'] = str(source)
+    with serialization_lib.SafeModeScope(False):
+        restored = keras.layers.StringLookup.from_config(config)
+    assert restored.get_vocabulary() == ['[UNK]', 'authored-token']
 
 
 def test_vocabulary_asset_roundtrip_after_original_deleted(tmp_path):
