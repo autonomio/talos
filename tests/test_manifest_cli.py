@@ -746,11 +746,15 @@ def test_same_iris_sfd_tuple_ranges_native_manifest_and_resume(tmp_path):
     assert CompiledSFD(overridden, source_path=tmp_path / 'override.yaml').params() == {'units': [4, 10, 3]}
 
 
-def test_source_bundle_excludes_target_installed_distribution(tmp_path, monkeypatch):
+@pytest.mark.parametrize('metadata_kind', ['wheel', 'egg-sources', 'egg-installed'])
+def test_source_bundle_excludes_target_installed_distribution(tmp_path, monkeypatch, metadata_kind):
     import importlib
+    import sys
 
     from talos.experiment.source_snapshot import hydrate_sources, snapshot_sources
     from talos.yaml.resolver import load_sfd
+    for name in ('alternate_dependency', 'alternate_dependency.integration'):
+        monkeypatch.delitem(sys.modules, name, raising=False)
     target = tmp_path / 'alternate_dependencies'
     package = target / 'alternate_dependency'
     package.mkdir(parents=True)
@@ -760,14 +764,24 @@ def test_source_bundle_excludes_target_installed_distribution(tmp_path, monkeypa
         '    from .integration import missing\n'
         '    return missing()\n')
     (package / 'integration.py').write_text('from absent_optional_backend import missing\n')
-    metadata = target / 'alternate_dependency-1.0.dist-info'
+    metadata = target / ('alternate_dependency-1.0.dist-info' if metadata_kind == 'wheel'
+                         else 'alternate_dependency.egg-info')
     metadata.mkdir()
-    (metadata / 'METADATA').write_text('Metadata-Version: 2.1\nName: alternate-dependency\nVersion: 1.0\n')
-    (metadata / 'RECORD').write_text(
-        'alternate_dependency/__init__.py,,\n'
-        'alternate_dependency/integration.py,,\n'
-        'alternate_dependency-1.0.dist-info/METADATA,,\n'
-        'alternate_dependency-1.0.dist-info/RECORD,,\n')
+    (metadata / ('METADATA' if metadata_kind == 'wheel' else 'PKG-INFO')).write_text(
+        'Metadata-Version: 2.1\nName: alternate-dependency\nVersion: 1.0\n')
+    if metadata_kind == 'wheel':
+        (metadata / 'RECORD').write_text(
+            'alternate_dependency/__init__.py,,\n'
+            'alternate_dependency/integration.py,,\n'
+            f'{metadata.name}/METADATA,,\n'
+            f'{metadata.name}/RECORD,,\n')
+    else:
+        # Older Python reads SOURCES; newer Python prefers installed-files.
+        (metadata / 'SOURCES.txt').write_text(
+            'alternate_dependency/__init__.py\nalternate_dependency/integration.py\n')
+        if metadata_kind == 'egg-installed':
+            (metadata / 'installed-files.txt').write_text(
+                '../alternate_dependency/__init__.py\n../alternate_dependency/integration.py\n')
     monkeypatch.syspath_prepend(str(target))
     importlib.invalidate_caches()
     source = tmp_path / 'caller_target_dependency.py'

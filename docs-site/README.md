@@ -20,6 +20,9 @@ npm --prefix docs-site run security:audit
 npm --prefix docs-site run check
 ```
 
+The audit reports all production advisories and enforces the
+[documentation dependency exception policy](../docs/Developer/Documentation-System.md#documentation-dependency-exceptions).
+
 The check lints mapped Markdown, tests source assembly, verifies external links,
 builds every route, proves sitemap/search/asset budgets, and runs browser and
 accessibility checks. A failed stage blocks the check.

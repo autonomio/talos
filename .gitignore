@@ -30,6 +30,7 @@ verification-output/
 !.markdownlint.json
 !docs-site/package.json
 !docs-site/package-lock.json
+!docs-site/security-exceptions.json
 !docs-site/product-docs.json
 !docs-site/docs-map.json
 
