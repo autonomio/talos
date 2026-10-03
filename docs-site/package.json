@@ -52,7 +52,7 @@
     "webpack-dev-middleware": "7.4.6"
   },
   "devDependencies": {
-    "@axe-core/playwright": "4.12.1",
+    "@axe-core/playwright": "4.13.0",
     "@playwright/test": "1.61.1",
     "markdownlint-cli2": "0.18.1",
     "markdown-it": "14.3.1"
