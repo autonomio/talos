@@ -92,7 +92,8 @@ def test_ci_combine_preserves_data_after_nested_report(tmp_path: Path) -> None:
     commands = [line.strip() for step in workflow['jobs']['documentation']['steps']
                 for line in step.get('run', '').splitlines()
                 if line.strip().startswith('python -m coverage combine ')]
-    assert len(commands) == 1
+    assert len(commands) == 2
+    assert all(command == 'python -m coverage combine --append --keep' for command in commands)
     coverage(*shlex.split(commands[0])[3:])
     report = tmp_path / 'coverage.json'
     coverage('json', '-o', str(report))

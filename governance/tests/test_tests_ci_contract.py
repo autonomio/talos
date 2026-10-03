@@ -5,7 +5,7 @@ from pathlib import Path
 import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-TESTS_WORKFLOW = REPO_ROOT / '.github/workflows/pr_checks_tests.yml'
+TESTS_WORKFLOW = REPO_ROOT / '.github/workflows/pr_checks_lint.yml'
 EXPECTED_TEST_COMMAND = 'pytest -p governance.pytest_runtime tests/test_*.py -q --maxfail=1'
 
 

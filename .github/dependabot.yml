@@ -4,11 +4,44 @@ updates:
     directory: /
     schedule:
       interval: weekly
+      day: monday
+      time: '04:00'
+      timezone: Europe/Helsinki
+    open-pull-requests-limit: 1
+    groups:
+      version-updates:
+        applies-to: version-updates
+        patterns: ['*']
+      security-updates:
+        applies-to: security-updates
+        patterns: ['*']
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+      day: tuesday
+      time: '04:00'
+      timezone: Europe/Helsinki
+    open-pull-requests-limit: 1
+    groups:
+      version-updates:
+        applies-to: version-updates
+        patterns: ['*']
+      security-updates:
+        applies-to: security-updates
+        patterns: ['*']
   - package-ecosystem: npm
     directory: /docs-site
     schedule:
       interval: weekly
+      day: wednesday
+      time: '04:00'
+      timezone: Europe/Helsinki
+    open-pull-requests-limit: 1
+    groups:
+      version-updates:
+        applies-to: version-updates
+        patterns: ['*']
+      security-updates:
+        applies-to: security-updates
+        patterns: ['*']

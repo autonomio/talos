@@ -1,16 +1,9 @@
 #!/usr/bin/env python3
-"""Test-suite runtime gate: the suite completes inside its recorded budget.
+"""Test-suite runtime gate: preserve the measured ceiling and profile slow tests.
 
-CLAUDE.md's stance says a command that runs repeatedly must be profiled and
-its profile reported, not merely tolerated. This gate is that stance made
-mechanical: the suite writes a runtime profile, and the profile is checked
-against a committed ceiling.
-
-The ceiling is per-repository, in `.github/budgets.json`. The template's
-own suite is trivial, so its ceiling is loose scaffolding a derived repository
-recalibrates against its own observed spread -- the shape of the budget file
-records the observation window so a later reader can tell a measured ceiling
-from a guessed one.
+Budgets live in `.github/budgets.json`. Raising a ceiling requires an explicit
+PR-body marker. Metadata edits revalidate that marker without rerunning tests;
+source checks still require the measured suite profile and enforce its ceiling.
 """
 from __future__ import annotations
 
@@ -127,16 +120,19 @@ def slowest(profile: dict[str, Any], limit: int) -> list[tuple[str, float]]:
 def main() -> int:
     exit_if_disabled('runtime_budget', BANNER)
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--profile', required=True, help='runtime profile JSON')
+    parser.add_argument('--profile', help='runtime profile JSON')
     parser.add_argument('--enforce', action='store_true',
                         help='exit non-zero when the suite exceeds its ceiling')
     parser.add_argument('--base-ref', help='protected base ref to compare the ceiling against')
     parser.add_argument('--base-file', help='path to the base budgets.json (local/test mode)')
     parser.add_argument('--pr-body-file', help='file holding the PR body, for the raise marker')
+    parser.add_argument('--check-ratchet-only', action='store_true',
+                        help='revalidate the PR-body waiver without repeating the test suite')
     args = parser.parse_args()
+    if not args.check_ratchet_only and args.profile is None:
+        parser.error('--profile is required unless --check-ratchet-only is selected')
 
     budget = load_json(BUDGET_PATH, 'runtime budget').get(BUDGET_SECTION, {})
-    profile = load_json(Path(args.profile), 'runtime profile')
 
     ceiling = budget.get('max_total_seconds')
     if isinstance(ceiling, bool) or not isinstance(ceiling, (int, float)) or ceiling <= 0:
@@ -155,7 +151,6 @@ def main() -> int:
         )
         if not raise_is_declared(pr_body):
             print(f'{BANNER} -- FAIL', file=sys.stderr)
-            print('', file=sys.stderr)
             print(
                 f'  raised without marker: max_total_seconds '
                 f'(base={base:g}, head={float(ceiling):g}, +{float(ceiling) - base:g})',
@@ -170,6 +165,10 @@ def main() -> int:
             print('Merge blocked.', file=sys.stderr)
             return 1
 
+    if args.check_ratchet_only:
+        print(f'{BANNER} -- PASS (runtime ceiling marker verified)')
+        return 0
+    profile = load_json(Path(args.profile), 'runtime profile')
     total = profile.get('total_seconds')
     if isinstance(total, bool) or not isinstance(total, (int, float)):
         fail_setup(BANNER, f'profile .total_seconds must be a number, got {total!r}')

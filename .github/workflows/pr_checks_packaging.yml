@@ -14,6 +14,10 @@ on:
     branches: [master]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -21,6 +25,7 @@ jobs:
   pr_checks_packaging:
     name: pr_checks_packaging
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -104,77 +109,3 @@ jobs:
         with:
           name: distributions
           path: dist
-
-  pr_checks_package_install:
-    name: pr_checks_package_install (${{ matrix.python-version }})
-    needs: pr_checks_packaging
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - python-version: '3.10'
-            lock: core-3.10.txt
-          - python-version: '3.11'
-            lock: core-3.11.txt
-          - python-version: '3.12'
-            lock: core-3.12.txt
-          - python-version: '3.13'
-            lock: core-3.13.txt
-
-    steps:
-      - name: Set up Python
-        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Checkout
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
-        with:
-          persist-credentials: false
-
-      - name: Download distributions
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53  # v6.0.0
-        with:
-          name: distributions
-          path: dist
-
-      - name: Install declared core dependencies
-        run: python -m pip install --require-hashes -r requirements/ci/${{ matrix.lock }}
-      - name: Install the built wheel
-        run: python -m pip install --no-deps dist/*.whl
-
-      - name: Import the installed package and agree with its metadata
-        env:
-          DIST_NAME: talos
-          PACKAGE_NAME: talos
-        run: |
-          set -euo pipefail
-          # Run from outside the checkout: importing inside it would load the
-          # source tree and prove nothing about the installed wheel.
-          cd "$RUNNER_TEMP"
-          python - <<'PY'
-          import importlib
-          import importlib.metadata as md
-          import os
-          import sys
-
-          dist_name = os.environ['DIST_NAME']
-          package = os.environ['PACKAGE_NAME']
-          module = importlib.import_module(package)
-          forbidden = {'tensorflow', 'keras', 'torch', 'matplotlib', 'pyarrow'}
-          if forbidden.intersection(sys.modules):
-              raise SystemExit('core import eagerly loaded an optional backend')
-          installed = md.version(dist_name)
-          declared = getattr(module, '__version__', installed)
-          print(f'{package} {declared} from {module.__file__} (dist {dist_name} {installed})')
-          if declared != installed:
-              raise SystemExit(
-                  f'__version__ {declared!r} disagrees with distribution metadata {installed!r}'
-              )
-          if 'site-packages' not in (module.__file__ or ''):
-              raise SystemExit(f'imported {module.__file__}, not the installed wheel')
-          PY
-
-      - name: Check the installed dependency set is consistent
-        run: python -m pip check

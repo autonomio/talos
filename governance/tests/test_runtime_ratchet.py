@@ -172,3 +172,27 @@ def test_missing_base_file_blocks(tmp_path: Path) -> None:
     )
     assert result.returncode == 2, result.stdout + result.stderr
     assert 'is not a regular file' in result.stderr
+
+
+def test_metadata_edit_rechecks_marker_without_reading_a_profile(tmp_path: Path) -> None:
+    """Removing a previously valid waiver must fail even without another test run."""
+    _run(tmp_path, head_ceiling=600, base_ceiling=120, pr_body='[runtime-raise: measured scope]')
+    (tmp_path / 'profile.json').unlink()
+    (tmp_path / 'body.txt').write_text('waiver removed', encoding='utf-8')
+    command = [sys.executable, str(tmp_path / 'governance/check_test_runtime.py'),
+               '--check-ratchet-only', '--base-file', str(tmp_path / 'base.json'),
+               '--pr-body-file', str(tmp_path / 'body.txt')]
+    removed = subprocess.run(command, capture_output=True, text=True, check=False, cwd=tmp_path)
+    assert removed.returncode == 1
+    assert 'raised without marker' in removed.stderr
+    (tmp_path / 'body.txt').write_text('[runtime-raise: measured scope]', encoding='utf-8')
+    restored = subprocess.run(command, capture_output=True, text=True, check=False, cwd=tmp_path)
+    assert restored.returncode == 0, restored.stderr
+
+
+def test_source_runtime_check_still_requires_profile(tmp_path: Path) -> None:
+    """The metadata mode cannot silently replace a source runtime measurement."""
+    result = subprocess.run([sys.executable, str(GATE), '--enforce'], cwd=tmp_path,
+                            capture_output=True, text=True, check=False)
+    assert result.returncode != 0
+    assert '--profile is required' in result.stderr
