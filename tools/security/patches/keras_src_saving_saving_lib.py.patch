@@ -1,0 +1,77 @@
+--- a/keras/src/saving/saving_lib.py
++++ b/keras/src/saving/saving_lib.py
+@@ -1,3 +1,4 @@
++# Modified by Autonomio for the owned legacy security backport; see AUTONOMIO_PATCHES.json.
+ # Copyright 2022 The TensorFlow Authors. All Rights Reserved.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+@@ -31,6 +32,8 @@
+ from keras.src import losses
+ from keras.src.engine import base_layer
+ from keras.src.optimizers import optimizer
++from keras.src.saving import security, serialization_lib
++from keras.src.saving.serialization_lib import SafeModeScope
+ from keras.src.saving.serialization_lib import ObjectSharingScope
+ from keras.src.saving.serialization_lib import deserialize_keras_object
+ from keras.src.saving.serialization_lib import serialize_keras_object
+@@ -229,9 +232,10 @@
+     _SAVING_V3_ENABLED.value = True
+ 
+     try:
+-        with tf.io.gfile.GFile(
++        with SafeModeScope(safe_mode is not False and serialization_lib.in_safe_mode() is not False), tf.io.gfile.GFile(
+             filepath, mode="r+b"
+         ) as gfile_handle, zipfile.ZipFile(gfile_handle, "r") as zf:
++            security.validate_zip(zf)
+             with zf.open(_CONFIG_FILENAME, "r") as f:
+                 config_json = f.read()
+ 
+@@ -559,6 +563,7 @@
+         if self.archive:
+             self.tmp_dir = get_temp_dir()
+             if self.mode == "r":
++                security.validate_zip(self.archive)
+                 self.archive.extractall(path=self.tmp_dir)
+             self.working_dir = tf.io.gfile.join(self.tmp_dir, self.root_path)
+             if self.mode == "w":
+@@ -576,7 +581,7 @@
+     def make(self, path):
+         if not path:
+             return self.working_dir
+-        path = tf.io.gfile.join(self.working_dir, path)
++        path = security.asset_path(self.working_dir, path)
+         if not tf.io.gfile.exists(path):
+             tf.io.gfile.makedirs(path)
+         return path
+@@ -584,7 +589,7 @@
+     def get(self, path):
+         if not path:
+             return self.working_dir
+-        path = tf.io.gfile.join(self.working_dir, path)
++        path = security.asset_path(self.working_dir, path)
+         if tf.io.gfile.exists(path):
+             return path
+         return None
+@@ -621,6 +626,13 @@
+             self.h5_file = h5py.File(self.io_file, mode=self.mode)
+         else:
+             self.h5_file = h5py.File(root_path, mode=self.mode)
++
++        if self.mode == "r":
++            try:
++                security.validate_h5(self.h5_file)
++            except BaseException:
++                self.close()
++                raise
+ 
+     def make(self, path):
+         if not path:
+@@ -662,7 +674,7 @@
+                 self.f = archive.open(root_path, mode="r")
+             else:
+                 self.f = open(root_path, mode="rb")
+-            self.contents = np.load(self.f, allow_pickle=True)
++            self.contents = np.load(self.f, allow_pickle=serialization_lib.in_safe_mode() is False)
+ 
+     def make(self, path):
+         if not path:

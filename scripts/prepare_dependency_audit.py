@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import re
+from collections.abc import Callable
 from importlib import metadata
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
@@ -19,7 +20,7 @@ def locked_entries(text: str) -> list[tuple[Requirement, set[str]]]:
     """Read exact platform-resolved entries, refusing unhashed or unpinned input."""
     blocks: list[list[str]] = []
     for line in text.splitlines():
-        if not line.strip() or line.startswith('#'):
+        if not line.strip() or line.startswith('#') or line == '--find-links ./dist':
             continue
         if line.startswith((' ', '\t')):
             if not blocks:
@@ -64,7 +65,8 @@ def advisory_identity(requirement: Requirement, hashes: set[str]) -> tuple[str, 
     return installed, audited
 
 
-def prepare(lock: Path, requirements: Path, identities: Path) -> None:
+def prepare(lock: Path, requirements: Path, identities: Path,
+            identity: Callable[[Requirement, set[str]], tuple[str, str]] = advisory_identity) -> None:
     """Retain the full installed graph and disclose every lookup transformation."""
     source = lock.read_bytes()
     records = []
@@ -74,7 +76,7 @@ def prepare(lock: Path, requirements: Path, identities: Path) -> None:
         if name in names:
             raise ValueError(f'{name}: duplicate locked dependency')
         names.add(name)
-        installed, audited = advisory_identity(requirement, hashes)
+        installed, audited = identity(requirement, hashes)
         records.append({'name': name, 'installed_version': installed, 'audit_version': audited,
                         'locked_requirement': str(requirement), 'locked_sha256': sorted(hashes)})
     requirements.write_text(''.join(f"{item['name']}=={item['audit_version']}\n" for item in records),

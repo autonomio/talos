@@ -105,7 +105,9 @@ def release_assets(tmp_path):
     for directory in [dist, evidence, tools]:
         directory.mkdir()
     files = {'talos-2.0.2-py3-none-any.whl': b'wheel fixture',
-             'talos-2.0.2.tar.gz': b'source fixture'}
+             'talos-2.0.2.tar.gz': b'source fixture',
+             'keras-2.14.0+autonomio.1-py3-none-any.whl': b'owned Keras fixture',
+             'protobuf-4.25.9+autonomio.1-py3-none-any.whl': b'owned protobuf fixture'}
     for name, content in files.items():
         (dist / name).write_bytes(content)
     (evidence / 'SHA256SUMS').write_text(''.join(
@@ -154,9 +156,11 @@ def test_release_attachment_verifies_every_subject_before_immutable_upload(relea
     assert result.returncode == 0, result.stderr
     calls = _gh_calls(environment)
     verified = [call for call in calls if call[:2] == ['attestation', 'verify']]
-    assert len(verified) == 3
+    assert len(verified) == 5
     assert {call[2] for call in verified} == {
-        'dist/talos-2.0.2-py3-none-any.whl', 'dist/talos-2.0.2.tar.gz', 'release-evidence/SHA256SUMS'}
+        'dist/talos-2.0.2-py3-none-any.whl', 'dist/talos-2.0.2.tar.gz', 'release-evidence/SHA256SUMS',
+        'dist/keras-2.14.0+autonomio.1-py3-none-any.whl',
+        'dist/protobuf-4.25.9+autonomio.1-py3-none-any.whl'}
     for call in verified:
         for flag, expected in [('repo', 'autonomio/talos'), ('source-digest', 'a' * 40),
                                ('source-ref', 'refs/heads/master'),
@@ -216,9 +220,10 @@ def test_release_privilege_and_pypi_enablement_are_separate_contracts():
     uploads = [step for step in jobs['build']['steps'] if 'upload-artifact@' in step.get('uses', '')]
     artifacts = {step['with']['name']: step['with']['path'].splitlines() for step in uploads}
     assert artifacts['release-dist'] == ['dist/*.whl', 'dist/*.tar.gz']
+    assert artifacts['legacy-security-wheels'] == ['build/legacy-security/*.whl']
     assert artifacts['release-evidence'] == ['release-evidence/SHA256SUMS', 'release-evidence/*.sigstore.json']
     attest = next(step for step in jobs['build']['steps'] if step.get('id') == 'attestation')
-    assert attest['with']['subject-path'].splitlines() == ['dist/*.whl', 'dist/*.tar.gz', 'release-evidence/SHA256SUMS']
+    assert attest['with']['subject-path'].splitlines() == ['dist/*.whl', 'dist/*.tar.gz', 'build/legacy-security/*.whl', 'release-evidence/SHA256SUMS']
     bundle = next(step for step in jobs['build']['steps'] if step.get('name') == 'Retain the authentic Sigstore bundle')
     assert bundle['env']['BUNDLE_PATH'] == '${{ steps.attestation.outputs.bundle-path }}'
     pypi_guard = next(step for step in jobs['build']['steps'] if step.get('name') == 'Guard against a reused PyPI version')

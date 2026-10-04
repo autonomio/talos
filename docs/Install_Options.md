@@ -26,20 +26,20 @@ Framework choices:
 | `torch` | PyTorch |
 | `keras,tensorflow` | Standalone Keras using TensorFlow |
 | `keras,torch` | Standalone Keras using Torch; set `KERAS_BACKEND=torch` |
-| `legacy-tensorflow` | Compatibility lane: TensorFlow 2.14.1, Keras 2.14 and NumPy 1.26; Python 3.10–3.11 |
+| `legacy-tensorflow` | TensorFlow 2.14.1 with owned Keras/Protobuf security backports and NumPy 1.26 |
 | `plots` | Matplotlib experiment/training plots |
 | `samplers` | Compatibility extra; remote samplers use the core's verified HTTPS clients |
 | `test` | Acceptance tests, coverage, lint and build tools |
 
-The legacy extra retains known upstream advisories for compatibility. Use it only for controlled existing workloads; use the modern extras for new work.
+The legacy extra requires the owned security wheels described in [Security backports](Developer/Security-Backports.md). Build or verify and install those wheels before selecting this extra. This lane supports Python 3.10.12+ or 3.11.4+; do not combine it with modern extras. Upstream advisory lookups remain visible and require verified repairs or explicit absence evidence. Use modern extras for new work.
 
 `python -m pip install 'talos @ git+https://github.com/autonomio/talos@master'` installs the current core and CLI without TensorFlow, Keras, Torch or plotting. Change the extra in the repository installation command to choose a backend. Do not combine the legacy lane with modern framework extras. Resolve framework and Talos upgrades together in a fresh environment.
 
 ## Established Talos 1.x
 
-The last published old-generation release is Talos 1.4. In a separate Python 3.10 or 3.11 environment, install `python -m pip install 'talos==1.4' 'ipython<9'`. The IPython constraint preserves compatibility with its `kerasplotlib` dependency. The official unchanged wheel is verified on Python 3.11 with TensorFlow 2.14.1, Keras 2.14.0, NumPy 1.26.4 and IPython 8.39.0.
+The last published old-generation release is Talos 1.4. In a separate Python 3.10.12+ or 3.11.4+ environment, install the owned legacy framework wheels from [Security backports](Developer/Security-Backports.md), then install `python -m pip install 'talos==1.4' 'tensorflow==2.14.1' 'numpy==1.26.4' 'ipython<9'`. The IPython constraint preserves compatibility with its `kerasplotlib` dependency. The official unchanged wheel is verified on Python 3.11 with TensorFlow 2.14.1, Keras 2.14.0, NumPy 1.26.4 and IPython 8.39.0.
 
-Talos 1.x will remain supported at least until 2028. Its TensorFlow dependency retains known upstream advisories; the maintenance commitment does not remove those findings. The `legacy-tensorflow` extra above runs historical framework callbacks on Talos 2; it does not install Talos 1.4.
+Talos 1.x will remain supported at least until 2028. The owned framework backports preserve the unchanged Talos wheel and old callback interface. Plain upstream Keras 2.14 and Protobuf 4.25.9 still carry known findings; do not infer a repair from the Talos support commitment. The `legacy-tensorflow` extra above runs historical framework callbacks on Talos 2; it does not install Talos 1.4.
 
 ## Install this checkout
 

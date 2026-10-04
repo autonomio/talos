@@ -1,0 +1,84 @@
+--- a/keras/src/utils/data_utils.py
++++ b/keras/src/utils/data_utils.py
+@@ -1,3 +1,4 @@
++# Modified by Autonomio for the owned legacy security backport; see AUTONOMIO_PATCHES.json.
+ # Copyright 2018 The TensorFlow Authors. All Rights Reserved.
+ #
+ # Licensed under the Apache License, Version 2.0 (the "License");
+@@ -103,37 +104,6 @@
+     )
+ 
+ 
+-def _resolve_path(path):
+-    return os.path.realpath(os.path.abspath(path))
+-
+-
+-def _is_path_in_dir(path, base_dir):
+-    return _resolve_path(os.path.join(base_dir, path)).startswith(base_dir)
+-
+-
+-def _is_link_in_dir(info, base):
+-    tip = _resolve_path(os.path.join(base, os.path.dirname(info.name)))
+-    return _is_path_in_dir(info.linkname, base_dir=tip)
+-
+-
+-def _filter_safe_paths(members):
+-    base_dir = _resolve_path(".")
+-    for finfo in members:
+-        valid_path = False
+-        if _is_path_in_dir(finfo.name, base_dir):
+-            valid_path = True
+-            yield finfo
+-        elif finfo.issym() or finfo.islnk():
+-            if _is_link_in_dir(finfo, base_dir):
+-                valid_path = True
+-                yield finfo
+-        if not valid_path:
+-            warnings.warn(
+-                "Skipping invalid path during archive extraction: "
+-                f"'{finfo.name}'."
+-            )
+-
+-
+ def _extract_archive(file_path, path=".", archive_format="auto"):
+     """Extracts an archive if it matches tar, tar.gz, tar.bz, or zip formats.
+ 
+@@ -170,22 +140,22 @@
+ 
+         if is_match_fn(file_path):
+             with open_fn(file_path) as archive:
+-                try:
+-                    if zipfile.is_zipfile(file_path):
+-                        # Zip archive.
+-                        archive.extractall(path)
+-                    else:
+-                        # Tar archive, perhaps unsafe. Filter paths.
+-                        archive.extractall(
+-                            path, members=_filter_safe_paths(archive)
+-                        )
+-                except (tarfile.TarError, RuntimeError, KeyboardInterrupt):
+-                    if os.path.exists(path):
+-                        if os.path.isfile(path):
+-                            os.remove(path)
+-                        else:
+-                            shutil.rmtree(path)
+-                    raise
++                if zipfile.is_zipfile(file_path):
++                    from keras.src.saving.security import validate_zip
++                    validate_zip(archive, path)
++                    archive.extractall(path)
++                else:
++                    if not hasattr(tarfile, "data_filter"):
++                        raise RuntimeError("Upgrade Python to a version with tarfile.data_filter.")
++                    # Validate all entries against the actual destination first.
++                    for member in archive:
++                        if member.issym() or member.islnk():
++                            raise tarfile.FilterError("Tar archive links are prohibited.")
++                        name = member.name.replace("\\", "/")
++                        if name.startswith("/") or ":" in name or ".." in name.split("/"):
++                            raise tarfile.FilterError("Tar member escapes the extraction directory.")
++                        tarfile.data_filter(member, path)
++                    archive.extractall(path, filter="data")
+             return True
+     return False
+ 

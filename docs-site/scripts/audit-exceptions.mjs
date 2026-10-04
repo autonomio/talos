@@ -45,7 +45,7 @@ export function reviewedExceptions(entries, now = new Date()) {
   return reviewed;
 }
 
-function installedLocations(siteRoot, names) {
+export function installedLocations(siteRoot, names) {
   const locations = new Map();
   const pending = [{directory: path.join(siteRoot, 'node_modules'), ancestors: new Set()}];
   while (pending.length > 0) {

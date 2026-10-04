@@ -1,0 +1,15 @@
+--- a/http-cache-semantics/index.js
++++ b/http-cache-semantics/index.js
+@@ -395,7 +395,11 @@
+         this._assertRequestHasHeaders(req);
+ 
+         // In all circumstances, a cache MUST NOT ignore the must-revalidate directive
+-        if (this._rescc['must-revalidate']) {
++        if (this._rescc['must-revalidate'] || !this.storable() ||
++            this._rescc['no-cache'] || this._resHeaders.vary === '*' ||
++            (this._isShared && (this._rescc['proxy-revalidate'] ||
++                (this._resHeaders['set-cookie'] &&
++                    !this._rescc.public && !this._rescc.immutable)))) {
+             return this._evaluateRequestMissResult(req);
+         }
+ 

@@ -1,0 +1,52 @@
+[
+  {
+    "package": "braces",
+    "version": "3.0.3",
+    "advisory": "GHSA-vfj7-8cjw-p6xm",
+    "files": [
+      {
+        "path": "lib/compile.js",
+        "before_sha256": "dc98f22eee3d511785d92a00758d5f0d48efed5f5813bdecc2de430c529b5c9f",
+        "after_sha256": "f06f8848d5d691d9ba5622f6e33cf9a2a1e13c0d395fd4f506db7fdbaf931768",
+        "patch": "braces_lib_compile.js.patch"
+      },
+      {
+        "path": "lib/expand.js",
+        "before_sha256": "41ccc196ebfa7b7781a634e721eb744e4e7bcb54cba427a7e3d6806a1b9e58f7",
+        "after_sha256": "ab4bb1be5921ab822b55daf12ac1ab3cdb803f49468a0ec668efb738effd01c0",
+        "patch": "braces_lib_expand.js.patch"
+      },
+      {
+        "path": "lib/parse.js",
+        "before_sha256": "e572166565f15fa6ad9865ae49d678218e32aabfd1b3720f6d0d43d39800d310",
+        "after_sha256": "1b2f409199d88c4bf54a59c287dba80810c0caef26698a2799cbda53d60ea62f",
+        "patch": "braces_lib_parse.js.patch"
+      },
+      {
+        "path": "lib/stringify.js",
+        "before_sha256": "379f22d77bfa1478341ccd49c5e4267464aabcbba03558bab332aac23fc6f23a",
+        "after_sha256": "41ccd0689b369fec64cfadf313b02f849b408a73f5bafd3b4cb78392343c6c50",
+        "patch": "braces_lib_stringify.js.patch"
+      },
+      {
+        "path": "lib/validate.js",
+        "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_sha256": "e2af955c58874c3b4347b916404c8903551f6766a1022971a28a661ab8bb179a",
+        "patch": "braces_lib_validate.js.patch"
+      }
+    ]
+  },
+  {
+    "package": "http-cache-semantics",
+    "version": "4.2.0",
+    "advisory": "GHSA-ch52-4w7c-c8xp",
+    "files": [
+      {
+        "path": "index.js",
+        "before_sha256": "01b7d66c854b2fe53ac05c98feb6e0d64722ab8898a778e2d2426a8b468d178f",
+        "after_sha256": "c5b32ae2707574156f6bd3f7f00aaf111ea591210588d7fe9bfd0801cf3682d4",
+        "patch": "http-cache-semantics_index.js.patch"
+      }
+    ]
+  }
+]

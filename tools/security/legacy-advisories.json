@@ -1,0 +1,108 @@
+[
+  {
+    "id": "GHSA-36fq-jgmw-4r9c",
+    "package": "keras",
+    "kind": "repaired",
+    "evidence": "governance/tests/test_legacy_backports.py: test_serialized_config_cannot_disable_safe_mode; test_serialized_function_reexports_cannot_bypass_safe_mode",
+    "source": "https://github.com/advisories/GHSA-36fq-jgmw-4r9c"
+  },
+  {
+    "id": "GHSA-5gwj-m78q-7pq3",
+    "package": "keras",
+    "kind": "repaired",
+    "evidence": "governance/tests/test_legacy_backports.py: test_lambda_safe_default_and_explicit_unsafe_compatibility",
+    "source": "https://github.com/advisories/GHSA-5gwj-m78q-7pq3"
+  },
+  {
+    "id": "GHSA-mq84-hjqx-cwf2",
+    "package": "keras",
+    "kind": "repaired",
+    "evidence": "governance/tests/test_legacy_backports.py: test_external_vocabulary_rejected_in_safe_mode; test_vocabulary_asset_roundtrip_after_original_deleted",
+    "source": "https://github.com/advisories/GHSA-mq84-hjqx-cwf2"
+  },
+  {
+    "id": "GHSA-gh82-f9x8-5frx",
+    "package": "keras",
+    "kind": "repaired",
+    "evidence": "governance/tests/test_legacy_backports.py: test_asset_paths_reject_escape",
+    "source": "https://github.com/advisories/GHSA-gh82-f9x8-5frx"
+  },
+  {
+    "id": "GHSA-m8wh-29wm-52mv",
+    "package": "keras",
+    "kind": "repaired",
+    "evidence": "governance/tests/test_legacy_backports.py: test_hdf5_unsafe_storage_rejected_before_read[external_link]; test_hdf5_unsafe_storage_rejected_before_read[soft_link]",
+    "source": "https://github.com/advisories/GHSA-m8wh-29wm-52mv"
+  },
+  {
+    "id": "GHSA-26c4-7vv6-867j",
+    "package": "keras",
+    "kind": "repaired",
+    "evidence": "governance/tests/test_legacy_backports.py: test_hdf5_unsafe_storage_rejected_before_read[virtual]; test_hdf5_unsafe_storage_rejected_before_read[external_storage]",
+    "source": "https://github.com/advisories/GHSA-26c4-7vv6-867j"
+  },
+  {
+    "id": "GHSA-74m6-m3xx-3vmj",
+    "package": "keras",
+    "kind": "repaired",
+    "evidence": "governance/tests/test_legacy_backports.py: test_hdf5_unsafe_storage_rejected_before_read[shape_bomb]",
+    "source": "https://github.com/advisories/GHSA-74m6-m3xx-3vmj"
+  },
+  {
+    "id": "GHSA-cjgq-5qmw-rcj6",
+    "package": "keras",
+    "kind": "repaired",
+    "evidence": "governance/tests/test_legacy_backports.py: test_public_get_file_download_extraction_uses_repaired_boundary; test_tar_traversal_rejected_without_deleting_existing_files",
+    "source": "https://github.com/advisories/GHSA-cjgq-5qmw-rcj6"
+  },
+  {
+    "id": "GHSA-hjqc-jx6g-rwp9",
+    "package": "keras",
+    "kind": "repaired",
+    "evidence": "governance/tests/test_legacy_backports.py: test_tar_links_rejected_before_any_extraction; tarfile.data_filter plus unconditional archive link rejection",
+    "source": "https://github.com/advisories/GHSA-hjqc-jx6g-rwp9"
+  },
+  {
+    "id": "GHSA-58hv-7753-xmfq",
+    "package": "keras",
+    "kind": "repaired",
+    "evidence": "governance/tests/test_legacy_backports.py: test_tar_links_rejected_before_any_extraction; obsolete CWD/path-prefix helpers removed",
+    "source": "https://github.com/advisories/GHSA-58hv-7753-xmfq"
+  },
+  {
+    "id": "GHSA-hqp4-2352-xf5r",
+    "package": "keras",
+    "kind": "repaired",
+    "evidence": "governance/tests/test_legacy_backports.py: test_tar_sibling_prefix_escape_rejected; test_zip_traversal_rejected; test_zip_existing_directory_symlink_cannot_escape",
+    "source": "https://github.com/advisories/GHSA-hqp4-2352-xf5r"
+  },
+  {
+    "id": "GHSA-v2w2-w228-c444",
+    "package": "keras",
+    "kind": "absent",
+    "evidence": "governance/tests/test_legacy_backports.py: Keras 2.14 has no TorchModuleWrapper or PyTorch layer integration",
+    "source": "https://github.com/advisories/GHSA-v2w2-w228-c444",
+    "paths": [
+      "keras/src/layers/torch_module_wrapper.py",
+      "keras/src/utils/torch_utils.py"
+    ]
+  },
+  {
+    "id": "GHSA-4f3f-g24h-fr8m",
+    "package": "keras",
+    "kind": "absent",
+    "evidence": "governance/tests/test_legacy_backports.py: Keras 2.14 has no TFSMLayer SavedModel layer wrapper",
+    "source": "https://github.com/advisories/GHSA-4f3f-g24h-fr8m",
+    "paths": [
+      "keras/src/export/tfsm_layer.py",
+      "keras/src/layers/tfsm_layer.py"
+    ]
+  },
+  {
+    "id": "GHSA-7gcm-g887-7qv7",
+    "package": "protobuf",
+    "kind": "repaired",
+    "evidence": "governance/tests/test_legacy_backports.py: test_protobuf_any_depth_is_enforced; upstream ConvertMessage recursion-accounting backport",
+    "source": "https://github.com/advisories/GHSA-7gcm-g887-7qv7"
+  }
+]
