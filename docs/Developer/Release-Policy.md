@@ -31,7 +31,7 @@ A tagged or uploaded version is burned. PyPI filenames cannot be reused after de
 
 The workflow downloads the exact Python 3.12 distributions already built, audited and installed by that CI run. It audits their contents against the release checkout and checks their metadata again, without rerunning training or rebuilding Talos. The two owned legacy security wheels are reconstructed from their reviewed hashes. Signing, immutable GitHub attachment and PyPI upload retain separate permissions. The protected `pypi` environment allows protected branches and has no manual reviewer gate.
 
-A merge that retains an already tagged package version cannot create a second release under that identity. Dependency-only bot PRs currently omit a Talos version bump; release creation rejects retargeting the existing tag. Include those dependency changes in the next reviewed version bump. Failed CI never publishes.
+Every PR, including a dependency-bot PR, must advance the version and matching changelog/citation identity before merge. Bots retain only the human slice-issue exemption. A merge cannot reuse an existing tag or PyPI filename, and failed CI never publishes.
 
 ## Deliverables
 

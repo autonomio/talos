@@ -3,6 +3,7 @@
 - Publish each new reviewed Talos version automatically after successful protected-master CI, without a separate release approval.
 - Reuse the exact CI-tested Talos distributions for signing and publication instead of repeating training and builds.
 - Reject foreign or failed CI evidence and skip superseded master heads before creating a release.
+- Require dependency-bot version and changelog bumps so every merge has a unique release identity.
 - Update installation instructions for the published Talos 2 generation and record verified 2.0.7 release provenance.
 - Record the attained OpenSSF Best Practices Silver badge and its dependency, signature and assurance evidence.
 

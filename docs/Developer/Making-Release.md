@@ -21,7 +21,7 @@ Read [Release policy](Release-Policy.md) for source, signature and burned-versio
 6. The attachment job verifies hashes, repository, signer workflow, source commit/ref and hosted runner before attaching the six immutable assets.
 7. The separate protected PyPI job uploads only the Talos wheel and sdist automatically. Verify the registry version and an isolated installation, then retain the actual workflow, digests and consumer verification.
 
-The source version is the release identity. A dependency-only bot merge without a version bump does not permit reusing an existing tag or PyPI filename; include it in the next reviewed version bump.
+The source version is the release identity. Dependency-bot PRs must include the same version, changelog and citation bump as other PRs before merge. The required version gate enforces this; an existing tag or PyPI filename cannot be reused.
 
 ## Recovery dispatch
 

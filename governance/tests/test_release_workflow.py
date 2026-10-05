@@ -350,3 +350,25 @@ def test_release_recovery_requires_tested_source_and_matching_identity(candidate
     result = _run_step('prepare_release', 'Select successful same-source master CI', root, environment)
     assert result.returncode != 0
     assert not Path(environment['GITHUB_OUTPUT']).exists()
+
+
+@pytest.mark.parametrize('bump', [False, True])
+def test_dependency_bot_requires_new_release_identity(tmp_path, bump):
+    base = tmp_path / 'base.toml'
+    head = tmp_path / 'head.toml'
+    old_notes = tmp_path / 'old.md'
+    new_notes = tmp_path / 'new.md'
+    base.write_text('[project]\nversion = "2.0.2"\n')
+    head.write_text('[project]\nversion = "2.0.3"\n' if bump else base.read_text())
+    old_notes.write_text('# v2.0.2\n\n- Fix source.\n')
+    new_notes.write_text('# v2.0.3\n\n- Update dependencies.\n' if bump else old_notes.read_text())
+    result = subprocess.run([
+        sys.executable, str(REPO_ROOT / 'governance/version_gate.py'),
+        '--pr-title', 'build(deps): update dependencies', '--pr-author', 'dependabot[bot]',
+        '--base-pyproject', str(base), '--head-pyproject', str(head),
+        '--base-changelog', str(old_notes), '--head-changelog', str(new_notes),
+    ], cwd=REPO_ROOT, capture_output=True, text=True, check=False)
+    assert result.returncode == (0 if bump else 1), result.stderr
+    assert 'SKIP' not in result.stdout
+    if not bump:
+        assert 'must bump' in result.stdout

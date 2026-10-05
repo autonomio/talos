@@ -92,27 +92,15 @@ bootstrap:
 ruleset:
   name: Protect-Master
 
-# Dependency updates arrive as pull requests opened by a bot. They close no
-# slice issue and bump no version, so laws 1 and 5 block every one of them
-# permanently -- the repository simply accumulates unmergeable pull requests
-# until a human hand-wraps each bump in a slice issue and a version bump. That
-# tax buys no reviewer anything: the diff is a version string someone else
-# already reviewed upstream, and the remaining nine laws still run.
-#
-# `exempt_gates` names the gates that step aside, and only for the authors in
-# `bot_authors`. Emptying either list holds bots to the same laws as anyone
-# else, which is the setting to choose if a repository would rather batch its
-# bumps by hand than let them merge unaccompanied.
-#
-# This cannot be widened by accident: a gate skips only when the author matches
-# AND the gate is named here, and both lists default to empty in code, so a
-# missing section enforces rather than exempts.
+# Dependency bots omit the human slice issue, but every merge releases Talos.
+# They therefore need the same reviewed version/changelog/citation bump as
+# other PRs. Exempting version would merge an already burned release identity.
+# A gate skips only when both its name and the author appear in these lists.
 automation:
   bot_authors:
     - dependabot[bot]
   exempt_gates:
     - slice
-    - version
 
 # The control surface.
 #

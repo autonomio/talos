@@ -141,10 +141,12 @@ def test_both_exempted_gates_are_told_who_opened_the_pull_request() -> None:
         )
 
 
-def test_both_laws_disclose_the_exemption() -> None:
+def test_configured_laws_disclose_the_exemption() -> None:
     """A law that does not mention its own exemption overstates what runs."""
     laws = (REPO_ROOT / 'CLAUDE.md').read_text(encoding='utf-8')
-    for law in ('pr_checks_slice', 'pr_checks_version'):
+    configured = yaml.safe_load(CONFIG.read_text(encoding='utf-8'))
+    for gate in configured.get('automation', {}).get('exempt_gates', []):
+        law = f'pr_checks_{gate}'
         line = next(ln for ln in laws.splitlines() if ln.endswith(f'*({law})*'))
         assert 'automation.bot_authors' in line, (
             f'the law ending in ({law}) does not disclose the bot exemption'
