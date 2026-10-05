@@ -1,33 +1,83 @@
-name: Build signed release and optionally publish PyPI
+name: Release Talos after successful master CI
 on:
-  release:
-    types: [published]
+  workflow_run:
+    workflows: [Test and build]
+    types: [completed]
+    branches: [master]
   workflow_dispatch:
     inputs:
       tag:
-        description: Existing published release tag matching this reviewed master commit.
-        required: true
+        description: Recovery tag matching the selected master version; leave empty to derive it.
+        required: false
         type: string
 permissions:
   contents: read
 concurrency:
-  group: release-assets-${{ github.event.release.tag_name || inputs.tag }}
+  group: release-${{ github.sha }}
   cancel-in-progress: false
 jobs:
+  prepare_release:
+    if: >-
+      github.repository == 'autonomio/talos' && github.ref == 'refs/heads/master' &&
+      (github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_repository.full_name == github.repository))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: pypi
+    permissions:
+      contents: write
+      actions: read
+    outputs:
+      ready: ${{ steps.candidate.outputs.ready }}
+      tag: ${{ steps.candidate.outputs.tag }}
+      source_sha: ${{ steps.candidate.outputs.source_sha }}
+      ci_run_id: ${{ steps.candidate.outputs.ci_run_id }}
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
+        with:
+          python-version: '3.12'
+      - name: Select successful same-source master CI
+        id: candidate
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXPECTED_SHA: ${{ github.sha }}
+          RECOVERY_TAG: ${{ inputs.tag }}
+        run: python scripts/release_candidate.py --expected-sha "$EXPECTED_SHA" --tag "$RECOVERY_TAG"
+      - name: Configure release identity
+        if: steps.candidate.outputs.ready == 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - name: Create the tested version tag and release
+        if: steps.candidate.outputs.ready == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ steps.candidate.outputs.tag }}
+          EXPECTED_SHA: ${{ steps.candidate.outputs.source_sha }}
+        run: python scripts/create_release.py --tag "$RELEASE_TAG" --expected-sha "$EXPECTED_SHA" --publish
   build:
-    if: github.event_name == 'release' || github.ref == 'refs/heads/master'
+    needs: prepare_release
+    if: needs.prepare_release.outputs.ready == 'true'
+    timeout-minutes: 15
     outputs:
       source_sha: ${{ steps.reviewed_source.outputs.source_sha }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      actions: read
       id-token: write
       attestations: write
     steps:
       - name: Checkout the released tag
         uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd  # v5.0.1
         with:
-          ref: ${{ github.event.release.tag_name || inputs.tag }}
+          ref: ${{ needs.prepare_release.outputs.tag }}
           fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
@@ -37,7 +87,7 @@ jobs:
         id: reviewed_source
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          RELEASE_TAG: ${{ needs.prepare_release.outputs.tag }}
         run: |
           set -euo pipefail
           if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -59,7 +109,7 @@ jobs:
       - name: Validate published tag and package version
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          RELEASE_TAG: ${{ needs.prepare_release.outputs.tag }}
           RELEASE_METADATA: ${{ runner.temp }}/release.json
         run: |
           set -euo pipefail
@@ -79,9 +129,7 @@ jobs:
         run: |
           python -m pip install --require-hashes -r requirements/ci/build-tools.txt
           python -m pip install --require-hashes -r requirements/ci/packaging-tools.txt
-          python -m pip install --require-hashes -r requirements/ci/dev-env.txt
       - name: Guard against a reused PyPI version
-        if: vars.PYPI_PUBLISH_ENABLED == 'true'
         run: |
           python - <<'PY'
           import json
@@ -102,20 +150,15 @@ jobs:
               raise SystemExit(f'PyPI already records Talos {version}; increment the version before publishing')
           print(f'Talos {version} is available on PyPI')
           PY
-      - name: Test the released source with current supported frameworks
-        env:
-          KERAS_BACKEND: tensorflow
-          CUDA_VISIBLE_DEVICES: '-1'
-          OMP_NUM_THREADS: '1'
+      - name: Download distributions validated by the selected full CI run
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53  # v6.0.0
+        with:
+          name: distribution-3.12
+          path: dist
+          run-id: ${{ needs.prepare_release.outputs.ci_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Validate the tested distribution against the release source
         run: |
-          python -m pip install --require-hashes -r requirements/ci/documentation-3.12.txt
-          python -m pip install --no-build-isolation --no-deps -e .
-          python -m pytest -q
-      - name: Build and validate the distribution
-        env:
-          SOURCE_DATE_EPOCH: '1704067200'
-        run: |
-          python -m build --no-isolation
           python scripts/package_audit.py
           python -m twine check dist/*
       - name: Build reproducible owned legacy security wheels
@@ -145,7 +188,7 @@ jobs:
       - name: Retain the authentic Sigstore bundle
         env:
           BUNDLE_PATH: ${{ steps.attestation.outputs.bundle-path }}
-          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          RELEASE_TAG: ${{ needs.prepare_release.outputs.tag }}
         run: cp -- "$BUNDLE_PATH" "release-evidence/talos-${RELEASE_TAG}.sigstore.json"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
@@ -167,7 +210,8 @@ jobs:
           path: build/legacy-security/*.whl
           if-no-files-found: error
   release_assets:
-    needs: build
+    needs: [prepare_release, build]
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -187,7 +231,7 @@ jobs:
       - name: Verify and attach immutable release assets
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_TAG: ${{ github.event.release.tag_name || inputs.tag }}
+          RELEASE_TAG: ${{ needs.prepare_release.outputs.tag }}
           SOURCE_SHA: ${{ needs.build.outputs.source_sha }}
         run: |
           set -euo pipefail
@@ -214,7 +258,7 @@ jobs:
           done
           gh release upload "$RELEASE_TAG" dist/*.whl dist/*.tar.gz release-evidence/SHA256SUMS "$BUNDLE" --repo "$GITHUB_REPOSITORY"
   publish:
-    if: vars.PYPI_PUBLISH_ENABLED == 'true'
+    timeout-minutes: 10
     needs: [build, release_assets]
     runs-on: ubuntu-latest
     environment: pypi

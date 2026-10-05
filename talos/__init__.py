@@ -1,6 +1,6 @@
 from importlib import import_module
 
-__version__ = '2.0.7'
+__version__ = '2.0.8'
 
 _EXPORTS = {
     'Sensor': ('talos.inference', 'Sensor'),

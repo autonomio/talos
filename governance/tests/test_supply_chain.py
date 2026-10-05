@@ -54,7 +54,7 @@ PERSIST_LINE_RE = re.compile(r'^\s*persist-credentials: false\s*$')
 # must keep credentials. Keyed with a count rather than by filename: waiving
 # the whole file would let a second checkout added later inherit the
 # credential-persistence waiver silently.
-CREDENTIALED_CHECKOUTS: dict[str, int] = {'pr_post_release.yml': 1}
+CREDENTIALED_CHECKOUTS: dict[str, int] = {'deploy.yml': 1}
 # Deliberately exempts exactly one canonical spelling: like the byte-equal
 # title rule, the law pins the form itself, so a differently-formatted
 # compliant fetch fails loud and gets rewritten to canon rather than

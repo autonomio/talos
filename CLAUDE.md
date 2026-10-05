@@ -54,6 +54,8 @@ Merge unlocks when every required gate is green **and** the branch is up-to-date
 
 When a gate fails, the gate's own output names the reason. Read the output, fix the code or the slice issue, push again. If the failure is the gate being wrong rather than the PR being wrong, fix the gate in its own PR — the ruleset drift gate (`pr_checks_ruleset`) will force the matching ruleset-snapshot update so no gate relaxation side-enters.
 
+The maintainer authorizes automatic publication of each new reviewed package version after successful protected-master full CI. `deploy.yml` owns tag creation, signed artifacts and PyPI upload; do not introduce a separate manual release approval. [Release policy](docs/Developer/Release-Policy.md) defines source identity and recovery.
+
 ## Review work
 
 **Reviewing a pull request?** The canonical brief is [`.github/copilot-instructions.md`](.github/copilot-instructions.md) — how to read a diff beyond its own lines, what to hunt, the verdict ladder, and how to post. Work entirely from it; it is also what GitHub's built-in Copilot review reads, so every reviewer (Copilot, agent, or human) holds one shared standard.

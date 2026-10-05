@@ -78,9 +78,16 @@ and source ref. An authentic Sigstore bundle and attested SHA-256 checksum list
 belong with each new release's wheel and source distribution. Historical
 releases remain unsigned unless their actual evidence says otherwise.
 
-A successful reviewed release execution is still needed for the signed-release
-criterion. PyPI enablement is a separate decision; the presence of organization
-credentials does not establish a trusted publisher or release approval.
+Talos [2.0.7](https://github.com/autonomio/talos/releases/tag/v2.0.7) completed
+[signing, immutable attachment and PyPI publication](https://github.com/autonomio/talos/actions/runs/37269978152)
+on 5 October 2026, from commit `53a8f5af95b8fdbf7e02d9815078f991358a3993`.
+The public release contains the four distributions, attested checksums and
+Sigstore bundle. Independent consumer verification checked all distribution
+hashes and bound the signatures to `deploy.yml`, that source commit,
+`refs/heads/master` and GitHub-hosted runners. A fresh PyPI core installation
+reported Talos 2.0.7 and provided the CLI without optional frameworks.
+The maintainer authorizes automatic publication after successful master CI;
+organization credentials alone do not prove a release.
 
 ## Application review and remaining work
 
