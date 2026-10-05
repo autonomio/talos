@@ -1,4 +1,4 @@
-> Talos has moved to its next generation. Talos 2 is in active maintenance. The established Talos 1.x series will remain supported at least until 2028. To keep using the latest 1.x release, install `python -m pip install 'talos==1.4' 'ipython<9'` in a separate Python 3.10 or 3.11 environment. The maintainer reports no breaking bug found or reported in Talos 1.x during the past two years.
+> Talos has moved to its next generation. Talos 2 is in active maintenance. The established Talos 1.x series will remain supported at least until 2028. To keep using the latest 1.x release, install `python -m pip install 'talos==1.4' 'ipython<9'` in a separate Python 3.10 or 3.11 environment. The last confirmed report of mislabeled experiment results in the earlier generation was [#439, opened on 11 December 2019](https://github.com/autonomio/talos/issues/439), affecting CSV parameter columns on Python 3.5.
 
 # Talos
 
@@ -15,9 +15,7 @@ Talos helps you turn the model you already have into a repeatable parameter expe
 
 Talos is made for researchers, data scientists and data engineers who want to remain in complete control of their models, with less time spent hopping between parameter settings. Start in a notebook with the familiar `Scan` interface. When an experiment needs a reusable definition, use a single Python file, a manifest and the CLI.
 
-![Ordinary Keras training beside the same model as a Talos parameter sweep](docs/_media/keras-to-talos.svg)
-
-The comparison uses actual model code and the real Iris dataset. [Open the paired source](examples/keras_to_talos.py), or follow the [first-sweep guide](docs/Guides/Quickstart.md). The brief training runs demonstrate the interface; they do not establish model performance.
+Start with the [first-sweep guide](docs/Guides/Quickstart.md), or see ordinary Keras training and a Talos parameter sweep in the [Python example](examples/keras_to_talos.py).
 
 ## Key features
 
@@ -84,7 +82,7 @@ Talos is released under the [MIT License](LICENSE). [NOTICE](NOTICE) preserves r
 
 ## Citations
 
-If you use Talos in published work, please cite the software version you used. The maintainer reports Talos use in at least 1,000 research papers.
+If you use Talos in published work, please cite the software version you used. Talos has been cited in at least 1,000 research papers.
 
 GitHub's **Cite this repository** menu reads [CITATION.cff](CITATION.cff). [Download BibTeX](CITATION.bib) for your bibliography. The [citation guide](docs/Citing_Talos.md) explains version-specific references and experiment records. For a released version, use that release's citation file. For development code, record the full Git commit and use a permalink to it.
 

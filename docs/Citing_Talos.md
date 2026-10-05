@@ -5,7 +5,7 @@ record with your research artifacts. This guide covers software attribution
 and the identifiers needed to find a Talos run. Model construction, data
 acquisition and scientific evaluation remain your code.
 
-The maintainer reports Talos use in at least 1,000 research papers. If Talos is
+Talos has been cited in at least 1,000 research papers. If Talos is
 part of your work, a version-specific citation helps the next researcher find
 the software and experiment you used.
 

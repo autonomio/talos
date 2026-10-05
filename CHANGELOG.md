@@ -1,3 +1,11 @@
+# Changelog
+
+# v2.0.9
+
+- Replace the README stability attribution with the dated, linked CSV result-labeling defect.
+- Remove the Keras comparison image and retain the runnable example and first-sweep guide.
+- State research citation use directly in the README and citation guide.
+
 # v2.0.8
 
 - Publish each new reviewed Talos version automatically after successful protected-master CI, without a separate release approval.
@@ -6,8 +14,6 @@
 - Require dependency-bot version and changelog bumps so every merge has a unique release identity.
 - Update installation instructions for the published Talos 2 generation and record verified 2.0.7 release provenance.
 - Record the attained OpenSSF Best Practices Silver badge and its dependency, signature and assurance evidence.
-
-# Changelog
 
 # v2.0.7
 
