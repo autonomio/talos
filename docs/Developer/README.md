@@ -25,7 +25,7 @@ checkout and test commands. Documentation-site work additionally needs Node.js
 | Assess supply-chain and trust boundaries | [Security assurance case](Security-Assurance-Case.md) | Exact candidate, audit, artifact and live-setting evidence |
 | Review OpenSSF evidence and remaining criteria | [OpenSSF evidence](OpenSSF.md) | Current public score, complete coverage, signed release and human confirmation |
 | Inspect distributions | [Packaging](Packaging.md) | Reproducible builds, complete source archive and installed-wheel checks |
-| Prepare an authorized release | [Making a release](Making-Release.md) | Reviewed version, matching notes, explicit release and provenance |
+| Follow an automatic release | [Making a release](Making-Release.md) | Reviewed version, successful master CI, automatic publication and provenance |
 | Choose the compatibility bump | [Semantic versioning](Semantic-Versioning.md) | Python/CLI/schema/archive impact and matching metadata |
 | Change public documentation strings | [Writing docstrings](Writing-Docstrings.md) | Caller meaning and no new measured debt |
 | Review accepted limitations | [Technical debt](Technical-Debt.md) | Current evidence and explicit repair conditions |

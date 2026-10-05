@@ -1,29 +1,31 @@
 # Making a release
 
-An authorized maintainer starts the release workflow explicitly. Merging to `master` does not release Talos.
+Talos releases automatically when a new reviewed package version merges to protected `master` and its full `Test and build` run succeeds. There is no additional release approval or enablement variable.
 
 ## Prerequisites
 
 - A reviewed candidate integrated into protected `master`, with required CI checks and compatible distributions.
-- For manual `deploy.yml` dispatch, the release tag matches the selected master workflow commit; keep this identity while preparing the release.
 - A strictly advanced `talos/__init__.py` version, matching newest changelog section and citation metadata.
-- Explicit authority to create the tag/release.
-- For PyPI publication, a configured trusted publisher, protected `pypi` environment and `PYPI_PUBLISH_ENABLED=true`.
+- A PyPI trusted publisher for `autonomio/talos`, workflow `deploy.yml`, environment `pypi`.
+- The `pypi` environment permits protected branches without a required reviewer.
 
-Read [Release policy](Release-Policy.md) before acting. Verify the current local/live distinction in [SETUP.md](../../SETUP.md).
+Read [Release policy](Release-Policy.md) for source, signature and burned-version contracts. External setup lives in [SETUP.md](../../SETUP.md).
 
-## Sequence
+## Automatic sequence
 
-1. Review acceptance evidence for core imports, installed wheels, affected framework lanes, documentation and archive/recovery contracts.
-2. Select the intended `master` candidate and tag `vMAJOR.MINOR.PATCH` matching Hatch's version. Verify the identity has never been released.
-3. Dispatch `pr_post_release.yml` with that tag. Its script derives notes from the reviewed changelog, validates the tag and creates the GitHub release.
-4. Inspect the release and exact commit. An existing tag is an idempotent creation case, not permission to reuse a published version.
-5. Start `deploy.yml` explicitly on `master` for the same published tag. A release created with `GITHUB_TOKEN` does not trigger another workflow from its release event. The tag, checkout and workflow commit must agree, and the tag must belong to protected master's history; stop if the selected source identity has changed.
-6. Inspect the build and attachment jobs. The workflow tests the released source, builds the Talos wheel and sdist and the two owned legacy security wheels, records `SHA256SUMS`, and signs all four distributions and the checksum file. It retains the attestation action's authentic bundle as `talos-vMAJOR.MINOR.PATCH.sigstore.json`, verifies hashes and signatures, and attaches the six release assets without replacing existing names. This runs independently of PyPI enablement.
-7. Confirm the attached artifacts and checksum file verify against the bundle, expected signer workflow, source commit/ref and hosted runner. Retain the actual run, signatures, digests, framework and documentation evidence. Until this succeeds on a real release, the signed-release path has no operational proof.
-8. When PyPI publication is authorized and enabled, inspect the separate protected `pypi` job after build and attachment succeed. Confirm PyPI receives only the wheel and sdist. Add the actual release date to citation metadata as part of the reviewed release preparation.
+1. Prepare the version, changelog and citation metadata in the PR. Review core imports, installed wheels, affected framework lanes, documentation and archive/recovery evidence.
+2. Merge after required checks and review pass. The normal protected-master CI verifies the merged source.
+3. Its successful completion starts `deploy.yml`. The workflow validates the exact CI run and source, skips superseded heads, and derives `vMAJOR.MINOR.PATCH` from Hatch's version source.
+4. The workflow creates the tag and GitHub release using the matching reviewed changelog. It downloads the exact Talos wheel and sdist tested by that CI run and audits them against the tagged source.
+5. It reconstructs the two owned legacy security wheels, records `SHA256SUMS`, and signs all four distributions and the checksum file. It retains the authentic bundle as `talos-vMAJOR.MINOR.PATCH.sigstore.json`.
+6. The attachment job verifies hashes, repository, signer workflow, source commit/ref and hosted runner before attaching the six immutable assets.
+7. The separate protected PyPI job uploads only the Talos wheel and sdist automatically. Verify the registry version and an isolated installation, then retain the actual workflow, digests and consumer verification.
 
-The operator command is `gh workflow run pr_post_release.yml --repo autonomio/talos --ref master -f tag=vMAJOR.MINOR.PATCH`; substitute the approved concrete version. For signed GitHub artifacts and optional PyPI publication, use `gh workflow run deploy.yml --repo autonomio/talos --ref master -f tag=vMAJOR.MINOR.PATCH`. Both commands are remote writes, not local verification commands. The PyPI variable and trusted publisher must be configured before dispatch when PyPI publication is intended.
+The source version is the release identity. Dependency-bot PRs must include the same version, changelog and citation bump as other PRs before merge. The required version gate enforces this; an existing tag or PyPI filename cannot be reused.
+
+## Recovery dispatch
+
+Use `gh workflow run deploy.yml --repo autonomio/talos --ref master -f tag=vMAJOR.MINOR.PATCH` only to recover the current master version. The command is a remote write. The selected source must have a successful protected-master full CI run, and the supplied tag must match its package version. The workflow enforces the same identity, signature and immutable-asset checks as automatic publication. A recovery dispatch needs no new routine release approval under the maintainer's standing merge-to-release authorization.
 
 ## Failure handling
 

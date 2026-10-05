@@ -50,15 +50,15 @@ The original [short example](https://gist.github.com/mikkokotila/4c0d6298ff0a22d
 
 ## Install
 
-Talos 2 is currently available from the development branch. PyPI still serves the established Talos 1.4 release.
+Talos 2 is available on PyPI and actively maintained. Choose the extra for your framework:
 
 ```sh
-python -m pip install 'talos[tensorflow] @ git+https://github.com/autonomio/talos@master'
-python -m pip install 'talos[keras,tensorflow] @ git+https://github.com/autonomio/talos@master'
-python -m pip install 'talos[torch] @ git+https://github.com/autonomio/talos@master'
+python -m pip install 'talos[tensorflow]'
+python -m pip install 'talos[keras,tensorflow]'
+python -m pip install 'talos[torch]'
 ```
 
-Choose the line for your framework. The core supports Python 3.10-3.13; modern Keras and TensorFlow require Python 3.11 or newer. For research, retain the resolved source commit or install from an exact reviewed commit. [Installation options](docs/Install_Options.md) covers backends and optional plotting and sampler dependencies.
+Choose the line for your framework. The core supports Python 3.10-3.13; modern Keras and TensorFlow require Python 3.11 or newer. For research, pin the exact Talos version and record it with your experiment; source installations should retain the full reviewed commit. [Installation options](docs/Install_Options.md) covers backends and optional plotting and sampler dependencies.
 
 For the established release:
 

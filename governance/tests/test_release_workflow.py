@@ -207,10 +207,32 @@ def test_release_metadata_rejects_drafts_and_wrong_versions(release_assets, draf
     assert (result.returncode == 0) == (not draft and tag == 'v2.0.2' and version == '2.0.2'), result.stderr
 
 
-def test_release_privilege_and_pypi_enablement_are_separate_contracts():
+def test_release_automatically_publishes_after_successful_same_source_ci():
     jobs = _jobs()
-    assert 'PYPI_PUBLISH_ENABLED' not in jobs['build']['if']
-    assert jobs['publish']['if'] == "vars.PYPI_PUBLISH_ENABLED == 'true'"
+    workflow = yaml.safe_load(WORKFLOW.read_text())
+    triggers = workflow.get('on', workflow.get(True))
+    assert triggers['workflow_run'] == {'workflows': ['Test and build'],
+                                       'types': ['completed'], 'branches': ['master']}
+    assert 'release' not in triggers
+    assert 'if' not in jobs['publish']
+    assert jobs['build']['needs'] == 'prepare_release'
+    assert jobs['build']['if'] == "needs.prepare_release.outputs.ready == 'true'"
+    assert jobs['prepare_release']['permissions'] == {'contents': 'write', 'actions': 'read'}
+    assert jobs['prepare_release']['environment'] == 'pypi'
+    for condition in ["github.repository == 'autonomio/talos'", "github.ref == 'refs/heads/master'",
+                      "github.event.workflow_run.conclusion == 'success'",
+                      "github.event.workflow_run.event == 'push'",
+                      'github.event.workflow_run.head_repository.full_name == github.repository']:
+        assert condition in jobs['prepare_release']['if']
+    assert all(0 < job['timeout-minutes'] <= 15 for job in jobs.values())
+    download = next(step for step in jobs['build']['steps']
+                    if step.get('name') == 'Download distributions validated by the selected full CI run')
+    assert download['with']['name'] == 'distribution-3.12'
+    assert download['with']['run-id'] == '${{ needs.prepare_release.outputs.ci_run_id }}'
+    assert download['with']['github-token'] == '${{ secrets.GITHUB_TOKEN }}'
+    scripts = '\n'.join(step.get('run', '') for step in jobs['build']['steps'])
+    assert 'pytest' not in scripts and 'python -m build' not in scripts
+    assert 'python scripts/package_audit.py' in scripts
     assert jobs['publish']['needs'] == ['build', 'release_assets']
     assert jobs['publish']['environment'] == 'pypi'
     assert jobs['publish']['permissions'] == {'id-token': 'write'}
@@ -227,4 +249,126 @@ def test_release_privilege_and_pypi_enablement_are_separate_contracts():
     bundle = next(step for step in jobs['build']['steps'] if step.get('name') == 'Retain the authentic Sigstore bundle')
     assert bundle['env']['BUNDLE_PATH'] == '${{ steps.attestation.outputs.bundle-path }}'
     pypi_guard = next(step for step in jobs['build']['steps'] if step.get('name') == 'Guard against a reused PyPI version')
-    assert pypi_guard['if'] == "vars.PYPI_PUBLISH_ENABLED == 'true'"
+    assert 'if' not in pypi_guard
+
+
+@pytest.fixture
+def candidate_repo(release_repo):
+    root, environment = release_repo
+    (root / 'scripts').mkdir()
+    for name in ['release_candidate.py', 'create_release.py']:
+        shutil.copyfile(REPO_ROOT / 'scripts' / name, root / 'scripts' / name)
+    (root / 'talos').mkdir()
+    (root / 'talos/__init__.py').write_text('__version__ = "2.0.2"\n')
+    (root / 'pyproject.toml').write_text('[project]\ndynamic = ["version"]\n'
+                                        '[tool.hatch.version]\npath = "talos/__init__.py"\n')
+    event_path = root / 'event.json'
+    event_path.write_text(json.dumps({'workflow_run': {'id': 123}}))
+    run = {'id': 123, 'workflow_id': 456, 'head_sha': environment['GITHUB_SHA'],
+           'head_branch': 'master', 'event': 'push', 'status': 'completed',
+           'conclusion': 'success', 'path': '.github/workflows/ci.yml',
+           'head_repository': {'full_name': 'autonomio/talos'}}
+    tools = root / 'bin'
+    tools.mkdir()
+    gh = tools / 'gh'
+    gh.write_text('''#!/usr/bin/env python3
+import json, os, sys
+path = sys.argv[2]
+run = json.loads(os.environ['CI_RUN'])
+if path.endswith('actions/runs/123'):
+    result = run
+elif path.endswith('actions/workflows/ci.yml'):
+    result = {'id': 456}
+elif 'actions/workflows/ci.yml/runs?' in path:
+    result = {'workflow_runs': [] if os.environ.get('MISSING_CI') else [run]}
+elif path.endswith('git/ref/heads/master'):
+    result = {'object': {'sha': os.environ['MASTER_SHA']}}
+else:
+    raise SystemExit('unexpected API request: ' + path)
+print(json.dumps(result))
+''')
+    gh.chmod(0o755)
+    environment.update(PATH=str(tools) + os.pathsep + str(Path(sys.executable).parent)
+                       + os.pathsep + environment['PATH'],
+                       GITHUB_REPOSITORY='autonomio/talos', GITHUB_EVENT_NAME='workflow_run',
+                       GITHUB_EVENT_PATH=str(event_path), EXPECTED_SHA=environment['GITHUB_SHA'],
+                       MASTER_SHA=environment['GITHUB_SHA'], RECOVERY_TAG='', CI_RUN=json.dumps(run))
+    return root, environment
+
+
+@pytest.mark.parametrize('event', ['workflow_run', 'workflow_dispatch'])
+def test_release_candidate_selects_tested_master_and_derives_version(candidate_repo, event):
+    root, environment = candidate_repo
+    environment['GITHUB_EVENT_NAME'] = event
+    result = _run_step('prepare_release', 'Select successful same-source master CI', root, environment)
+    assert result.returncode == 0, result.stderr
+    assert Path(environment['GITHUB_OUTPUT']).read_text() == (
+        f"ready=true\ntag=v2.0.2\nsource_sha={environment['GITHUB_SHA']}\nci_run_id=123\n")
+
+
+@pytest.mark.parametrize('field,value', [
+    ('conclusion', 'failure'), ('event', 'pull_request'), ('workflow_id', 789),
+    ('path', '.github/workflows/other.yml'), ('head_branch', 'unreviewed'),
+    ('status', 'in_progress'), ('head_repository', {'full_name': 'foreign/talos'}),
+])
+def test_release_candidate_rejects_untrusted_ci_before_tagging(candidate_repo, field, value):
+    root, environment = candidate_repo
+    run = json.loads(environment['CI_RUN'])
+    run[field] = value
+    environment['CI_RUN'] = json.dumps(run)
+    result = _run_step('prepare_release', 'Select successful same-source master CI', root, environment)
+    assert result.returncode != 0
+    assert not Path(environment['GITHUB_OUTPUT']).exists()
+    assert _git(root, 'tag', '--list') == 'v2.0.2'
+
+
+@pytest.mark.parametrize('superseded', ['master', 'workflow-source'])
+def test_release_candidate_skips_superseded_source(candidate_repo, superseded):
+    root, environment = candidate_repo
+    if superseded == 'master':
+        environment['MASTER_SHA'] = 'a' * 40
+    else:
+        run = json.loads(environment['CI_RUN'])
+        run['head_sha'] = 'a' * 40
+        environment['CI_RUN'] = json.dumps(run)
+    result = _run_step('prepare_release', 'Select successful same-source master CI', root, environment)
+    assert result.returncode == 0, result.stderr
+    assert Path(environment['GITHUB_OUTPUT']).read_text() == 'ready=false\n'
+    assert 'superseded' in result.stdout
+
+
+@pytest.mark.parametrize('failure', ['missing-ci', 'wrong-tag', 'wrong-repository'])
+def test_release_recovery_requires_tested_source_and_matching_identity(candidate_repo, failure):
+    root, environment = candidate_repo
+    environment['GITHUB_EVENT_NAME'] = 'workflow_dispatch'
+    if failure == 'missing-ci':
+        environment['MISSING_CI'] = 'true'
+    elif failure == 'wrong-tag':
+        environment['RECOVERY_TAG'] = 'v9.0.0'
+    else:
+        environment['GITHUB_REPOSITORY'] = 'foreign/talos'
+    result = _run_step('prepare_release', 'Select successful same-source master CI', root, environment)
+    assert result.returncode != 0
+    assert not Path(environment['GITHUB_OUTPUT']).exists()
+
+
+@pytest.mark.parametrize('bump', [False, True])
+def test_dependency_bot_requires_new_release_identity(tmp_path, bump):
+    base = tmp_path / 'base.toml'
+    head = tmp_path / 'head.toml'
+    old_notes = tmp_path / 'old.md'
+    new_notes = tmp_path / 'new.md'
+    base.write_text('[project]\nversion = "2.0.2"\n')
+    head.write_text('[project]\nversion = "2.0.3"\n' if bump else base.read_text())
+    old_notes.write_text('# v2.0.2\n\n- Fix source.\n')
+    new_notes.write_text('# v2.0.3\n\n- Update dependencies.\n' if bump else old_notes.read_text())
+    result = subprocess.run([
+        sys.executable, str(REPO_ROOT / 'governance/version_gate.py'),
+        '--pr-title', 'build(deps): update dependencies', '--pr-author', 'dependabot[bot]',
+        '--base-pyproject', str(base), '--head-pyproject', str(head),
+        '--base-changelog', str(old_notes), '--head-changelog', str(new_notes),
+    ], cwd=REPO_ROOT, capture_output=True, text=True, check=False)
+    assert result.returncode == (0 if bump else 1), result.stderr
+    assert 'SKIP' not in result.stdout
+    if not bump:
+        assert 'must bump' in result.stdout

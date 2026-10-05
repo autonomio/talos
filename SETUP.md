@@ -15,8 +15,9 @@ passed. The audit used `RULESET_AUDIT_TOKEN` and inspected bypass actors.
 These are dated observations, not a permanent assertion about remote settings.
 The steps below remain the activation and recovery runbook. Preserve classic
 protection and compare the complete live snapshot when changing settings.
-PyPI publication remains separately disabled until its prerequisites and
-release authorization are satisfied.
+The maintainer authorizes automatic release after successful protected-master
+CI. PyPI publishing requires the trusted publisher and branch-restricted
+`pypi` environment described below.
 
 ## Prerequisites
 
@@ -34,7 +35,6 @@ release authorization are satisfied.
 | `REPO_BOOTSTRAP_TOKEN` | Explicit existing-repository activation | Administration, Variables and Issues read/write; Metadata read |
 | `RULESET_AUDIT_TOKEN` | Post-merge live ruleset audit, including bypass actors | Administration and Metadata read |
 | `RULESET_ID` | Identify the installed ruleset | Set after the ruleset is created |
-| `PYPI_PUBLISH_ENABLED` | Enable the separate PyPI workflow | Leave unset until trusted publishing and the `pypi` environment are configured |
 
 Use repository secrets or organization secrets restricted to Talos. Never print token values or store them in source. `GITHUB_TOKEN` cannot administer rulesets and events it creates generally do not start another workflow run; it cannot replace an activation credential.
 
@@ -53,11 +53,13 @@ Use repository secrets or organization secrets restricted to Talos. Never print 
 
 For read-only verification, use `gh variable list --repo autonomio/talos`, `gh api repos/autonomio/talos/rulesets` and `gh label list --repo autonomio/talos`. The configured ruleset name and gate list come from `governance.yml`; compare the responses rather than merely checking that an API call succeeded.
 
-## Enable releases separately
+## Configure automatic releases
 
-[Making a release](docs/Developer/Making-Release.md) defines the controlled release sequence. Do not enable automatic publication as a side effect of governance adoption.
+[Making a release](docs/Developer/Making-Release.md) defines the merge-to-release sequence. A successful full protected-master CI run starts `deploy.yml`, which selects the tested source, creates the matching version tag, signs and attaches artifacts, and publishes Talos to PyPI.
 
-Configure the PyPI project's trusted publisher for `autonomio/talos`, the publish workflow and the `pypi` environment. Protect that environment with the intended release approval. Verify the package name, version source and burned-version guard, then set `PYPI_PUBLISH_ENABLED=true` only when publication is authorized. Legacy PyPI tokens are not needed by the trusted-publishing path.
+Configure the PyPI project's trusted publisher with owner `autonomio`, repository `talos`, workflow `deploy.yml` and environment `pypi`. Set that GitHub environment's deployment branch policy to protected branches, with no required reviewers. The protected-master merge review authorizes the release; do not add another manual approval gate. Verify package identity, version and burned-version guard. Legacy PyPI username/password or API tokens are not used by this OIDC path, and no `PYPI_PUBLISH_ENABLED` variable is required.
+
+On 5 October 2026, the matching PyPI publisher was configured and the GitHub `pypi` environment was restricted to protected branches without required reviewers. These are dated activation observations; verify the live settings when recovering publication.
 
 ## Failure modes
 
@@ -68,7 +70,7 @@ Configure the PyPI project's trusted publisher for `autonomio/talos`, the publis
 | Audit cannot inspect bypass actors | Audit token lacks Administration read | Repair the read-only token scope; do not suppress the check |
 | Review does not satisfy protection | Reviewer lacks write access, authored the PR or code-owner approval is missing | Obtain an eligible non-author review |
 | Copilot review unavailable | Account or repository capability not configured | Configure it before declaring the intended protection active |
-| Publication is skipped | Enablement variable or release prerequisite absent | Complete the separate release setup only when intended |
+| Publication is skipped | Failed or superseded master CI | Inspect the current master run; a failed or obsolete head must not publish |
 | PyPI guard rejects a version | That version has already been served | Advance the version; never reuse a burned identity |
 
 ## Read next

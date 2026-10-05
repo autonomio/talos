@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publish the reviewed Talos version only through an explicit release invocation."""
+"""Publish the tested Talos version with immutable source and changelog identity."""
 from __future__ import annotations
 
 import argparse

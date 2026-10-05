@@ -95,7 +95,7 @@ A missing optional setting uses its documented default. A malformed setting bloc
 
 ## Bot exemptions
 
-Only the authors named in `automation.bot_authors` can skip the gates listed in `automation.exempt_gates`. Dependabot may skip slice and version requirements; the other gates still run. Empty lists remove the exemption. Every skip identifies the author and gate in output.
+Only the authors named in `automation.bot_authors` can skip the gates listed in `automation.exempt_gates`. Dependabot may skip the human slice issue; every bot PR still needs the version, changelog and citation bump before merge, because every merge publishes a new Talos release. The other gates still run. Empty lists remove the exemption. Every skip identifies the author and gate in output.
 
 ## Change a control
 

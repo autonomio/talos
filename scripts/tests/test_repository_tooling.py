@@ -30,7 +30,7 @@ audit = load('package_audit')
 
 
 class ReleaseContract(unittest.TestCase):
-    """An explicit release must agree with source, changelog and selected commit."""
+    """A release must agree with source, changelog and selected commit."""
 
     def test_invalid_tag_is_rejected(self):
         with self.assertRaises(ValueError):

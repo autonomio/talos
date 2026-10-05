@@ -17,7 +17,7 @@ Talos is a local scientific parameter-sweep library and CLI. It executes user-se
 | Resume | Parameters, source/data identity and local state | Manifest consistency and mismatch rejection |
 | Issue/PR parsing | Untrusted Markdown and GitHub JSON | Parser contract/property tests and fail-closed validation |
 | CI supply chain | Dependencies, actions and tokens | Hash/SHA pins, vulnerability checks and least privilege |
-| Publication | Approved tag and built artifacts | Explicit workflow, trusted publisher, digests and attestations |
+| Publication | Reviewed source, version and tested artifacts | Successful protected-master CI, same-source release workflow, trusted publisher, digests and attestations |
 
 A manifest establishes recorded identities and execution evidence. It does not certify arbitrary training code or sanitize a hostile archive.
 
@@ -43,7 +43,8 @@ use their platform verification defaults. This assumes caller-owned operating
 system trust stores and Git configuration retain certificate verification.
 Network availability, certificate authorities, trusted dependencies and caller
 credential hygiene remain external
-assumptions. Legacy framework advisories remain unresolved as recorded below.
+assumptions. Original legacy advisories remain visible; the owned source repairs
+and absent-code dispositions are recorded in [Security backports](Security-Backports.md).
 
 ## Reviewed integration
 
@@ -70,14 +71,14 @@ personal security knowledge or make hostile user code safe.
 | Least privilege | PR workflows declare read permissions; release attachment has a separate write job without checkout or training execution |
 | Complete mediation and fail-safe defaults | Issue parsers reject invalid contracts; release validation rejects source, signature and digest mismatches before attachment |
 | Open design and economy of mechanism | Public source, documented interfaces and one executor serve Python, SFD and CLI callers |
-| Separation of privilege | Protected integration requires an eligible non-author approval; PyPI publication has its own environment and enablement |
+| Separation of privilege | Protected integration requires an eligible non-author approval; signing, immutable attachment and PyPI publication retain separate permissions; the maintainer authorizes publication after successful master CI |
 | Least common mechanism | Optional frameworks load through their declared backend; no shared hosted account or multitenant execution service exists |
 | Psychological acceptability | Trust requirements are stated at archive/model entry points; invalid identities fail visibly |
 | Limited attack surface and input validation | No finance service or hosted arbitrary-code endpoint; CLI/schema validation and containment checks guard recorded inputs |
 | Defense in depth and unnecessary risk | Hash pins, dependency audits, CodeQL, reviewed integration and artifact verification cover different failure modes |
 | Injection and untrusted deserialization | User callbacks, SFD Python and serialized framework objects require trusted origins; Talos does not advertise a sandbox |
 | Path traversal and integrity | Archive extraction in `talos/commands/restore.py` validates destination containment; `talos/experiment/source_snapshot.py` checks source-bundle containment and recorded digests |
-| Authentication and credential exposure | Talos has no account/password store; Actions credentials stay in declared jobs and are not persisted by checkout |
+| Authentication and credential exposure | Talos has no account/password store; Actions credentials stay in declared jobs; only the tag-creation checkout retains its scoped token, while training and attachment cannot inherit it |
 
 Scientific correctness is a separate boundary: causal preprocessing, metric
 direction, seed semantics and recovery identity need behavioral tests even
@@ -89,13 +90,13 @@ The honesty suite compares required contexts in `governance.yml`, the ten annota
 
 ## Dependencies and credentials
 
-Python dependency audits cover supported core/current/minimum lanes; legacy upstream advisories remain visible. Exceptions name an advisory, reason and expiry. Documentation rejects every advisory severity subject to [exact-version, expiring maintainer approvals](Documentation-System.md#documentation-dependency-exceptions); its original findings remain visible. Dependabot supplies update pressure; a green audit is evidence at its recorded time.
+Python dependency audits cover supported core/current/minimum lanes. The legacy compatibility graph uses owned Keras/Protobuf security wheels; original upstream identities remain visible and require exact-source repair receipts or verified absent-code dispositions. Documentation convenience copies likewise require verified repairs, alongside [exact-version, expiring maintainer approvals](Documentation-System.md#documentation-dependency-exceptions). Risk acceptance alone does not repair exploitable code. [Security backports](Security-Backports.md) owns reconstruction, adversarial regression and installed-graph evidence. Dependabot supplies update pressure; the [actual dependency monitor](https://github.com/autonomio/talos/actions/runs/37271305368) passed on 5 October 2026 at `53a8f5af95b8fdbf7e02d9815078f991358a3993`. A green audit is evidence at its recorded time.
 
 Actions are pinned to full commits, toolchains to hashes, workflow tokens to declared permissions and checkout credentials disabled except where a declared release operation needs them. PR-controlled code must not execute in a privileged target event. Supply-chain contract tests establish these source properties; live secret scope still needs administrator verification.
 
 ## Artifacts and scientific recovery
 
-The packaging plane proves fixed-epoch repeatability, distribution contents, bounded dependency metadata and installed-wheel behavior outside the checkout. The release path supports GitHub build provenance and SHA-256 digests with PyPI trusted publishing. These claims apply after activation and successful release execution; historical releases gain no provenance retroactively.
+The packaging plane proves fixed-epoch repeatability, distribution contents, bounded dependency metadata and installed-wheel behavior outside the checkout. The release path supports GitHub build provenance and SHA-256 digests with PyPI trusted publishing. The [2.0.7 publication](https://github.com/autonomio/talos/actions/runs/37269978152) executed signing, immutable attachment and PyPI upload from `53a8f5af95b8fdbf7e02d9815078f991358a3993`. Independent consumer verification checked all four distribution hashes and five signed subjects against the source digest, signer workflow, master ref and hosted runner. A fresh PyPI installation reported 2.0.7 without optional frameworks. Historical releases gain no provenance retroactively.
 
 Training acceptance uses real bundled data, the three DL paths and the shared executor. Recovery proof runs in fresh processes, checks source/data identities and exercises source-independent restoration. These are correctness controls, not an assurance that untrusted models are safe to execute.
 
@@ -106,9 +107,10 @@ Property tests feed arbitrary strings to issue-body parsers and assert determini
 ## Residual risks
 
 - Model/SFD code and archive serialization require trusted origins.
-- Legacy framework support can retain upstream advisories; current-lane success does not erase them.
+- Owned dependency backports require continued source/hash/behavior review; current-lane success does not validate the separate legacy graph.
+- Legacy public dataset helpers inherit platform redirect behavior, which can permit a transport downgrade; credential-bearing entropy requests use the separate redirect-blocking client.
 - Static analysis and generated parser inputs cannot prove scientific validity or all runtime behavior.
-- Live branch protection and audit credentials have dated external proof; release execution, release environment and PyPI publisher still need verification.
+- Live branch protection, publisher configuration and executed releases have dated proof; later changes require fresh verification.
 - Continuity depends on eligible maintainers and reviewers in [MAINTAINERS.md](../../MAINTAINERS.md).
 
 ## Verify a claim

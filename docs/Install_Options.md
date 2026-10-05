@@ -6,12 +6,12 @@ Prerequisites are Python 3.10–3.13 and pip with access to a package index cont
 
 ## Install a framework extra
 
-Talos 2 is actively maintained source; PyPI currently serves Talos 1.4. Install the current generation from the repository, or use the checkout installation below. For research, replace `master` with an exact reviewed source commit.
+Talos 2 is available on PyPI. Install the framework extra you need, or use the checkout installation below. For research, pin the exact Talos version; source installations should use a full reviewed commit.
 
 ```sh
 python -m venv .venv
 . .venv/bin/activate
-python -m pip install 'talos[tensorflow] @ git+https://github.com/autonomio/talos@master'
+python -m pip install 'talos[tensorflow]'
 ```
 
 The modern minimums are TensorFlow 2.20, Keras 3.15 and Torch 2.13. The TensorFlow extra also requires patched Protobuf 6.33.5 or newer.
@@ -33,7 +33,7 @@ Framework choices:
 
 The legacy extra requires the owned security wheels described in [Security backports](Developer/Security-Backports.md). Build or verify and install those wheels before selecting this extra. This lane supports Python 3.10.12+ or 3.11.4+; do not combine it with modern extras. Upstream advisory lookups remain visible and require verified repairs or explicit absence evidence. Use modern extras for new work.
 
-`python -m pip install 'talos @ git+https://github.com/autonomio/talos@master'` installs the current core and CLI without TensorFlow, Keras, Torch or plotting. Change the extra in the repository installation command to choose a backend. Do not combine the legacy lane with modern framework extras. Resolve framework and Talos upgrades together in a fresh environment.
+`python -m pip install talos` installs the released core and CLI without TensorFlow, Keras, Torch or plotting. Change the extra in the installation command to choose a backend. Do not combine the legacy lane with modern framework extras. Resolve framework and Talos upgrades together in a fresh environment.
 
 ## Established Talos 1.x
 
