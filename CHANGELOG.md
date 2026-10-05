@@ -4,6 +4,7 @@
 - Reuse the exact CI-tested Talos distributions for signing and publication instead of repeating training and builds.
 - Reject foreign or failed CI evidence and skip superseded master heads before creating a release.
 - Update installation instructions for the published Talos 2 generation and record verified 2.0.7 release provenance.
+- Record the attained OpenSSF Best Practices Silver badge and its dependency, signature and assurance evidence.
 
 # Changelog
 

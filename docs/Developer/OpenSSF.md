@@ -2,9 +2,9 @@
 
 Talos has an [OpenSSF Best Practices application](https://www.bestpractices.dev/en/projects/15140)
 and a [public Scorecard report](https://scorecard.dev/viewer/?uri=github.com/autonomio/talos).
-Passing is awarded; the Silver application is 95% complete as of 3 October 2026. Silver is a Best Practices level;
-Scorecard reports a separate score from zero to ten. This page records evidence
-and outstanding work without claiming Silver attainment or future results.
+Passing and [Silver](https://www.bestpractices.dev/en/projects/15140/silver) are awarded at 100%; Silver was attained on 5 October 2026. Silver is a Best Practices level;
+Scorecard reports a separate score from zero to ten. This page records dated
+evidence and maintenance obligations without claiming future results.
 
 ## Prerequisites
 
@@ -18,7 +18,9 @@ require the named maintainer's confirmation.
 | Observation | Scope and evidence |
 | --- | --- |
 | Scorecard 8.9/10 | Public API report dated 3 October 2026, 07:04:32 UTC; commit `19aba6539913d0e7cf0b9b52fefad8985dba58f9` |
-| Best Practices application | Passing awarded at 100%; Silver 95% after the 3 October maintainer confirmation |
+| Best Practices application | Passing and [Silver awarded at 100%](https://www.bestpractices.dev/en/projects/15140/silver); Silver attained on 5 October 2026 |
+| Dependency monitoring | [Actual weekly-monitor workflow execution](https://github.com/autonomio/talos/actions/runs/37271305368) passed at source `53a8f5af95b8fdbf7e02d9815078f991358a3993` |
+| Signed publication | [2.0.7 release](https://github.com/autonomio/talos/releases/tag/v2.0.7) and [successful publication](https://github.com/autonomio/talos/actions/runs/37269978152); consumer hashes/signatures and fresh PyPI installation verified |
 | Coverage and test policy | [PR 625](https://github.com/autonomio/talos/pull/625) merged at `06a635e`; its source tree equals the verified candidate `2388cec` |
 | Reviewed integration | [PR 608](https://github.com/autonomio/talos/pull/608), approved by `bit-mis`, merged at `9783406`; PR 625 later merged at `06a635e` |
 | Live protection | Active ruleset `24306812`; [privileged audit](https://github.com/autonomio/talos/actions/runs/36893895454) passed with exact snapshot parity and no bypass actors |
@@ -89,7 +91,7 @@ reported Talos 2.0.7 and provided the CLI without optional frameworks.
 The maintainer authorizes automatic publication after successful master CI;
 organization credentials alone do not prove a release.
 
-## Application review and remaining work
+## Application review and continuing obligations
 
 Use the official [passing](https://www.bestpractices.dev/en/criteria/0?details=true)
 and [Silver criteria](https://www.bestpractices.dev/en/criteria/1?details=true).
@@ -102,16 +104,20 @@ capability, access and legal authority to continue development and issue a fix
 within one week. The vulnerability-history attestation remains recorded in
 the public application.
 
-The two incomplete mandatory Silver criteria are dependency monitoring and
-signed releases. The [owned backports](Security-Backports.md) require public
-integration and verified CI; signed releases require an actual successful
-release and consumer verification. Continue to:
+The three remaining mandatory entries were completed on 5 October: dependency
+monitoring, signed releases and the public [assurance case](Security-Assurance-Case.md).
+The [owned backports](Security-Backports.md) are integrated in PR 650 and verified
+by full master CI and the actual monitor run. The signed 2.0.7 release and its
+consumer verification supply operational signing evidence. The application was
+submitted under the maintainer's existing CDLA-Permissive 2.0 consent and the
+portal awarded Silver. The existing README badge reads that live award.
+Continue to:
 
 - Review substantive static diagnostics. An inherited-debt ratchet is not a
   claim that every warning is fixed or every style exception is rare and local.
 - Resolve legacy dependency advisories individually without treating trusted
   model execution as proof that a dependency vulnerability is unexploitable.
-- Link an actual signed release and verify its artifacts from a consumer environment.
+- Verify each new signed release from a consumer environment and retain its source and workflow identity.
 - Refresh the fixed-bug ledger after later merges; its current 64% result applies
   only to the recorded six-month public-source inventory.
 - Reassess input, certificate and credential validation after the reviewed
