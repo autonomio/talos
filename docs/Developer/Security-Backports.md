@@ -3,7 +3,7 @@
 The legacy TensorFlow lane preserves old Talos callbacks with TensorFlow 2.14.1,
 Keras `2.14.0+autonomio.1` and Protobuf `4.25.9+autonomio.1`. These are Autonomio
 backports, not upstream releases. Modern extras remain the default for new work.
-Use Python 3.10.12+ or 3.11.4+ for the legacy lane.
+Use Python 3.11.4+ for the legacy lane.
 
 ## Reconstruct and install
 

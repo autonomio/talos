@@ -2,7 +2,7 @@
 
 Install Talos into an isolated environment, then choose the framework extra your model uses. The package exports the Python API and the `talos` command; optional frameworks are loaded only when required. This page owns installation choices rather than training or CLI configuration.
 
-Prerequisites are Python 3.10–3.13 and pip with access to a package index containing the required distributions. Modern Keras/TensorFlow extras require Python 3.11 or newer; Torch supports Python 3.10 or newer. Choose a framework whose supported Python and platform versions include yours. The activation command below is for a POSIX shell; on Windows use the environment's activation script for that shell.
+Prerequisites are Python 3.11–3.13 and pip with access to a package index containing the required distributions. Modern Keras/TensorFlow extras require Python 3.11 or newer; Torch supports Python 3.11 or newer. Choose a framework whose supported Python and platform versions include yours. The activation command below is for a POSIX shell; on Windows use the environment's activation script for that shell.
 
 ## Install a framework extra
 
@@ -31,7 +31,7 @@ Framework choices:
 | `samplers` | Compatibility extra; remote samplers use the core's verified HTTPS clients |
 | `test` | Acceptance tests, coverage, lint and build tools |
 
-The legacy extra requires the owned security wheels described in [Security backports](Developer/Security-Backports.md). Build or verify and install those wheels before selecting this extra. This lane supports Python 3.10.12+ or 3.11.4+; do not combine it with modern extras. Upstream advisory lookups remain visible and require verified repairs or explicit absence evidence. Use modern extras for new work.
+The legacy extra requires the owned security wheels described in [Security backports](Developer/Security-Backports.md). Build or verify and install those wheels before selecting this extra. This lane supports Python 3.11.4+; do not combine it with modern extras. Upstream advisory lookups remain visible and require verified repairs or explicit absence evidence. Use modern extras for new work.
 
 `python -m pip install talos` installs the released core and CLI without TensorFlow, Keras, Torch or plotting. Change the extra in the installation command to choose a backend. Do not combine the legacy lane with modern framework extras. Resolve framework and Talos upgrades together in a fresh environment.
 

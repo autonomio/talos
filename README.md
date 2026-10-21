@@ -56,7 +56,7 @@ python -m pip install 'talos[keras,tensorflow]'
 python -m pip install 'talos[torch]'
 ```
 
-Choose the line for your framework. The core supports Python 3.10-3.13; modern Keras and TensorFlow require Python 3.11 or newer. For research, pin the exact Talos version and record it with your experiment; source installations should retain the full reviewed commit. [Installation options](docs/Install_Options.md) covers backends and optional plotting and sampler dependencies.
+Choose the line for your framework. The core supports Python 3.11-3.13; modern Keras and TensorFlow require Python 3.11 or newer. For research, pin the exact Talos version and record it with your experiment; source installations should retain the full reviewed commit. [Installation options](docs/Install_Options.md) covers backends and optional plotting and sampler dependencies.
 
 For the established release:
 

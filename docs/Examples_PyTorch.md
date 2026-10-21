@@ -4,7 +4,7 @@ Train two PyTorch networks while retaining the established Talos callback interf
 
 ## Prerequisites
 
-Use Python 3.10–3.13 with the [Torch extra](Backends.md) (`talos[torch]`) installed in the active interpreter. The scikit-learn dataset is available offline through the core dependencies. Run the Python blocks in order, in one session, from a writable experiment directory. These bounded training runs demonstrate the interface; they do not establish clinical or generalization performance.
+Use Python 3.11–3.13 with the [Torch extra](Backends.md) (`talos[torch]`) installed in the active interpreter. The scikit-learn dataset is available offline through the core dependencies. Run the Python blocks in order, in one session, from a writable experiment directory. These bounded training runs demonstrate the interface; they do not establish clinical or generalization performance.
 
 ## Procedure
 

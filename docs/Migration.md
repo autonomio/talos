@@ -82,7 +82,7 @@ factory or Keras custom object prevents portable restoration.
 
 Talos 2 corrects confirmed defects: stateful F1 is invariant to batch partitioning; binary outputs shaped `(n, 1)` are thresholded correctly; multiclass probabilities use class selection; objective direction is respected; evaluation folds include remainder rows and reject empty folds; shuffled features and labels stay aligned; reducer windows/cadence, live-file reload and Gamify annotations behave consistently; later-added metrics are retained in CSVs. Fold evaluation scores an already-trained model on held-out partitions; it does not retrain models as cross-validation would.
 
-Core imports no DL or plotting backend. Python 3.10–3.13, modern optional frameworks and a separate TensorFlow 2.14 / NumPy 1.26 lane replace the obsolete Python 2/3.5 metadata. See [installation](Install_Options.md) and [SFD/CLI usage](SFD_and_CLI.md).
+Core imports no DL or plotting backend. Python 3.11–3.13, modern optional frameworks and a separate TensorFlow 2.14 / NumPy 1.26 lane replace the obsolete Python 2/3.5 metadata. See [installation](Install_Options.md) and [SFD/CLI usage](SFD_and_CLI.md).
 
 ## Legacy security backports
 

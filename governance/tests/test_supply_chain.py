@@ -266,7 +266,7 @@ def test_matrix_hash_locks_exist_for_every_selected_lane() -> None:
 def test_supported_security_audits_retain_strict_full_graph_lookup() -> None:
     workflow = yaml.safe_load((WORKFLOWS_DIR / 'ci.yml').read_text(encoding='utf-8'))
     for job, condition, lock in (
-        ('core', "matrix.python == '3.10'", '${{ matrix.lock }}'),
+        ('core', "matrix.python == '3.11'", '${{ matrix.lock }}'),
         ('backends', "matrix.lock == 'minimum-3.11.txt'", '${{ matrix.lock }}'),
         ('documentation', None, 'documentation-3.12.txt'),
     ):
@@ -288,6 +288,6 @@ def test_supported_security_audits_retain_strict_full_graph_lookup() -> None:
         assert 'audit-requirements.txt' in upload['with']['path']
         assert 'always()' in upload['if']
     core = workflow['jobs']['core']['strategy']['matrix']['include']
-    assert {'python': '3.10', 'lock': 'core-3.10.txt'} in core
+    assert {'python': '3.11', 'lock': 'core-3.11.txt'} in core
     minimum = workflow['jobs']['backends']['strategy']['matrix']['include']
     assert {'python': '3.11', 'lock': 'minimum-3.11.txt', 'keras_backend': 'tensorflow'} in minimum

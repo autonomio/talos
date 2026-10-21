@@ -10,13 +10,12 @@ keywords = ["hyperparameters", "parameter-sweep", "keras", "tensorflow", "pytorc
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE", "NOTICE"]
-requires-python = ">=3.10,<3.14"
+requires-python = ">=3.11,<3.14"
 authors = [{name = "Mikko Kotila", email = "mailme@mikkokotila.com"}]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Science/Research",
   "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -82,7 +81,7 @@ include = ["talos/*"]
 show_missing = true
 
 [tool.pyright]
-pythonVersion = "3.10"
+pythonVersion = "3.11"
 typeCheckingMode = "strict"
 include = ["talos"]
 exclude = [

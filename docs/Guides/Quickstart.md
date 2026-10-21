@@ -75,7 +75,7 @@ Talos can package trained models and experiment assets for restoration in anothe
 ## Supported environments
 
 - Linux, macOS or Windows system
-- Python 3.10–3.13 for the core
+- Python 3.11–3.13 for the core
 - Optional Keras, TensorFlow/tf.keras or PyTorch; see [backend compatibility](../Backends.md)
 
 Talos supports full-grid search, sampled search and reduction of pending candidates. It offers pseudo and quasi-random sampling, with optional external entropy providers; see [optimization strategies](../Optimization_Strategies.md).
