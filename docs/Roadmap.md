@@ -11,7 +11,7 @@ Talos 2 preserves the Python Scan workflow and runs it through the shared SFD an
 The original roadmap allocated equal thirds to planning, testing and coding. Its internal priorities remain a useful review framework:
 
 | Activity | Share within the activity | Purpose |
-|---|---|---|
+| --- | --- | --- |
 | Planning | One third | Design the future |
 | Planning | One third | Write specifications |
 | Planning | One third | Create documentation |
@@ -37,7 +37,7 @@ Maintainers review it when dependency support or scientific behavior changes.
 Dates identify planned review periods, not promised releases.
 
 | Period | Planned work | Acceptance evidence |
-|---|---|---|
+| --- | --- | --- |
 | October–December 2026 | Verify the adopted default-branch controls, full-framework coverage and the next authorized release's signatures | Required CI, complete-package statement coverage, scoped ruleset audit and verified release assets |
 | January–March 2027 | Review Python, Keras, TensorFlow and PyTorch compatibility and upstream deprecations | Current/minimum resolver audits and framework training/archive tests |
 | April–June 2027 | Review historical archive readers, custom objects and interrupted recovery | Fresh-process restoration, source/data mismatch rejection and resumed-run equivalence |

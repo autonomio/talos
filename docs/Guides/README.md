@@ -16,7 +16,7 @@ Use a supported Python and [backend installation](../Install_Options.md), a writ
 ## Model recipes
 
 | Model shape or task | Walkthrough | Complete runnable code |
-|---|---|---|
+| --- | --- | --- |
 | Typical Keras classification | [Iris sweep](../Examples_Typical.md) | [Complete Iris example](../Examples_Typical_Code.md) |
 | Multiple inputs | [Aligned input arrays](../Examples_Multiple_Inputs.md) | [Complete multiple-input example](../Examples_Multiple_Inputs_Code.md) |
 | Multiple outputs | [Diagnosis and radius targets](../Examples_Multiple_Outputs.md) | [Complete multiple-output example](../Examples_Multiple_Outputs_Code.md) |

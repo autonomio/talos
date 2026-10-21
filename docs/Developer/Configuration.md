@@ -8,7 +8,7 @@ Read [CLAUDE.md](../../CLAUDE.md), install the hash-locked CI toolchains and ins
 
 ## Repository shape
 
-Talos uses package root `talos`, maintained tests under `tests`, governance tests under `governance/tests`, Python 3.12 for governance and `master` as the protected target. Historical `tests/commands` and `tests/performance` stay outside maintained pytest discovery. Runtime support remains Python 3.10–3.13.
+Talos uses package root `talos`, maintained tests under `tests`, governance tests under `governance/tests`, Python 3.12 for governance and `master` as the protected target. Historical `tests/commands` and `tests/performance` stay outside maintained pytest discovery. Runtime support remains Python 3.11–3.13.
 
 The configuration declares the approving authority `mikkokotila`, the `slice` issue contract, Conventional Commits types, `# v{version}` changelog headers and the intended ruleset. The package version is dynamic: Hatch reads `talos/__init__.py`.
 

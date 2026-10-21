@@ -1,5 +1,10 @@
 # Changelog
 
+# v2.0.10
+
+- Stop automatic Copilot code review on every push; reviews remain available on request.
+- Drop Python 3.10 from the supported range at its upstream end of life; the core now requires Python 3.11–3.13.
+
 # v2.0.9
 
 - Replace the README stability attribution with the dated, linked CSV result-labeling defect.

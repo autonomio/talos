@@ -242,13 +242,13 @@ def test_workflow_runtime_and_tooling_match_config() -> None:
             # are not literals; every literal that remains must still be the
             # version governance.yml names.
             literals = [v for v in versions if not v.startswith('${{')]
-            assert set(literals) <= {'3.10', '3.11', '3.12', '3.13'}, (workflow_name, literals)
+            assert set(literals) <= {'3.11', '3.12', '3.13'}, (workflow_name, literals)
             continue
         assert versions == [python_version] * len(versions), workflow_name
     assert _requirement_pins('ruff') == [ruff_version]
     assert _requirement_pins('pyright') == [pyright_version]
-    assert pyproject['project']['requires-python'] == '>=3.10,<3.14'
-    assert pyproject['tool']['pyright']['pythonVersion'] == '3.10'
+    assert pyproject['project']['requires-python'] == '>=3.11,<3.14'
+    assert pyproject['tool']['pyright']['pythonVersion'] == '3.11'
 
 
 def test_bootstrap_review_and_slice_settings_match_config() -> None:

@@ -4,7 +4,7 @@ Train two native PyTorch networks and retain their metrics and model factories. 
 
 ## Prerequisites and execution
 
-Use Python 3.10–3.13 with the [Torch extra](Backends.md) (`talos[torch]`). The dataset is an offline scikit-learn fixture. From a writable experiment directory, save the following program as `torch_example.py` and execute `python torch_example.py`.
+Use Python 3.11–3.13 with the [Torch extra](Backends.md) (`talos[torch]`). The dataset is an offline scikit-learn fixture. From a writable experiment directory, save the following program as `torch_example.py` and execute `python torch_example.py`.
 
 The walkthrough owns the data split, callback explanation and interpretation of metrics. The program is bounded to two trials; successful execution passes its result-row assertion.
 

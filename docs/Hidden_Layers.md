@@ -38,7 +38,7 @@ assert len(scan_object.data) == 2
 | Parameter | type | Description |
 | --------- | ------- | ----------- |
 | `model` | Keras model | A model being built inside the callback |
-| `params` | dict  | The input model parameters dictionary |
+| `params` | dict | The input model parameters dictionary |
 | `last_neuron` | int | Number of dimensions on the output layer |
 
 NOTE: `params` here refers to the dictionary where parameters of a single permutation are contained.

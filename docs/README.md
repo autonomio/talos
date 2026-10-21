@@ -5,7 +5,7 @@ Talos runs parameter sweeps for Keras, TensorFlow and PyTorch models. Keep the e
 ## Start with your task
 
 | I want to… | Start here |
-|---|---|
+| --- | --- |
 | Run my first sweep | [First parameter sweep](Guides/Quickstart.md), then the [typical example](Examples_Typical.md) |
 | Keep an existing Talos model working | [Migration](Migration.md), [Scan](Scan.md), and [backend contracts](Backends.md) |
 | Define a reproducible experiment for Python or the CLI | [SFD and CLI](SFD_and_CLI.md) |
@@ -29,7 +29,7 @@ The [workflow guide](Workflow.md) connects these steps and explains when to repe
 ## Documentation map
 
 | Section | Canonical responsibility | Entry point |
-|---|---|---|
+| --- | --- | --- |
 | Overview | Product boundary, capabilities, workflow and direction | [Capabilities](Overview.md) and [development priorities](Roadmap.md) |
 | Guides | Complete reader jobs, model recipes and operating a sweep | [Guides](Guides/README.md) |
 | Reference | Public interfaces, defaults, return values and error boundaries | [Reference](Reference/README.md) |

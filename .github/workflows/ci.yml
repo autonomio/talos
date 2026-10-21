@@ -20,8 +20,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - python: '3.10'
-            lock: core-3.10.txt
           - python: '3.11'
             lock: core-3.11.txt
           - python: '3.12'
@@ -38,13 +36,13 @@ jobs:
       - run: python -m pip install --require-hashes -r requirements/ci/${{ matrix.lock }}
       - run: python -m pip install --no-build-isolation --no-deps -e .
       - name: Bind installed locked dependencies to upstream advisory identities
-        if: matrix.python == '3.10'
+        if: matrix.python == '3.11'
         run: python scripts/prepare_dependency_audit.py --lock requirements/ci/${{ matrix.lock }} --requirements audit-requirements.txt --identities audit-identities.json
       - name: Audit every supported locked dependency
-        if: matrix.python == '3.10'
+        if: matrix.python == '3.11'
         run: pip-audit --strict --disable-pip --no-deps -r audit-requirements.txt --format json --output audit.json
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
-        if: ${{ always() && (matrix.python == '3.10') }}
+        if: ${{ always() && (matrix.python == '3.11') }}
         with:
           name: dependency-audit-core
           path: |

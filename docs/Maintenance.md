@@ -24,9 +24,9 @@ Examples train on real bundled Iris, breast cancer and digits observations. Docu
 
 NVIDIA command and power callback paths use an explicitly identified command provider. These checks verify integration behavior; physical GPU power readings, accelerator determinism and remote quantum entropy services require their own hardware/service checks.
 
-Run the maintained acceptance suite, lint and distribution build described in [CONTRIBUTING](../CONTRIBUTING.md). Install the wheel outside the checkout. Core Python 3.10–3.13 must remain usable without DL or plotting frameworks. Test legacy, current and supported minimum frameworks; retain fresh-process native archive, deleted-helper recovery, interrupted-run, source/data verification and live-control regressions.
+Run the maintained acceptance suite, lint and distribution build described in [CONTRIBUTING](../CONTRIBUTING.md). Install the wheel outside the checkout. Core Python 3.11–3.13 must remain usable without DL or plotting frameworks. Test legacy, current and supported minimum frameworks; retain fresh-process native archive, deleted-helper recovery, interrupted-run, source/data verification and live-control regressions.
 
-Python 3.10 reaches upstream end of life in October 2026; keep its tested Talos compatibility separate from upstream runtime maintenance. The next support review should reassess that lane and verify Python 3.14 before expanding the declared range. [Python lifecycle](https://devguide.python.org/versions/)
+Python 3.10 reached upstream end of life in October 2026 and Talos dropped it from the supported range; compatibility with it is no longer tested. The next support review should reassess the remaining lanes and verify Python 3.14 before expanding the declared range. [Python lifecycle](https://devguide.python.org/versions/)
 
 ## Supported dependency floors
 
