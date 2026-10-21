@@ -1,5 +1,9 @@
 # Changelog
 
+# v2.0.10
+
+- Stop automatic Copilot code review on every push; reviews remain available on request.
+
 # v2.0.9
 
 - Replace the README stability attribution with the dated, linked CSV result-labeling defect.
