@@ -5,7 +5,7 @@ Use the documentation to isolate a failure, then use the Talos issue tracker for
 ## Choose the route
 
 | I want to… | Go to… |
-|---|---|
+| --- | --- |
 | Troubleshoot an installation or callback | [Installation options](Install_Options.md), [Backends](Backends.md), and [Scan](Scan.md) |
 | Troubleshoot resume or restoration | [SFD and CLI](SFD_and_CLI.md) and [Restore](Restore.md) |
 | Report a reproducible bug | [Talos issues](https://github.com/autonomio/talos/issues) |

@@ -30,7 +30,7 @@ Here `label` is an original parameter name and `value` is a candidate from that 
 With these in place, one then proceeds to apply the reduction to the current parameter space, with one of the supported functions:
 
 | Method on `scan.param_object` | Pending-work effect |
-|---|---|
+| --- | --- |
 | `remove_is_not(label, value)` | Retain rows whose named parameter equals the value |
 | `remove_is(label, value)` | Remove rows whose named parameter equals the value |
 | `remove_le(label, value)` | Remove rows at or below the threshold |
