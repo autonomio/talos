@@ -79,17 +79,6 @@ def test_metadata_edits_recheck_markers_without_rerunning_scientific_suites() ->
                               '--profile runtime-artifacts/profile.json --enforce')
 
 
-def test_dependency_bursts_are_grouped_and_scheduled_independently() -> None:
-    updates = yaml.safe_load((ROOT / '.github/dependabot.yml').read_text())['updates']
-    assert len(updates) == 3
-    slots = set()
-    for update in updates:
-        assert update['open-pull-requests-limit'] == 1
-        schedule = update['schedule']
-        assert schedule['timezone'] == 'Europe/Helsinki'
-        slots.add((schedule['day'], schedule['time']))
-        for kind in ('version-updates', 'security-updates'):
-            assert update['groups'][kind] == {'applies-to': kind, 'patterns': ['*']}
-        assert 'ignore' not in update
-        assert 'target-branch' not in update
-    assert len(slots) == 3
+def test_dependency_automation_is_absent() -> None:
+    assert not (ROOT / '.github/dependabot.yml').exists()
+    assert not (ROOT / '.github/dependabot.yaml').exists()
