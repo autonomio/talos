@@ -1,9 +1,12 @@
 # Changelog
 
+# v2.0.12
+
+- Remove Dependabot version-update configuration; automated security fixes are disabled and dependency automation is asserted absent by the governance suite.
+
 # v2.0.11
 
 - Refresh locked dependencies past pip and npm audit CVEs; accept unfixable deepmerge low via a 30-day reviewed exception.
-- Remove Dependabot version-update configuration; automated security fixes are disabled and dependency automation is asserted absent by the governance suite.
 
 # v2.0.10
 
