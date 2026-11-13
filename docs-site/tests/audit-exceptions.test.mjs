@@ -8,7 +8,7 @@ import {acceptedPackages, auditExecutionFailure, reviewedExceptions, verifyInsta
 import {auditFailure} from '../scripts/audit-report.mjs';
 
 const entries = JSON.parse(readFileSync(new URL('../security-exceptions.json', import.meta.url), 'utf8'));
-const NOW = new Date('2026-10-03T12:00:00Z');
+const NOW = new Date('2026-11-13T12:00:00Z');
 const review = () => reviewedExceptions(structuredClone(entries), NOW);
 const advisory = (entry) => ({
   name: entry.package, dependency: entry.package, severity: entry.severity,
@@ -16,9 +16,9 @@ const advisory = (entry) => ({
 });
 const finding = (name, via, severity = 'high') => ({name, severity, via, nodes: [`node_modules/${name}`]});
 function fixture() {
-  const vulnerabilities = Object.fromEntries(entries.map((entry) => [entry.package, finding(entry.package, [advisory(entry)])]));
-  vulnerabilities.tool = finding('tool', entries.map((entry) => entry.package));
-  vulnerabilities.root = finding('root', ['tool']);
+  const vulnerabilities = Object.fromEntries(entries.map((entry) => [entry.package, finding(entry.package, [advisory(entry)], entry.severity)]));
+  vulnerabilities.tool = finding('tool', entries.map((entry) => entry.package), entries[0].severity);
+  vulnerabilities.root = finding('root', ['tool'], entries[0].severity);
   const packages = Object.fromEntries(entries.map((entry) => [`node_modules/${entry.package}`, {version: entry.version}]));
   packages['node_modules/tool'] = {version: '1.0.0'};
   packages['node_modules/root'] = {version: '1.0.0'};
@@ -33,23 +33,22 @@ function decision(candidate, reviewed = review()) {
 test('checked-in approvals are exactly the two agreed IDs, versions and expiry', () => {
   assert.deepEqual(entries.map(({id, package: name, version, severity, approved_by, approved_on, expires}) =>
     [id, name, version, severity, approved_by, approved_on, expires]), [
-    ['GHSA-vfj7-8cjw-p6xm', 'braces', '3.0.3', 'high', 'mikkokotila', '2026-10-03', '2026-11-02'],
-    ['GHSA-ch52-4w7c-c8xp', 'http-cache-semantics', '4.2.0', 'high', 'mikkokotila', '2026-10-03', '2026-11-02'],
+    ['GHSA-gcqx-w48m-w2h4', 'deepmerge', '4.3.1', 'low', 'mikkokotila', '2026-11-13', '2026-12-13'],
   ]);
-  assert.equal(reviewedExceptions(entries, new Date('2026-11-01T23:59:59.999Z')).size, 2);
-  assert.throws(() => reviewedExceptions(entries, new Date('2026-11-02T00:00:00Z')), /expired/);
+  assert.equal(reviewedExceptions(entries, new Date('2026-12-12T23:59:59.999Z')).size, 1);
+  assert.throws(() => reviewedExceptions(entries, new Date('2026-12-13T00:00:00Z')), /expired/);
 });
 
 test('malformed, duplicate, unreviewed, future and overlong approvals fail closed', () => {
   for (const mutation of [
     (entry) => { entry.id = 'other'; },
-    (entry) => { entry.version = '^3.0.3'; },
+    (entry) => { entry.version = '^4.3.1'; },
     (entry) => { entry.reason = ' '; },
     (entry) => { entry.approved_by = ''; },
     (entry) => { entry.severity = 'unknown'; },
-    (entry) => { entry.approved_on = '2026-10-04'; },
-    (entry) => { entry.expires = '2026-11-03'; },
-    (entry) => { entry.expires = '2026-10-03'; },
+    (entry) => { entry.approved_on = '2026-11-14'; },
+    (entry) => { entry.expires = '2026-12-14'; },
+    (entry) => { entry.expires = '2026-11-13'; },
     (entry) => { entry.expires = '2026-02-30'; },
     (entry) => { delete entry.approved_on; },
   ]) {
@@ -65,18 +64,18 @@ test('malformed, duplicate, unreviewed, future and overlong approvals fail close
 test('complete transitive cause chains pass only with their exact reviewed leaves', () => {
   const candidate = fixture();
   const result = decision(candidate);
-  assert.deepEqual([...result.accepted].sort(), ['braces', 'http-cache-semantics', 'root', 'tool']);
+  assert.deepEqual([...result.accepted].sort(), ['deepmerge', 'root', 'tool']);
   assert.equal(result.failure, null);
-  assert.match(decision(candidate, new Map()).failure, /braces/);
+  assert.match(decision(candidate, new Map()).failure, /deepmerge/);
   assert.match(auditFailure(candidate.report, new Map(), result.accepted), /via unresolved/);
 });
 
 test('a new advisory on the accepted package blocks it and every affected parent', () => {
   const candidate = fixture();
-  candidate.report.vulnerabilities.braces.via.push({...advisory(entries[0]), url: 'https://github.com/advisories/GHSA-abcd-abcd-abcd'});
+  candidate.report.vulnerabilities.deepmerge.via.push({...advisory(entries[0]), url: 'https://github.com/advisories/GHSA-abcd-abcd-abcd'});
   const result = decision(candidate);
-  assert.deepEqual([...result.accepted], ['http-cache-semantics']);
-  assert.match(result.failure, /braces/);
+  assert.deepEqual([...result.accepted], []);
+  assert.match(result.failure, /deepmerge/);
   assert.match(result.failure, /root/);
   assert.match(result.failure, /tool/);
 });
@@ -95,17 +94,17 @@ test('advisory identity, severity and every affected lock node remain bound', ()
     (value) => { value.via = [null]; },
   ]) {
     const candidate = fixture();
-    mutation(candidate.report.vulnerabilities.braces);
-    assert.match(decision(candidate).failure, /braces/);
+    mutation(candidate.report.vulnerabilities.deepmerge);
+    assert.match(decision(candidate).failure, /deepmerge/);
   }
   const changed = fixture();
-  changed.packages['node_modules/braces'].version = '3.0.2';
-  assert.match(decision(changed).failure, /braces/);
+  changed.packages['node_modules/deepmerge'].version = '4.3.0';
+  assert.match(decision(changed).failure, /deepmerge/);
   const nested = fixture();
-  const location = 'node_modules/tool/node_modules/braces';
-  nested.packages[location] = {version: '3.0.2'};
-  nested.report.vulnerabilities.braces.nodes.push(location);
-  assert.match(decision(nested).failure, /braces/);
+  const location = 'node_modules/tool/node_modules/deepmerge';
+  nested.packages[location] = {version: '4.3.0'};
+  nested.report.vulnerabilities.deepmerge.nodes.push(location);
+  assert.match(decision(nested).failure, /deepmerge/);
 });
 
 test('unrelated findings at every severity still block alongside accepted causes', () => {
@@ -147,7 +146,7 @@ test('a complete cycle anchored in reviewed causes is order-independent', () => 
 });
 
 test('invalid audit reports and unknown severity cannot use exception acceptance', () => {
-  for (const report of [null, [], 'invalid', {error: {code: 'ENOAUDIT'}}, {}, {vulnerabilities: []}, {vulnerabilities: {braces: null}}]) {
+  for (const report of [null, [], 'invalid', {error: {code: 'ENOAUDIT'}}, {}, {vulnerabilities: []}, {vulnerabilities: {deepmerge: null}}]) {
     assert.equal(acceptedPackages(report, {}, review()).size, 0);
     assert.ok(auditFailure(report, new Map()));
   }
@@ -166,22 +165,22 @@ test('every installed copy must match the locked exception version and identity'
   for (const entry of entries) install(`node_modules/${entry.package}`, entry.package, entry.version);
   assert.doesNotThrow(() => verifyInstalledExceptions(site, packages, review()));
   const alias = 'node_modules/npm-alias';
-  install(alias, 'braces', '3.0.2');
+  install(alias, 'deepmerge', '4.3.0');
   assert.throws(() => verifyInstalledExceptions(site, packages, review()), /version mismatch/);
   delete packages[alias];
   assert.throws(() => verifyInstalledExceptions(site, packages, review()), /absent from lockfile/);
   rmSync(path.join(site, alias), {recursive: true});
-  const nested = 'node_modules/tool/node_modules/braces';
-  install(nested, 'braces', '3.0.2');
+  const nested = 'node_modules/tool/node_modules/deepmerge';
+  install(nested, 'deepmerge', '4.3.0');
   delete packages[nested];
   assert.throws(() => verifyInstalledExceptions(site, packages, review()), /absent from lockfile/);
-  packages[nested] = {version: '3.0.2'};
+  packages[nested] = {version: '4.3.0'};
   assert.throws(() => verifyInstalledExceptions(site, packages, review()), /version mismatch/);
-  packages[nested].version = '3.0.3';
+  packages[nested].version = '4.3.1';
   assert.throws(() => verifyInstalledExceptions(site, packages, review()), /version mismatch/);
-  install(nested, 'renamed-braces', '3.0.3');
+  install(nested, 'renamed-deepmerge', '4.3.1');
   assert.throws(() => verifyInstalledExceptions(site, packages, review()), /version mismatch/);
-  install(nested, 'braces', '3.0.3');
+  install(nested, 'deepmerge', '4.3.1');
   symlinkSync(path.join(site, 'node_modules/tool'), path.join(site, 'node_modules/alias'));
   assert.throws(() => verifyInstalledExceptions(site, packages, review()), /absent from lockfile/);
   unlinkSync(path.join(site, 'node_modules/alias'));
@@ -190,10 +189,10 @@ test('every installed copy must match the locked exception version and identity'
   symlinkSync(path.join(site, 'node_modules'), path.join(site, 'node_modules/cycle'));
   assert.throws(() => verifyInstalledExceptions(site, packages, review()), /Cyclic/);
   unlinkSync(path.join(site, 'node_modules/cycle'));
-  delete packages['node_modules/braces'];
+  delete packages['node_modules/deepmerge'];
   assert.throws(() => verifyInstalledExceptions(site, packages, review()), /absent from lockfile/);
-  packages['node_modules/braces'] = {version: '3.0.3'};
-  packages['../node_modules/braces'] = {version: '3.0.3'};
+  packages['node_modules/deepmerge'] = {version: '4.3.1'};
+  packages['../node_modules/deepmerge'] = {version: '4.3.1'};
   assert.throws(() => verifyInstalledExceptions(site, packages, review()), /Invalid locked package location/);
 });
 

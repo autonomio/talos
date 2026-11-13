@@ -1,22 +1,12 @@
 [
   {
-    "id": "GHSA-vfj7-8cjw-p6xm",
-    "package": "braces",
-    "version": "3.0.3",
-    "severity": "high",
+    "id": "GHSA-gcqx-w48m-w2h4",
+    "package": "deepmerge",
+    "version": "4.3.1",
+    "severity": "low",
     "approved_by": "mikkokotila",
-    "approved_on": "2026-10-03",
-    "expires": "2026-11-02",
-    "reason": "Existing maintainer-approved temporary documentation-build exception, with its original scope and expiry retained. Acceptance additionally requires the exact reviewed owned source backport and its installed-copy inventory. Bound compile/expand/stringify AST traversal and parser nesting; adversarial depth fails before recursive stack exhaustion. Retain the original upstream finding. Replace the backport and retire this exception when a compatible patched upstream release is available."
-  },
-  {
-    "id": "GHSA-ch52-4w7c-c8xp",
-    "package": "http-cache-semantics",
-    "version": "4.2.0",
-    "severity": "high",
-    "approved_by": "mikkokotila",
-    "approved_on": "2026-10-03",
-    "expires": "2026-11-02",
-    "reason": "Existing maintainer-approved temporary documentation-build exception, with its original scope and expiry retained. Acceptance additionally requires the exact reviewed owned source backport and its installed-copy inventory. Reject non-storable/no-cache and shared private/cookie responses before max-stale can grant a cache hit; preserve explicitly public and private-cache behavior. Retain the original upstream finding. Replace the backport and retire this exception when a compatible patched upstream release is available."
+    "approved_on": "2026-11-13",
+    "expires": "2026-12-13",
+    "reason": "Docs-site build processes repository-controlled SVGs through @svgr/webpack; no untrusted SVG input reaches deepmerge mergeObject in CI or local builds. No patched release exists (latest 4.3.1 affected). Revisit on upstream fix."
   }
 ]

@@ -48,5 +48,30 @@
         "patch": "http-cache-semantics_index.js.patch"
       }
     ]
+  },
+  {
+    "package": "deepmerge",
+    "version": "4.3.1",
+    "advisory": "GHSA-gcqx-w48m-w2h4",
+    "files": [
+      {
+        "path": "index.js",
+        "before_sha256": "12440c84957c1990ea2d5e33dc0091722dc1dc1585c6d20e0c780e568ffa9d30",
+        "after_sha256": "ae03a8e04a92c4902af7252cb1bb699b26090458da9064b934dc4b61c0c660ab",
+        "patch": "deepmerge_index.js.patch"
+      },
+      {
+        "path": "dist/cjs.js",
+        "before_sha256": "2e5160f84a1141bd927264afe4d15766f1e6cf07daef182b37ff53fea121de7d",
+        "after_sha256": "7b980412f572e180d3f5d89d3db40c2fbae9c4fa5e66bf905a5089a72db2e341",
+        "patch": "deepmerge_dist_cjs.js.patch"
+      },
+      {
+        "path": "dist/umd.js",
+        "before_sha256": "f33e6596482d1fb5c7c427f8ef92f2aa849eea9223acd974176b2fb27ddbf73a",
+        "after_sha256": "f2683638440a9238e405a9dabdc804dac08292361c299424b4d82414086842c7",
+        "patch": "deepmerge_dist_umd.js.patch"
+      }
+    ]
   }
 ]

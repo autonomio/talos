@@ -1,0 +1,19 @@
+--- a/deepmerge/dist/umd.js
++++ b/deepmerge/dist/umd.js
+@@ -84,10 +84,16 @@
+ 		var destination = {};
+ 		if (options.isMergeableObject(target)) {
+ 			getKeys(target).forEach(function(key) {
++				if (key === '__proto__') {
++					return
++				}
+ 				destination[key] = cloneUnlessOtherwiseSpecified(target[key], options);
+ 			});
+ 		}
+ 		getKeys(source).forEach(function(key) {
++			if (key === '__proto__') {
++				return
++			}
+ 			if (propertyIsUnsafe(target, key)) {
+ 				return
+ 			}

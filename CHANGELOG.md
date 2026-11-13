@@ -1,5 +1,9 @@
 # Changelog
 
+# v2.0.11
+
+- Refresh locked dependencies past pip and npm audit CVEs; accept unfixable deepmerge low via a 30-day reviewed exception.
+
 # v2.0.10
 
 - Stop automatic Copilot code review on every push; reviews remain available on request.

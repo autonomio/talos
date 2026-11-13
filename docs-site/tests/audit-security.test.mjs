@@ -24,17 +24,20 @@ function fixture(t) {
   writeFileSync(path.join(root, 'security-exceptions.json'), JSON.stringify(entries));
   const dependencies = Object.fromEntries(entries.map((entry) => [entry.package, entry.version]));
   const packages = {'node_modules/root': {version: '1.0.0', dependencies}};
-  const vulnerabilities = {root: {name: 'root', severity: 'high', via: Object.keys(dependencies), nodes: ['node_modules/root']}};
-  for (const entry of entries) {
-    const location = `node_modules/${entry.package}`;
-    packages[location] = {version: entry.version};
+  const vulnerabilities = {root: {name: 'root', severity: entries[0].severity, via: Object.keys(dependencies), nodes: ['node_modules/root']}};
+  for (const item of patches) {
+    const location = `node_modules/${item.package}`;
+    packages[location] = {version: item.version};
     mkdirSync(path.join(root, location), {recursive: true});
-    writeFileSync(path.join(root, location, 'package.json'), JSON.stringify({name: entry.package, version: entry.version}));
-    for (const file of patches.find((item) => item.package === entry.package).files) {
+    writeFileSync(path.join(root, location, 'package.json'), JSON.stringify({name: item.package, version: item.version}));
+    for (const file of item.files) {
       const target = path.join(root, location, file.path);
       mkdirSync(path.dirname(target), {recursive: true});
-      copyFileSync(new URL(`../node_modules/${entry.package}/${file.path}`, import.meta.url), target);
+      copyFileSync(new URL(`../node_modules/${item.package}/${file.path}`, import.meta.url), target);
     }
+  }
+  for (const entry of entries) {
+    const location = `node_modules/${entry.package}`;
     vulnerabilities[entry.package] = {name: entry.package, severity: entry.severity, nodes: [location], via: [{
       name: entry.package, dependency: entry.package, severity: entry.severity,
       url: `https://github.com/advisories/${entry.id}`,
@@ -55,7 +58,7 @@ ${signal ? "process.kill(process.pid, 'SIGTERM');" : `process.exit(${status});`}
       env: {...process.env, PATH: `${root}/bin:${process.env.PATH}`}, encoding: 'utf8',
     });
   };
-  return {root, entries, report, run};
+  return {root, entries, report, run, patches};
 }
 
 test('the audit CLI retains original findings and explicitly records accepted npm exit 1', (t) => {
@@ -64,13 +67,14 @@ test('the audit CLI retains original findings and explicitly records accepted np
   assert.equal(result.status, 0, result.stderr);
   assert.ok(result.stdout.startsWith(JSON.stringify(report, null, 2)));
   for (const entry of entries) assert.ok(result.stdout.includes(`${entry.id}, ${entry.package}@${entry.version}`));
-  assert.match(result.stdout, /3 reported package findings accepted/);
+  assert.match(result.stdout, /2 reported package findings accepted/);
 });
 
 test('the audit CLI rejects unrelated findings, auditor errors, signals and empty error exits', (t) => {
-  const {run, report} = fixture(t);
+  const {run, report, entries} = fixture(t);
   const extra = structuredClone(report);
-  extra.vulnerabilities.braces.via.push({...extra.vulnerabilities.braces.via[0], url: 'https://github.com/advisories/GHSA-abcd-abcd-abcd'});
+  const target = entries[0].package;
+  extra.vulnerabilities[target].via.push({...extra.vulnerabilities[target].via[0], url: 'https://github.com/advisories/GHSA-abcd-abcd-abcd'});
   for (const [payload, status, signal] of [
     [extra, 1, false],
     [{error: {code: 'ENOAUDIT'}}, 1, false],
@@ -89,15 +93,15 @@ test('the audit CLI rejects unrelated findings, auditor errors, signals and empt
 
 test('the audit CLI rejects expired approval and installed-package tampering', (t) => {
   const {root, run, entries} = fixture(t);
-  const metadata = path.join(root, 'node_modules/braces/package.json');
-  writeFileSync(metadata, JSON.stringify({name: 'braces', version: '3.0.2'}));
+  const metadata = path.join(root, `node_modules/${entries[0].package}/package.json`);
+  writeFileSync(metadata, JSON.stringify({name: entries[0].package, version: '0.0.0-tampered'}));
   const changed = run();
   assert.equal(changed.status, 1);
   assert.match(changed.stderr, /version mismatch/);
-  writeFileSync(metadata, JSON.stringify({name: 'braces', version: '3.0.3'}));
-  const unlisted = path.join(root, 'node_modules/root/node_modules/braces');
+  writeFileSync(metadata, JSON.stringify({name: entries[0].package, version: entries[0].version}));
+  const unlisted = path.join(root, `node_modules/root/node_modules/${entries[0].package}`);
   mkdirSync(unlisted, {recursive: true});
-  writeFileSync(path.join(unlisted, 'package.json'), JSON.stringify({name: 'braces', version: '3.0.2'}));
+  writeFileSync(path.join(unlisted, 'package.json'), JSON.stringify({name: entries[0].package, version: entries[0].version}));
   const extra = run();
   assert.equal(extra.status, 1);
   assert.match(extra.stderr, /absent from lockfile/);
@@ -115,8 +119,9 @@ test('the audit CLI rejects expired approval and installed-package tampering', (
 
 
 test('a failing audit drains its complete original report before exiting', (t) => {
-  const {run, report} = fixture(t);
-  report.vulnerabilities.braces.via.push({...report.vulnerabilities.braces.via[0],
+  const {run, report, entries} = fixture(t);
+  const target = entries[0].package;
+  report.vulnerabilities[target].via.push({...report.vulnerabilities[target].via[0],
     url: 'https://github.com/advisories/GHSA-abcd-abcd-abcd', title: 'large advisory '.repeat(30000)});
   const result = run(report);
   assert.equal(result.status, 1, result.stderr);
@@ -125,8 +130,9 @@ test('a failing audit drains its complete original report before exiting', (t) =
 });
 
 test('valid advisory approval cannot bypass absent or tampered repaired source', (t) => {
-  const {root, run, report} = fixture(t);
-  writeFileSync(path.join(root, 'node_modules/braces/lib/parse.js'), 'unrepaired source');
+  const {root, run, report, entries, patches} = fixture(t);
+  const repaired = patches.find((item) => item.package === entries[0].package).files[0].path;
+  writeFileSync(path.join(root, `node_modules/${entries[0].package}/${repaired}`), 'unrepaired source');
   const result = run();
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Security patch upstream source hash mismatch/);
